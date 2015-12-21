@@ -212,33 +212,4 @@ func main() {
 		},
 	}
 	app.Run(os.Args)
-	/* args := os.Args[1:]
-	help_message := os.Args[0] + " accepts following options: 'create', 'pack', 'publish'. Please use " +os.Args[0]+ " with the right option"
-	if len(args) == 0 { args = []string{""} }
-	switch args[0] {
-	case "create":
-		os.MkdirAll("template" + string(filepath.Separator) + "DataModel", 0777)
-		os.MkdirAll("template" + string(filepath.Separator) + "Resource Scripts", 0777)
-		os.Create("template" + string(filepath.Separator) + "DataModel" + string(filepath.Separator) + "datamodel.xml")
-		os.Create("template" + string(filepath.Separator) + "Resource Scripts" + string(filepath.Separator) + "metadata.xml")
-	case "download":
-		url := "https://api.github.com/repos/doppleware/shell_templates/tarball"
-		downloadFromUrl(url)
-		str, err := ioutil.TempDir("", "shelltemp_")
-		fmt.Println(str)
-		if err != nil {
-			fmt.Println("Error while creating dir")
-			return
-		}
-		untarIt("test.zip", str)
-	case "pack":
-		zipIt("template", "package.zip")
-	case "publish":
-	case "help":
-		fmt.Println(help_message)
-	default:
-		fmt.Println(help_message)
-	}*/
-
-
 }
