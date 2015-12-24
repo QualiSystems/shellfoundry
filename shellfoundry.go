@@ -97,14 +97,20 @@ func zipIt(source, target string) error {
 			return err
 		}
 
+
+		/*
+		FileInfoHeader creates a partially-populated FileHeader from an os.FileInfo.
+		Because os.FileInfo's Name method returns only the base name of the file it describes,
+		it may be necessary to modify the Name field of the returned header to provide the full path name of the file.
+		 */
 		header, err := zip.FileInfoHeader(info)
 		if err != nil {
 			return err
 		}
 
-		filename := strings.TrimPrefix(path, source)
+		filename := strings.TrimPrefix(path, source) // trims parent part of the path, for example: strings.TrimPrefix("template/file.txt", "template/") -> "file.txt"
 		if filename != "" {
-			header.Name = filepath.Join(filename)
+			header.Name = filename
 		}
 
 		if info.IsDir() {
@@ -113,6 +119,13 @@ func zipIt(source, target string) error {
 			header.Method = zip.Deflate
 		}
 
+		/**
+		CreateHeader adds a file to the zip file using the provided FileHeader for the file metadata.
+		It returns a Writer to which the file contents should be written.
+
+		The file's contents must be written to the io.Writer before the next call to Create, CreateHeader, or Close.
+		The provided FileHeader fh must not be modified after a call to CreateHeader.
+		 */
 		writer, err := archive.CreateHeader(header)
 		if err != nil {
 			return err
@@ -121,12 +134,24 @@ func zipIt(source, target string) error {
 		if info.IsDir() {
 			return nil
 		}
+		fmt.Println(path)
 		file, err := os.Open(path)
 		if err != nil {
 			return err
 		}
 		defer file.Close()
-		_, err = io.Copy(writer, file)
+
+		/**
+		Copy copies from src to dst until either EOF is reached on src or an error occurs.
+		It returns the number of bytes copied and the first error encountered while copying, if any.
+
+		A successful Copy returns err == nil, not err == EOF. Because Copy is defined to read from src until EOF,
+		it does not treat an EOF from Read as an error to be reported.
+
+		If src implements the WriterTo interface, the copy is implemented by calling src.WriteTo(dst).
+		Otherwise, if dst implements the ReaderFrom interface, the copy is implemented by calling dst.ReadFrom(src).
+		 */
+		_, err = io.Copy(writer /*dst*/, file /*src*/)
 		return err
 	})
 
