@@ -2,17 +2,24 @@ package main
 
 import (
 	"archive/tar"
+	"archive/zip"
 	"compress/gzip"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-	"archive/zip"
 	"strings"
+
 	"github.com/codegangsta/cli"
 )
+
+type Driver struct {
+	Name string `xml:"Name,attr"`
+}
 
 func overwrite(mpath string) (*os.File, error) {
 	f, err := os.OpenFile(mpath, os.O_RDWR|os.O_TRUNC, 0777)
@@ -33,9 +40,9 @@ func read(mpath string) (*os.File, error) {
 	return f, nil
 }
 
-func untarIt(mpath string, basepath string) {
+func untarIt(mpath string, basepath string, root string) {
 	fr, err := read(mpath)
-	fmt.Printf("reading %s\n", mpath)
+	//fmt.Printf("reading %s\n", mpath)
 
 	defer fr.Close()
 	if err != nil {
@@ -48,6 +55,9 @@ func untarIt(mpath string, basepath string) {
 	}
 	tr := tar.NewReader(gr)
 	var index = 0
+	var topDir = ""
+	var firstDir = true
+
 	for {
 		hdr, err := tr.Next()
 		if err == io.EOF {
@@ -57,32 +67,46 @@ func untarIt(mpath string, basepath string) {
 		if err != nil {
 			panic(err)
 		}
-		path := filepath.Join(basepath, hdr.Name)
+		originalPath := hdr.Name
+		//fmt.Printf("current fie %s \n", filepath.Base(originalPath))
+		path := filepath.Join(basepath, strings.Replace(hdr.Name, topDir, "", -1))
 		switch hdr.Typeflag {
 		case tar.TypeDir:
-			if err := os.MkdirAll(path, os.FileMode(hdr.Mode)); err != nil {
-				panic(err)
+			if firstDir == true {
+				if filepath.Base(originalPath) == root {
+					topDir = originalPath
+					firstDir = false
+					//fmt.Printf("Setting the top folder %s \n", topDir)
+				}
+			} else {
+
+				if err := os.MkdirAll(path, os.FileMode(hdr.Mode)); err != nil {
+					panic(err)
+				}
+				//fmt.Printf("creating dir %s \n", path)
 			}
-			fmt.Printf("creating dir %s \n", path)
 
 		case tar.TypeReg:
-			ow, err := overwrite(path)
-			defer ow.Close()
-			if err != nil {
-				panic(err)
+			if firstDir == false {
+				ow, err := overwrite(path)
+				defer ow.Close()
+				if err != nil {
+					panic(err)
+				}
+				if _, err := io.Copy(ow, tr); err != nil {
+					panic(err)
+				}
+				//fmt.Printf("writing %s \n", path)
 			}
-			if _, err := io.Copy(ow, tr); err != nil {
-				panic(err)
-			}
-			fmt.Printf("writing %s \n", path)
+
 		default:
-			fmt.Printf("Can't: %c, %s\n", hdr.Typeflag, path)
+			//fmt.Printf("Can't: %c, %s\n", hdr.Typeflag, path)
 		}
 		index++
 	}
 }
 
-func zipIt(source, target string) error {
+func zipIt(source, target string, excludedExtensions []string) error {
 	zipfile, err := os.Create(target)
 	if err != nil {
 		return err
@@ -97,23 +121,34 @@ func zipIt(source, target string) error {
 			return err
 		}
 
-
 		/*
-		FileInfoHeader creates a partially-populated FileHeader from an os.FileInfo.
-		Because os.FileInfo's Name method returns only the base name of the file it describes,
-		it may be necessary to modify the Name field of the returned header to provide the full path name of the file.
-		 */
+			FileInfoHeader creates a partially-populated FileHeader from an os.FileInfo.
+			Because os.FileInfo's Name method returns only the base name of the file it describes,
+			it may be necessary to modify the Name field of the returned header to provide the full path name of the file.
+		*/
 		header, err := zip.FileInfoHeader(info)
 		if err != nil {
 			return err
 		}
 
-		filename := strings.TrimPrefix(path, source) // trims parent part of the path, for example: strings.TrimPrefix("template/file.txt", "template/") -> "file.txt"
+		if info.IsDir() && path == source {
+			return nil
+		}
+
+		filename := strings.TrimPrefix(path, source)
+		filename = strings.TrimPrefix(filename, "/") // trims parent part of the path, for example: strings.TrimPrefix("template/file.txt", "template/") -> "file.txt"
+		for index := 0; index < len(excludedExtensions); index++ {
+			if strings.HasSuffix(strings.ToLower(filename), strings.ToLower(excludedExtensions[index])) {
+				return nil
+			}
+
+		}
 		if filename != "" {
 			header.Name = filename
 		}
 
 		if info.IsDir() {
+			//fmt.Println("dir: " + info.Name())
 			header.Name += "/"
 		} else {
 			header.Method = zip.Deflate
@@ -125,7 +160,8 @@ func zipIt(source, target string) error {
 
 		The file's contents must be written to the io.Writer before the next call to Create, CreateHeader, or Close.
 		The provided FileHeader fh must not be modified after a call to CreateHeader.
-		 */
+		*/
+		//fmt.Println("header: " + header.Name)
 		writer, err := archive.CreateHeader(header)
 		if err != nil {
 			return err
@@ -134,7 +170,7 @@ func zipIt(source, target string) error {
 		if info.IsDir() {
 			return nil
 		}
-		fmt.Println(path)
+		//fmt.Println(path)
 		file, err := os.Open(path)
 		if err != nil {
 			return err
@@ -150,7 +186,8 @@ func zipIt(source, target string) error {
 
 		If src implements the WriterTo interface, the copy is implemented by calling src.WriteTo(dst).
 		Otherwise, if dst implements the ReaderFrom interface, the copy is implemented by calling dst.ReadFrom(src).
-		 */
+		*/
+
 		_, err = io.Copy(writer /*dst*/, file /*src*/)
 		return err
 	})
@@ -158,34 +195,167 @@ func zipIt(source, target string) error {
 	return err
 }
 
-func downloadFromUrl(url string) {
-	fileName := "test.zip"
-	fmt.Println("Downloading", url, "to", fileName)
+func downloadFromURL(url string) (filename string, err error) {
 
-	// TODO: check file existence first with io.IsExist
-	output, err := os.Create(fileName)
-	if err != nil {
-		fmt.Println("Error while creating", fileName, "-", err)
-		return
-	}
-	defer output.Close()
+	temp_file, err := ioutil.TempFile(os.TempDir(), "shelltemp_")
+
+	//fmt.Println("Downloading", url, "to", temp_file.Name())
+	defer temp_file.Close()
 
 	response, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Error while downloading", url, "-", err)
-		return
+		return "", fmt.Errorf("Error while downloading", url, "-", err)
 	}
 	defer response.Body.Close()
 
-	n, err := io.Copy(output, response.Body)
-	if err != nil {
-		fmt.Println("Error while downloading", url, "-", err)
-		return
+	n, err := io.Copy(temp_file, response.Body)
+	if err != nil || n == 0 {
+		return "", fmt.Errorf("Error while downloading", url, "-", err)
 	}
 
-	fmt.Println(n, "bytes downloaded.")
+	return temp_file.Name(), nil
 }
 
+// Copies file source to destination dest.
+func CopyFile(source string, dest string) (err error) {
+	sf, err := os.Open(source)
+	if err != nil {
+		return err
+	}
+	defer sf.Close()
+	df, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
+	defer df.Close()
+	_, err = io.Copy(df, sf)
+	if err == nil {
+		si, err := os.Stat(source)
+		if err != nil {
+			err = os.Chmod(dest, si.Mode())
+		}
+
+	}
+
+	return
+}
+
+// Recursively copies a directory tree, attempting to preserve permissions.
+// Source directory must exist, destination directory must *not* exist.
+func CopyDir(source string, dest string) (err error) {
+
+	// get properties of source dir
+	fi, err := os.Stat(source)
+	if err != nil {
+		return err
+	}
+
+	if !fi.IsDir() {
+		return &CustomError{"Source is not a directory"}
+	}
+
+	// ensure dest dir does not already exist
+
+	entries, err := ioutil.ReadDir(source)
+
+	for _, entry := range entries {
+
+		sfp := source + "/" + entry.Name()
+		dfp := dest + "/" + entry.Name()
+		if entry.IsDir() {
+			err = CopyDir(sfp, dfp)
+			if err != nil {
+				log.Println(err)
+			}
+		} else {
+			// perform copy
+			err = CopyFile(sfp, dfp)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+
+	}
+	return
+}
+
+// A struct for returning custom error messages
+type CustomError struct {
+	What string
+}
+
+// Returns the error message defined in What as a string
+func (e *CustomError) Error() string {
+	return e.What
+}
+
+func Copy(dst, src string) error {
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	_, err = io.Copy(out, in)
+	cerr := out.Close()
+	if err != nil {
+		return err
+	}
+	return cerr
+}
+
+func parseXML(filename string) string {
+	xmlFile, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("Error opening file:", err)
+		return ""
+	}
+	defer xmlFile.Close()
+	b, _ := ioutil.ReadAll(xmlFile)
+
+	var q Driver
+
+	xml.Unmarshal(b, &q)
+
+	return q.Name
+
+}
+
+func replaceString(file string, match string, replace string) {
+	input, err := ioutil.ReadFile(file)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	lines := strings.Split(string(input), "\n")
+
+	for i, line := range lines {
+		if strings.Contains(line, match) {
+			lines[i] = strings.Replace(line, match, replace, -1)
+		}
+	}
+	output := strings.Join(lines, "\n")
+	err = ioutil.WriteFile(file, []byte(output), 0644)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+func downloadTemplate() (directory string, err error) {
+	url := "https://api.github.com/repos/QualiSystems/shell-templates/tarball"
+	str, err := downloadFromURL(url)
+	if err != nil {
+		fmt.Println("Error while downloading", url, "-", err)
+		return "", err
+	}
+	packageTempDir := filepath.Join(os.TempDir(), "spool_"+filepath.Base(str))
+	os.MkdirAll(packageTempDir, 0777)
+	untarIt(str, packageTempDir, "base")
+	return packageTempDir, nil
+}
 func main() {
 	app := cli.NewApp()
 	app.Version = "0.0.1"
@@ -196,42 +366,138 @@ func main() {
 		{
 			Name:    "create",
 			Aliases: []string{"c"},
-			Usage:   "create directory structure for the package template",
+			Usage:   "create directory structure for the package template. \n e.g shellfoundry create myshell ",
 			Action: func(c *cli.Context) {
-				os.MkdirAll("template" + string(filepath.Separator) + "DataModel", 0777)
-				os.MkdirAll("template" + string(filepath.Separator) + "Resource Scripts", 0777)
-				os.Create("template" + string(filepath.Separator) + "DataModel" + string(filepath.Separator) + "datamodel.xml")
-				os.Create("template" + string(filepath.Separator) + "Resource Scripts" + string(filepath.Separator) + "metadata.xml")
-			},
-		},
-		{
-			Name: 	 "download",
-			Aliases: []string{"d"},
-			Usage: 	 "download shell template from github",
-			Action: func(c *cli.Context) {
-				url := "https://api.github.com/repos/doppleware/shell_templates/tarball"
-				downloadFromUrl(url)
-				str, err := ioutil.TempDir("", "shelltemp_")
-				fmt.Println(str)
+
+				packageTempDir, err := downloadTemplate()
 				if err != nil {
-					fmt.Println("Error while creating dir")
+					fmt.Println("Error while downloading template: " + err.Error())
 					return
 				}
-				untarIt("test.zip", str)
+
+				if len(c.Args()) < 0 {
+					fmt.Println("Usage: shellfoundry create [shellname]  ")
+					return
+				}
+				directory := c.Args()[0]
+				os.MkdirAll(directory, 0777)
+				dataModelDir := filepath.Join(directory, "datamodel")
+				os.MkdirAll(dataModelDir, 0777)
+				distDir := filepath.Join(directory, "dist")
+				os.MkdirAll(distDir, 0777)
+				srcDir := filepath.Join(directory, "src")
+				os.MkdirAll(srcDir, 0777)
+				scriptsDir := filepath.Join(directory, "scripts")
+				os.MkdirAll(scriptsDir, 0777)
+
+				err = CopyDir(filepath.Join(packageTempDir, "DataModel"), dataModelDir)
+				if err != nil {
+					fmt.Println("Error while copying template: " + err.Error())
+				}
+				err = CopyDir(filepath.Join(packageTempDir, "Configuration"), dataModelDir)
+				if err != nil {
+					fmt.Println("Error while copying template: " + err.Error())
+				}
+				err = CopyDir(filepath.Join(packageTempDir, "Resource Drivers - Python"), srcDir)
+				if err != nil {
+					fmt.Println("Error while copying template: " + err.Error())
+				}
+
+				os.Rename(filepath.Join(srcDir, "sampleresourcedriver.py"), filepath.Join(srcDir, directory+"driver.py"))
+				replaceString(filepath.Join(srcDir, "drivermetadata.xml"),
+					"<Driver Name=\"Sample Driver\"", fmt.Sprintf("<Driver Name=\"%s\"", strings.Title(directory+" driver")))
+
+				replaceString(filepath.Join(srcDir, "drivermetadata.xml"),
+					"MainClass=\"sampleresourcedriver.SampleResourceDriver\"", fmt.Sprintf("MainClass=\"%s\"",
+						directory+"driver."+strings.Title(directory+"Driver")))
+
+				replaceString(filepath.Join(srcDir, directory+"driver.py"),
+					"class SampleResourceDriver", fmt.Sprintf("class %s", strings.Title(directory+"Driver")))
+
+				replaceString(filepath.Join(dataModelDir, "datamodel.xml"),
+					"<ResourceModel Name=\"Shell Model\"", fmt.Sprintf("<ResourceModel Name=\"%s\"", strings.Title(directory)))
+
+				replaceString(filepath.Join(dataModelDir, "datamodel.xml"),
+					"<DriverDescriptor Name=\"Sample Driver\"", fmt.Sprintf("<DriverDescriptor Name=\"%s\"", strings.Title(directory+" driver")))
+
+				replaceString(filepath.Join(dataModelDir, "datamodel.xml"),
+					"<DriverName>Sample Driver</DriverName>", fmt.Sprintf("<DriverName>%s</DriverName>", strings.Title(directory+" driver")))
+
+				replaceString(filepath.Join(dataModelDir, "shellconfig.xml"),
+					"<ResourceTemplate Name=\"Shell Name\" Model=\"Shell Name\" Driver=\"Sample Driver\">",
+					fmt.Sprintf("<ResourceTemplate Name=\"%s\" Model=\"%s\" Driver=\"%s\">",
+						strings.Title(directory), strings.Title(directory), strings.Title(directory+" driver")))
+
 			},
 		},
+
 		{
-			Name: 	 "pack",
+			Name:    "package",
 			Aliases: []string{"p"},
-			Usage:	 "create package.zip",
+			Usage:   "shellfoundry package",
 			Action: func(c *cli.Context) {
-				zipIt("template", "package.zip")
+
+				driverName := parseXML(filepath.Join("src", "drivermetadata.xml"))
+				driverPath := filepath.Join(os.TempDir(), driverName) + ".zip"
+				excludedExt := []string{".ds_store", ".gitignore"}
+				zipIt("src", driverPath, excludedExt)
+
+				packageTempDir, err := downloadTemplate()
+				if err != nil {
+					fmt.Println("Error while downloading template: " + err.Error())
+					return
+				}
+				os.RemoveAll(filepath.Join(packageTempDir, "Resource Drivers - Python"))
+				os.MkdirAll(filepath.Join(packageTempDir, "Resource Drivers - Python"), 0777)
+				err = Copy(filepath.Join(packageTempDir, "Resource Drivers - Python", filepath.Base(driverPath)), driverPath)
+				if err != nil {
+					fmt.Println("Error while copying driver: " + err.Error())
+					return
+				}
+
+				err = Copy(filepath.Join(packageTempDir, "DataModel", "datamodel.xml"), filepath.Join("DataModel", "datamodel.xml"))
+				if err != nil {
+					fmt.Println("Error while copying data model: " + err.Error())
+					return
+				}
+				err = Copy(filepath.Join(packageTempDir, "Configuration", "shellconfig.xml"), filepath.Join("DataModel", "shellconfig.xml"))
+				if err != nil {
+					fmt.Println("Error while copying configuration: " + err.Error())
+					return
+				}
+
+				currentDir, err := os.Getwd()
+				if err != nil {
+					fmt.Println("Error while getting current dir: " + err.Error())
+					return
+				}
+				//fmt.Println(packageTempDir)
+
+				zipIt(packageTempDir, filepath.Join("dist", filepath.Base(currentDir)+".zip"), excludedExt)
+				if err != nil {
+					fmt.Println("Error creating package: " + err.Error())
+					return
+				}
+				err = os.RemoveAll(packageTempDir)
+				if err != nil {
+					fmt.Println("Error deleting temp files: " + err.Error())
+					return
+				}
+				// excludedExt := []string{".ds_store"}
+				// temp_file, err := ioutil.TempFile(os.TempDir(), "shelltemp_")
+				// if err != nil {
+				// 	fmt.Println("Error while creating dir")
+				// 	return
+				// }
+				// zipIt("src", temp_file.Name(), excludedExt)
+				//
+				// zipIt("template", "package.zip", excludedExt)
 			},
 		},
 		{
-			Name: 	 "publish",
+			Name:    "publish",
 			Aliases: []string{"u"},
-			Usage:	 "publish package to CloudShell",
+			Usage:   "Not yet implemented",
 			Action: func(c *cli.Context) {
 			},
 		},

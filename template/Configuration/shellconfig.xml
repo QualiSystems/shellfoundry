@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ShellsConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/ShellsConfigurationSchema.xsd">
+<ResourceTemplates>
+    <ResourceTemplate Name="Docker Host" Model="Generic Docker Host" Driver="">
+        <Description>Add a Docker host to CloudShell, Docker hosts can be used to deploy CloudShell Apps! .</Description>
+        <AutoLoad Enable="false">
+            <Description>The discovery process will retrieve the structure and configuration of the switch(modules, ports) </Description>
+        </AutoLoad>
+        <Attributes>
+            <Attribute Name="User" Value="" />
+            <Attribute Name="Password" Value="" />
+        </Attributes>
+    </ResourceTemplate>
+</ResourceTemplates>
+</ShellsConfiguration>
