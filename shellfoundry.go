@@ -68,7 +68,7 @@ func untarIt(mpath string, basepath string, root string) {
 			panic(err)
 		}
 		originalPath := hdr.Name
-		//fmt.Printf("current fie %s \n", filepath.Base(originalPath))
+		//fmt.Printf("current fie %s \n", originalPath)
 		path := filepath.Join(basepath, strings.Replace(hdr.Name, topDir, "", -1))
 		switch hdr.Typeflag {
 		case tar.TypeDir:
@@ -78,7 +78,7 @@ func untarIt(mpath string, basepath string, root string) {
 					firstDir = false
 					//fmt.Printf("Setting the top folder %s \n", topDir)
 				}
-			} else {
+			} else if strings.HasPrefix(originalPath, topDir) {
 
 				if err := os.MkdirAll(path, os.FileMode(hdr.Mode)); err != nil {
 					panic(err)
@@ -87,7 +87,7 @@ func untarIt(mpath string, basepath string, root string) {
 			}
 
 		case tar.TypeReg:
-			if firstDir == false {
+			if firstDir == false && strings.HasPrefix(originalPath, topDir) {
 				ow, err := overwrite(path)
 				defer ow.Close()
 				if err != nil {
@@ -240,6 +240,18 @@ func CopyFile(source string, dest string) (err error) {
 	return
 }
 
+func CreateDirIfNotExists(path string) (err error) {
+	// create dest dir if needed
+	_, err = os.Open(path)
+	if os.IsNotExist(err) {
+		err = os.MkdirAll(path, 0777)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // Recursively copies a directory tree, attempting to preserve permissions.
 // Source directory must exist, destination directory must *not* exist.
 func CopyDir(source string, dest string) (err error) {
@@ -252,6 +264,12 @@ func CopyDir(source string, dest string) (err error) {
 
 	if !fi.IsDir() {
 		return &CustomError{"Source is not a directory"}
+	}
+
+	// create dest dir if needed
+	err = CreateDirIfNotExists(dest)
+	if err != nil {
+		return err
 	}
 
 	// ensure dest dir does not already exist
@@ -295,16 +313,21 @@ func Copy(dst, src string) error {
 		return err
 	}
 	defer in.Close()
+
 	out, err := os.Create(dst)
+
 	if err != nil {
 		return err
 	}
+
 	defer out.Close()
 	_, err = io.Copy(out, in)
 	cerr := out.Close()
 	if err != nil {
 		return err
 	}
+	fmt.Println("Copied DST:" + dst)
+
 	return cerr
 }
 
@@ -344,16 +367,16 @@ func replaceString(file string, match string, replace string) {
 		log.Fatalln(err)
 	}
 }
-func downloadTemplate() (directory string, err error) {
-	url := "https://api.github.com/repos/QualiSystems/shell-templates/tarball"
-	str, err := downloadFromURL(url)
+func downloadTemplate(template string) (directory string, err error) {
+	url := "https://api.github.com/repos/QualiSystems/shell-templates/tarball/new_format"
+	zipfile, err := downloadFromURL(url)
 	if err != nil {
 		fmt.Println("Error while downloading", url, "-", err)
 		return "", err
 	}
-	packageTempDir := filepath.Join(os.TempDir(), "spool_"+filepath.Base(str))
+	packageTempDir := filepath.Join(os.TempDir(), "spool_"+filepath.Base(zipfile))
 	os.MkdirAll(packageTempDir, 0777)
-	untarIt(str, packageTempDir, "base")
+	untarIt(zipfile, packageTempDir, template)
 	return packageTempDir, nil
 }
 func main() {
@@ -369,7 +392,8 @@ func main() {
 			Usage:   "create directory structure for the package template. \n e.g shellfoundry create myshell ",
 			Action: func(c *cli.Context) {
 
-				packageTempDir, err := downloadTemplate()
+				template := "base"
+				packageTempDir, err := downloadTemplate(template)
 				if err != nil {
 					fmt.Println("Error while downloading template: " + err.Error())
 					return
@@ -380,53 +404,71 @@ func main() {
 					return
 				}
 				directory := c.Args()[0]
-				os.MkdirAll(directory, 0777)
+
 				dataModelDir := filepath.Join(directory, "datamodel")
-				os.MkdirAll(dataModelDir, 0777)
 				distDir := filepath.Join(directory, "dist")
-				os.MkdirAll(distDir, 0777)
 				srcDir := filepath.Join(directory, "src")
-				os.MkdirAll(srcDir, 0777)
 				scriptsDir := filepath.Join(directory, "scripts")
-				os.MkdirAll(scriptsDir, 0777)
 
-				err = CopyDir(filepath.Join(packageTempDir, "DataModel"), dataModelDir)
+				err = CreateDirIfNotExists(dataModelDir)
 				if err != nil {
 					fmt.Println("Error while copying template: " + err.Error())
 				}
-				err = CopyDir(filepath.Join(packageTempDir, "Configuration"), dataModelDir)
-				if err != nil {
-					fmt.Println("Error while copying template: " + err.Error())
-				}
-				err = CopyDir(filepath.Join(packageTempDir, "Resource Drivers - Python"), srcDir)
+				err = CopyDir(packageTempDir, directory)
 				if err != nil {
 					fmt.Println("Error while copying template: " + err.Error())
 				}
 
-				os.Rename(filepath.Join(srcDir, "sampleresourcedriver.py"), filepath.Join(srcDir, directory+"driver.py"))
+				templateName := template + "Shell"
+
+				err = CreateDirIfNotExists(scriptsDir)
+				if err != nil {
+					fmt.Println("Error while copying template: " + err.Error())
+				}
+				err = CreateDirIfNotExists(distDir)
+				if err != nil {
+					fmt.Println("Error while copying template: " + err.Error())
+				}
+
+				os.Rename(filepath.Join(srcDir, strings.ToLower(templateName)+"driver.py"),
+					filepath.Join(srcDir, directory+"driver.py"))
+
 				replaceString(filepath.Join(srcDir, "drivermetadata.xml"),
-					"<Driver Name=\"Sample Driver\"", fmt.Sprintf("<Driver Name=\"%s\"", strings.Title(directory+" driver")))
+					fmt.Sprintf("<Driver Name=\"%s Driver\"", strings.Title(templateName)),
+					fmt.Sprintf("<Driver Name=\"%s\"", strings.Title(directory+" driver")))
 
 				replaceString(filepath.Join(srcDir, "drivermetadata.xml"),
-					"MainClass=\"sampleresourcedriver.SampleResourceDriver\"", fmt.Sprintf("MainClass=\"%s\"",
-						directory+"driver."+strings.Title(directory+"Driver")))
+					fmt.Sprintf("MainClass=\"%sdriver.%sDriver\"", strings.ToLower(templateName),
+						strings.Title(templateName)),
+					fmt.Sprintf("MainClass=\"%s\"", directory+"driver."+strings.Title(directory+"Driver")))
 
 				replaceString(filepath.Join(srcDir, directory+"driver.py"),
-					"class SampleResourceDriver", fmt.Sprintf("class %s", strings.Title(directory+"Driver")))
+					fmt.Sprintf("class %sDriver", strings.Title(templateName)),
+					fmt.Sprintf("class %s", strings.Title(directory+"Driver")))
 
 				replaceString(filepath.Join(dataModelDir, "datamodel.xml"),
-					"<ResourceModel Name=\"Shell Model\"", fmt.Sprintf("<ResourceModel Name=\"%s\"", strings.Title(directory)))
+					fmt.Sprintf("<ResourceModel Name=\"%s\"", strings.Title(templateName)),
+					fmt.Sprintf("<ResourceModel Name=\"%s\"", strings.Title(directory)))
 
 				replaceString(filepath.Join(dataModelDir, "datamodel.xml"),
-					"<DriverDescriptor Name=\"Sample Driver\"", fmt.Sprintf("<DriverDescriptor Name=\"%s\"", strings.Title(directory+" driver")))
+					fmt.Sprintf("<DriverDescriptor Name=\"%s\"", strings.Title(templateName+" driver")),
+					fmt.Sprintf("<DriverDescriptor Name=\"%s\"", strings.Title(directory+" driver")))
 
 				replaceString(filepath.Join(dataModelDir, "datamodel.xml"),
-					"<DriverName>Sample Driver</DriverName>", fmt.Sprintf("<DriverName>%s</DriverName>", strings.Title(directory+" driver")))
+					fmt.Sprintf("<DriverName>%s</DriverName>", strings.Title(templateName+" Driver")),
+					fmt.Sprintf("<DriverName>%s</DriverName>", strings.Title(directory+" Driver")))
 
 				replaceString(filepath.Join(dataModelDir, "shellconfig.xml"),
-					"<ResourceTemplate Name=\"Shell Name\" Model=\"Shell Name\" Driver=\"Sample Driver\">",
+					fmt.Sprintf("<ResourceTemplate Name=\"%s\" Model=\"%s\" Driver=\"%s\">",
+						strings.Title(templateName), strings.Title(templateName), strings.Title(templateName+" driver")),
 					fmt.Sprintf("<ResourceTemplate Name=\"%s\" Model=\"%s\" Driver=\"%s\">",
 						strings.Title(directory), strings.Title(directory), strings.Title(directory+" driver")))
+
+				err = os.RemoveAll(packageTempDir)
+				if err != nil {
+					fmt.Println("Error deleting temp files: " + err.Error())
+					return
+				}
 
 			},
 		},
@@ -440,18 +482,23 @@ func main() {
 				driverName := parseXML(filepath.Join("src", "drivermetadata.xml"))
 				driverPath := filepath.Join(os.TempDir(), driverName) + ".zip"
 				excludedExt := []string{".ds_store", ".gitignore"}
-				zipIt("src", driverPath, excludedExt)
+				errr := zipIt("src", driverPath, excludedExt)
+				if errr != nil {
+					fmt.Println("Error while packaging driver: " + errr.Error())
+					return
+				}
+				template := "package_template"
 
-				packageTempDir, err := downloadTemplate()
+				packageTempDir, err := downloadTemplate(template)
 				if err != nil {
 					fmt.Println("Error while downloading template: " + err.Error())
 					return
 				}
-				os.RemoveAll(filepath.Join(packageTempDir, "Resource Drivers - Python"))
-				os.MkdirAll(filepath.Join(packageTempDir, "Resource Drivers - Python"), 0777)
-				err = Copy(filepath.Join(packageTempDir, "Resource Drivers - Python", filepath.Base(driverPath)), driverPath)
+				err = Copy(filepath.Join(packageTempDir, "Resource Drivers - Python", filepath.Base(driverPath)),
+					driverPath)
+
 				if err != nil {
-					fmt.Println("Error while copying driver: " + err.Error())
+					fmt.Println("Error while copying driver " + err.Error())
 					return
 				}
 
