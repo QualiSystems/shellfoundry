@@ -326,7 +326,7 @@ func Copy(dst, src string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Copied DST:" + dst)
+	//fmt.Println("Copied DST:" + dst)
 
 	return cerr
 }
@@ -387,9 +387,24 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:    "create",
-			Aliases: []string{"c"},
-			Usage:   "create directory structure for the package template. \n e.g shellfoundry create myshell ",
+			Name:        "create",
+			Aliases:     []string{"c"},
+			Usage:       "shellfoundry create [Name]",
+			Description: "Creates a new shell project. You can select a predefined template.",
+
+			ArgsUsage: "[Name] we recommend the name for the shells follows the CloudShell convention of [Vendor OS Type] for example: 'Acme AOS Switch'  ",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "template, t",
+					Value: "base",
+					Usage: "Select the shell template to use",
+				},
+				cli.StringFlag{
+					Name:  "cloudshell_version, cv",
+					Value: "latest",
+					Usage: "The minimal CloudShell version this shell should be compatible with",
+				},
+			},
 			Action: func(c *cli.Context) {
 
 				template := "base"
