@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"compress/gzip"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"io"
@@ -15,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/codegangsta/cli"
+	"github.com/jmoiron/jsonq"
 )
 
 type Driver struct {
@@ -40,6 +42,29 @@ func read(mpath string) (*os.File, error) {
 	return f, nil
 }
 
+func getTemplateInfoFile() (link string, err error) {
+	response, err := http.Get("https://api.github.com/repos/QualiSystems/shell-templates/contents/templates.yaml")
+	if err != nil {
+		return "", err
+	}
+	defer response.Body.Close()
+
+	resp := make(map[string]interface{})
+	body, _ := ioutil.ReadAll(response.Body)
+	err = json.Unmarshal(body, &resp)
+	if err != nil {
+		return "", err
+	}
+
+	jq := jsonq.NewQuery(resp)
+	download_url, err := jq.String("download_url")
+	if err != nil {
+		return "", err
+	}
+
+	return download_url, nil
+
+}
 func untarIt(mpath string, basepath string, root string) {
 	fr, err := read(mpath)
 	//fmt.Printf("reading %s\n", mpath)
@@ -348,6 +373,24 @@ func parseXML(filename string) string {
 
 }
 
+func printFile(file string) {
+	input, err := ioutil.ReadFile(file)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	lines := strings.Split(string(input), "\n")
+
+	for _, line := range lines {
+		fmt.Println(line)
+	}
+	output := strings.Join(lines, "\n")
+	err = ioutil.WriteFile(file, []byte(output), 0644)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
 func replaceString(file string, match string, replace string) {
 	input, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -368,7 +411,7 @@ func replaceString(file string, match string, replace string) {
 	}
 }
 func downloadTemplate(template string) (directory string, err error) {
-	url := "https://api.github.com/repos/QualiSystems/shell-templates/tarball/new_format"
+	url := "https://api.github.com/repos/QualiSystems/shell-templates/tarball/"
 	zipfile, err := downloadFromURL(url)
 	if err != nil {
 		fmt.Println("Error while downloading", url, "-", err)
@@ -391,6 +434,7 @@ func main() {
 			Aliases:     []string{"c"},
 			Usage:       "shellfoundry create [Name]",
 			Description: "Creates a new shell project. You can select a predefined template.",
+			UsageText:   "blah",
 
 			ArgsUsage: "[Name] we recommend the name for the shells follows the CloudShell convention of [Vendor OS Type] for example: 'Acme AOS Switch'  ",
 			Flags: []cli.Flag{
@@ -407,7 +451,10 @@ func main() {
 			},
 			Action: func(c *cli.Context) {
 
-				template := "base"
+				template := c.String("template")
+				if len(template) == 0 {
+					template = "base"
+				}
 				packageTempDir, err := downloadTemplate(template)
 				if err != nil {
 					fmt.Println("Error while downloading template: " + err.Error())
@@ -489,9 +536,10 @@ func main() {
 		},
 
 		{
-			Name:    "package",
-			Aliases: []string{"p"},
-			Usage:   "shellfoundry package",
+			Name:      "package",
+			Aliases:   []string{"p"},
+			Usage:     "shellfoundry package",
+			UsageText: "blah",
 			Action: func(c *cli.Context) {
 
 				driverName := parseXML(filepath.Join("src", "drivermetadata.xml"))
@@ -557,8 +605,28 @@ func main() {
 			},
 		},
 		{
+			Name:    "list",
+			Aliases: []string{"l"},
+			Usage:   "Gets the list of available templates",
+			Action: func(c *cli.Context) {
+				link, err := getTemplateInfoFile()
+				if err != nil {
+					fmt.Println("Error getting list of templates: " + err.Error())
+					return
+				}
+
+				yamlFile, error := downloadFromURL(link)
+				if error != nil {
+					fmt.Println("Can't download file: " + err.Error())
+					return
+				}
+
+				printFile(yamlFile)
+			},
+		},
+		{
 			Name:    "publish",
-			Aliases: []string{"u"},
+			Aliases: []string{"pu"},
 			Usage:   "Not yet implemented",
 			Action: func(c *cli.Context) {
 			},
