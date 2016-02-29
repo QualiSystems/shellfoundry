@@ -15,8 +15,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"utilities.qs/registry_windows"
-
 	"github.com/codegangsta/cli"
 	"github.com/jmoiron/jsonq"
 )
@@ -530,6 +528,10 @@ func main() {
 					fmt.Sprintf("<DriverName>%s</DriverName>", strings.Title(templateName+" Driver")),
 					fmt.Sprintf("<DriverName>%s</DriverName>", strings.Title(directory+" Driver")))
 
+				replaceString(filepath.Join(dataModelDir, "datamodel.xml"),
+					fmt.Sprintf("<ParentModelName>%s</ParentModelName>", strings.Title(templateName)),
+					fmt.Sprintf("<ParentModelName>%s</ParentModelName>", strings.Title(directory)))
+
 				replaceString(filepath.Join(dataModelDir, "shellconfig.xml"),
 					fmt.Sprintf("<ResourceTemplate Name=\"%s\" Model=\"%s\" Driver=\"%s\">",
 						strings.Title(templateName), strings.Title(templateName), strings.Title(templateName+" driver")),
@@ -641,14 +643,6 @@ func main() {
 			Aliases: []string{"pu"},
 			Usage:   "Not yet implemented",
 			Action: func(c *cli.Context) {
-			},
-		},
-		{
-			Name:    "install",
-			Aliases: []string{"i"},
-			Usage:   "add to the local path",
-			Action: func(c *cli.Context) {
-				registry_windows.setPath()
 			},
 		},
 	}
