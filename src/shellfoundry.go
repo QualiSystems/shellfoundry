@@ -5,13 +5,14 @@ import (
 	"archive/zip"
 	"compress/gzip"
 	"fmt"
-	"github.com/codegangsta/cli"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/codegangsta/cli"
 )
 
 func overwrite(mpath string) (*os.File, error) {
@@ -129,6 +130,7 @@ func zipIt(source, target string) error {
 		The file's contents must be written to the io.Writer before the next call to Create, CreateHeader, or Close.
 		The provided FileHeader fh must not be modified after a call to CreateHeader.
 		*/
+		fmt.Println("zipping: " + header.Name)
 		writer, err := archive.CreateHeader(header)
 		if err != nil {
 			return err

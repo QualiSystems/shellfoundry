@@ -15,6 +15,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"utilities.qs/registry_windows"
+
 	"github.com/codegangsta/cli"
 	"github.com/jmoiron/jsonq"
 )
@@ -178,6 +180,14 @@ func zipIt(source, target string, excludedExtensions []string) error {
 		} else {
 			header.Method = zip.Deflate
 		}
+
+		if strings.HasPrefix(header.Name, "\\") {
+			header.Name = strings.Replace(header.Name, "\\", "", 1)
+		}
+
+		header.Name = strings.Replace(header.Name, "\\", "/", -1)
+
+		fmt.Println("zipping: " + header.Name)
 
 		/**
 		CreateHeader adds a file to the zip file using the provided FileHeader for the file metadata.
@@ -593,6 +603,8 @@ func main() {
 					fmt.Println("Error deleting temp files: " + err.Error())
 					return
 				}
+
+				fmt.Println("Package created successfully")
 				// excludedExt := []string{".ds_store"}
 				// temp_file, err := ioutil.TempFile(os.TempDir(), "shelltemp_")
 				// if err != nil {
@@ -629,6 +641,14 @@ func main() {
 			Aliases: []string{"pu"},
 			Usage:   "Not yet implemented",
 			Action: func(c *cli.Context) {
+			},
+		},
+		{
+			Name:    "install",
+			Aliases: []string{"i"},
+			Usage:   "add to the local path",
+			Action: func(c *cli.Context) {
+				registry_windows.setPath()
 			},
 		},
 	}
