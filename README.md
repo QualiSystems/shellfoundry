@@ -1,13 +1,13 @@
 # shellfoundry
 CloudShell Shell creation tool
 
-#Installation
+## Installation
 
 ```batch
 > pip install shellfoundry
 ```
 
-# Usage
+## Usage
 
 ```batch
 > shellfoundry gh:QualiSystems/shellfoundry-template
