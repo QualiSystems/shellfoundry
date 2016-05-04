@@ -1,6 +1,8 @@
-from qpm.packaging.auto_argument_parser import AutoArgumentParser
-from shellfoundry.gateway import ShellFoundryGateway
 import click
+from cookiecutter.main import cookiecutter
+from qpm.packaging.drivers_packager import DriversPackager
+from qpm.packaging.shell_installer import ShellInstaller
+from qpm.packaging.shell_packager import ShellPackager
 
 
 @click.group()
@@ -12,21 +14,38 @@ def cli():
 @click.command()
 @click.argument(u'template')
 def create(template):
-    click.echo('create' + template)
-    # argument_parser = AutoArgumentParser(ShellFoundryGateway)
-    # argument_parser.parse_args()
+    """
+    Create a CloudShell shell based on a template
+    :param template:
+    :return:
+    """
+    cookiecutter(template)
 
 
 @click.command()
 @click.argument(u'package')
 def pack(package):
-    click.echo('pack' + package)
+    """
+    Packs a CloudShell package
+    :param package:
+    :return:
+    """
+    drivers_packager = DriversPackager()
+    drivers_packager.package_drivers(package)
+    packager = ShellPackager()
+    packager.create_shell_package(package)
 
 
 @click.command()
 @click.argument(u'package')
 def install(package):
-    click.echo('install' + package)
+    """
+    Installs a CloudShell package into CloudShell
+    :param package:
+    :return:
+    """
+    installer = ShellInstaller()
+    installer.install(package)
 
 cli.add_command(create)
 cli.add_command(pack)
