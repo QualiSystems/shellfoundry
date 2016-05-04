@@ -29,7 +29,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author="Boris Modylevsky",
     author_email='borismod@gmail.com',
-    url='https://github.com/borismod/shellfoundry',
+    url='https://github.com/QualiSystems/shellfoundry',
     packages=[
         'shellfoundry',
     ],

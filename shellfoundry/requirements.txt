@@ -1,2 +1,3 @@
 cookiecutter
 qpm
+click
