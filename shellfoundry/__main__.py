@@ -7,22 +7,21 @@ from qpm.packaging.shell_packager import ShellPackager
 
 @click.group()
 def cli():
-    click.echo('cli')
     pass
 
 
-@click.command()
+@cli.command()
 @click.argument(u'template')
 def create(template):
     """
     Create a CloudShell shell based on a template
-    :param template:
+    :param template: CloudShell shell template to be used.
     :return:
     """
     cookiecutter(template)
 
 
-@click.command()
+@cli.command()
 @click.argument(u'package')
 def pack(package):
     """
@@ -36,7 +35,7 @@ def pack(package):
     packager.create_shell_package(package)
 
 
-@click.command()
+@cli.command()
 @click.argument(u'package')
 def install(package):
     """
@@ -47,9 +46,6 @@ def install(package):
     installer = ShellInstaller()
     installer.install(package)
 
-cli.add_command(create)
-cli.add_command(pack)
-cli.add_command(install)
 
 if __name__ == '__main__':
     cli()
