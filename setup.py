@@ -14,13 +14,11 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [
-    'cookiecutter',# TODO: put package requirements here
-]
+with open('requirements.txt') as req_file:
+    requirements = req_file.read()
 
-test_requirements = [
-    # TODO: put package test requirements here
-]
+with open('test_requirements.txt') as test_req_file:
+    test_requirements = test_req_file.read()
 
 setup(
     name='shellfoundry',

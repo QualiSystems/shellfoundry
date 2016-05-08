@@ -41,13 +41,17 @@ def pack(package):
 
 @cli.command()
 @click.argument(u'package')
-def build(package):
+@click.option(u'--path', default=None)
+def build(package, path=None):
     """
     Builds a CloudShell package
-    :param package:
+    :param package: Package name
+    :param path: Path to the source directory
     :return:
     """
-    current_path = os.getcwd()
+    click.echo('package is ' + package)
+    click.echo('path is ' + (path or ''))
+    current_path = path or os.getcwd()
     package_builder = PackageBuilder()
     package_builder.build_package(current_path, package)
 
