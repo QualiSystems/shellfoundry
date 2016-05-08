@@ -1,11 +1,12 @@
 import os
 import unittest
+from shutil import copy
+
 from pyfakefs import fake_filesystem_unittest
 from shellfoundry.package_builder import PackageBuilder
 
 
 class TestPackageBuilder(fake_filesystem_unittest.TestCase):
-
     def setUp(self):
         self.setUpPyfakefs()
 
@@ -20,4 +21,27 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder.build_package(u'C:\\work\\GitHub\\aws\\amazon_web_services', 'aws')
 
         # Assert
-        self.assertTrue(os.path.exists(u'C:\\work\\GitHub\\aws\\amazon_web_services\aws.zip'))
+        self.assertFileExists(u'C:\\work\\GitHub\\aws\\amazon_web_services\package\\datamodel\datamodel.xml')
+        self.assertFileExists(u'C:\\work\\GitHub\\aws\\amazon_web_services\package\\Configuration\shellconfig.xml')
+        self.assertFileExists(
+            u'C:\\work\\GitHub\\aws\\amazon_web_services\package\\Resource Drivers - Python\\aws Driver.zip')
+
+    def test_copy(self):
+        self.fs.CreateFile(u'C:\\source\\file.txt', contents='')
+        os.makedirs(u'C:\destination')
+        copy(u'C:\\source\\file.txt', u'C:\destination')
+
+        self.assertFileExists(u'C:\destination\\file.txt')
+
+    def test_zip(self):
+        self.fs.CreateFile(u'C:\\source\\file.txt', contents='')
+
+        os.makedirs(u'C:\destination')
+        copy(u'C:\\source\\file.txt', u'C:\destination')
+
+        self.assertFileExists(u'C:\destination\\file.txt')
+
+
+    def assertFileExists(self, file_path):
+        self.assertTrue(os.path.exists(file_path))
+
