@@ -1,8 +1,12 @@
+import os
+
 import click
 from cookiecutter.main import cookiecutter
 from qpm.packaging.drivers_packager import DriversPackager
 from qpm.packaging.shell_installer import ShellInstaller
 from qpm.packaging.shell_packager import ShellPackager
+
+from shellfoundry.package_builder import PackageBuilder
 
 
 @click.group()
@@ -33,6 +37,19 @@ def pack(package):
     drivers_packager.package_drivers(package)
     packager = ShellPackager()
     packager.create_shell_package(package)
+
+
+@cli.command()
+@click.argument(u'package')
+def build(package):
+    """
+    Builds a CloudShell package
+    :param package:
+    :return:
+    """
+    current_path = os.getcwd()
+    package_builder = PackageBuilder()
+    package_builder.build_package(current_path, package)
 
 
 @cli.command()
