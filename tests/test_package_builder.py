@@ -1,7 +1,5 @@
 import os
-import unittest
-from shutil import copy
-
+import shutil
 from pyfakefs import fake_filesystem_unittest
 from shellfoundry.package_builder import PackageBuilder
 
@@ -26,18 +24,11 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         self.assertFileExists(
             u'C:\\work\\GitHub\\aws\\amazon_web_services\package\\Resource Drivers - Python\\aws Driver.zip')
 
-    def test_copy(self):
-        self.fs.CreateFile(u'C:\\source\\file.txt', contents='')
-        os.makedirs(u'C:\destination')
-        copy(u'C:\\source\\file.txt', u'C:\destination')
-
-        self.assertFileExists(u'C:\destination\\file.txt')
-
     def test_zip(self):
         self.fs.CreateFile(u'C:\\source\\file.txt', contents='')
 
         os.makedirs(u'C:\destination')
-        copy(u'C:\\source\\file.txt', u'C:\destination')
+        shutil.copy(u'C:\\source\\file.txt', u'C:\destination')
 
         self.assertFileExists(u'C:\destination\\file.txt')
 

@@ -1,5 +1,5 @@
 import os
-from shutil import copyfile, copytree, copy
+import shutil
 import zipfile
 from qpm.packaging.driver_packager import zip_dir
 
@@ -20,19 +20,19 @@ class PackageBuilder(object):
     def _copy_datamodel(package_path, path):
         src_file_path = os.path.join(path, 'datamodel', 'datamodel.xml')
         dest_dir_path = os.path.join(package_path, 'datamodel')
-        PackageBuilder._copy_file(dest_dir_path, src_file_path, 'datamodel.xml')
+        PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
     @staticmethod
-    def _copy_file(dest_dir_path, src_file_path, filename):
+    def _copy_file(dest_dir_path, src_file_path):
         if not os.path.exists(dest_dir_path):
             os.makedirs(dest_dir_path)
-        copyfile(src_file_path, os.path.join(dest_dir_path, filename))
+        shutil.copy(src_file_path, dest_dir_path)
 
     @staticmethod
     def _copy_shellconfig(package_path, path):
         src_file_path = os.path.join(path, 'datamodel', 'shellconfig.xml')
         dest_dir_path = os.path.join(package_path, 'Configuration')
-        PackageBuilder._copy_file(dest_dir_path, src_file_path, 'shellconfig.xml')
+        PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
     @staticmethod
     def _copy_driver(package_path, path, package_name):
@@ -44,7 +44,7 @@ class PackageBuilder(object):
             zip_dir(src_dir_path, zip_file, True, True)
 
         dest_dir_path = os.path.join(package_path, 'Resource Drivers - Python')
-        PackageBuilder._copy_file(dest_dir_path, zip_file_path, driver_filename)
+        PackageBuilder._copy_file(dest_dir_path, zip_file_path)
 
     @staticmethod
     def _zip_package(package_path, path, package_name):
