@@ -1,16 +1,16 @@
 import os
-
 import click
+import pkg_resources
 from cookiecutter.main import cookiecutter
 from qpm.packaging.drivers_packager import DriversPackager
 from qpm.packaging.shell_installer import ShellInstaller
 from qpm.packaging.shell_packager import ShellPackager
-
 from shellfoundry.package_builder import PackageBuilder
 
 
 @click.group()
 def cli():
+    click.echo('shellfoundry, version ' + pkg_resources.get_distribution("qpm").version)
     pass
 
 
@@ -42,7 +42,7 @@ def pack(package):
 @cli.command()
 @click.argument(u'package')
 @click.option(u'--path', default=None)
-def build(package, path=None):
+def build(package, path):
     """
     Builds a CloudShell package
     :param package: Package name
