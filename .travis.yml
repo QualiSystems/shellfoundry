@@ -4,29 +4,11 @@
 language: python
 python: 2.7
 
-env:
-  - TOXENV=py35
-  - TOXENV=py34
-  - TOXENV=py33
-  - TOXENV=py27
-  - TOXENV=py26
-  - TOXENV=pypy
-
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -U tox
+install:
+    pip install -r requirements.txt
+    pip install -r test_requirements.txt
 
 # command to run tests, e.g. python setup.py test
-script: tox
+script: nosetests
 
-# After you create the Github repo and add it to Travis, run the
-# travis_pypi_setup.py script to finish PyPI deployment setup
-deploy:
-  provider: pypi
-  distributions: sdist bdist_wheel
-  user: borismod
-  password:
-    secure: PLEASE_REPLACE_ME
-  on:
-    tags: true
-    repo: borismod/shellfoundry
-    condition: $TOXENV == py27
