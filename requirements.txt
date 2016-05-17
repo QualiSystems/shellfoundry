@@ -1,3 +1,4 @@
 cookiecutter
 qpm
 click
+pyyaml

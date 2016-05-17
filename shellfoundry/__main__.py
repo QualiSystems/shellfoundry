@@ -2,9 +2,7 @@ import os
 import click
 import pkg_resources
 from cookiecutter.main import cookiecutter
-from qpm.packaging.drivers_packager import DriversPackager
 from qpm.packaging.shell_installer import ShellInstaller
-from qpm.packaging.shell_packager import ShellPackager
 from shellfoundry.package_builder import PackageBuilder
 
 
@@ -15,28 +13,32 @@ def cli():
 
 
 @cli.command()
-@click.argument(u'template')
-def create(template):
+def version():
     """
-    Create a CloudShell shell based on a template
+    Prints the current version of shellfoundry
+    :return:
+    """
+    pass
+
+
+@cli.command()
+def list():
+    """
+    Lists CloudShell shell templates
+    :return:
+    """
+    click.echo('Should print templates list')
+
+
+@cli.command()
+@click.argument(u'template')
+def new(template):
+    """
+    Create a new CloudShell shell based on a template
     :param template: CloudShell shell template to be used.
     :return:
     """
     cookiecutter(template)
-
-
-@cli.command()
-@click.argument(u'package')
-def pack(package):
-    """
-    Packs a CloudShell package
-    :param package:
-    :return:
-    """
-    drivers_packager = DriversPackager()
-    drivers_packager.package_drivers(package)
-    packager = ShellPackager()
-    packager.create_shell_package(package)
 
 
 @cli.command()
