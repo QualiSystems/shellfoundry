@@ -1,19 +1,22 @@
-import ConfigParser
 import os
 from quali_api_client import QualiAPIClient
 
 
 class ShellInstaller(object):
-    def install(self, package_name):
-        config = ConfigParser.ConfigParser()
+    def install(self, package_name, config):
+        """
 
-        config_path = os.path.join(os.getcwd(), 'qpm.ini')
-        config.readfp(open(config_path))
-        host = config.get('Installation', 'host') or 'localhost'
-        port = config.get('Installation', 'port') or '9000'
-        username = config.get('Installation', 'username') or 'admin'
-        password = config.get('Installation', 'password') or 'admin'
-        domain = config.get('Installation', 'domain') or 'Global'
+        :param package_name:
+        :param config:
+        :type config shellfoundry.config_reader.InstallConfig
+        :return:
+        """
+
+        host = config.host
+        port = config.port
+        username = config.username
+        password = config.password
+        domain = config.domain
 
         print 'Installing package {0} into CloudShell at http://{1}:{2}'.format(package_name, host, port)
         server = QualiAPIClient(host, port, username, password, domain)

@@ -2,7 +2,8 @@ import os
 import click
 import pkg_resources
 from cookiecutter.main import cookiecutter
-from qpm.packaging.shell_installer import ShellInstaller
+from shellfoundry.config_reader import ConfigReader
+from shellfoundry.installer import ShellInstaller
 from shellfoundry.package_builder import PackageBuilder
 
 
@@ -60,14 +61,15 @@ def build(package, path):
 
 @cli.command()
 @click.argument(u'package')
-def install(package):
+def install():
     """
-    Installs a CloudShell package into CloudShell
-    :param package:
+    Installs a CloudShell shell into CloudShell
     :return:
     """
+    config_reader = ConfigReader()
     installer = ShellInstaller()
-    installer.install(package)
+    project = config_reader.read()
+    installer.install(project.name, project.install)
 
 
 if __name__ == '__main__':
