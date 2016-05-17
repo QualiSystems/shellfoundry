@@ -4,13 +4,11 @@ from shellfoundry.template_retriever import TemplateRetriever
 
 
 class TestTemplateRetriever(unittest.TestCase):
-
     def mock_get_templates_from_github(self):
         return """
         templates:
-        - switch
-        - router
-        - hub
+          switch : https://github.com/QualiSystems/shellfoundry-switch-template
+          router : https://github.com/QualiSystems/shellfoundry-router-template
         """
 
     @mock.patch('shellfoundry.template_retriever.TemplateRetriever._get_templates_from_github',
@@ -23,4 +21,6 @@ class TestTemplateRetriever(unittest.TestCase):
         templates = template_retriever.get_templates()
 
         # Assert
-        self.assertSequenceEqual(templates, ['switch', 'router', 'hub'])
+        self.assertSequenceEqual(templates,
+                                 {'switch': 'https://github.com/QualiSystems/shellfoundry-switch-template',
+                                  'router': 'https://github.com/QualiSystems/shellfoundry-router-template'})

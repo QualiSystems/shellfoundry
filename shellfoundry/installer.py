@@ -1,5 +1,5 @@
 import os
-from quali_api_client import QualiAPIClient
+from qpm.packaging.quali_api_client import QualiAPIClient
 
 
 class ShellInstaller(object):

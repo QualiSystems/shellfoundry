@@ -5,6 +5,7 @@ from cookiecutter.main import cookiecutter
 from shellfoundry.config_reader import ConfigReader
 from shellfoundry.installer import ShellInstaller
 from shellfoundry.package_builder import PackageBuilder
+from shellfoundry.template_retriever import TemplateRetriever
 
 
 @click.group()
@@ -28,7 +29,9 @@ def list():
     Lists CloudShell shell templates
     :return:
     """
-    click.echo('Should print templates list')
+    template_retriever = TemplateRetriever()
+    templates = template_retriever.get_templates()
+    click.echo('Supported templates are: \r\n {0}'.format(_get_templates_with_comma(templates)))
 
 
 @cli.command()
@@ -39,28 +42,38 @@ def new(template):
     :param template: CloudShell shell template to be used.
     :return:
     """
-    cookiecutter(template)
+    template_retriever = TemplateRetriever()
+    templates = template_retriever.get_templates()
+
+    if template not in templates:
+        raise click.BadParameter(
+            'Template {0} does not exist. Supported templates are: {1}'.format(template,
+                                                                               _get_templates_with_comma(templates)))
+
+    cookiecutter(templates[template])
+
+
+def _get_templates_with_comma(templates):
+    return ', '.join(templates.keys())
 
 
 @cli.command()
-@click.argument(u'package')
 @click.option(u'--path', default=None)
-def build(package, path):
+def build(path):
     """
     Builds a CloudShell package
-    :param package: Package name
     :param path: Path to the source directory
     :return:
     """
-    click.echo('package is ' + package)
-    click.echo('path is ' + (path or ''))
-    current_path = path or os.getcwd()
+    config_reader = ConfigReader()
     package_builder = PackageBuilder()
-    package_builder.build_package(current_path, package)
+
+    project = config_reader.read()
+    current_path = path or os.getcwd()
+    package_builder.build_package(current_path, project.name)
 
 
 @cli.command()
-@click.argument(u'package')
 def install():
     """
     Installs a CloudShell shell into CloudShell
@@ -74,5 +87,3 @@ def install():
 
 if __name__ == '__main__':
     cli()
-
-
