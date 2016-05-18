@@ -1,5 +1,4 @@
 import os
-from shellfoundry.config_reader import CloudShellConfigReader
 from shellfoundry.package_builder import PackageBuilder
 from shellfoundry.shell_config_reader import ShellConfigReader
 

@@ -1,7 +1,5 @@
 import os
 import shutil
-import zipfile
-from qpm.packaging.driver_packager import zip_dir
 
 
 class PackageBuilder(object):
@@ -13,7 +11,7 @@ class PackageBuilder(object):
 
         self._copy_datamodel(package_path, path)
         self._copy_shellconfig(package_path, path)
-        self._copy_driver(package_path, path, package_name)
+        self._create_driver(package_path, path, package_name)
         self._zip_package(package_path, path, package_name)
 
     @staticmethod
@@ -35,21 +33,12 @@ class PackageBuilder(object):
         PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
     @staticmethod
-    def _copy_driver(package_path, path, package_name):
-
-        driver_filename = package_name + ' Driver.zip'
-        zip_file_path = os.path.join(path, driver_filename)
-        with zipfile.ZipFile(zip_file_path, 'w') as zip_file:
-            src_dir_path = os.path.join(path, 'src')
-            zip_dir(src_dir_path, zip_file, True, True)
-
-        dest_dir_path = os.path.join(package_path, 'Resource Drivers - Python')
-        PackageBuilder._copy_file(dest_dir_path, zip_file_path)
+    def _create_driver(package_path, path, package_name):
+        dir_to_zip = os.path.join(path, 'src')
+        zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', package_name + ' Driver')
+        shutil.make_archive(zip_file_path, 'zip', dir_to_zip)
 
     @staticmethod
     def _zip_package(package_path, path, package_name):
-        with zipfile.ZipFile(os.path.join(path, package_name + '.zip'), 'w') as zip_file:
-            zip_dir(package_path, zip_file, True, False)
-
-
-
+        zip_file_path = os.path.join(path, package_name)
+        shutil.make_archive(zip_file_path, 'zip', package_path)
