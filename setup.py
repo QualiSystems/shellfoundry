@@ -10,10 +10,11 @@ def get_file_content(file_name):
     with open(file_name) as f:
         return f.read()
 
+exec(open('shellfoundry/version.py').read())
 
 setup(
     name='shellfoundry',
-    version=get_file_content('version.txt'),
+    version=__version__,
     description="shellfoundry - Quali tool for creating, building and installing CloudShell shells",
     long_description=get_file_content('README.rst') + '\n\n' + get_file_content('HISTORY.rst'),
     author="Boris Modylevsky",
