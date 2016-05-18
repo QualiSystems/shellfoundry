@@ -1,8 +1,8 @@
 import click
 import pkg_resources
-from cookiecutter.main import cookiecutter
 from shellfoundry.config_reader import CloudShellConfigReader
 from shellfoundry.installer import ShellInstaller
+from shellfoundry.new_command import NewCommandExecutor
 from shellfoundry.pack_command import PackCommandExecutor
 from shellfoundry.template_retriever import TemplateRetriever
 
@@ -28,7 +28,7 @@ def list():
     """
     template_retriever = TemplateRetriever()
     templates = template_retriever.get_templates()
-    click.echo(u'Supported templates are: \r\n {0}'.format(_get_templates_with_comma(templates)))
+    click.echo(u'Supported templates are: \r\n {0}'.format(', '.join(templates.keys())))
 
 
 @cli.command()
@@ -38,19 +38,7 @@ def new(name, template):
     """
     Create a new shell based on a template.
     """
-    template_retriever = TemplateRetriever()
-    templates = template_retriever.get_templates()
-
-    if template not in templates:
-        raise click.BadParameter(
-            u'Template {0} does not exist. Supported templates are: {1}'.format(template,
-                                                                                _get_templates_with_comma(templates)))
-
-    cookiecutter(templates[template], no_input=True, extra_context={u'project_name': name})
-
-
-def _get_templates_with_comma(templates):
-    return ', '.join(templates.keys())
+    NewCommandExecutor().new(name, template)
 
 
 @cli.command()
