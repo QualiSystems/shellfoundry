@@ -1,6 +1,7 @@
 import os
 from pyfakefs import fake_filesystem_unittest
 from shellfoundry.package_builder import PackageBuilder
+from asserts import *
 
 
 class TestPackageBuilder(fake_filesystem_unittest.TestCase):
@@ -18,13 +19,11 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder.build_package('work/aws/amazon_web_services', 'aws')
 
         # Assert
-        self.assertFileExists('work/aws/amazon_web_services/package/datamodel/datamodel.xml')
-        self.assertFileExists('work/aws/amazon_web_services/package/Configuration/shellconfig.xml')
-        self.assertFileExists('work/aws/amazon_web_services/package/Resource Drivers - Python/aws Driver.zip')
-        self.assertFileExists('work/aws/amazon_web_services/aws.zip')
+        assertFileExists(self, 'work/aws/amazon_web_services/package/datamodel/datamodel.xml')
+        assertFileExists(self, 'work/aws/amazon_web_services/package/Configuration/shellconfig.xml')
+        assertFileExists(self, 'work/aws/amazon_web_services/package/Resource Drivers - Python/aws Driver.zip')
+        assertFileExists(self, 'work/aws/amazon_web_services/aws.zip')
 
-    def assertFileExists(self, file_path):
-        self.assertTrue(os.path.exists(file_path), msg='File {0} does not exist'.format(file_path))
 
 
 

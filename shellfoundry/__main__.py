@@ -1,11 +1,10 @@
-import os
 import click
 import pkg_resources
 from cookiecutter.main import cookiecutter
+from shellfoundry.config_reader import CloudShellConfigReader
 from shellfoundry.installer import ShellInstaller
-from shellfoundry.package_builder import PackageBuilder
+from shellfoundry.pack_command import PackCommandExecutor
 from shellfoundry.template_retriever import TemplateRetriever
-from shellfoundry.config_reader import ConfigReader
 
 
 @click.group()
@@ -59,12 +58,7 @@ def pack():
     """
     Pack the shell package.
     """
-    config_reader = ConfigReader()
-    package_builder = PackageBuilder()
-
-    project = config_reader.read()
-    current_path = os.getcwd()
-    package_builder.build_package(current_path, project.name)
+    PackCommandExecutor().pack()
 
 
 @cli.command()
@@ -72,7 +66,7 @@ def install():
     """
     Install the shell package into CloudShell.
     """
-    config_reader = ConfigReader()
+    config_reader = CloudShellConfigReader()
     installer = ShellInstaller()
     project = config_reader.read()
     installer.install(project.name, project.install)

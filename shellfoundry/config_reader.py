@@ -16,12 +16,6 @@ PASSWORD = 'password'
 DOMAIN = 'domain'
 
 
-class ProjectConfig(object):
-    def __init__(self, install, name):
-        self.install = install
-        self.name = name
-
-
 class InstallConfig(object):
     def __init__(self, host, port, username, password, domain):
         self.domain = domain
@@ -35,20 +29,18 @@ class InstallConfig(object):
         return InstallConfig(DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, DEFAULT_PASSWORD, DEFAULT_DOMAIN)
 
 
-class ConfigReader(object):
-    def read(self, config_path=None):
-        config_path = config_path or os.path.join(os.getcwd(), 'shellfoundry.yml')
-
-        project_name = self._get_project_name()
+class CloudShellConfigReader(object):
+    def read(self):
+        config_path = os.path.join(os.getcwd(), 'cloudshell_config.yml')
 
         if not os.path.isfile(config_path):
-            return ProjectConfig(InstallConfig.get_default(), project_name)
+            return InstallConfig.get_default()
 
         with open(config_path) as stream:
             config = yaml.load(stream.read())
 
         if not config or INSTALL not in config:
-            return ProjectConfig(InstallConfig.get_default(), project_name)
+            return InstallConfig.get_default()
 
         install_config = config[INSTALL]
 
@@ -58,12 +50,7 @@ class ConfigReader(object):
         password = self._get_with_default(install_config, PASSWORD, DEFAULT_PASSWORD)
         domain = self._get_with_default(install_config, DOMAIN, DEFAULT_DOMAIN)
 
-        return ProjectConfig(InstallConfig(host, port, username, password, domain), project_name)
-
-    @staticmethod
-    def _get_project_name():
-        project_name = os.path.split(os.getcwd())[1]
-        return project_name
+        return InstallConfig(host, port, username, password, domain)
 
     @staticmethod
     def _get_with_default(install_config, parameter_name, default_value):
