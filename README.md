@@ -12,25 +12,28 @@ shellfoundry is available on the Pypi server and can be installed using:
 
 ## Usage
 
-### Creating a new shell based on template
-**shellfoundry** allows creating a new fresh shell from scratch using template. The default shell template is located
-in github repository  https://github.com/QualiSystems/shellfoundry-template
-In order to create a shell from that github repository use the following command line:
-
-```batch
-> python shellfoundry create https://github.com/QualiSystems/shellfoundry-template.git
+### Displaying version
+```batch 
+> shellfoundry version
 ```
+
+### Displaying availbale templates
+Lists available templates
+```batch 
+> shellfoundry list
+```
+
+### Creating a new shell based on template
+**shellfoundry** allows creating a new fresh shell from scratch using template. In order to create a shell based on a default template use the following command line:
+```batch
+>  shellfoundry new --name=nutshell
+```
+
+In order to create a shell based on specific template
 or using a shortcut:
 ```batch
-> python shellfoundry create gh:QualiSystems/shellfoundry-template
+> shellfoundry new --name=nutshell --template=template_name
 ```
-
-Another option is to use your own template located on your local machine. In such case the following command-line
-will do the magic:
-```batch
-> python shellfoundry create c:\shells\templates\my-template
-```
-
 Once created a shell you may push it to your github repository and develop it according to your needs.
 
 ### Building a shell package
@@ -39,7 +42,8 @@ The result of this operation will be a zip file named shell_name.zip, which can 
 drag-and-drop in the portal or install command of **shellfoundry**.
 
 ```batch
-> python shellfoundry build shell_name
+> cd nutshell
+> shellfoundry pack 
 ```
 
 ### Installing a shell package
@@ -47,6 +51,6 @@ In order to apply your shell onto your CloudShell, it needs to be installed. The
 shell_name.zip into your CloudShell.
 
 ```batch
-> python shellfoundry install shell_name
+> shellfoundry install
 ```
 
