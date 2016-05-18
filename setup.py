@@ -22,6 +22,9 @@ setup(
     packages=[
         'shellfoundry',
     ],
+    entry_points={
+        "console_scripts": ['shellfoundry = shellfoundry.bootstrap:cli']
+    },
     package_dir={'shellfoundry':
                      'shellfoundry'},
     include_package_data=True,
