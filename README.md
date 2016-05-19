@@ -1,18 +1,54 @@
 # shellfoundry
-CloudShell package CLI build tool
+[![Build Status](https://travis-ci.org/QualiSystems/shellfoundry.svg?branch=develop)](https://travis-ci.org/QualiSystems/shellfoundry) [![Coverage Status](https://coveralls.io/repos/github/QualiSystems/shellfoundry/badge.svg?branch=develop)](https://coveralls.io/github/QualiSystems/shellfoundry?branch=develop) [![PyPI](https://img.shields.io/pypi/pyversions/shellfoundry.svg?maxAge=2592000)]() [![PyPI](https://img.shields.io/pypi/v/shellfoundry.svg?maxAge=2592000)]()
 
-#Installation
-1. Download the shellfoundry tool from the release page on this repository
-2. Add the location of the shellfoundry to the windows path environment variable: http://www.faqforge.com/windows/setting-the-path-environmental-variable-on-windows-7/
-So that you can use the shellfoundry from any directory. 
-3. You can run the tool's help to learn about its capabilities.
-# Build
-Run `go build shellfoundry.go` to generate *shellfoundry.exe* file
+Command line utility for CloudShell shells developers. The utility helps to create a new shell based on a template,
+build an installable shell package and install a shell into your CloudShell.
 
-#Usage
-Run `shellfoundry.exe help` to discover available options
+## Installation
 
+shellfoundry is available on the Pypi server and can be installed using:
 
+```batch
+> pip install shellfoundry
+```
 
+## Usage
 
+### Displaying version
+```batch
+> shellfoundry version
+```
+
+### Displaying availbale templates
+Lists available templates
+```batch
+> shellfoundry list
+```
+
+### Creating a new shell based on template
+**shellfoundry** allows creating a new fresh shell from scratch using template. In order to create a shell based on a default template use the following command line:
+```batch
+>  shellfoundry new nutshell
+```
+
+In order to create a shell based on specific template
+```batch
+> shellfoundry new nutshell template_name
+```
+Once created a shell you may push it to your github repository and develop it according to your needs.
+
+### Packaging a shell
+Packaging a shell package creates a ZIP representing the sell. Zipped shell package can be installed into your CloudShell.
+```batch
+> cd nutshell
+> shellfoundry pack
+```
+
+### Installing a shell package
+In order to apply your shell onto your CloudShell, it needs to be installed. The following command-line will install
+shell_name.zip into your CloudShell.
+
+```batch
+> shellfoundry install
+```
 

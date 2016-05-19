@@ -1,0 +1,5 @@
+requests
+cookiecutter
+qpm
+click
+pyyaml
