@@ -57,6 +57,5 @@ docs/_build/
 
 # PyBuilder
 target/
-.idea
-.idea/inspectionProfiles
+.idea/
 version.txt
