@@ -1,14 +1,13 @@
-# Config file for automatic testing at travis-ci.org
-# This file will be regenerated if you run travis_pypi_setup.py
-
 language: python
 python: 2.7
 
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
     - pip install -r requirements.txt
     - pip install -r test_requirements.txt
+    - pip install coveralls
 
-# command to run tests, e.g. python setup.py test
-script: nosetests
+script:
+    coverage run --source=shellfoundry setup.py test
 
+after_success:
+    coveralls
