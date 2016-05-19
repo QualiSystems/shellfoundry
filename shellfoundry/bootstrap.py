@@ -32,8 +32,8 @@ def list():
 
 
 @cli.command()
-@click.option(u'--name', prompt=u'Type shell name:', help=u'Shell name to be created.')
-@click.option(u'--template', default=u'default', help=u'Shell template to be used.')
+@click.argument(u'name')
+@click.argument(u'template', default=u'default')
 def new(name, template):
     """
     Create a new shell based on a template.
