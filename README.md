@@ -1,5 +1,5 @@
 # shellfoundry
-[![Build Status](https://travis-ci.org/QualiSystems/shellfoundry.svg?branch=develop)](https://travis-ci.org/QualiSystems/shellfoundry) [![Coverage Status](https://coveralls.io/repos/github/QualiSystems/shellfoundry/badge.svg?branch=develop)](https://coveralls.io/github/QualiSystems/shellfoundry?branch=develop)
+[![Build Status](https://travis-ci.org/QualiSystems/shellfoundry.svg?branch=develop)](https://travis-ci.org/QualiSystems/shellfoundry) [![Coverage Status](https://coveralls.io/repos/github/QualiSystems/shellfoundry/badge.svg?branch=develop)](https://coveralls.io/github/QualiSystems/shellfoundry?branch=develop) [![PyPI](https://img.shields.io/pypi/pyversions/shellfoundry.svg?maxAge=2592000)]() [![PyPI](https://img.shields.io/pypi/v/shellfoundry.svg?maxAge=2592000)]() 
 
 Command line utility for CloudShell shells developers. The utility helps to create a new shell based on a template,
 build an installable shell package and install a shell into your CloudShell.
@@ -33,7 +33,7 @@ Lists available templates
 
 In order to create a shell based on specific template
 or using a shortcut:
-```batch
+```batch 
 > shellfoundry new --name=nutshell --template=template_name
 ```
 Once created a shell you may push it to your github repository and develop it according to your needs.
