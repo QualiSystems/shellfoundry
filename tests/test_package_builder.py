@@ -1,4 +1,3 @@
-import shutil
 import unittest
 from pyfakefs import fake_filesystem_unittest
 from shellfoundry.package_builder import PackageBuilder
@@ -25,13 +24,6 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         assertFileExists(self, 'work/aws/amazon_web_services/package/Configuration/shellconfig.xml')
         assertFileExists(self, 'work/aws/amazon_web_services/package/Resource Drivers - Python/aws Driver.zip')
         assertFileExists(self, 'work/aws/amazon_web_services/aws.zip')
-
-    def test_zip(self):
-        self.fs.CreateFile(u'c:\\test\\readme.txt', contents='')
-
-        shutil.make_archive(u'c:\\test\\some_file.zip', 'zip', u'c:\\test')
-
-        self.assertFileExists(u'c:\\test\\some_file.zip')
 
     def assertFileExists(self, file_path):
         self.assertTrue(os.path.exists(file_path), msg='File {0} does not exist'.format(file_path))
