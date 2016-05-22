@@ -2,9 +2,9 @@ import click
 import pkg_resources
 from shellfoundry.config_reader import CloudShellConfigReader
 from shellfoundry.installer import ShellInstaller
+from shellfoundry.list_command import ListCommandExecutor
 from shellfoundry.new_command import NewCommandExecutor
 from shellfoundry.pack_command import PackCommandExecutor
-from shellfoundry.template_retriever import TemplateRetriever
 
 
 @click.group()
@@ -26,17 +26,15 @@ def list():
     """
     List shell templates.
     """
-    template_retriever = TemplateRetriever()
-    templates = template_retriever.get_templates()
-    click.echo(u'Supported templates are: \r\n {0}'.format(', '.join(templates.keys())))
+    ListCommandExecutor().list()
 
 
 @cli.command()
 @click.argument(u'name')
-@click.argument(u'template', default=u'default')
+@click.option(u'--template', default=u'default', help='Template to be used')
 def new(name, template):
     """
-    Create a new shell based on a template.
+    Create a new shell based on a template.\r\n
     """
     NewCommandExecutor().new(name, template)
 
