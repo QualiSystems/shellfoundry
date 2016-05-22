@@ -9,7 +9,7 @@ class TestPackCommandExecutor(fake_filesystem_unittest.TestCase):
 
     def test_build_package_package_created(self):
         # Arrange
-        self.fs.CreateFile('\\nut_shell\\shell.yml', contents="""
+        self.fs.CreateFile('nut_shell/shell.yml', contents="""
 shell:
     name: nut_shell
     author: Chuck Norris
@@ -17,9 +17,9 @@ shell:
     description: Save the world
     version: 1.0.0
     """)
-        self.fs.CreateFile('\\nut_shell\\datamodel\\datamodel.xml')
-        self.fs.CreateFile('\\nut_shell\\datamodel\\shellconfig.xml')
-        self.fs.CreateFile('\\nut_shell\\src\\driver.py')
+        self.fs.CreateFile('nut_shell/datamodel/datamodel.xml')
+        self.fs.CreateFile('nut_shell/datamodel/shellconfig.xml')
+        self.fs.CreateFile('nut_shell/src/driver.py')
         os.chdir('nut_shell')
 
         command_executor = PackCommandExecutor()
@@ -28,7 +28,7 @@ shell:
         command_executor.pack()
 
         # Assert
-        assertFileExists(self, '\\nut_shell\\dist\\nut_shell.zip')
+        assertFileExists(self, 'dist/nut_shell.zip')
 
 
 
