@@ -1,6 +1,8 @@
 import os
+
 from pyfakefs import fake_filesystem_unittest
-from shellfoundry.shell_config_reader import ShellConfigReader
+
+from shellfoundry.utilities.shell_config_reader import ShellConfigReader
 
 
 class TestShellConfigReader(fake_filesystem_unittest.TestCase):

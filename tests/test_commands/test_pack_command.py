@@ -1,8 +1,10 @@
 import unittest
 import zipfile
-from asserts import *
+
 from pyfakefs import fake_filesystem_unittest
-from shellfoundry.pack_command import PackCommandExecutor
+
+from tests.asserts import *
+from shellfoundry.commands.pack_command import PackCommandExecutor
 
 
 class TestPackCommandExecutor(fake_filesystem_unittest.TestCase):

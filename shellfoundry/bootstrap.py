@@ -1,10 +1,10 @@
 import click
 import pkg_resources
-from shellfoundry.config_reader import CloudShellConfigReader
-from shellfoundry.installer import ShellInstaller
-from shellfoundry.list_command import ListCommandExecutor
-from shellfoundry.new_command import NewCommandExecutor
-from shellfoundry.pack_command import PackCommandExecutor
+
+from shellfoundry.commands.install_command import InstallCommandExecutor
+from shellfoundry.commands.list_command import ListCommandExecutor
+from shellfoundry.commands.new_command import NewCommandExecutor
+from shellfoundry.commands.pack_command import PackCommandExecutor
 
 
 @click.group()
@@ -52,7 +52,4 @@ def install():
     """
     Install the shell package into CloudShell.
     """
-    config_reader = CloudShellConfigReader()
-    installer = ShellInstaller()
-    project = config_reader.read()
-    installer.install(project.name, project.install)
+    InstallCommandExecutor().install()

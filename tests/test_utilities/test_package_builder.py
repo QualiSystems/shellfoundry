@@ -1,7 +1,9 @@
 import unittest
+
 from pyfakefs import fake_filesystem_unittest
-from shellfoundry.package_builder import PackageBuilder
-from asserts import *
+
+from tests.asserts import *
+from shellfoundry.utilities.package_builder import PackageBuilder
 
 
 class TestPackageBuilder(fake_filesystem_unittest.TestCase):

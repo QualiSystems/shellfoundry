@@ -1,6 +1,6 @@
 import unittest
 import mock
-from shellfoundry.template_retriever import TemplateRetriever
+from shellfoundry.utilities.template_retriever import TemplateRetriever
 
 
 class TestTemplateRetriever(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestTemplateRetriever(unittest.TestCase):
             repository : https://github.com/QualiSystems/shellfoundry-router-template
         """
 
-    @mock.patch('shellfoundry.template_retriever.TemplateRetriever._get_templates_from_github',
+    @mock.patch('shellfoundry.utilities.template_retriever.TemplateRetriever._get_templates_from_github',
                 mock_get_templates_from_github)
     def test_get_templates(self):
         # Arrange

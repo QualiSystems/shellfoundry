@@ -1,7 +1,7 @@
 import click
 from cookiecutter.main import cookiecutter
 
-from shellfoundry.template_retriever import TemplateRetriever
+from shellfoundry.utilities.template_retriever import TemplateRetriever
 
 
 class NewCommandExecutor(object):

@@ -1,6 +1,6 @@
 import os
-from shellfoundry.package_builder import PackageBuilder
-from shellfoundry.shell_config_reader import ShellConfigReader
+from shellfoundry.utilities.package_builder import PackageBuilder
+from shellfoundry.utilities.shell_config_reader import ShellConfigReader
 
 
 class PackCommandExecutor(object):
