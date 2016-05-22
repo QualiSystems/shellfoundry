@@ -1,5 +1,6 @@
 import os
 import shutil
+import zipfile
 
 
 class PackageBuilder(object):
@@ -36,9 +37,28 @@ class PackageBuilder(object):
     def _create_driver(package_path, path, package_name):
         dir_to_zip = os.path.join(path, 'src')
         zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', package_name + ' Driver')
-        shutil.make_archive(zip_file_path, 'zip', dir_to_zip)
+        PackageBuilder.make_archive(zip_file_path, 'zip', dir_to_zip)
 
     @staticmethod
     def _zip_package(package_path, path, package_name):
         zip_file_path = os.path.join(path, package_name)
-        shutil.make_archive(zip_file_path, 'zip', package_path)
+        PackageBuilder.make_archive(zip_file_path, 'zip', package_path)
+
+    @staticmethod
+    def make_archive(output_filename, format, source_dir):
+        if os.path.splitext(output_filename)[1] == '':
+            output_filename += '.zip'
+        output_dir = os.path.dirname(output_filename)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        relroot = os.path.abspath(os.path.join(source_dir, os.pardir))
+        with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip:
+            for root, dirs, files in os.walk(source_dir):
+                # add directory (needed for empty dirs)
+                zip.write(root, os.path.relpath(root, relroot))
+                for file in files:
+                    filename = os.path.join(root, file)
+                    if os.path.isfile(filename): # regular files only
+                        arcname = os.path.join(os.path.relpath(root, relroot), file)
+                        zip.write(filename, arcname)
+
