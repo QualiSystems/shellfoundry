@@ -22,7 +22,7 @@ class NewCommandExecutor(object):
                                                                                     self._get_templates_with_comma(
                                                                                         templates)))
 
-        cookiecutter(templates[template], no_input=True, extra_context={u'project_name': name})
+        cookiecutter(templates[template].repository, no_input=True, extra_context={u'project_name': name})
 
     @staticmethod
     def _get_templates_with_comma(templates):

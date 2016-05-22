@@ -7,8 +7,12 @@ class TestTemplateRetriever(unittest.TestCase):
     def mock_get_templates_from_github(self):
         return """
         templates:
-          switch : https://github.com/QualiSystems/shellfoundry-switch-template
-          router : https://github.com/QualiSystems/shellfoundry-router-template
+          - name : switch
+            description : Basic switch template
+            repository : https://github.com/QualiSystems/shellfoundry-switch-template
+          - name : router
+            description : Basic router template
+            repository : https://github.com/QualiSystems/shellfoundry-router-template
         """
 
     @mock.patch('shellfoundry.template_retriever.TemplateRetriever._get_templates_from_github',
@@ -21,6 +25,10 @@ class TestTemplateRetriever(unittest.TestCase):
         templates = template_retriever.get_templates()
 
         # Assert
-        self.assertSequenceEqual(templates,
-                                 {'switch': 'https://github.com/QualiSystems/shellfoundry-switch-template',
-                                  'router': 'https://github.com/QualiSystems/shellfoundry-router-template'})
+        self.assertEqual(templates['router'].name, 'router')
+        self.assertEqual(templates['router'].description, 'Basic router template')
+        self.assertEqual(templates['router'].repository, 'https://github.com/QualiSystems/shellfoundry-router-template')
+
+        self.assertEqual(templates['switch'].name, 'switch')
+        self.assertEqual(templates['switch'].description, 'Basic switch template')
+        self.assertEqual(templates['switch'].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
