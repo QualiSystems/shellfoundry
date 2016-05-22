@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
-    from distutils.core import setup
+    from distutils.core import setup, find_packages
 
 
 def get_file_content(file_name):
@@ -20,14 +20,10 @@ setup(
     author="Boris Modylevsky",
     author_email='borismod@gmail.com',
     url='https://github.com/QualiSystems/shellfoundry',
-    packages=[
-        'shellfoundry',
-    ],
+    packages=find_packages(),
     entry_points={
         "console_scripts": ['shellfoundry = shellfoundry.bootstrap:cli']
     },
-    package_dir={'shellfoundry':
-                     'shellfoundry'},
     include_package_data=True,
     install_requires=get_file_content('requirements.txt'),
     license="Apache 2.0",
