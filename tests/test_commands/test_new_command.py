@@ -1,9 +1,10 @@
 import unittest
+from unittest import skip
 
 from mock import Mock, patch
-from unittest import skip
-from shellfoundry.new_command import NewCommandExecutor
-from shellfoundry.shell_template import ShellTemplate
+
+from shellfoundry.commands.new_command import NewCommandExecutor
+from shellfoundry.models.shell_template import ShellTemplate
 
 
 class TestMainCli(unittest.TestCase):

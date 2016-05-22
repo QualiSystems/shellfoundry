@@ -1,5 +1,6 @@
 import os
 import yaml
+from shellfoundry.exceptions import ShellYmlMissingException, WrongShellYmlException
 
 VERSION = 'version'
 DESCRIPTION = 'description'
@@ -23,13 +24,13 @@ class ShellConfigReader(object):
         config_path = os.path.join(os.getcwd(), 'shell.yml')
 
         if not os.path.isfile(config_path):
-            raise ValueError('shell.yml is missing')
+            raise ShellYmlMissingException('shell.yml is missing')
 
         with open(config_path) as stream:
             config = yaml.load(stream.read())
 
         if not config or SHELL not in config:
-            raise ValueError('shell section is missing in shell.yml')
+            raise WrongShellYmlException('shell section is missing in shell.yml')
 
         install_config = config[SHELL]
 

@@ -1,7 +1,7 @@
 import requests
 import yaml
 
-from shellfoundry.shell_template import ShellTemplate
+from shellfoundry.models.shell_template import ShellTemplate
 
 TEMPLATES_YML = 'https://raw.github.com/QualiSystems/shellfoundry/master/templates.yml'
 

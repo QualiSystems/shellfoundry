@@ -1,7 +1,9 @@
 import unittest
+
 from mock import Mock, patch
-from shellfoundry.list_command import ListCommandExecutor
-from shellfoundry.shell_template import ShellTemplate
+
+from shellfoundry.commands.list_command import ListCommandExecutor
+from shellfoundry.models.shell_template import ShellTemplate
 
 
 class TestListCommand(unittest.TestCase):

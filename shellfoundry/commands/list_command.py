@@ -1,5 +1,6 @@
 import click
-from shellfoundry.template_retriever import TemplateRetriever
+
+from shellfoundry.utilities.template_retriever import TemplateRetriever
 
 
 class ListCommandExecutor(object):
