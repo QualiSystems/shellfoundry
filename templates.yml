@@ -1,2 +1,4 @@
 templates:
-  default : https://github.com/QualiSystems/shellfoundry-template
+    - name : base
+      description : Base shell template
+      repository : https://github.com/QualiSystems/shellfoundry-template
