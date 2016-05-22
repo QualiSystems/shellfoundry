@@ -1,7 +1,7 @@
 import click
 from cookiecutter.main import cookiecutter
 
-from shellfoundry.template_retriever import TemplateRetriever
+from shellfoundry.utilities.template_retriever import TemplateRetriever
 
 
 class NewCommandExecutor(object):
@@ -22,7 +22,7 @@ class NewCommandExecutor(object):
                                                                                     self._get_templates_with_comma(
                                                                                         templates)))
 
-        cookiecutter(templates[template], no_input=True, extra_context={u'project_name': name})
+        cookiecutter(templates[template].repository, no_input=True, extra_context={u'project_name': name})
 
     @staticmethod
     def _get_templates_with_comma(templates):

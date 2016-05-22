@@ -33,7 +33,7 @@ Lists available templates
 
 In order to create a shell based on specific template
 ```batch
-> shellfoundry new nutshell template_name
+> shellfoundry new nutshell --template_name=template_name
 ```
 Once created a shell you may push it to your github repository and develop it according to your needs.
 
