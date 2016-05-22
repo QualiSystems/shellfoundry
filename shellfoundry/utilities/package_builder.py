@@ -2,6 +2,8 @@ import os
 import shutil
 import zipfile
 
+import click
+
 
 class PackageBuilder(object):
     def __init__(self):
@@ -13,7 +15,8 @@ class PackageBuilder(object):
         self._copy_datamodel(package_path, path)
         self._copy_shellconfig(package_path, path)
         self._create_driver(package_path, path, package_name)
-        self._zip_package(package_path, path, package_name)
+        zip_path = self._zip_package(package_path, path, package_name)
+        click.echo(u'Shell package was successfully created: \r\n' + zip_path)
 
     @staticmethod
     def _copy_datamodel(package_path, path):
@@ -42,7 +45,7 @@ class PackageBuilder(object):
     @staticmethod
     def _zip_package(package_path, path, package_name):
         zip_file_path = os.path.join(path, 'dist', package_name)
-        PackageBuilder._make_archive(zip_file_path, 'zip', package_path)
+        return PackageBuilder._make_archive(zip_file_path, 'zip', package_path)
 
     @staticmethod
     def _make_archive(output_filename, format, source_dir):
@@ -69,4 +72,6 @@ class PackageBuilder(object):
                     if os.path.isfile(filename): # regular files only
                         arcname = os.path.join(os.path.relpath(root, relroot), file)
                         zip.write(filename, arcname)
+
+        return output_filename
 
