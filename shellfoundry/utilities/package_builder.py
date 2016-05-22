@@ -37,15 +37,23 @@ class PackageBuilder(object):
     def _create_driver(package_path, path, package_name):
         dir_to_zip = os.path.join(path, 'src')
         zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', package_name + ' Driver')
-        PackageBuilder.make_archive(zip_file_path, 'zip', dir_to_zip)
+        PackageBuilder._make_archive(zip_file_path, 'zip', dir_to_zip)
 
     @staticmethod
     def _zip_package(package_path, path, package_name):
-        zip_file_path = os.path.join(path, package_name)
-        PackageBuilder.make_archive(zip_file_path, 'zip', package_path)
+        zip_file_path = os.path.join(path, 'dist', package_name)
+        PackageBuilder._make_archive(zip_file_path, 'zip', package_path)
 
     @staticmethod
-    def make_archive(output_filename, format, source_dir):
+    def _make_archive(output_filename, format, source_dir):
+        """
+        Creates archive in specified format recursively of source_dir
+        Replaces shtutil.make_archive in order to be able to test with pyfakefs
+        :param output_filename: Output archive file name. If directory does not exist, it will be created
+        :param format: Archive format to be used. Currently only zip is supported
+        :param source_dir: Directory to scan for archiving
+        :return:
+        """
         if os.path.splitext(output_filename)[1] == '':
             output_filename += '.zip'
         output_dir = os.path.dirname(output_filename)
