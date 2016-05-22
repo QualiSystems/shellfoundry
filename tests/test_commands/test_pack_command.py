@@ -32,3 +32,31 @@ shell:
         # Assert
         assertFileExists(self, 'dist/nut_shell.zip')
         echo_mock.assert_any_call(u'Shell package was successfully created:')
+
+    @patch('click.echo')
+    def test_proper_error_message_displayed_when_shell_yml_is_in_wrong_format(self, echo_mock):
+        # Arrange
+        self.fs.CreateFile('nut_shell/shell.yml', contents='WRONG YAML FORMAT')
+        os.chdir('nut_shell')
+
+        command_executor = PackCommandExecutor()
+
+        # Act
+        command_executor.pack()
+
+        # Assert
+        echo_mock.assert_any_call(u'shell.yml format is wrong')
+
+    @patch('click.echo')
+    def test_proper_error_message_displayed_when_shell_yml_missing(self, echo_mock):
+        # Arrange
+        self.fs.CreateFile('nut_shell/datamodel/datamodel.xml')
+        os.chdir('nut_shell')
+
+        command_executor = PackCommandExecutor()
+
+        # Act
+        command_executor.pack()
+
+        # Assert
+        echo_mock.assert_any_call(u'shell.yml file is missing')
