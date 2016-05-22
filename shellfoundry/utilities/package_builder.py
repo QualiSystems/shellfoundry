@@ -16,7 +16,8 @@ class PackageBuilder(object):
         self._copy_shellconfig(package_path, path)
         self._create_driver(package_path, path, package_name)
         zip_path = self._zip_package(package_path, path, package_name)
-        click.echo(u'Shell package was successfully created: \r\n' + zip_path)
+        click.echo(u'Shell package was successfully created:')
+        click.echo(zip_path)
 
     @staticmethod
     def _copy_datamodel(package_path, path):

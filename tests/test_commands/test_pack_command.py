@@ -31,5 +31,4 @@ shell:
 
         # Assert
         assertFileExists(self, 'dist/nut_shell.zip')
-        echo_mock.assert_called_once_with(
-            u'Shell package was successfully created: \r\n\\nut_shell\\dist\\nut_shell.zip')
+        echo_mock.assert_any_call(u'Shell package was successfully created:')
