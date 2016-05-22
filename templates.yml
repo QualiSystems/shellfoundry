@@ -1,0 +1,4 @@
+templates:
+    - name : base
+      description : Base shell template
+      repository : https://github.com/QualiSystems/shellfoundry-template
