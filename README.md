@@ -4,51 +4,17 @@
 Command line utility for CloudShell shells developers. The utility helps to create a new shell based on a template,
 build an installable shell package and install a shell into your CloudShell.
 
-## Installation
+# [Getting started]
 
-shellfoundry is available on the Pypi server and can be installed using:
+```bash
+$ pip install shellfoundry
 
-```batch
-> pip install shellfoundry
+$ shellfoundry new nutshell
 ```
 
-## Usage
+For more commands and detailed usage please refer to [Documentation](docs/readme.md)
 
-### Displaying version
-```batch
-> shellfoundry version
-```
+# License
+[Apache License 2.0](https://github.com/QualiSystems/shellfoundry/blob/master/LICENSE)
 
-### Displaying availbale templates
-Lists available templates
-```batch
-> shellfoundry list
-```
-
-### Creating a new shell based on template
-**shellfoundry** allows creating a new fresh shell from scratch using template. In order to create a shell based on a default template use the following command line:
-```batch
->  shellfoundry new nutshell
-```
-
-In order to create a shell based on specific template
-```batch
-> shellfoundry new nutshell --template_name=template_name
-```
-Once created a shell you may push it to your github repository and develop it according to your needs.
-
-### Packaging a shell
-Packaging a shell package creates a ZIP representing the sell. Zipped shell package can be installed into your CloudShell.
-```batch
-> cd nutshell
-> shellfoundry pack
-```
-
-### Installing a shell package
-In order to apply your shell onto your CloudShell, it needs to be installed. The following command-line will install
-shell_name.zip into your CloudShell.
-
-```batch
-> shellfoundry install
-```
 
