@@ -4,7 +4,7 @@
 
 [Usage](usage.md)
 
-[Contributing](contributing.md)
+[Contributing](../.github/contributing.md)
 
 [Credits](credits.md)
 
