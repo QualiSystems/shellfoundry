@@ -11,7 +11,15 @@ Please refer to its documentation: [http://cookiecutter.readthedocs.io/en/latest
 Once created a new template repository, it's required to add it to list of templates located at:
 [templates.yml](../templates.yml)
 
-In order to modify it, see instrucions below on how to contribute to **shellfoundry**
+###templates.yml
+```yaml
+templates:
+    - name : base
+      description : Base shell template
+      repository : https://github.com/QualiSystems/shellfoundry-template
+```
+
+In order to modify it, see instructions below on how to contribute to **shellfoundry**
 
 
 ## Contributing to shellfoundry
