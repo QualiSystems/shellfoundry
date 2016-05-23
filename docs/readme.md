@@ -6,7 +6,5 @@
 
 [Contributing](contributing.md)
 
-[License](license.md)
-
 [Credits](credits.md)
 

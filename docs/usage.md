@@ -51,3 +51,4 @@ Shell package can be installed into CloudShell using install command. It should 
 $ shellfoundry install
 ```
 
+Return to [Table of Contents](readme.md)

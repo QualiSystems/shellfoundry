@@ -28,4 +28,4 @@ In order to get help on specific command, add --help flag. For example, getting 
 $ shellfoundry new --help
 ```
 
-
+Return to [Table of Contents](readme.md)
