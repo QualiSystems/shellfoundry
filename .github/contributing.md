@@ -11,7 +11,15 @@ Please refer to its documentation: [http://cookiecutter.readthedocs.io/en/latest
 Once created a new template repository, it's required to add it to list of templates located at:
 [templates.yml](../templates.yml)
 
-In order to modify it, see instrucions below on how to contribute to **shellfoundry**
+###templates.yml
+```yaml
+templates:
+    - name : base
+      description : Base shell template
+      repository : https://github.com/QualiSystems/shellfoundry-template
+```
+
+In order to modify it, see instructions below on how to contribute to **shellfoundry**
 
 
 ## Contributing to shellfoundry
@@ -21,6 +29,11 @@ In order to modify it, see instrucions below on how to contribute to **shellfoun
 
 ```bash
 $ git clone https://github.com/YOUR_ACCOUNT/shellfoundry.git
+```
+
+- Create a branch for local development
+```bash
+$ git checkout -b name-of-your-feature
 ```
 
 - Make the required changes:
@@ -37,11 +50,20 @@ $ git clone https://github.com/YOUR_ACCOUNT/shellfoundry.git
 
 - Commit & push them to github
 ```bash
-$ git commit -am "changes"
-$ git push
+$ git add .
+$ git commit -m "Your detailed description of your changes"
+$ git push origin name-of-your-feature
 ```
 - Submit pull request
 
+## Pull Request Guidelines
+
+Before you submit a pull request, check that it meets these guidelines:
+
+1. The pull request should include tests.
+2. If the pull request adds functionality, the docs should be updated. Put your new functionality into a function
+with a docstring, and add the feature to the list in [Usage](usage.md]
+3. The pull request should work for Python 2.7. Check https://travis-ci.org/QualiSystems/shellfoundry and make sure that the tests pass for all supported Python versions.
 
 
 Return to [Table of Contents](readme.md)
