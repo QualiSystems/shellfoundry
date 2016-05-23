@@ -13,7 +13,9 @@ $ shellfoundry new nutshell
 ```
 
 For more commands and detailed usage please refer to [Documentation](docs/readme.md)
+
 Opening issues and feature requests: [Issue Tracker](https://github.com/QualiSystems/shellfoundry/issues)
+
 Forum for questions and discussions: [Gitter.im](https://gitter.im/QualiSystems/shellfoundry)
 
 # License
