@@ -26,7 +26,7 @@ shellfoundry
 ```bash
 $ shellfoundry list
 ```
-In order to add a new template or modify exisging one, please refer to [Contributing](~contributing.md)
+In order to add a new template or modify exisging one, please refer to [Contributing](../.github/contributing.md)
 
 ## Packaging a shell
 
