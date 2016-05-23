@@ -1,6 +1,10 @@
-[Getting Started](~getting_started.md)
-[Usage](~usage.md)
-[Contributing]((~contributing.md)
-[License](~license.md)
-[Credits](~credits.md)
+[Getting Started](~/docs/getting_started.md)
+
+[Usage](~/docs/usage.md)
+
+[Contributing]((~/docs/contributing.md)
+
+[License](~/docs/license.md)
+
+[Credits](~/docs/credits.md)
 
