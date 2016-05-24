@@ -1,13 +1,10 @@
 import os
 import yaml
 
-INSTALL = 'install'
+from shellfoundry.models.install_config import InstallConfig, DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, \
+    DEFAULT_PASSWORD, DEFAULT_DOMAIN
 
-DEFAULT_HOST = 'localhost'
-DEFAULT_PORT = 9000
-DEFAULT_USERNAME = 'admin'
-DEFAULT_PASSWORD = 'admin'
-DEFAULT_DOMAIN = 'Global'
+INSTALL = 'install'
 
 HOST = 'host'
 PORT = 'port'
@@ -16,21 +13,13 @@ PASSWORD = 'password'
 DOMAIN = 'domain'
 
 
-class InstallConfig(object):
-    def __init__(self, host, port, username, password, domain):
-        self.domain = domain
-        self.password = password
-        self.username = username
-        self.port = port
-        self.host = host
-
-    @staticmethod
-    def get_default():
-        return InstallConfig(DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, DEFAULT_PASSWORD, DEFAULT_DOMAIN)
-
-
 class CloudShellConfigReader(object):
     def read(self):
+        """
+
+        :return:
+        :rtype shellfoundry.models.install_config.Installconfig
+        """
         config_path = os.path.join(os.getcwd(), 'cloudshell_config.yml')
 
         if not os.path.isfile(config_path):
