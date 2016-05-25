@@ -25,7 +25,7 @@ class NewCommandExecutor(object):
                                                                                         templates)))
         # Supports creating shell in the same directory
         if name == '.':
-            shell_name = os.path.split(os.getcwd())
+            shell_name = os.path.split(os.getcwd())[1]
             cookiecutter(templates[template].repository, no_input=True, extra_context={u'project_name': shell_name},
                          overwrite_if_exists=True, output_dir='..')
         else:
