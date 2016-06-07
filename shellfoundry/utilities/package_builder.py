@@ -35,8 +35,9 @@ class PackageBuilder(object):
     @staticmethod
     def _copy_shellconfig(package_path, path):
         src_file_path = os.path.join(path, 'datamodel', 'shellconfig.xml')
-        dest_dir_path = os.path.join(package_path, 'Configuration')
-        PackageBuilder._copy_file(dest_dir_path, src_file_path)
+        if os.path.exists(src_file_path):
+            dest_dir_path = os.path.join(package_path, 'Configuration')
+            PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
     @staticmethod
     def _create_driver(package_path, path, package_name):

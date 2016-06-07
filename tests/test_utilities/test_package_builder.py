@@ -26,6 +26,23 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/aws Driver.zip')
         assertFileExists(self, 'aws/amazon_web_services/dist/aws.zip')
 
+    def test_pack_succeeds_when_shellconfig_is_missing(self):
+        # Arrange
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/datamodel.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/src/driver.py', contents='')
+        os.chdir('work')
+        builder = PackageBuilder()
+
+        # Act
+        builder.build_package('aws/amazon_web_services', 'aws')
+
+        # Assert
+        assertFileExists(self, 'aws/amazon_web_services/package/metadata.xml')
+        assertFileExists(self, 'aws/amazon_web_services/package/datamodel/datamodel.xml')
+        assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/aws Driver.zip')
+        assertFileExists(self, 'aws/amazon_web_services/dist/aws.zip')
+
 
 
 
