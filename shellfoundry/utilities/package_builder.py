@@ -63,7 +63,7 @@ class PackageBuilder(object):
         output_dir = os.path.dirname(output_filename)
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-        relroot = os.path.abspath(os.path.join(source_dir, os.pardir))
+        relroot = source_dir
         with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip:
             for root, dirs, files in os.walk(source_dir):
                 # add directory (needed for empty dirs)
