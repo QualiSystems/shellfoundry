@@ -12,6 +12,7 @@ class PackageBuilder(object):
     def build_package(self, path, package_name):
         package_path = os.path.join(path, 'package')
 
+        self._copy_metadata(package_path, path)
         self._copy_datamodel(package_path, path)
         self._copy_shellconfig(package_path, path)
         self._create_driver(package_path, path, package_name)
@@ -76,3 +77,6 @@ class PackageBuilder(object):
 
         return output_filename
 
+    def _copy_metadata(self, package_path, path):
+        src_file_path = os.path.join(path, 'datamodel', 'metadata.xml')
+        PackageBuilder._copy_file(package_path, src_file_path)

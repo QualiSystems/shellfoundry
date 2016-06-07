@@ -9,6 +9,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_build_package_package_created(self):
         # Arrange
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
         self.fs.CreateFile('work/aws/amazon_web_services/datamodel/datamodel.xml', contents='')
         self.fs.CreateFile('work/aws/amazon_web_services/datamodel/shellconfig.xml', contents='')
         self.fs.CreateFile('work/aws/amazon_web_services/src/driver.py', contents='')
@@ -19,6 +20,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder.build_package('aws/amazon_web_services', 'aws')
 
         # Assert
+        assertFileExists(self, 'aws/amazon_web_services/package/metadata.xml')
         assertFileExists(self, 'aws/amazon_web_services/package/datamodel/datamodel.xml')
         assertFileExists(self, 'aws/amazon_web_services/package/Configuration/shellconfig.xml')
         assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/aws Driver.zip')
