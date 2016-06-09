@@ -11,12 +11,12 @@ class PackageBuilder(object):
 
     def build_package(self, path, package_name, driver_name):
         package_path = os.path.join(path, 'package')
-        shutil.rmtree(path=package_path, ignore_errors=True)
         self._copy_metadata(package_path, path)
         self._copy_datamodel(package_path, path)
         self._copy_shellconfig(package_path, path)
         self._create_driver(package_path, path, driver_name)
         zip_path = self._zip_package(package_path, path, package_name)
+        shutil.rmtree(path=package_path, ignore_errors=True)
         click.echo(u'Shell package was successfully created:')
         click.echo(zip_path)
 
