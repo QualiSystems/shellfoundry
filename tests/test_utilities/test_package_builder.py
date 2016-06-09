@@ -17,13 +17,13 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder = PackageBuilder()
 
         # Act
-        builder.build_package('aws/amazon_web_services', 'aws')
+        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         assertFileExists(self, 'aws/amazon_web_services/package/metadata.xml')
         assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
         assertFileExists(self, 'aws/amazon_web_services/package/Configuration/shellconfig.xml')
-        assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/aws Driver.zip')
+        assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip')
         assertFileExists(self, 'aws/amazon_web_services/dist/aws.zip')
 
     def test_pack_succeeds_when_shellconfig_is_missing(self):
@@ -35,12 +35,12 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder = PackageBuilder()
 
         # Act
-        builder.build_package('aws/amazon_web_services', 'aws')
+        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         assertFileExists(self, 'aws/amazon_web_services/package/metadata.xml')
         assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
-        assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/aws Driver.zip')
+        assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip')
         assertFileExists(self, 'aws/amazon_web_services/dist/aws.zip')
 
 

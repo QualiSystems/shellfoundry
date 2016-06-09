@@ -9,13 +9,13 @@ class PackageBuilder(object):
     def __init__(self):
         pass
 
-    def build_package(self, path, package_name):
+    def build_package(self, path, package_name, driver_name):
         package_path = os.path.join(path, 'package')
 
         self._copy_metadata(package_path, path)
         self._copy_datamodel(package_path, path)
         self._copy_shellconfig(package_path, path)
-        self._create_driver(package_path, path, package_name)
+        self._create_driver(package_path, path, driver_name)
         zip_path = self._zip_package(package_path, path, package_name)
         click.echo(u'Shell package was successfully created:')
         click.echo(zip_path)
@@ -40,9 +40,9 @@ class PackageBuilder(object):
             PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
     @staticmethod
-    def _create_driver(package_path, path, package_name):
+    def _create_driver(package_path, path, driver_name):
         dir_to_zip = os.path.join(path, 'src')
-        zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', package_name + ' Driver')
+        zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', driver_name)
         PackageBuilder._make_archive(zip_file_path, 'zip', dir_to_zip)
 
     @staticmethod
