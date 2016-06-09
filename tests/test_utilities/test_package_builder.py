@@ -43,6 +43,26 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip')
         assertFileExists(self, 'aws/amazon_web_services/dist/aws.zip')
 
+    def test_old_package_dir_deleted(self):
+        # Arrange
+        self.fs.CreateFile('work/aws/amazon_web_services/package/oldfile.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/datamodel.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/shellconfig.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/src/driver.py', contents='')
+        os.chdir('work')
+        builder = PackageBuilder()
+
+        # Act
+        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+
+        # Assert
+        assertFileDoesNotExist(self, 'aws/amazon_web_services/package/oldfile.xml')
+        assertFileExists(self, 'aws/amazon_web_services/package/metadata.xml')
+        assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
+        assertFileExists(self, 'aws/amazon_web_services/package/Configuration/shellconfig.xml')
+        assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip')
+        assertFileExists(self, 'aws/amazon_web_services/dist/aws.zip')
 
 
 
