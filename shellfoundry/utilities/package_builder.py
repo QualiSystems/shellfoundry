@@ -23,7 +23,7 @@ class PackageBuilder(object):
     @staticmethod
     def _copy_datamodel(package_path, path):
         src_file_path = os.path.join(path, 'datamodel', 'datamodel.xml')
-        dest_dir_path = os.path.join(package_path, 'datamodel')
+        dest_dir_path = os.path.join(package_path, 'DataModel')
         PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
     @staticmethod
