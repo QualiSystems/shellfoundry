@@ -2,7 +2,8 @@
 
 ## Installation
 
-shellfoundry requires Python 2.7 to be installed on your machine. If you don't have Python installed, please refer to
+**shellfoundry** requires Python 2.7 to be installed on your machine. If you don't have Python installed, please refer to
+
 [Downloading Python](https://wiki.python.org/moin/BeginnersGuide/Download) for detailed instructions on
 how to install Python. Python also has to be available in your PATH environment variable.
 

@@ -2,8 +2,8 @@
 Credits
 =======
 
-Development Lead
+Development Team
 ----------------
 
-* Boris Modylevsky <borismod@gmail.com>
-
+* Boris Modylevsky @borismod
+* Roni Dover @doppleware
