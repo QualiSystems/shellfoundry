@@ -14,7 +14,7 @@ class PackCommandExecutor(object):
         try:
             config = self.config_reader.read()
             current_path = os.getcwd()
-            self.package_builder.build_package(current_path, config.name)
+            self.package_builder.build_package(current_path, config.name, config.driver_name)
         except ShellYmlMissingException:
             click.echo(u'shell.yml file is missing')
         except WrongShellYmlException:

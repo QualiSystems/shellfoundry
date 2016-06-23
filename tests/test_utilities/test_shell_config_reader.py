@@ -18,6 +18,7 @@ shell:
     email: chuck@hollywood.io
     description: Save the world
     version: 1.0.0
+    driver_name: NutShellDriver
     """)
         os.chdir('shell_name')
         reader = ShellConfigReader()
@@ -31,3 +32,4 @@ shell:
         self.assertEqual(config.email, 'chuck@hollywood.io')
         self.assertEqual(config.description, 'Save the world')
         self.assertEqual(config.version, '1.0.0')
+        self.assertEqual(config.driver_name, 'NutShellDriver')

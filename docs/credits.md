@@ -1,6 +1,6 @@
 # Credits
 
-Development of **shellfoundry** would not have been possible without open source libraries it depends on:
+Development of **shellfoundry** would not have been possible without the open source libraries it depends on:
 
 - **cookiecutter** [https://github.com/audreyr/cookiecutter](https://github.com/audreyr/cookiecutter)
 - **requests** [https://github.com/kennethreitz/requests](http://docs.python-requests.org/)
