@@ -10,6 +10,7 @@ EMAIL = 'email'
 AUTHOR = 'author'
 NAME = 'name'
 SHELL = 'shell'
+DRIVER_NAME = 'driver_name'
 
 
 class ProjectConfig(object):

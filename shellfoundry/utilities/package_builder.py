@@ -5,6 +5,7 @@ import zipfile
 import click
 import mimetypes
 
+
 class PackageBuilder(object):
     def __init__(self):
         pass
@@ -13,7 +14,7 @@ class PackageBuilder(object):
         package_path = os.path.join(path, 'package')
         self._copy_metadata(package_path, path)
         self._copy_datamodel(package_path, path)
-        self._copy_images(package_path,path)
+        self._copy_images(package_path, path)
         self._copy_shellconfig(package_path, path)
         self._create_driver(package_path, path, driver_name)
         zip_path = self._zip_package(package_path, path, package_name)
@@ -21,18 +22,20 @@ class PackageBuilder(object):
         click.echo(u'Shell package was successfully created:')
         click.echo(zip_path)
 
+    def _copy_metadata(self, package_path, path):
+        src_file_path = os.path.join(path, 'datamodel', 'metadata.xml')
+        PackageBuilder._copy_file(package_path, src_file_path)
+
     @staticmethod
     def _copy_datamodel(package_path, path):
         src_file_path = os.path.join(path, 'datamodel', 'datamodel.xml')
         dest_dir_path = os.path.join(package_path, 'DataModel')
         PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
-
     @staticmethod
     def _is_image(file):
-        type, encoding =  mimetypes.guess_type(file)
+        type, encoding = mimetypes.guess_type(file)
         return type and "image" in type
-
 
     @staticmethod
     def _copy_images(package_path, path):
@@ -89,12 +92,8 @@ class PackageBuilder(object):
                 zip.write(root, os.path.relpath(root, relroot))
                 for file in files:
                     filename = os.path.join(root, file)
-                    if os.path.isfile(filename): # regular files only
+                    if os.path.isfile(filename):  # regular files only
                         arcname = os.path.join(os.path.relpath(root, relroot), file)
                         zip.write(filename, arcname)
 
         return output_filename
-
-    def _copy_metadata(self, package_path, path):
-        src_file_path = os.path.join(path, 'datamodel', 'metadata.xml')
-        PackageBuilder._copy_file(package_path, src_file_path)
