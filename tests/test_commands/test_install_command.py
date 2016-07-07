@@ -15,6 +15,7 @@ class TestInstallCommandExecutor(fake_filesystem_unittest.TestCase):
         self.fs.CreateFile('nut_shell/shell.yml', contents="""
 shell:
     name: nut_shell
+    driver: NutShellDriver
     """)
         self.fs.CreateFile('nut_shell/cloudshell_config.yml', contents="""
 install:
