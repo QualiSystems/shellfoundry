@@ -52,4 +52,5 @@ def install():
     """
     Install the shell package into CloudShell.
     """
+    PackCommandExecutor().pack()
     InstallCommandExecutor().install()

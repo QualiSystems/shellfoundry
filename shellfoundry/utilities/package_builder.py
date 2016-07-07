@@ -12,13 +12,13 @@ class PackageBuilder(object):
 
     def build_package(self, path, package_name, driver_name):
         package_path = os.path.join(path, 'package')
-
         self._copy_metadata(package_path, path)
         self._copy_datamodel(package_path, path)
         self._copy_images(package_path, path)
         self._copy_shellconfig(package_path, path)
         self._create_driver(package_path, path, driver_name)
         zip_path = self._zip_package(package_path, path, package_name)
+        shutil.rmtree(path=package_path, ignore_errors=True)
         click.echo(u'Shell package was successfully created:')
         click.echo(zip_path)
 
@@ -44,7 +44,7 @@ class PackageBuilder(object):
         for root, _, files in os.walk(datamodel_dir):
             images = [dir_file for dir_file in files if PackageBuilder._is_image(dir_file)]
             for image in images:
-                PackageBuilder._copy_file(dest_dir_path, os.path.join(root, image))
+                PackageBuilder._copy_file(dest_dir_path,  os.path.join(root, image))
 
     @staticmethod
     def _copy_file(dest_dir_path, src_file_path):
@@ -55,13 +55,14 @@ class PackageBuilder(object):
     @staticmethod
     def _copy_shellconfig(package_path, path):
         src_file_path = os.path.join(path, 'datamodel', 'shellconfig.xml')
-        dest_dir_path = os.path.join(package_path, 'Configuration')
-        PackageBuilder._copy_file(dest_dir_path, src_file_path)
+        if os.path.exists(src_file_path):
+            dest_dir_path = os.path.join(package_path, 'Configuration')
+            PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
     @staticmethod
-    def _create_driver(package_path, path, package_name):
+    def _create_driver(package_path, path, driver_name):
         dir_to_zip = os.path.join(path, 'src')
-        zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', package_name)
+        zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', driver_name)
         PackageBuilder._make_archive(zip_file_path, 'zip', dir_to_zip)
 
     @staticmethod

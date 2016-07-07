@@ -1,3 +1,5 @@
+import os
+
 import click
 from cookiecutter.main import cookiecutter
 
@@ -21,8 +23,13 @@ class NewCommandExecutor(object):
                 u'Template {0} does not exist. Supported templates are: {1}'.format(template,
                                                                                     self._get_templates_with_comma(
                                                                                         templates)))
-
-        cookiecutter(templates[template].repository, no_input=True, extra_context={u'project_name': name})
+        # Supports creating shell in the same directory
+        if name == '.':
+            shell_name = os.path.split(os.getcwd())[1]
+            cookiecutter(templates[template].repository, no_input=True, extra_context={u'project_name': shell_name},
+                         overwrite_if_exists=True, output_dir='..')
+        else:
+            cookiecutter(templates[template].repository, no_input=True, extra_context={u'project_name': name})
 
     @staticmethod
     def _get_templates_with_comma(templates):

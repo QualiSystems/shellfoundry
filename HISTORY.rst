@@ -7,6 +7,7 @@ History
 
 * Installation of package into CloudShell was fixed
 
+
 0.0.26 (2016-06-23)
 ------------------
 

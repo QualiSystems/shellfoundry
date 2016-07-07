@@ -2,6 +2,8 @@ import os
 import yaml
 from shellfoundry.exceptions import ShellYmlMissingException, WrongShellYmlException
 
+DRIVER_NAME = 'driver_name'
+
 VERSION = 'version'
 DESCRIPTION = 'description'
 EMAIL = 'email'

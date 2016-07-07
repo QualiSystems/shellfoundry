@@ -1,3 +1,5 @@
+from urllib2 import HTTPError
+import click
 from shellfoundry.utilities.shell_config_reader import ShellConfigReader
 from shellfoundry.utilities.config_reader import CloudShellConfigReader
 from shellfoundry.utilities.installer import ShellInstaller
@@ -10,6 +12,10 @@ class InstallCommandExecutor(object):
         self.shell_config_reader = shell_config_reader or ShellConfigReader()
 
     def install(self):
-        cloudshell_config = self.cloudshell_config_reader.read()
-        shell_config = self.shell_config_reader.read()
-        self.installer.install(shell_config.name, cloudshell_config)
+        try:
+            cloudshell_config = self.cloudshell_config_reader.read()
+            shell_config = self.shell_config_reader.read()
+            self.installer.install(shell_config.name, cloudshell_config)
+        except HTTPError:
+            click.echo(u'Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml')
+
