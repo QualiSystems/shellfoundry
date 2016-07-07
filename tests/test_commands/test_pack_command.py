@@ -19,6 +19,7 @@ shell:
     description: Save the world
     version: 1.0.0
     """)
+        self.fs.CreateFile('nut_shell/datamodel/metadata.xml')
         self.fs.CreateFile('nut_shell/datamodel/datamodel.xml')
         self.fs.CreateFile('nut_shell/datamodel/shellconfig.xml')
         self.fs.CreateFile('nut_shell/src/driver.py')

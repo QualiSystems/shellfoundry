@@ -8,15 +8,17 @@ EMAIL = 'email'
 AUTHOR = 'author'
 NAME = 'name'
 SHELL = 'shell'
+DRIVER_NAME = 'driver_name'
 
 
 class ProjectConfig(object):
-    def __init__(self, name, author, email, description, version):
+    def __init__(self, name, author, email, description, version, driver_name):
         self.version = version
         self.description = description
         self.email = email
         self.author = author
         self.name = name
+        self.driver_name = driver_name
 
 
 class ShellConfigReader(object):
@@ -39,8 +41,9 @@ class ShellConfigReader(object):
         email = self._get_with_default(install_config, EMAIL, '')
         description = self._get_with_default(install_config, DESCRIPTION, '')
         version = self._get_with_default(install_config, VERSION, '')
+        driver_name = self._get_with_default(install_config, DRIVER_NAME, '')
 
-        return ProjectConfig(name, author, email, description, version)
+        return ProjectConfig(name, author, email, description, version, driver_name)
 
     @staticmethod
     def _get_with_default(install_config, parameter_name, default_value):
