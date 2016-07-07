@@ -2,6 +2,9 @@ templates:
     - name : base
       description : Base shell template
       repository : https://github.com/QualiSystems/shellfoundry-template
+    - name: base-empty
+      description : Similar to the base shell template but without example function in the driver implementation
+      repository : https://github.com/QualiSystems/shellfoundry-template-empty-driver
     - name : tosca
       description : Shell template based on TOSCA standard (experimentary)
       repository : https://github.com/QualiSystems/shellfoundry-tosca-template
