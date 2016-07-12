@@ -1,5 +1,4 @@
 import os
-import unittest
 from mock import Mock, patch
 from pyfakefs import fake_filesystem_unittest
 from shellfoundry.commands.new_command import NewCommandExecutor
