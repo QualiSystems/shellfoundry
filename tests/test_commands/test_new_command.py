@@ -1,8 +1,5 @@
 import unittest
-from unittest import skip
-import uuid
 from mock import Mock, patch
-
 from shellfoundry.commands.new_command import NewCommandExecutor
 from shellfoundry.models.shell_template import ShellTemplate
 
