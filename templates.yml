@@ -3,26 +3,26 @@ templates:
       description : Base shell template
       repository : https://github.com/QualiSystems/shellfoundry-template
       params:
-        - project_name :
+        project_name :
     - name: base-empty
       params:
-        - project_name :
+        project_name :
       description : Similar to the base shell template but without example function in the driver implementation
       repository : https://github.com/QualiSystems/shellfoundry-template-empty-driver
     - name: networking/switch
       description : Networking standard for switch type devices/virtual appliances
       repository : https://github.com/QualiSystems/shell-networking-standard
       params:
-        - project_name :
-        - family_name : Switch
+        project_name :
+        family_name : Switch
     - name: networking/router
       description : Networking standard for router type devices/virtual appliances
       repository : https://github.com/QualiSystems/shell-networking-standard
       params:
-        - project_name :
-        - family_name : Router
+        project_name :
+        family_name : Router
     - name : tosca
       params:
-        - project_name :
+        project_name :
       description : Shell template based on TOSCA standard (experimental)
       repository : https://github.com/QualiSystems/shellfoundry-tosca-template
