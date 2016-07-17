@@ -19,7 +19,8 @@ class TemplateRetriever(object):
         return {template['name']: ShellTemplate(
             template['name'],
             template['description'],
-            template['repository']) for template in config['templates']}
+            template['repository'],
+            template['params']) for template in config['templates']}
 
     @staticmethod
     def _get_templates_from_github():
