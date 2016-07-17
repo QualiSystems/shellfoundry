@@ -21,6 +21,7 @@ class TestDataModelMerger(unittest.TestCase):
     #     merged_xml = merger.merge_shell_model(dm, shell)
     #     self.assertIsNotNone(merged_xml)
 
+
     def test_merges_attributes(self):
 
         datamodel = """<?xml version="1.0" encoding="utf-8"?>
