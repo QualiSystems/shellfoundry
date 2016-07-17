@@ -1,9 +1,12 @@
+import codecs
 import os
 import shutil
 import zipfile
 
 import click
 import mimetypes
+
+from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
 
 class PackageBuilder(object):
@@ -27,10 +30,33 @@ class PackageBuilder(object):
         PackageBuilder._copy_file(package_path, src_file_path)
 
     @staticmethod
+    def _get_file_content_as_string(path):
+        with codecs.open(path, 'r', encoding='utf8') as f:
+            text = f.read()
+        return text
+
+    @staticmethod
+    def _save_to_utf_file(content, dest_path):
+        with codecs.open(dest_path, "w", "utf-8-sig") as f:
+            f.write(content)
+
+    @staticmethod
     def _copy_datamodel(package_path, path):
-        src_file_path = os.path.join(path, 'datamodel', 'datamodel.xml')
+        shell_model_path = os.path.join(path, 'datamodel', 'shell_model.xml')
+        src_dm_file_path = os.path.join(path, 'datamodel', 'datamodel.xml')
         dest_dir_path = os.path.join(package_path, 'DataModel')
-        PackageBuilder._copy_file(dest_dir_path, src_file_path)
+
+        if os.path.exists(shell_model_path):
+            shell_model = PackageBuilder._get_file_content_as_string(shell_model_path)
+            dm = PackageBuilder._get_file_content_as_string(src_dm_file_path)
+            merger = ShellDataModelMerger()
+            merged_dm  = merger.merge_shell_model(dm, shell_model)
+            if not os.path.exists(dest_dir_path):
+                os.makedirs(dest_dir_path)
+            PackageBuilder._save_to_utf_file(merged_dm, os.path.join(dest_dir_path, 'datamodel.xml'))
+
+        else:
+            PackageBuilder._copy_file(dest_dir_path, src_dm_file_path)
 
     @staticmethod
     def _is_image(file):

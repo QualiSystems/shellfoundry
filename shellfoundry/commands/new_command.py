@@ -22,14 +22,19 @@ class NewCommandExecutor(object):
             raise click.BadParameter(
                 u'Template {0} does not exist. Supported templates are: {1}'.format(template,
                                                                                     self._get_templates_with_comma(
-                                                                                        templates)))
+                                                                                    templates)))
+        template_obj = templates[template]
+
         # Supports creating shell in the same directory
         if name == '.':
-            shell_name = os.path.split(os.getcwd())[1]
-            cookiecutter(templates[template].repository, no_input=True, extra_context={u'project_name': shell_name},
+            template_obj.params['project_name'] = os.path.split(os.getcwd())[1]
+            cookiecutter(template_obj.repository, no_input=True,
+                         extra_context= template_obj.params,
                          overwrite_if_exists=True, output_dir='..')
         else:
-            cookiecutter(templates[template].repository, no_input=True, extra_context={u'project_name': name})
+            template_obj.params['project_name'] = name
+            cookiecutter(template_obj.repository, no_input=True,
+                         extra_context=template_obj.params)
 
     @staticmethod
     def _get_templates_with_comma(templates):

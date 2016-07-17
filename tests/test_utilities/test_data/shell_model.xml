@@ -1,0 +1,17 @@
+<Shell>
+    <ShellAttributes>
+    </ShellAttributes>
+
+    <ShellModel Family="Switch">
+        <ResourceModel Name="DSwitch" Description="" SupportsConcurrentCommands="true">
+            <AttachedAttributes>
+            </AttachedAttributes>
+            <AttributeValues>
+            </AttributeValues>
+            <Drivers>
+                <DriverName>DSwitchDriver</DriverName>
+            </Drivers>
+            <Scripts />
+        </ResourceModel>
+    </ShellModel>
+</Shell>
