@@ -9,17 +9,17 @@ from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
 class TestDataModelMerger(unittest.TestCase):
 
-    def test_works_with_utf_files(self):
-
-        with codecs.open(os.path.join(".","test_data","datamodel.xml"), 'r', encoding='utf8') as f:
-            dm = f.read()
-
-        with codecs.open(os.path.join(".","test_data","shell_model.xml"), 'r', encoding='utf8') as f:
-            shell = f.read()
-
-        merger = ShellDataModelMerger()
-        merged_xml = merger.merge_shell_model(dm, shell)
-        self.assertIsNotNone(merged_xml)
+    # def test_works_with_utf_files(self):
+    #
+    #     with codecs.open(os.path.join(".","test_data","datamodel.xml"), 'r', encoding='utf8') as f:
+    #         dm = f.read()
+    #
+    #     with codecs.open(os.path.join(".","test_data","shell_model.xml"), 'r', encoding='utf8') as f:
+    #         shell = f.read()
+    #
+    #     merger = ShellDataModelMerger()
+    #     merged_xml = merger.merge_shell_model(dm, shell)
+    #     self.assertIsNotNone(merged_xml)
 
     def test_merges_attributes(self):
 
