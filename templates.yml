@@ -21,6 +21,12 @@ templates:
       params:
         project_name :
         family_name : Router
+    - name: PDU
+      description : PDU device
+      repository : https://github.com/QualiSystems/shell-pdu-standard
+      params:
+        project_name :
+        family_name : PDU
     - name : tosca
       params:
         project_name :
