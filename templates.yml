@@ -1,10 +1,10 @@
 templates:
-    - name : base
+    - name : shell
       description : Base shell template
       repository : https://github.com/QualiSystems/shellfoundry-template
       params:
         project_name :
-    - name: base-empty
+    - name: shell-clean
       params:
         project_name :
       description : Similar to the base shell template but without example function in the driver implementation
@@ -22,11 +22,23 @@ templates:
         project_name :
         family_name : Router
     - name: PDU
-      description : PDU device
+      description : Template for PDU devices
       repository : https://github.com/QualiSystems/shell-pdu-standard
       params:
         project_name :
         family_name : PDU
+    - name: Firewall
+      description : Template for PDU devices
+      repository : https://github.com/QualiSystems/shell-firewall-standard
+      params:
+        project_name :
+        family_name : Firewall
+    - name: Compute
+      description : Template for compute resources
+      repository : https://github.com/QualiSystems/shell-compute-standard
+      params:
+        project_name :
+        family_name :
     - name : tosca
       params:
         project_name :
