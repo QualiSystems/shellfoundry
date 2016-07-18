@@ -1,6 +1,9 @@
 import zipfile
 
+from mock import patch, MagicMock
 from pyfakefs import fake_filesystem_unittest
+
+from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 from tests.asserts import *
 from shellfoundry.utilities.package_builder import PackageBuilder
 
@@ -8,6 +11,55 @@ from shellfoundry.utilities.package_builder import PackageBuilder
 class TestPackageBuilder(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
+
+    def test_it_merges_datamodel_if_shell_config_exists(self):
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/shell_model.xml', contents='')
+
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/datamodel.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/shellconfig.xml', contents='')
+
+        os.chdir('work')
+        builder = PackageBuilder()
+
+        with patch('shellfoundry.utilities.package_builder.ShellDataModelMerger') as MockClass:
+            # Act
+            instance = MockClass.return_value
+            instance.merge_shell_model.return_value = 'Test'
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+            instance.merge_shell_model.assert_called()
+
+        # Assert
+        TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
+        assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
+
+        with open('aws/amazon_web_services/package/DataModel/datamodel.xml', 'r') as f:
+                text = f.read()
+        self.assertEqual(text.decode("utf-8-sig"), 'Test')
+
+    def test_it_does_not_merge_datamodel_if_shell_config_does_not_exist(self):
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
+
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/datamodel.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/shellconfig.xml', contents='')
+
+        os.chdir('work')
+        builder = PackageBuilder()
+
+        with patch('shellfoundry.utilities.package_builder.ShellDataModelMerger') as MockClass:
+            # Act
+            instance = MockClass.return_value
+            instance.merge_shell_model.return_value = 'Test'
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+            instance.merge_shell_model.assert_not_called()
+
+        # Assert
+        TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
+        assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
+
+        with open('aws/amazon_web_services/package/DataModel/datamodel.xml', 'r') as f:
+                text = f.read()
+        self.assertEqual(text, '')
 
     def test_it_copies_image_files_in_the_datamodel_dir(self):
         self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
