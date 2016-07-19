@@ -1,7 +1,7 @@
 templates:
     - name : shell
       description : Base shell template
-      repository : https://github.com/QualiSystems/shellfoundry-template
+      repository : https://github.com/QualiSystems/shell-resource-standard
       params:
         project_name :
     - name: shell-clean
