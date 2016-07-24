@@ -4,7 +4,7 @@ templates:
       repository : https://github.com/QualiSystems/shell-resource-standard
       params:
         project_name :
-    - name: resource-shell-clean
+    - name: resource-clean
       params:
         project_name :
       description : Similar to the base shell template but without example function in the driver implementation
