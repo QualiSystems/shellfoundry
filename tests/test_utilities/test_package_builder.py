@@ -33,9 +33,8 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
         assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
 
-        with open('aws/amazon_web_services/package/DataModel/datamodel.xml', 'r') as f:
-                text = f.read()
-        self.assertEqual(text.decode("utf-8-sig"), 'Test')
+        self.assert_utf_file_content('aws/amazon_web_services/package/DataModel/datamodel.xml', 'Test')
+
 
     def test_it_does_not_merge_datamodel_if_shell_config_does_not_exist(self):
         self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
@@ -57,9 +56,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
         assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
 
-        with open('aws/amazon_web_services/package/DataModel/datamodel.xml', 'r') as f:
-                text = f.read()
-        self.assertEqual(text, '')
+        self.assert_utf_file_content('aws/amazon_web_services/package/DataModel/datamodel.xml', '')
 
     def test_it_copies_image_files_in_the_datamodel_dir(self):
         self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
@@ -148,6 +145,12 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         with zipfile.ZipFile(source_filename) as zf:
             zf.extractall(dest_dir)
 
+
+    def assert_utf_file_content(self, path, content):
+        with open(path, 'r') as f:
+            text = f.read()
+
+        self.assertEqual(text.decode("utf-8-sig"), content, msg="File was different than expected content")
 
 
 
