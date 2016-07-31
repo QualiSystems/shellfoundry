@@ -1,5 +1,6 @@
 from mock import patch
 from pyfakefs import fake_filesystem_unittest
+from shellfoundry.utilities.python_depedencies_packager import PythonDependenciesPackager
 from tests.asserts import *
 from shellfoundry.commands.pack_command import PackCommandExecutor
 
@@ -9,7 +10,8 @@ class TestPackCommandExecutor(fake_filesystem_unittest.TestCase):
         self.setUpPyfakefs()
 
     @patch('click.echo')
-    def test_build_package_package_created(self, echo_mock):
+    @patch('shellfoundry.utilities.python_depedencies_packager.pip')
+    def test_build_package_package_created(self, pip_mock,echo_mock):
         # Arrange
         self.fs.CreateFile('nut_shell/shell.yml', contents="""
 shell:
@@ -35,7 +37,8 @@ shell:
         echo_mock.assert_any_call(u'Shell package was successfully created:')
 
     @patch('click.echo')
-    def test_proper_error_message_displayed_when_shell_yml_is_in_wrong_format(self, echo_mock):
+    @patch('shellfoundry.utilities.python_depedencies_packager.pip')
+    def test_proper_error_message_displayed_when_shell_yml_is_in_wrong_format(self,pip_mock, echo_mock):
         # Arrange
         self.fs.CreateFile('nut_shell/shell.yml', contents='WRONG YAML FORMAT')
         os.chdir('nut_shell')
@@ -49,7 +52,8 @@ shell:
         echo_mock.assert_any_call(u'shell.yml format is wrong')
 
     @patch('click.echo')
-    def test_proper_error_message_displayed_when_shell_yml_missing(self, echo_mock):
+    @patch('shellfoundry.utilities.python_depedencies_packager.pip')
+    def test_proper_error_message_displayed_when_shell_yml_missing(self,pip_mock, echo_mock):
         # Arrange
         self.fs.CreateFile('nut_shell/datamodel/datamodel.xml')
         os.chdir('nut_shell')
