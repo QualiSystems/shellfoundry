@@ -11,7 +11,7 @@ class PackCommandExecutor(object):
     def __init__(self):
         self.config_reader = ShellConfigReader()
         self.package_builder = PackageBuilder()
-        self.dependencies_packager=PythonDependenciesPackager()
+        self.dependencies_packager = PythonDependenciesPackager()
 
     def pack(self):
         try:

@@ -18,7 +18,7 @@ class PythonDependenciesPackager:
             return
 
         proxy = os.environ.get('http_proxy')
-        pip_args=['download']
+        pip_args = ['download']
         if proxy:
             pip_args.append('--proxy')
             pip_args.append(proxy)
