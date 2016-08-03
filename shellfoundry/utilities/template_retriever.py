@@ -1,6 +1,5 @@
 import requests
 import yaml
-from collections import OrderedDict
 
 from shellfoundry.models.shell_template import ShellTemplate
 
@@ -17,15 +16,11 @@ class TemplateRetriever(object):
         if not config or 'templates' not in config:
             return []
 
-        templatesdic = OrderedDict()
-        for template in config['templates']:
-            templatesdic[template['name']] = ShellTemplate(
-                template['name'],
-                template['description'],
-                template['repository'],
-                template['params'])
-
-        return templatesdic
+        return {template['name']: ShellTemplate(
+            template['name'],
+            template['description'],
+            template['repository'],
+            template['params']) for template in config['templates']}
 
     @staticmethod
     def _get_templates_from_github():

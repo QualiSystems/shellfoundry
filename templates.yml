@@ -7,7 +7,7 @@ templates:
     - name: resource-clean
       params:
         project_name :
-      description : Base shell template for inventory resources (without example commands)
+      description : Similar to the base shell template but without example function in the driver implementation
       repository : https://github.com/QualiSystems/resource-shell-standard-clean
     - name: deployed-app
       params:
@@ -15,13 +15,13 @@ templates:
       description : Template for deployed apps
       repository : https://github.com/QualiSystems/shell-deployedapp-standard
     - name: networking/switch
-      description : Template for standard Switch devices/virtual appliances
+      description : Networking standard for switch type devices/virtual appliances
       repository : https://github.com/QualiSystems/shell-networking-standard
       params:
         project_name :
         family_name : Switch
     - name: networking/router
-      description : Template for standard Router devices/virtual appliances
+      description : Networking standard for router type devices/virtual appliances
       repository : https://github.com/QualiSystems/shell-networking-standard
       params:
         project_name :
@@ -33,13 +33,13 @@ templates:
         project_name :
         family_name : PDU
     - name: Firewall
-      description : Template for Firewall devices
+      description : Template for PDU devices
       repository : https://github.com/QualiSystems/shell-firewall-standard
       params:
         project_name :
         family_name : Firewall
     - name: Compute
-      description : Template for Compute resources
+      description : Template for compute resources
       repository : https://github.com/QualiSystems/shell-compute-standard
       params:
         project_name :
@@ -47,5 +47,5 @@ templates:
     - name : tosca
       params:
         project_name :
-      description : Template based on the TOSCA standard (experimental)
+      description : Shell template based on TOSCA standard (experimental)
       repository : https://github.com/QualiSystems/shellfoundry-tosca-template
