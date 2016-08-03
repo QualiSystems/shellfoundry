@@ -1,4 +1,5 @@
 import click
+import textwrap
 
 from shellfoundry.utilities.template_retriever import TemplateRetriever
 
@@ -9,6 +10,13 @@ class ListCommandExecutor(object):
 
     def list(self):
         templates = self.template_retriever.get_templates()
-        click.echo(u'Supported templates are:\r\n{0}'.format('\r\n'.join(
-            [template.name + ': ' + template.description for template in templates.values()]
-        )))
+        prefixlen = 23
+        output = u'\r\nSupported templates are:\r\n'
+        for template in templates.values():
+            prefix = (" " + template.name + ": ").ljust(prefixlen)
+            wrapper = textwrap.TextWrapper(initial_indent=prefix, width=77,
+                                           subsequent_indent=' ' * prefixlen)
+            message = template.description
+            output += '\r\n' + wrapper.fill(message)
+
+        click.echo(output)
