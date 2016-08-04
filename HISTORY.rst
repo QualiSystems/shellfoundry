@@ -2,6 +2,12 @@
 History
 =======
 
+
+0.0.31 (2016-08-04)
+------------------
+
+* git prerequisite was removed. shellfoundry works without git being preinstalled
+
 0.0.28 (2016-07-07)
 ------------------
 
