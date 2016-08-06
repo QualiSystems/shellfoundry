@@ -8,6 +8,7 @@ TEMPLATES_YML = 'https://raw.github.com/QualiSystems/shellfoundry/master/templat
 
 
 class TemplateRetriever(object):
+
     def get_templates(self):
         """
         :return: Dictionary of shellfoundry.ShellTemplate
