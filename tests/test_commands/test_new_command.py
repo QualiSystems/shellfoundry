@@ -1,18 +1,20 @@
 import os
 
 from click import BadParameter
+from click import UsageError
 from mock import Mock
 from pyfakefs import fake_filesystem_unittest
+from quali.testing.extensions import mocking_extensions
+from requests.exceptions import SSLError
 from shellfoundry.commands.new_command import NewCommandExecutor
 from shellfoundry.models.shell_template import ShellTemplate
 from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplateCompiler
-from tests.test_helpers import mocking_extensions
 
 
 class TestMainCli(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
-        Mock.smarter_assert_called_once_with = mocking_extensions.smarter_assert_called_once_with
+        mocking_extensions.bootstrap()
 
     def test_not_existing_template_exception_thrown(self):
         # Arrange
@@ -22,6 +24,23 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
 
         # Act + Assert
         self.assertRaises(Exception, command_executor.new, 'nut_shell', 'NOT_EXISTING_TEMPLATE')
+
+    def test_shows_informative_message_when_offline(self):
+        # Arrange
+        template_retriever = Mock()
+        template_retriever.get_templates.side_effect = \
+            SSLError()
+
+        repo_downloader = Mock()
+        repo_downloader.download_template.return_value = 'repo_path'
+
+        template_compiler = Mock()
+
+        command_executor = NewCommandExecutor(template_retriever=template_retriever,
+                                              repository_downloader=repo_downloader,
+                                              template_compiler=template_compiler)
+        # Act
+        self.assertRaisesRegexp(UsageError, "offline",  command_executor.new, 'nut_shell', 'base')
 
     def test_not_existing_local_template_dir_thrown(self):
         # Arrange
