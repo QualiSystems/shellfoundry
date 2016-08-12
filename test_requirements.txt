@@ -1,3 +1,4 @@
 mock
 pyfakefs
 httpretty
+quali-testing-helpers
