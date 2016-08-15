@@ -6,6 +6,9 @@ import zipfile
 import click
 import mimetypes
 
+import re
+from datetime import datetime
+
 from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
 
@@ -38,6 +41,11 @@ class PackageBuilder(object):
     @staticmethod
     def _save_to_utf_file(content, dest_path):
         with codecs.open(dest_path, "w", "utf-8-sig") as f:
+            f.write(content)
+
+    @staticmethod
+    def _save_to_file(content, dest_path):
+        with codecs.open(dest_path, "w") as f:
             f.write(content)
 
     @staticmethod
@@ -88,8 +96,34 @@ class PackageBuilder(object):
     @staticmethod
     def _create_driver(package_path, path, driver_name):
         dir_to_zip = os.path.join(path, 'src')
+        drivermetadata_path = os.path.join(dir_to_zip, 'drivermetadata.xml')
+        version = PackageBuilder._update_driver_version(drivermetadata_path)
         zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', driver_name)
         PackageBuilder._make_archive(zip_file_path, 'zip', dir_to_zip)
+        if version:  # version was replaced
+            PackageBuilder._update_driver_version(drivermetadata_path, version)
+
+    @staticmethod
+    def _update_driver_version(metadata_path, version=''):
+        metadata = PackageBuilder._get_file_content_as_string(metadata_path)
+        if re.search('Version=\"\d+\.\d+\.\*\"', metadata):
+            m = re.search('Version=\"(\d+\.\d+\.\*)?\"', metadata)
+            ver = m.group(1)
+
+            days = (datetime.utcnow() - datetime(2000, 1, 1)).days
+            now = datetime.now()
+            seconds_since_midnight = (now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds()
+
+            revision = str(days) + '.' + str(int(seconds_since_midnight / 2))
+            newver = re.sub('\*', revision, ver)
+            metadata = re.sub('Version=\"(\d+\.\d+\.\*)?\"', 'Version=\"' + newver + '\"', metadata)
+            PackageBuilder._save_to_file(metadata, metadata_path)
+            return ver
+
+        elif version:
+            metadata = re.sub('Version=\"(\d+\.\d+\.\d+\.\d+)?\"', 'Version=\"' + version + '\"', metadata)
+            PackageBuilder._save_to_file(metadata, metadata_path)
+            return None
 
     @staticmethod
     def _zip_package(package_path, path, package_name):
