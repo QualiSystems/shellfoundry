@@ -1,5 +1,4 @@
 import zipfile
-import re
 
 from mock import patch, MagicMock
 from pyfakefs import fake_filesystem_unittest
@@ -74,7 +73,8 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder = PackageBuilder()
 
         # Act
-        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
@@ -95,7 +95,8 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder = PackageBuilder()
 
         # Act
-        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         assertFileDoesNotExist(self, 'aws/amazon_web_services/package/DataModel/iamimage.blah')
@@ -110,7 +111,8 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder = PackageBuilder()
 
         # Act
-        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         assertFileExists(self, 'aws/amazon_web_services/dist/aws.zip')
@@ -154,22 +156,23 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder = PackageBuilder()
 
         # Act
-        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
         assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip')
         TestPackageBuilder.unzip('aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip',
-                                 'aws/amazon_web_services/Resource Drivers - Python')
-        assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/drivermetadata.xml')
+                                 'aws/driver')
+        assertFileExists(self, 'aws/driver/drivermetadata.xml')
 
         # packed file should have a dynamic version
-        self.asset_driver_version('aws/amazon_web_services/package/Resource Drivers - Python/drivermetadata.xml',
-                                   '1.2.*')
+        self.asset_driver_version('aws/driver/drivermetadata.xml',
+                                   '1.2.*', True)
 
         # original file should still have the original value
         self.asset_driver_version('work/aws/amazon_web_services/src/drivermetadata.xml',
-                                  '1.2.*')
+                                  '1.2.*', False)
 
 
     @staticmethod
@@ -195,4 +198,4 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         else:
             pattern = pattern.replace('\.*', '\.\*')
 
-        self.assertRegex(text, pattern, msg="Version was different than expected")
+        self.assertRegexpMatches(text, pattern, msg="Version was different than expected")
