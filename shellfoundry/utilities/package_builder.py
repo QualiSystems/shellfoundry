@@ -105,6 +105,9 @@ class PackageBuilder(object):
 
     @staticmethod
     def _update_driver_version(metadata_path, version=''):
+        if not os.path.isfile(metadata_path):
+            return None
+
         metadata = PackageBuilder._get_file_content_as_string(metadata_path)
         if re.search('Version=\"\d+\.\d+\.\*\"', metadata):
             m = re.search('Version=\"(\d+\.\d+\.\*)?\"', metadata)
