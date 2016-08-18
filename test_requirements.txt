@@ -1,2 +1,4 @@
 mock
 pyfakefs>=2.8
+httpretty
+quali-testing-helpers
