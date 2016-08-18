@@ -7,7 +7,7 @@ and initializes a shell skeleton based on the *base* template. The structure of 
 [https://github.com/QualiSystems/shellfoundry-template](https://github.com/QualiSystems/shellfoundry-template)
 
 ```bash
-$ pip install new nutshell
+$ shellfoundry new nutshell
 ```
 
 ## Creating new shell from custom template
@@ -16,7 +16,7 @@ $ pip install new nutshell
 a shell that is based on a specific template:
 
 ```bash
-$ pip install new nutshell --template_name=base
+$ shellfoundry new nutshell --template networking/router
 ```
 
 ## Listing available templates
