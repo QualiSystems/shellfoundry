@@ -31,7 +31,9 @@ def list():
 
 @cli.command()
 @click.argument(u'name')
-@click.option(u'--template', default=u'resource', help='Template to be used')
+@click.option(u'--template', default=u'resource',
+              help="Specify a Shell template. Use 'shellfoundry list' to see the list of available templates. "
+                   "You can use 'local://<foler>' to specify a locally saved template")
 def new(name, template):
     """
     Create a new shell based on a template.\r\n
