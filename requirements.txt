@@ -3,3 +3,4 @@ cookiecutter
 qpm
 click
 pyyaml
+giturlparse.py
