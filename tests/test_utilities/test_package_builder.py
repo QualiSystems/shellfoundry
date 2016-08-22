@@ -26,7 +26,8 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             # Act
             instance = MockClass.return_value
             instance.merge_shell_model.return_value = 'Test'
-            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+            with patch('click.echo'):
+                builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
             instance.merge_shell_model.assert_called()
 
         # Assert
@@ -49,7 +50,8 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             # Act
             instance = MockClass.return_value
             instance.merge_shell_model.return_value = 'Test'
-            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+            with patch('click.echo'):
+                builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
             instance.merge_shell_model.assert_not_called()
 
         # Assert
@@ -132,7 +134,8 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder = PackageBuilder()
 
         # Act
-        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         assertFileExists(self, 'aws/amazon_web_services/dist/aws.zip')
@@ -171,7 +174,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
                                    '1.2.*', True)
 
         # original file should still have the original value
-        self.asset_driver_version('work/aws/amazon_web_services/src/drivermetadata.xml',
+        self.asset_driver_version('aws/amazon_web_services/src/drivermetadata.xml',
                                   '1.2.*', False)
 
 
