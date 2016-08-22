@@ -73,7 +73,8 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder = PackageBuilder()
 
         # Act
-        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
@@ -94,7 +95,8 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder = PackageBuilder()
 
         # Act
-        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         assertFileDoesNotExist(self, 'aws/amazon_web_services/package/DataModel/iamimage.blah')
@@ -109,7 +111,8 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         builder = PackageBuilder()
 
         # Act
-        builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         assertFileExists(self, 'aws/amazon_web_services/dist/aws.zip')
@@ -138,6 +141,40 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
         assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip')
 
+    def test_it_updates_the_driver_version_dynamically(self):
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/datamodel.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/shellconfig.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/src/driver.py', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/src/drivermetadata.xml',
+                           contents='<Driver Description="CloudShell shell" '
+                                    'MainClass="driver.ImplementingDiscoveryDriver" '
+                                    'Name="ImplementingDiscoveryDriver" Version="1.2.*">'
+                                    '</Driver>')
+
+        os.chdir('work')
+        builder = PackageBuilder()
+
+        # Act
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+
+        # Assert
+        TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
+        assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip')
+        TestPackageBuilder.unzip('aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip',
+                                 'aws/driver')
+        assertFileExists(self, 'aws/driver/drivermetadata.xml')
+
+        # packed file should have a dynamic version
+        self.asset_driver_version('aws/driver/drivermetadata.xml',
+                                   '1.2.*', True)
+
+        # original file should still have the original value
+        self.asset_driver_version('work/aws/amazon_web_services/src/drivermetadata.xml',
+                                  '1.2.*', False)
+
+
     @staticmethod
     def unzip(source_filename, dest_dir):
         if not os.path.exists(dest_dir):
@@ -145,14 +182,20 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         with zipfile.ZipFile(source_filename) as zf:
             zf.extractall(dest_dir)
 
-
     def assert_utf_file_content(self, path, content):
         with open(path, 'r') as f:
             text = f.read()
 
         self.assertEqual(text.decode("utf-8-sig"), content, msg="File was different than expected content")
 
+    def asset_driver_version(self, path, base_version, check_dynamic):
+        with open(path, 'r') as f:
+            text = f.read()
 
+        pattern = 'Version=\"' + str(base_version).replace('.', '\.') + '\"'
+        if check_dynamic:
+            pattern = pattern.replace('\.*', '\.\d+\.\d+')
+        else:
+            pattern = pattern.replace('\.*', '\.\*')
 
-
-
+        self.assertRegexpMatches(text, pattern, msg="Version was different than expected")
