@@ -1,4 +1,4 @@
 mock
-pyfakefs
+pyfakefs==2.8
 httpretty
 quali-testing-helpers
