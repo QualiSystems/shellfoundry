@@ -27,14 +27,13 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             instance = MockClass.return_value
             instance.merge_shell_model.return_value = 'Test'
             builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
-            instance.merge_shell_model.assert_called()
+            self.assertTrue(instance.merge_shell_model.called, 'merge_shell_model should be called')
 
         # Assert
         TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
         assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
 
         self.assert_utf_file_content('aws/amazon_web_services/package/DataModel/datamodel.xml', 'Test')
-
 
     def test_it_does_not_merge_datamodel_if_shell_config_does_not_exist(self):
         self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
