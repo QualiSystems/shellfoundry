@@ -25,7 +25,9 @@ class ShellPackageBuilder(object):
         self._create_driver('', package_path)
         zip_path = self._zip_package(package_path, '', 'shell-package')
 
-        shutil.rmtree(path=package_path, ignore_errors=True)
+        if os.path.exists(package_path):
+            shutil.rmtree(path=package_path, ignore_errors=True)
+
         click.echo(u'Shell package was successfully created:')
         click.echo(zip_path)
 
