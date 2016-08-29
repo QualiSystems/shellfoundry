@@ -25,11 +25,18 @@ class ShellPackageBuilder(object):
         self._create_driver('', package_path)
         zip_path = self._zip_package(package_path, '', 'shell-package')
 
-        if os.path.exists(package_path):
-            shutil.rmtree(path=package_path, ignore_errors=True)
+        self._safe_delete_directory(package_path)
 
         click.echo(u'Shell package was successfully created:')
         click.echo(zip_path)
+
+    @staticmethod
+    def _safe_delete_directory(package_path):
+        try:
+            if os.path.exists(package_path):
+                shutil.rmtree(path=package_path, ignore_errors=True)
+        except IOError:
+            pass
 
     def _copy_shell_icon(self, package_path, path):
         self._copy_file(
