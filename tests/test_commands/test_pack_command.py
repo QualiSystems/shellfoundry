@@ -70,16 +70,16 @@ shell:
     @patch('shellfoundry.utilities.python_dependencies_packager.pip')
     def test_tosca_based_shell_packed(self, pip_mock, echo_mock):
         # Arrange
-        self.fs.CreateFile('nut-shell//TOSCA-Metadata//TOSCA.meta',
+        self.fs.CreateFile('nut-shell/TOSCA-Metadata/TOSCA.meta',
                            contents='TOSCA-Meta-File-Version: 1.0 '
                                     'CSAR-Version: 1.1 '
                                     'Created-By: Anonymous'
                                     'Entry-Definitions: shell-definition.yml')
 
-        self.fs.CreateFile('nut-shell//shell-definition.yml',
+        self.fs.CreateFile('nut-shell/shell-definition.yml',
                            contents='SOME SHELL DEFINITION')
 
-        self.fs.CreateFile('nut-shell//shell-icon.png',
+        self.fs.CreateFile('nut-shell/shell-icon.png',
                            contents='IMAGE')
 
         os.chdir('nut-shell')
