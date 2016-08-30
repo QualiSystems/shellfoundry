@@ -21,7 +21,7 @@ class PackCommandExecutor(object):
         current_path = os.getcwd()
 
         if self.shell_package_builder.is_tosca_based_shell(current_path):
-            self.shell_package_builder.pack()
+            self.shell_package_builder.pack(current_path)
         else:
             self._pack_old_school_shell(current_path)
 

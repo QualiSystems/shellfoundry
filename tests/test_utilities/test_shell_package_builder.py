@@ -14,30 +14,41 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
     def test_tosca_based_shell_packed(self):
         # Arrange
         self.fs.CreateFile('nut-shell/TOSCA-Metadata/TOSCA.meta',
-                           contents='TOSCA-Meta-File-Version: 1.0 '
-                                    'CSAR-Version: 1.1 '
-                                    'Created-By: Anonymous'
+                           contents='TOSCA-Meta-File-Version: 1.0 \n'
+                                    'CSAR-Version: 1.1 \n'
+                                    'Created-By: Anonymous\n'
                                     'Entry-Definitions: shell-definition.yml')
 
         self.fs.CreateFile('nut-shell/shell-definition.yml',
-                           contents='SOME SHELL DEFINITION')
+                           contents='tosca_definitions_version: tosca_simple_yaml_1_0\n'
+                                    'metadata:\n'
+                                    '  template_name: NutShell\n'
+                                    '  template_author: Anonymous\n'
+                                    '  template_version: 1.0.0\n'
+                                    'node_types:\n'
+                                    '  vendor.switch.NXOS:\n'
+                                    '    derived_from: cloudshell.nodes.Switch\n'
+                                    '    artifacts:\n'
+                                    '      icon:\n'
+                                    '        file: nxos.png\n'
+                                    '        type: tosca.artifacts.File\n')
 
-        self.fs.CreateFile('nut-shell/shell-icon.png',
+        self.fs.CreateFile('nut-shell/nxos.png',
                            contents='IMAGE')
 
         os.chdir('nut-shell')
 
-        command_executor = ShellPackageBuilder()
+        shell_package_builder = ShellPackageBuilder()
 
         # Act
-        command_executor.pack()
+        shell_package_builder.pack('nut-shell')
 
         # Assert
-        assertFileExists(self, 'dist/shell-package.zip')
-        TestPackageBuilder.unzip('dist/shell-package.zip', 'dist/package_content')
+        assertFileExists(self, 'dist/nut-shell.zip')
+        TestPackageBuilder.unzip('dist/nut-shell.zip', 'dist/package_content')
 
         assertFileExists(self, 'dist/package_content/TOSCA-Metadata/TOSCA.meta')
         assertFileExists(self, 'dist/package_content/shell-definition.yml')
-        assertFileExists(self, 'dist/package_content/shell-icon.png')
-        assertFileExists(self, 'dist/package_content/shell-driver.zip')
+        assertFileExists(self, 'dist/package_content/nxos.png')
+        assertFileExists(self, 'dist/package_content/NutShellDriver.zip')
 
