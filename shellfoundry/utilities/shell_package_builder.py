@@ -61,14 +61,6 @@ class ShellPackageBuilder(object):
                 tosca_meta[key] = val.strip()
         return tosca_meta
 
-    @staticmethod
-    def _safe_delete_directory(package_path):
-        try:
-            if os.path.exists(package_path):
-                shutil.rmtree(path=package_path, ignore_errors=True)
-        except IOError:
-            pass
-
     def _copy_shell_icon(self, package_path, path):
         self._copy_file(
             src_file_path=os.path.join(path, 'shell-icon.png'),
