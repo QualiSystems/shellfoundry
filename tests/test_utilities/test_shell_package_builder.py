@@ -31,7 +31,10 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
                                     '    artifacts:\n'
                                     '      icon:\n'
                                     '        file: nxos.png\n'
-                                    '        type: tosca.artifacts.File\n')
+                                    '        type: tosca.artifacts.File\n'
+                                    '      driver:\n'
+                                    '        file: NutShellDriver.zip\n'
+                                    '        type: tosca.artifacts.File')
 
         self.fs.CreateFile('nut-shell/nxos.png',
                            contents='IMAGE')
@@ -83,7 +86,6 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
 
         assertFileExists(self, 'dist/package_content/TOSCA-Metadata/TOSCA.meta')
         assertFileExists(self, 'dist/package_content/shell-definition.yml')
-        assertFileExists(self, 'dist/package_content/NutShellDriver.zip')
 
     def test_tosca_based_shell_packed_when_some_artifacts_missing_in_directory(self):
         # Arrange
@@ -112,7 +114,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
         shell_package_builder = ShellPackageBuilder()
 
         # Act
-        shell_package_builder.pack('nut-shell')
+        shell_package_builder.pack('//nut-shell')
 
         # Assert
         assertFileExists(self, 'dist/nut-shell.zip')
@@ -120,5 +122,4 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
 
         assertFileExists(self, 'dist/package_content/TOSCA-Metadata/TOSCA.meta')
         assertFileExists(self, 'dist/package_content/shell-definition.yml')
-        assertFileExists(self, 'dist/package_content/NutShellDriver.zip')
 

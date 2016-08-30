@@ -31,7 +31,7 @@ class ShellPackageBuilder(object):
         shell_definition_path = tosca_meta['Entry-Definitions']
 
         self._copy_shell_definition(package_path, '', shell_definition_path)
-        self._create_driver('', path, shell_name)
+        self._create_driver('', os.curdir, shell_name)
 
         with open(shell_definition_path) as shell_definition_file:
             shell_definition = yaml.load(shell_definition_file)
