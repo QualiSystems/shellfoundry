@@ -8,6 +8,7 @@ import mimetypes
 
 import re
 from datetime import datetime
+import xml.etree.ElementTree as etree
 
 from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
@@ -104,28 +105,33 @@ class PackageBuilder(object):
             PackageBuilder._update_driver_version(drivermetadata_path, version)
 
     @staticmethod
+    def _parse_xml(xml_string):
+        parser = etree.XMLParser(encoding='utf-8')
+        return etree.fromstring(xml_string, parser)
+
+    @staticmethod
     def _update_driver_version(metadata_path, version=''):
         if not os.path.isfile(metadata_path):
             return None
 
         metadata = PackageBuilder._get_file_content_as_string(metadata_path)
-        if re.search('Version=\"\d+\.\d+\.\*\"', metadata):
-            m = re.search('Version=\"(\d+\.\d+\.\*)?\"', metadata)
-            ver = m.group(1)
+        metadata_xml = PackageBuilder._parse_xml(metadata)
+        curver = metadata_xml.get("Version")
 
+        if re.match('\d+\.\d+\.\*', curver):
             days = (datetime.utcnow() - datetime(2000, 1, 1)).days
             now = datetime.now()
             seconds_since_midnight = (now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds()
 
             revision = str(days) + '.' + str(int(seconds_since_midnight / 2))
-            newver = re.sub('\*', revision, ver)
-            metadata = re.sub('Version=\"(\d+\.\d+\.\*)?\"', 'Version=\"' + newver + '\"', metadata)
-            PackageBuilder._save_to_file(metadata, metadata_path)
-            return ver
+            newver = curver.replace('*', revision)
+            metadata_xml.set('Version', newver)
+            PackageBuilder._save_to_file(etree.tostring(metadata_xml), metadata_path)
+            return curver
 
         elif version:
-            metadata = re.sub('Version=\"(\d+\.\d+\.\d+\.\d+)?\"', 'Version=\"' + version + '\"', metadata)
-            PackageBuilder._save_to_file(metadata, metadata_path)
+            metadata_xml.set('Version', version)
+            PackageBuilder._save_to_file(etree.tostring(metadata_xml), metadata_path)
             return None
 
     @staticmethod
