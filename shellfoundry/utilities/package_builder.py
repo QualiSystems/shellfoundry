@@ -9,6 +9,7 @@ import mimetypes
 import re
 from datetime import datetime
 import xml.etree.ElementTree as etree
+from version_utilities import VersionUtilities
 
 from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
@@ -59,7 +60,7 @@ class PackageBuilder(object):
             shell_model = PackageBuilder._get_file_content_as_string(shell_model_path)
             dm = PackageBuilder._get_file_content_as_string(src_dm_file_path)
             merger = ShellDataModelMerger()
-            merged_dm  = merger.merge_shell_model(dm, shell_model)
+            merged_dm = merger.merge_shell_model(dm, shell_model)
             if not os.path.exists(dest_dir_path):
                 os.makedirs(dest_dir_path)
             PackageBuilder._save_to_utf_file(merged_dm, os.path.join(dest_dir_path, 'datamodel.xml'))
@@ -119,12 +120,8 @@ class PackageBuilder(object):
         curver = metadata_xml.get("Version")
 
         if re.match('\d+\.\d+\.\*', curver):
-            days = (datetime.utcnow() - datetime(2000, 1, 1)).days
-            now = datetime.now()
-            seconds_since_midnight = (now - now.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds()
-
-            revision = str(days) + '.' + str(int(seconds_since_midnight / 2))
-            newver = curver.replace('*', revision)
+            build_and_revision = VersionUtilities.get_timestamped_build_and_revision()
+            newver = curver.replace('*', build_and_revision)
             metadata_xml.set('Version', newver)
             PackageBuilder._save_to_file(etree.tostring(metadata_xml), metadata_path)
             return curver
