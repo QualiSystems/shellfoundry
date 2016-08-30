@@ -66,21 +66,17 @@ shell:
         # Assert
         echo_mock.assert_any_call(u'shell.yml file is missing')
 
-    @patch('click.echo')
-    @patch('shellfoundry.utilities.python_dependencies_packager.pip')
-    def test_tosca_based_shell_packed(self, pip_mock, echo_mock):
+    @patch('shellfoundry.commands.pack_command.ShellPackageBuilder.pack')
+    def test_tosca_based_shell_packager_called_when_shell_contains_tosca_meta_file(self, pack_mock):
         # Arrange
         self.fs.CreateFile('nut-shell/TOSCA-Metadata/TOSCA.meta',
-                           contents='TOSCA-Meta-File-Version: 1.0 '
-                                    'CSAR-Version: 1.1 '
-                                    'Created-By: Anonymous'
+                           contents='TOSCA-Meta-File-Version: 1.0 \n'
+                                    'CSAR-Version: 1.1 \n'
+                                    'Created-By: Anonymous \n'
                                     'Entry-Definitions: shell-definition.yml')
 
         self.fs.CreateFile('nut-shell/shell-definition.yml',
                            contents='SOME SHELL DEFINITION')
-
-        self.fs.CreateFile('nut-shell/shell-icon.png',
-                           contents='IMAGE')
 
         os.chdir('nut-shell')
 
@@ -90,4 +86,4 @@ shell:
         command_executor.pack()
 
         # Assert
-        assertFileExists(self, 'dist/shell-package.zip')
+        self.assertTrue(pack_mock.called)
