@@ -5,6 +5,7 @@ import shutil
 import yaml
 
 from shellfoundry.utilities.archive_creator import ArchiveCreator
+from shellfoundry.utilities.temp_dir_context import TempDirContext
 
 
 class ShellPackageBuilder(object):
@@ -22,30 +23,28 @@ class ShellPackageBuilder(object):
         Creates TOSCA based Shell package
         :return:
         """
-        package_path = 'shell-package'
         head, shell_name = os.path.split(path)
+        with TempDirContext(shell_name) as package_path:
 
-        self._copy_tosca_meta(package_path, '')
-        tosca_meta = self._read_tosca_meta()
+            self._copy_tosca_meta(package_path, '')
+            tosca_meta = self._read_tosca_meta()
 
-        shell_definition_path = tosca_meta['Entry-Definitions']
+            shell_definition_path = tosca_meta['Entry-Definitions']
 
-        self._copy_shell_definition(package_path, '', shell_definition_path)
-        self._create_driver('', os.curdir, shell_name)
+            self._copy_shell_definition(package_path, '', shell_definition_path)
+            self._create_driver('', os.curdir, shell_name)
 
-        with open(shell_definition_path) as shell_definition_file:
-            shell_definition = yaml.load(shell_definition_file)
-            for node_type in shell_definition['node_types'].values():
-                if 'artifacts' not in node_type:
-                    continue
-                for artifact in node_type['artifacts'].values():
-                    self._copy_artifact(artifact['file'], package_path)
+            with open(shell_definition_path) as shell_definition_file:
+                shell_definition = yaml.load(shell_definition_file)
+                for node_type in shell_definition['node_types'].values():
+                    if 'artifacts' not in node_type:
+                        continue
+                    for artifact in node_type['artifacts'].values():
+                        self._copy_artifact(artifact['file'], package_path)
 
-        zip_path = self._zip_package(package_path, '', shell_name)
+            zip_path = self._zip_package(package_path, '', shell_name)
 
-        self._safe_delete_directory(package_path)
-
-        click.echo(u'Shell package was successfully created: ' + zip_path)
+            click.echo(u'Shell package was successfully created: ' + zip_path)
 
     def _copy_artifact(self, artifact_path, package_path):
         if os.path.exists(artifact_path):
