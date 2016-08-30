@@ -5,18 +5,11 @@ import shutil
 import yaml
 
 from shellfoundry.utilities.archive_creator import ArchiveCreator
+from shellfoundry.utilities.shell_package_helper import ShellPackageHelper
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 
 
 class ShellPackageBuilder(object):
-    def is_tosca_based_shell(self, path):
-        """
-        Determines whether a shell is a TOSCA based shell
-        :param path: Path to shell
-        :return:
-        :rtype: bool
-        """
-        return os.path.exists(self._get_tosca_meta_path(path))
 
     def pack(self, path):
         """
@@ -55,7 +48,7 @@ class ShellPackageBuilder(object):
 
     def _read_tosca_meta(self):
         tosca_meta = {}
-        with open(self._get_tosca_meta_path('')) as meta_file:
+        with open(ShellPackageHelper.get_tosca_meta_path('')) as meta_file:
             for meta_line in meta_file:
                 (key, val) = meta_line.split(':')
                 tosca_meta[key] = val.strip()
@@ -73,12 +66,8 @@ class ShellPackageBuilder(object):
 
     def _copy_tosca_meta(self, package_path, path):
         self._copy_file(
-            src_file_path=self._get_tosca_meta_path(path),
+            src_file_path=ShellPackageHelper.get_tosca_meta_path(path),
             dest_dir_path=os.path.join(package_path, 'TOSCA-Metadata'))
-
-    @staticmethod
-    def _get_tosca_meta_path(path):
-        return os.path.join(path, 'TOSCA-Metadata', 'TOSCA.meta')
 
     @staticmethod
     def _create_driver(path, package_path, shell_name):
