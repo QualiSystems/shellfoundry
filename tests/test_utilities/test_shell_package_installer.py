@@ -1,3 +1,4 @@
+from cloudshell.rest.exceptions import ShellNotFoundException
 from mock import patch, Mock
 from pyfakefs import fake_filesystem_unittest
 from shellfoundry.utilities.shell_package_installer import ShellPackageInstaller
@@ -21,10 +22,10 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         self.assertTrue(mock_client.update_shell.called)
 
     @patch('shellfoundry.utilities.shell_package_installer.CloudShellRestApiClient')
-    def test_install_shell_adds_a_new_shell_when_update_fails(self, rest_client_mock):
+    def test_install_shell_adds_a_new_shell_when_shell_does_not_exist(self, rest_client_mock):
         # Arrange
         mock_client = Mock()
-        mock_client.update_shell = Mock(side_effect=Exception())
+        mock_client.update_shell = Mock(side_effect=ShellNotFoundException())
         rest_client_mock.return_value = mock_client
         installer = ShellPackageInstaller()
 
@@ -34,3 +35,22 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         # Assert
         self.assertTrue(mock_client.update_shell.called)
         self.assertTrue(mock_client.add_shell.called)
+
+    @patch('shellfoundry.utilities.shell_package_installer.CloudShellRestApiClient')
+    def test_shell_add_should_not_be_called_when_update_fails(self, rest_client_mock):
+        # Arrange
+        mock_client = Mock()
+        mock_client.update_shell = Mock(side_effect=Exception())
+        rest_client_mock.return_value = mock_client
+        installer = ShellPackageInstaller()
+
+        # noinspection PyBroadException
+        try:
+            # Act
+            installer.install('work/nut-shell')
+        except Exception:
+            pass
+
+        # Assert
+        self.assertTrue(mock_client.update_shell.called)
+        self.assertFalse(mock_client.add_shell.called)

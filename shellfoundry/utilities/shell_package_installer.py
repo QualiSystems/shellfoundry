@@ -1,5 +1,6 @@
 import os
 import click
+from cloudshell.rest.exceptions import ShellNotFoundException
 
 from shellfoundry.utilities.config_reader import CloudShellConfigReader
 from shellfoundry.utilities.shell_package_helper import ShellPackageHelper
@@ -27,7 +28,6 @@ class ShellPackageInstaller(object):
         try:
             click.echo('Updating shell {0}'.format(package_full_path))
             client.update_shell(package_full_path)
-        except Exception as exception:
-            click.echo('Update failed with an error {0}'.format(exception.message))
-            click.echo('Adding shell {0}'.format(package_full_path))
+        except ShellNotFoundException:
+            click.echo('Shell not found, adding shell {0}'.format(package_full_path))
             client.add_shell(package_full_path)
