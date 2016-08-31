@@ -3,6 +3,16 @@ import os
 
 class ShellPackageHelper(object):
     @staticmethod
+    def get_shell_name(path):
+        """
+        Returns shell name
+        :param path:
+        :return:
+        """
+        head, shell_name = os.path.split(path)
+        return shell_name.title().replace('-', '')
+
+    @staticmethod
     def is_tosca_based_shell(path):
         """
         Determines whether a shell is a TOSCA based shell

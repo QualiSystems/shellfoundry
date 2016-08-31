@@ -16,7 +16,7 @@ class ShellPackageBuilder(object):
         Creates TOSCA based Shell package
         :return:
         """
-        head, shell_name = os.path.split(path)
+        shell_name = ShellPackageHelper.get_shell_name(path)
         with TempDirContext(shell_name) as package_path:
 
             self._copy_tosca_meta(package_path, '')
@@ -72,7 +72,7 @@ class ShellPackageBuilder(object):
     @staticmethod
     def _create_driver(path, package_path, shell_name):
         dir_to_zip = os.path.join(path, 'src')
-        driver_name = shell_name.title().replace('-', '') + 'Driver'
+        driver_name = shell_name + 'Driver'
         zip_file_path = os.path.join(package_path, driver_name)
         ArchiveCreator.make_archive(zip_file_path, 'zip', dir_to_zip)
 

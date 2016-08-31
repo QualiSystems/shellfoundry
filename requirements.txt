@@ -4,3 +4,4 @@ qpm
 click
 pyyaml
 giturlparse.py
+cloudshell-automation-api>=7.0.0.0,<7.3.0.0
