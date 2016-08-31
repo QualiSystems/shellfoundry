@@ -26,7 +26,7 @@ setup(
     },
     include_package_data=True,
     install_requires=get_file_content('requirements.txt'),
-    license="Apache 2.0",
+    license="Apache Software License 2.0",
     zip_safe=False,
     keywords='shellfoundry sandbox cloud virtualization vcenter cmp cloudshell quali command-line cli',
     classifiers=[

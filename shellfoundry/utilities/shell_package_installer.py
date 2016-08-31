@@ -1,9 +1,9 @@
 import os
 import click
 
-from shellfoundry.utilities.api import CloudShellRestApiClient
 from shellfoundry.utilities.config_reader import CloudShellConfigReader
 from shellfoundry.utilities.shell_package_helper import ShellPackageHelper
+from cloudshell.rest.api import CloudShellRestApiClient
 
 
 class ShellPackageInstaller(object):
