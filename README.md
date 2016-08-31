@@ -10,7 +10,7 @@ build an installable shell package and install a shell into your CloudShell.
 # Getting started
 
 ```bash
-$ pip install shellfoundry
+$ python -m pip install shellfoundry
 
 $ shellfoundry new nutshell
 ```
