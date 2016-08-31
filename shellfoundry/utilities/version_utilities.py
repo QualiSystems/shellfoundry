@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-class VersionUtilities(object):
+class VersionUtilities:
     @staticmethod
     def get_timestamped_build_and_revision():
         days = (datetime.utcnow() - datetime(2000, 1, 1)).days

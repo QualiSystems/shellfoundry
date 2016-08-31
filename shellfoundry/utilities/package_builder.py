@@ -6,7 +6,7 @@ import mimetypes
 
 import re
 import xml.etree.ElementTree as etree
-from version_utilities import VersionUtilities
+from shellfoundry.utilities.version_utilities import VersionUtilities
 from shellfoundry.utilities.archive_creator import ArchiveCreator
 from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
