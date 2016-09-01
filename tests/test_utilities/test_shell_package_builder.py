@@ -49,8 +49,8 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             shell_package_builder.pack('nut-shell')
 
         # Assert
-        assertFileExists(self, 'dist/nut-shell.zip')
-        TestPackageBuilder.unzip('dist/nut-shell.zip', 'dist/package_content')
+        assertFileExists(self, 'dist/NutShell.zip')
+        TestPackageBuilder.unzip('dist/NutShell.zip', 'dist/package_content')
 
         assertFileExists(self, 'dist/package_content/TOSCA-Metadata/TOSCA.meta')
         assertFileExists(self, 'dist/package_content/shell-definition.yml')
@@ -84,8 +84,8 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             shell_package_builder.pack('nut-shell')
 
         # Assert
-        assertFileExists(self, 'dist/nut-shell.zip')
-        TestPackageBuilder.unzip('dist/nut-shell.zip', 'dist/package_content')
+        assertFileExists(self, 'dist/NutShell.zip')
+        TestPackageBuilder.unzip('dist/NutShell.zip', 'dist/package_content')
 
         assertFileExists(self, 'dist/package_content/TOSCA-Metadata/TOSCA.meta')
         assertFileExists(self, 'dist/package_content/shell-definition.yml')
@@ -121,8 +121,8 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             shell_package_builder.pack('//nut-shell')
 
         # Assert
-        assertFileExists(self, 'dist/nut-shell.zip')
-        TestPackageBuilder.unzip('dist/nut-shell.zip', 'dist/package_content')
+        assertFileExists(self, 'dist/NutShell.zip')
+        TestPackageBuilder.unzip('dist/NutShell.zip', 'dist/package_content')
 
         assertFileExists(self, 'dist/package_content/TOSCA-Metadata/TOSCA.meta')
         assertFileExists(self, 'dist/package_content/shell-definition.yml')

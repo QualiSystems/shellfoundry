@@ -1,6 +1,5 @@
 from mock import patch
 from pyfakefs import fake_filesystem_unittest
-from shellfoundry.utilities.python_dependencies_packager import PythonDependenciesPackager
 from tests.asserts import *
 from shellfoundry.commands.pack_command import PackCommandExecutor
 

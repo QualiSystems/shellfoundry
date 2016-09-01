@@ -16,9 +16,9 @@ class ListCommandExecutor(object):
             raise click.UsageError('Could not retrieve the templates list. Are you offline?')
 
         prefixlen = 23
-        output = u'\r\nSupported templates are:\r\n'
+        output = u'\r\nTemplates:\r\n'
         for template in templates.values():
-            prefix = (" " + template.name + ": ").ljust(prefixlen)
+            prefix = ("  " + template.name + " ").ljust(prefixlen)
             wrapper = textwrap.TextWrapper(initial_indent=prefix, width=77,
                                            subsequent_indent=' ' * prefixlen)
             message = template.description

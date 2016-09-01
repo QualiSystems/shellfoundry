@@ -36,6 +36,8 @@ class NewCommandExecutor(object):
         else:
             self._import_online_template(name, running_on_same_folder, template)
 
+        click.echo('Created shell {0} based on template {1}'.format(name, template))
+
     def _import_online_template(self, name, running_on_same_folder, template):
         # Create a temp folder for the operation to make sure we delete it after
         with TempDirContext(name) as temp_dir:

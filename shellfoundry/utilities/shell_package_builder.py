@@ -5,29 +5,23 @@ import shutil
 import yaml
 
 from shellfoundry.utilities.archive_creator import ArchiveCreator
+from shellfoundry.utilities.shell_package import ShellPackage
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 
 
 class ShellPackageBuilder(object):
-    def is_tosca_based_shell(self, path):
-        """
-        Determines whether a shell is a TOSCA based shell
-        :param path: Path to shell
-        :return:
-        :rtype: bool
-        """
-        return os.path.exists(self._get_tosca_meta_path(path))
 
     def pack(self, path):
         """
         Creates TOSCA based Shell package
         :return:
         """
-        head, shell_name = os.path.split(path)
+        shell_package = ShellPackage(path)
+        shell_name = shell_package.get_shell_name()
         with TempDirContext(shell_name) as package_path:
 
             self._copy_tosca_meta(package_path, '')
-            tosca_meta = self._read_tosca_meta()
+            tosca_meta = self._read_tosca_meta(path)
 
             shell_definition_path = tosca_meta['Entry-Definitions']
 
@@ -53,9 +47,10 @@ class ShellPackageBuilder(object):
         else:
             click.echo('Missing artifact not added to shell package: ' + artifact_path)
 
-    def _read_tosca_meta(self):
+    def _read_tosca_meta(self, path):
         tosca_meta = {}
-        with open(self._get_tosca_meta_path('')) as meta_file:
+        shell_package = ShellPackage(path)
+        with open(shell_package.get_metadata_path()) as meta_file:
             for meta_line in meta_file:
                 (key, val) = meta_line.split(':')
                 tosca_meta[key] = val.strip()
@@ -72,18 +67,15 @@ class ShellPackageBuilder(object):
             dest_dir_path=package_path)
 
     def _copy_tosca_meta(self, package_path, path):
+        shell_package = ShellPackage(path)
         self._copy_file(
-            src_file_path=self._get_tosca_meta_path(path),
+            src_file_path=shell_package.get_metadata_path(),
             dest_dir_path=os.path.join(package_path, 'TOSCA-Metadata'))
-
-    @staticmethod
-    def _get_tosca_meta_path(path):
-        return os.path.join(path, 'TOSCA-Metadata', 'TOSCA.meta')
 
     @staticmethod
     def _create_driver(path, package_path, shell_name):
         dir_to_zip = os.path.join(path, 'src')
-        driver_name = shell_name.title().replace('-', '') + 'Driver'
+        driver_name = shell_name + 'Driver'
         zip_file_path = os.path.join(package_path, driver_name)
         ArchiveCreator.make_archive(zip_file_path, 'zip', dir_to_zip)
 
