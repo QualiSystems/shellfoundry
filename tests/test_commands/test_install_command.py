@@ -39,6 +39,25 @@ install:
         mock_installer.install.assert_called_once_with('nut_shell', InstallConfig('localhost', 9000, 'YOUR_USERNAME',
                                                                                   'YOUR_PASSWORD', 'Global'))
 
+    def test_tosca_based_shell_installed_when_tosca_meta_file_exists(self):
+        # Arrange
+        self.fs.CreateFile('nut-shell/TOSCA-Metadata/TOSCA.meta',
+                           contents='TOSCA-Meta-File-Version: 1.0 \n'
+                                    'CSAR-Version: 1.1 \n'
+                                    'Created-By: Anonymous \n'
+                                    'Entry-Definitions: shell-definition.yml')
+
+        os.chdir('nut-shell')
+
+        mock_shell_package_installer = MagicMock()
+        command_executor = InstallCommandExecutor(shell_package_installer=mock_shell_package_installer)
+
+        # Act
+        command_executor.install()
+
+        # Assert
+        self.assertTrue(mock_shell_package_installer.install.called)
+
     @patch('click.echo')
     def test_proper_error_message_displayed_when_login_failed(self, echo_mock):
         # Arrange

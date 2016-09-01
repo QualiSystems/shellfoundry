@@ -4,7 +4,8 @@ from shellfoundry.utilities.template_retriever import TemplateRetriever
 
 
 class TestTemplateRetriever(unittest.TestCase):
-    def mock_get_templates_from_github(self):
+    @staticmethod
+    def mock_get_templates_from_github():
         return """
         templates:
           - name : switch
@@ -36,3 +37,15 @@ class TestTemplateRetriever(unittest.TestCase):
         self.assertEqual(templates['switch'].name, 'switch')
         self.assertEqual(templates['switch'].description, 'Basic switch template')
         self.assertEqual(templates['switch'].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
+
+    @mock.patch('shellfoundry.utilities.template_retriever.TemplateRetriever._get_templates_from_github',
+                lambda x: "")
+    def test_empty_templates_should_return_when_not_templates_found_on_github(self):
+        # Arrange
+        template_retriever = TemplateRetriever()
+
+        # Act
+        templates = template_retriever.get_templates()
+
+        # Assert
+        self.assertEqual(templates, [])
