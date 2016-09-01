@@ -1,5 +1,6 @@
 import os
 
+from mock import patch
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.utilities.shell_package_builder import ShellPackageBuilder
@@ -44,7 +45,8 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
         shell_package_builder = ShellPackageBuilder()
 
         # Act
-        shell_package_builder.pack('/nut-shell')
+        with patch('click.echo'):
+            shell_package_builder.pack('/nut-shell')
 
         # Assert
         assertFileExists(self, 'dist/NutShell.zip')
@@ -78,7 +80,8 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
         shell_package_builder = ShellPackageBuilder()
 
         # Act
-        shell_package_builder.pack('/nut-shell')
+        with patch('click.echo'):
+            shell_package_builder.pack('/nut-shell')
 
         # Assert
         assertFileExists(self, 'dist/NutShell.zip')
@@ -114,7 +117,8 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
         shell_package_builder = ShellPackageBuilder()
 
         # Act
-        shell_package_builder.pack('//nut-shell')
+        with patch('click.echo'):
+            shell_package_builder.pack('/nut-shell')
 
         # Assert
         assertFileExists(self, 'dist/NutShell.zip')

@@ -16,7 +16,8 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         installer = ShellPackageInstaller()
 
         # Act
-        installer.install('work/nut-shell')
+        with patch('click.echo'):
+            installer.install('work/nut-shell')
 
         # Assert
         self.assertTrue(mock_client.update_shell.called)
@@ -30,7 +31,8 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         installer = ShellPackageInstaller()
 
         # Act
-        installer.install('work/nut-shell')
+        with patch('click.echo'):
+            installer.install('work/nut-shell')
 
         # Assert
         self.assertTrue(mock_client.update_shell.called)
@@ -47,7 +49,8 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         # noinspection PyBroadException
         try:
             # Act
-            installer.install('work/nut-shell')
+            with patch('click.echo'):
+                installer.install('work/nut-shell')
         except Exception:
             pass
 

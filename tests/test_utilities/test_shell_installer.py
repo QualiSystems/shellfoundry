@@ -25,7 +25,8 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
         shell_installer = ShellInstaller()
 
         # Act
-        shell_installer.install('nut_shell', install_config)
+        with patch('click.echo'):
+            shell_installer.install('nut_shell', install_config)
 
         shell_full_path = self.fs.path_separator + 'work' + self.fs.path_separator + 'dist' + self.fs.path_separator + 'nut_shell.zip'
 
