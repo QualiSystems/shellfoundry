@@ -61,6 +61,7 @@ def install():
 @cli.command()
 def dist():
     """
-    Downloads the driver's dependencies from PyPI to dist/offline_requirements
+    Creates a deployable Shell which can be distributed to a production environment
     """
+    PackCommandExecutor().pack()
     DistCommandExecutor().dist()
