@@ -1,6 +1,7 @@
 import click
 import pkg_resources
 
+from shellfoundry.commands.dist_command import DistCommandExecutor
 from shellfoundry.commands.install_command import InstallCommandExecutor
 from shellfoundry.commands.list_command import ListCommandExecutor
 from shellfoundry.commands.new_command import NewCommandExecutor
@@ -56,3 +57,11 @@ def install():
     """
     PackCommandExecutor().pack()
     InstallCommandExecutor().install()
+
+
+@cli.command()
+def dist():
+    """
+    Downloads Python driver's dependencies from PyPI and saves them under dist/offline_requirements
+    """
+    DistCommandExecutor().dist()
