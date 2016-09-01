@@ -6,7 +6,7 @@ from shellfoundry.exceptions import WrongShellYmlException, ShellYmlMissingExcep
 from shellfoundry.utilities.package_builder import PackageBuilder
 from shellfoundry.utilities.shell_config_reader import ShellConfigReader
 from shellfoundry.utilities.shell_package_builder import ShellPackageBuilder
-from shellfoundry.utilities.shell_package_helper import ShellPackageHelper
+from shellfoundry.utilities.shell_package import ShellPackage
 
 
 class PackCommandExecutor(object):
@@ -20,7 +20,8 @@ class PackCommandExecutor(object):
 
         current_path = os.getcwd()
 
-        if ShellPackageHelper.is_tosca_based_shell(current_path):
+        shell_package = ShellPackage(current_path)
+        if shell_package.is_tosca():
             self.shell_package_builder.pack(current_path)
         else:
             self._pack_old_school_shell(current_path)

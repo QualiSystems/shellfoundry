@@ -4,7 +4,7 @@ import click
 from shellfoundry.utilities.shell_config_reader import ShellConfigReader
 from shellfoundry.utilities.config_reader import CloudShellConfigReader
 from shellfoundry.utilities.installer import ShellInstaller
-from shellfoundry.utilities.shell_package_helper import ShellPackageHelper
+from shellfoundry.utilities.shell_package import ShellPackage
 from shellfoundry.utilities.shell_package_installer import ShellPackageInstaller
 
 
@@ -18,7 +18,8 @@ class InstallCommandExecutor(object):
 
     def install(self):
         current_path = os.getcwd()
-        if ShellPackageHelper.is_tosca_based_shell(current_path):
+        shell_package = ShellPackage(current_path)
+        if shell_package.is_tosca():
             self.shell_package_installer.install(current_path)
         else:
             self._install_old_school_shell()

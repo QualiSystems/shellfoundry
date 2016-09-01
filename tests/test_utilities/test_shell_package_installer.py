@@ -8,7 +8,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
 
-    @patch('shellfoundry.utilities.shell_package_installer.CloudShellRestApiClient')
+    @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient')
     def test_install_shell_updates_an_existing_shell(self, rest_client_mock):
         # Arrange
         mock_client = Mock()
@@ -21,7 +21,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         # Assert
         self.assertTrue(mock_client.update_shell.called)
 
-    @patch('shellfoundry.utilities.shell_package_installer.CloudShellRestApiClient')
+    @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient')
     def test_install_shell_adds_a_new_shell_when_shell_does_not_exist(self, rest_client_mock):
         # Arrange
         mock_client = Mock()
@@ -36,7 +36,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         self.assertTrue(mock_client.update_shell.called)
         self.assertTrue(mock_client.add_shell.called)
 
-    @patch('shellfoundry.utilities.shell_package_installer.CloudShellRestApiClient')
+    @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient')
     def test_shell_add_should_not_be_called_when_update_fails(self, rest_client_mock):
         # Arrange
         mock_client = Mock()

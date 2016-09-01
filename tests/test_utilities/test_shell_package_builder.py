@@ -44,7 +44,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
         shell_package_builder = ShellPackageBuilder()
 
         # Act
-        shell_package_builder.pack('nut-shell')
+        shell_package_builder.pack('/nut-shell')
 
         # Assert
         assertFileExists(self, 'dist/NutShell.zip')
@@ -78,7 +78,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
         shell_package_builder = ShellPackageBuilder()
 
         # Act
-        shell_package_builder.pack('nut-shell')
+        shell_package_builder.pack('/nut-shell')
 
         # Assert
         assertFileExists(self, 'dist/NutShell.zip')
