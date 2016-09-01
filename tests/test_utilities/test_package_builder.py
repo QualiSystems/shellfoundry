@@ -1,6 +1,6 @@
 import zipfile
 
-from mock import patch
+from mock import patch, Mock
 from pyfakefs import fake_filesystem_unittest
 
 from tests.asserts import *
@@ -34,7 +34,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
         assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
 
-        self.assert_utf_file_content('aws/amazon_web_services/package/DataModel/datamodel.xml', 'Test')
+        self._assert_utf_file_content('aws/amazon_web_services/package/DataModel/datamodel.xml', 'Test')
 
     def test_it_does_not_merge_datamodel_if_shell_config_does_not_exist(self):
         self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
@@ -57,7 +57,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
         assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
 
-        self.assert_utf_file_content('aws/amazon_web_services/package/DataModel/datamodel.xml', '')
+        self._assert_utf_file_content('aws/amazon_web_services/package/DataModel/datamodel.xml', '')
 
     def test_it_copies_image_files_in_the_datamodel_dir(self):
         self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
@@ -155,15 +155,14 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
                                     '</Driver>')
 
         os.chdir('work')
-        builder = PackageBuilder()
+        driver_version_strategy = Mock()
+        driver_version_strategy.supports_version_pattern.return_value = True
+        driver_version_strategy.get_version.return_value = '1.2.3.4'
+        builder = PackageBuilder(driver_version_strategy)
 
         # Act
-        with patch('shellfoundry.utilities.package_builder.VersionUtilities') as VersionUtilitiesMock:
-            VersionUtilitiesMock.get_timestamped_build_and_revision.return_value = '2000.3000'
-            with patch('click.echo'):
-                builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
-            self.assertTrue(VersionUtilitiesMock.get_timestamped_build_and_revision.called,
-                            'get_timestamped_build_and_revision should be called')
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
@@ -173,7 +172,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         assertFileExists(self, 'aws/driver/drivermetadata.xml')
 
         # packed file should have a dynamic version
-        self._assert_driver_version_equals('aws/driver/drivermetadata.xml', '1.2.2000.3000')
+        self._assert_driver_version_equals('aws/driver/drivermetadata.xml', '1.2.3.4')
         # original file should still have the original value
         self._assert_driver_version_equals('aws/amazon_web_services/src/drivermetadata.xml', '1.2.*')
 
@@ -189,11 +188,15 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
                                     '</Driver>')
 
         os.chdir('work')
-        builder = PackageBuilder()
 
         # Act
-        with patch('click.echo'):
-            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+        with patch('shellfoundry.utilities.package_builder.DriverVersionTimestampBased') as version_mock:
+            strategy_instance = Mock()
+            version_mock.return_value = strategy_instance
+            strategy_instance.get_version.return_value = '1.2.3000.4000'
+            builder = PackageBuilder()
+            with patch('click.echo'):
+                builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
 
         # Assert
         TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
@@ -203,7 +206,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         assertFileExists(self, 'aws/driver/drivermetadata.xml')
 
         # packed file should have a dynamic version
-        self._assert_driver_version_patten_matches('aws/driver/drivermetadata.xml', '1\.2\.\d+\.\d+')
+        self._assert_driver_version_equals('aws/driver/drivermetadata.xml', '1.2.3000.4000')
         # original file should still have the original value
         self._assert_driver_version_equals('aws/amazon_web_services/src/drivermetadata.xml', '1.2.*')
 
@@ -249,7 +252,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         parser = etree.XMLParser(encoding='utf-8')
         return etree.fromstring(xml_string, parser)
 
-    def assert_utf_file_content(self, path, content):
+    def _assert_utf_file_content(self, path, content):
         with open(path, 'r') as f:
             text = f.read()
 
@@ -267,8 +270,3 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
     def _assert_driver_version_equals(self, path, expected_version):
         version = self._get_driver_version_from_file(path)
         self.assertEquals(version, expected_version)
-
-    def _assert_driver_version_patten_matches(self, path, expected_pattern):
-        version = self._get_driver_version_from_file(path)
-
-        self.assertRegexpMatches(version, expected_pattern, msg="Version was different than expected")

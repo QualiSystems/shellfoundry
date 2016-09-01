@@ -4,16 +4,15 @@ import shutil
 import click
 import mimetypes
 
-import re
 import xml.etree.ElementTree as etree
-from shellfoundry.utilities.version_utilities import VersionUtilities
+from shellfoundry.utilities.version_utilities import DriverVersionTimestampBased
 from shellfoundry.utilities.archive_creator import ArchiveCreator
 from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
 
 class PackageBuilder(object):
-    def __init__(self):
-        pass
+    def __init__(self, driver_version_strategy=None):
+        self.driver_version_strategy = driver_version_strategy or DriverVersionTimestampBased()
 
     def build_package(self, path, package_name, driver_name):
         package_path = os.path.join(path, 'package')
@@ -92,40 +91,38 @@ class PackageBuilder(object):
             dest_dir_path = os.path.join(package_path, 'Configuration')
             PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
-    @staticmethod
-    def _create_driver(package_path, path, driver_name):
+    def _create_driver(self, package_path, path, driver_name):
         dir_to_zip = os.path.join(path, 'src')
         drivermetadata_path = os.path.join(dir_to_zip, 'drivermetadata.xml')
-        version = PackageBuilder._update_driver_version(drivermetadata_path)
+        version = self._update_driver_version(drivermetadata_path)
         zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', driver_name)
         ArchiveCreator.make_archive(zip_file_path, 'zip', dir_to_zip)
         if version:  # version was replaced
-            PackageBuilder._update_driver_version(drivermetadata_path, version)
+            self._update_driver_version(drivermetadata_path, version)
 
     @staticmethod
     def _parse_xml(xml_string):
         parser = etree.XMLParser(encoding='utf-8')
         return etree.fromstring(xml_string, parser)
 
-    @staticmethod
-    def _update_driver_version(metadata_path, version=''):
+    def _update_driver_version(self, metadata_path, version=''):
         if not os.path.isfile(metadata_path):
             return None
 
-        metadata = PackageBuilder._get_file_content_as_string(metadata_path)
-        metadata_xml = PackageBuilder._parse_xml(metadata)
+        metadata = self._get_file_content_as_string(metadata_path)
+        metadata_xml = self._parse_xml(metadata)
         curver = metadata_xml.get("Version")
 
-        if re.match('\d+\.\d+\.\*', curver):
-            build_and_revision = VersionUtilities.get_timestamped_build_and_revision()
-            newver = curver.replace('*', build_and_revision)
-            metadata_xml.set('Version', newver)
-            PackageBuilder._save_to_file(etree.tostring(metadata_xml), metadata_path)
-            return curver
-
-        elif version:
+        if version:
             metadata_xml.set('Version', version)
-            PackageBuilder._save_to_file(etree.tostring(metadata_xml), metadata_path)
+            self._save_to_file(etree.tostring(metadata_xml), metadata_path)
+            return None
+        elif self.driver_version_strategy.supports_version_pattern(curver):
+            newver = self.driver_version_strategy.get_version(curver)
+            metadata_xml.set('Version', newver)
+            self._save_to_file(etree.tostring(metadata_xml), metadata_path)
+            return curver
+        else:
             return None
 
     @staticmethod
