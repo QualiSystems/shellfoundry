@@ -1,6 +1,7 @@
 import click
 import pkg_resources
 
+from shellfoundry.commands.dist_command import DistCommandExecutor
 from shellfoundry.commands.install_command import InstallCommandExecutor
 from shellfoundry.commands.list_command import ListCommandExecutor
 from shellfoundry.commands.new_command import NewCommandExecutor
@@ -9,22 +10,21 @@ from shellfoundry.commands.pack_command import PackCommandExecutor
 
 @click.group()
 def cli():
-    click.echo(u'shellfoundry - CloudShell shell command-line tool')
     pass
 
 
 @cli.command()
 def version():
     """
-    Show shellfoundry version.
+    Displays the shellfoundry version
     """
-    click.echo(u'Version: ' + pkg_resources.get_distribution(u'shellfoundry').version)
+    click.echo(u'shellfoundry version ' + pkg_resources.get_distribution(u'shellfoundry').version)
 
 
 @cli.command()
 def list():
     """
-    List shell templates.
+    Lists the available shell templates
     """
     ListCommandExecutor().list()
 
@@ -36,7 +36,7 @@ def list():
                    "You can use 'local://<foler>' to specify a locally saved template")
 def new(name, template):
     """
-    Create a new shell based on a template.\r\n
+    Creates a new shell based on a template
     """
     NewCommandExecutor().new(name, template)
 
@@ -44,7 +44,7 @@ def new(name, template):
 @cli.command()
 def pack():
     """
-    Pack the shell package.
+    Creates a shell package
     """
     PackCommandExecutor().pack()
 
@@ -52,7 +52,16 @@ def pack():
 @cli.command()
 def install():
     """
-    Install the shell package into CloudShell.
+    Installs the shell package into CloudShell
     """
     PackCommandExecutor().pack()
     InstallCommandExecutor().install()
+
+
+@cli.command()
+def dist():
+    """
+    Creates a deployable Shell which can be distributed to a production environment
+    """
+    PackCommandExecutor().pack()
+    DistCommandExecutor().dist()

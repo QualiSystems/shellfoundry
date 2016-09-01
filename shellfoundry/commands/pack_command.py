@@ -1,9 +1,9 @@
 import os
+
 import click
 
 from shellfoundry.exceptions import WrongShellYmlException, ShellYmlMissingException
 from shellfoundry.utilities.package_builder import PackageBuilder
-from shellfoundry.utilities.python_dependencies_packager import PythonDependenciesPackager
 from shellfoundry.utilities.shell_config_reader import ShellConfigReader
 from shellfoundry.utilities.shell_package_builder import ShellPackageBuilder
 from shellfoundry.utilities.shell_package import ShellPackage
@@ -14,7 +14,6 @@ class PackCommandExecutor(object):
     def __init__(self):
         self.config_reader = ShellConfigReader()
         self.package_builder = PackageBuilder()
-        self.dependencies_packager = PythonDependenciesPackager()
         self.shell_package_builder = ShellPackageBuilder()
 
     def pack(self):
@@ -26,11 +25,6 @@ class PackCommandExecutor(object):
             self.shell_package_builder.pack(current_path)
         else:
             self._pack_old_school_shell(current_path)
-
-        requirements_path = os.path.join(current_path, 'src', 'requirements.txt')
-        dest_path = os.path.join(current_path, 'dist', 'offline_requirements')
-
-        self.dependencies_packager.save_offline_dependencies(requirements_path, dest_path)
 
     def _pack_old_school_shell(self, current_path):
         try:
