@@ -5,7 +5,7 @@ import shutil
 import yaml
 
 from shellfoundry.utilities.archive_creator import ArchiveCreator
-from shellfoundry.utilities.shell_package_helper import ShellPackageHelper
+from shellfoundry.utilities.shell_package import ShellPackage
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 
 
@@ -16,11 +16,12 @@ class ShellPackageBuilder(object):
         Creates TOSCA based Shell package
         :return:
         """
-        shell_name = ShellPackageHelper.get_shell_name(path)
+        shell_package = ShellPackage(path)
+        shell_name = shell_package.get_shell_name()
         with TempDirContext(shell_name) as package_path:
 
             self._copy_tosca_meta(package_path, '')
-            tosca_meta = self._read_tosca_meta()
+            tosca_meta = self._read_tosca_meta(path)
 
             shell_definition_path = tosca_meta['Entry-Definitions']
 
@@ -46,9 +47,10 @@ class ShellPackageBuilder(object):
         else:
             click.echo('Missing artifact not added to shell package: ' + artifact_path)
 
-    def _read_tosca_meta(self):
+    def _read_tosca_meta(self, path):
         tosca_meta = {}
-        with open(ShellPackageHelper.get_tosca_meta_path('')) as meta_file:
+        shell_package = ShellPackage(path)
+        with open(shell_package.get_metadata_path()) as meta_file:
             for meta_line in meta_file:
                 (key, val) = meta_line.split(':')
                 tosca_meta[key] = val.strip()
@@ -65,8 +67,9 @@ class ShellPackageBuilder(object):
             dest_dir_path=package_path)
 
     def _copy_tosca_meta(self, package_path, path):
+        shell_package = ShellPackage(path)
         self._copy_file(
-            src_file_path=ShellPackageHelper.get_tosca_meta_path(path),
+            src_file_path=shell_package.get_metadata_path(),
             dest_dir_path=os.path.join(package_path, 'TOSCA-Metadata'))
 
     @staticmethod
