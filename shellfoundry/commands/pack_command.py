@@ -6,6 +6,7 @@ from shellfoundry.utilities.package_builder import PackageBuilder
 from shellfoundry.utilities.python_dependencies_packager import PythonDependenciesPackager
 from shellfoundry.utilities.shell_config_reader import ShellConfigReader
 from shellfoundry.utilities.shell_package_builder import ShellPackageBuilder
+from shellfoundry.utilities.shell_package import ShellPackage
 
 
 class PackCommandExecutor(object):
@@ -20,7 +21,8 @@ class PackCommandExecutor(object):
 
         current_path = os.getcwd()
 
-        if self.shell_package_builder.is_tosca_based_shell(current_path):
+        shell_package = ShellPackage(current_path)
+        if shell_package.is_tosca():
             self.shell_package_builder.pack(current_path)
         else:
             self._pack_old_school_shell(current_path)
