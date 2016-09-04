@@ -44,8 +44,8 @@ templates:
       params:
         project_name :
         family_name :
-    - name : tosca
-      params:
+    - name : tosca/networking/switch
+      params: 
         project_name :
-      description : Template based on the TOSCA standard (experimental)
+      description : TOSCA based template for standard Switch devices/virtual appliances
       repository : https://github.com/QualiSystems/shellfoundry-tosca-template
