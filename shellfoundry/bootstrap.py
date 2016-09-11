@@ -1,11 +1,17 @@
+import os
+
 import click
 import pkg_resources
+from cloudshell.rest.api import PackagingRestApiClient
+from cloudshell.rest.exceptions import ShellNotFoundException
+from requests import post
 
 from shellfoundry.commands.dist_command import DistCommandExecutor
 from shellfoundry.commands.install_command import InstallCommandExecutor
 from shellfoundry.commands.list_command import ListCommandExecutor
 from shellfoundry.commands.new_command import NewCommandExecutor
 from shellfoundry.commands.pack_command import PackCommandExecutor
+from shellfoundry.utilities.shell_package import ShellPackage
 
 
 @click.group()
@@ -65,3 +71,31 @@ def dist():
     """
     PackCommandExecutor().pack()
     DistCommandExecutor().dist()
+
+
+@cli.command()
+def generate():
+    """
+    Creates a deployable Shell which can be distributed to a production environment
+    """
+    path = os.getcwd()
+    shell_package = ShellPackage(path)
+    shell_filename = shell_package.get_shell_name() + '.zip'
+    package_full_path = os.path.join(path, 'dist', shell_filename)
+
+    client = PackagingRestApiClient(ip='localhost',
+                                    username='admin',
+                                    port='9000',
+                                    domain='global',
+                                    password='admin')
+
+    url = 'http://localhost:9000/API/ShellDrivers/Generate'
+    response = post(url,
+                    files={os.path.basename(shell_filename): open(package_full_path, 'rb')},
+                    headers={'Authorization': 'Basic ' + client.token})
+
+    print('writing zip file')
+    with open('my_driver.zip', 'wb') as driver_file:
+        driver_file.write(response.content)
+
+generate()
