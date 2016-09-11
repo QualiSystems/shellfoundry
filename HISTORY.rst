@@ -2,6 +2,12 @@
 History
 =======
 
+0.0.33 (2016-09-11)
+-------------------
+
+* TOSCA support was added to pack and install commands
+* Generate command was added that generates driver data model in Python
+
 0.0.32 (2016-08-10)
 -------------------
 
