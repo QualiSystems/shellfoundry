@@ -13,4 +13,6 @@ class TempDirContext:
         return self.temp_dir
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        shutil.rmtree(self.temp_dir,ignore_errors=True)
+        if exc_val:
+            return False
+        shutil.rmtree(self.temp_dir, ignore_errors=True)

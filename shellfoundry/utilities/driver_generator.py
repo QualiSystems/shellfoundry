@@ -44,9 +44,17 @@ class DriverGenerator(object):
         response = post(url,
                         files={path.basename(shell_filename): open(package_full_path, 'rb')},
                         headers={'Authorization': 'Basic ' + token})
+
+        if response.status_code != 200:
+            error_message = 'Code generation failed with code {0} and error {1}'\
+                .format(response.status_code, response.text)
+            click.echo(message=error_message, err=True)
+            return
+
         click.echo('Extracting data model ...')
         with TempDirContext(shell_package.get_shell_name()) as temp_dir:
             generated_zip = path.join(temp_dir, shell_filename)
+            click.echo('Writing temporary file {0}'.format(generated_zip))
             with open(generated_zip, 'wb') as driver_file:
                 driver_file.write(response.content)
 
