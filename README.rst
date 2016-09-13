@@ -33,8 +33,8 @@ installation.
 
 .. code:: bash
 
-    $ shellfoundry new `<shell`> –template `<template`>
-    $ cd `<shell`>
+    $ shellfoundry new <shell> –template <template>
+    $ cd <shell>
 
 3. Define data model in shell-definition.yml
 4. Generate data model
