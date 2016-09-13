@@ -21,11 +21,13 @@ Shellfoundry flow
 1. Choose a TOSCA template
 
 .. code:: bash
+
     $ shellfoundry list
 
 2. Create a shell
 
 .. code:: bash
+
     $ shellfoundry new ``<shell``> –template ``<template``>
     $ cd ``<shell``>
 
@@ -33,12 +35,14 @@ Shellfoundry flow
 4. Generate data model
 
 .. code:: bash
+
     $ shellfoundry generate
 
 5. Implement logic in driver.py using classes from data\_model.py
 6. Install the shell package into Cloudshell
 
 .. code:: bash
+
     $ shellfoundry install
 
 Additional Links
