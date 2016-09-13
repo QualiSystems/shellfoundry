@@ -32,7 +32,7 @@ installation.
 
 .. code:: bash
 
-    $ shellfoundry new <shell> –template <template>
+    $ shellfoundry new <shell> –-template <template>
     $ cd <shell>
 
 3. Define data model in shell-definition.yml
