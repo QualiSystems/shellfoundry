@@ -1,6 +1,8 @@
 shellfoundry
 ============
 
+**Create, Innovate and Automate with ShellFoundry**
+
 |Join the chat at https://gitter.im/QualiSystems/shellfoundry| |Build
 Status| |Coverage Status| |PyPI| |PyPI| |Dependency Status|
 
@@ -18,9 +20,8 @@ Installation
 Usage
 =====
 
-**Create, Innovate and Automate with ShellFoundry**
 ShellFoundry streamlines the whole process of shell development from choosing a template, via code generation and
-installation. 
+installation.
 
 1. Choose a TOSCA template
 
