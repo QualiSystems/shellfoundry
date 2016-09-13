@@ -15,8 +15,12 @@ Installation
 
     $ pip install shellfoundry
 
-Shellfoundry flow
-=================
+Usage
+=====
+
+**Create, Innovate and Automate with ShellFoundry**
+ShellFoundry streamlines the whole process of shell development from choosing a template, via code generation and
+installation. 
 
 1. Choose a TOSCA template
 
