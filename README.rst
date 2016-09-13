@@ -20,38 +20,26 @@ Shellfoundry flow
 
 1. Choose a TOSCA template
 
-+-----------------------+
-| $ shellfoundry list   |
-+=======================+
-+-----------------------+
+.. code:: bash
+    $ shellfoundry list
 
 2. Create a shell
 
-+-----------------------------------------------------------+
-| $ shellfoundry new ``<shell``> –template ``<template``>   |
-+===========================================================+
-+-----------------------------------------------------------+
-
-+--------------------+
-| $ cd ``<shell``>   |
-+====================+
-+--------------------+
+.. code:: bash
+    $ shellfoundry new ``<shell``> –template ``<template``>
+    $ cd ``<shell``>
 
 3. Define data model in shell-definition.yml
 4. Generate data model
 
-+---------------------------+
-| $ shellfoundry generate   |
-+===========================+
-+---------------------------+
+.. code:: bash
+    $ shellfoundry generate
 
 5. Implement logic in driver.py using classes from data\_model.py
 6. Install the shell package into Cloudshell
 
-+--------------------------+
-| $ shellfoundry install   |
-+==========================+
-+--------------------------+
+.. code:: bash
+    $ shellfoundry install
 
 Additional Links
 ================
