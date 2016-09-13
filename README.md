@@ -9,6 +9,12 @@ build an installable shell package and install a shell into your CloudShell.
 
 # Installation
 
+```bash
+$ pip install shellfoundry
+```
+
+# Usage
+
 1. Choose a TOSCA template
 
 | $ shellfoundry list   |
