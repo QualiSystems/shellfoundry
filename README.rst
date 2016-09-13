@@ -8,14 +8,53 @@ Command line utility for CloudShell shells developers. The utility helps
 to create a new shell based on a template, build an installable shell
 package and install a shell into your CloudShell.
 
-Getting started
-===============
+Installation
+============
 
 .. code:: bash
 
     $ pip install shellfoundry
 
-    $ shellfoundry new nutshell
+Shellfoundry flow
+=================
+
+1. Choose a TOSCA template
+
++-----------------------+
+| $ shellfoundry list   |
++=======================+
++-----------------------+
+
+2. Create a shell
+
++-----------------------------------------------------------+
+| $ shellfoundry new ``<shell``> –template ``<template``>   |
++===========================================================+
++-----------------------------------------------------------+
+
++--------------------+
+| $ cd ``<shell``>   |
++====================+
++--------------------+
+
+3. Define data model in shell-definition.yml
+4. Generate data model
+
++---------------------------+
+| $ shellfoundry generate   |
++===========================+
++---------------------------+
+
+5. Implement logic in driver.py using classes from data\_model.py
+6. Install the shell package into Cloudshell
+
++--------------------------+
+| $ shellfoundry install   |
++==========================+
++--------------------------+
+
+Additional Links
+================
 
 -  For more commands and detailed usage please refer to `Documentation`_
 
