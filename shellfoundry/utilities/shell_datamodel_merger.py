@@ -32,5 +32,4 @@ class ShellDataModelMerger:
         attributes_insertion_point = datamodel_tree.find(".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}Attributes")
         attributes_insertion_point.extend(attributes)
 
-
         return etree.tostring(datamodel_tree)
