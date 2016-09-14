@@ -138,8 +138,7 @@ class TestDataModelMerger(unittest.TestCase):
         merger = ShellDataModelMerger()
 
         # Assert
-        self.assertRaises(Exception, merger.merge_shell_model, datamodel, shell,
-                          'Shell family not found:NON EXISTING FAMILY')
+        self.assertRaises(Exception, merger.merge_shell_model, datamodel, shell)
 
     def test_exception_thrown_when_shell_model_missing_in_data_model(self):
 
@@ -180,8 +179,7 @@ class TestDataModelMerger(unittest.TestCase):
         merger = ShellDataModelMerger()
 
         # Assert
-        self.assertRaises(Exception, merger.merge_shell_model, datamodel, shell,
-                          'Missing ShellModel element in shell_model.xml file')
+        self.assertRaises(Exception, merger.merge_shell_model, datamodel, shell)
 
     def test_adds_the_shell_model_to_the_datamodel(self):
 
