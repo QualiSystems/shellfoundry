@@ -9,25 +9,28 @@ from shellfoundry.models.install_config import InstallConfig
 
 
 class DriverGenerator(object):
-    def generate_driver(self, cloudshell_config, destination_path, package_full_path, shell_filename, shell_package):
+    def generate_driver(self, cloudshell_config, destination_path, package_full_path, shell_filename, shell_name):
         """
-
+        Generates Python data model by connecting to Cloudshell server
         :param cloudshell_config:
         :type cloudshell_config: InstallConfig
         :param destination_path:
         :param package_full_path:
         :param shell_filename:
-        :param shell_package:
+        :param shell_name:
         :return:
         """
-        client = DriverGenerator._connect_to_cloudshell(cloudshell_config)
-        DriverGenerator._generate_driver_data_model(client, cloudshell_config, destination_path, package_full_path,
-                                                    shell_filename,
-                                                    shell_package)
+        client = self._connect_to_cloudshell(cloudshell_config)
+        self._generate_driver_data_model(client=client,
+                                         cloudshell_config=cloudshell_config,
+                                         destination_path=destination_path,
+                                         package_full_path=package_full_path,
+                                         shell_filename=shell_filename,
+                                         shell_name=shell_name)
 
     @staticmethod
     def _generate_driver_data_model(client, cloudshell_config, destination_path, package_full_path,
-                                    shell_filename, shell_package):
+                                    shell_filename, shell_name):
         """
 
         :param client:
@@ -36,7 +39,7 @@ class DriverGenerator(object):
         :param destination_path:
         :param package_full_path:
         :param shell_filename:
-        :param shell_package:
+        :param shell_name:
         :return:
         """
         url = 'http://{0}:{1}/API/ShellDrivers/Generate'.format(cloudshell_config.host, cloudshell_config.port)
@@ -46,13 +49,13 @@ class DriverGenerator(object):
                         headers={'Authorization': 'Basic ' + token})
 
         if response.status_code != 200:
-            error_message = 'Code generation failed with code {0} and error {1}'\
+            error_message = 'Code generation failed with code {0} and error {1}' \
                 .format(response.status_code, response.text)
             click.echo(message=error_message, err=True)
             return
 
         click.echo('Extracting data model ...')
-        with TempDirContext(shell_package.get_shell_name()) as temp_dir:
+        with TempDirContext(shell_name) as temp_dir:
             generated_zip = path.join(temp_dir, shell_filename)
             click.echo('Writing temporary file {0}'.format(generated_zip))
             with open(generated_zip, 'wb') as driver_file:
