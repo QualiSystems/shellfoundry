@@ -2,7 +2,7 @@
 History
 =======
 
-0.0.33 (2016-09-11)
+0.0.35 (2016-09-15)
 -------------------
 
 * TOSCA support was added to pack and install commands
