@@ -61,6 +61,7 @@ class DriverGenerator(object):
             with open(generated_zip, 'wb') as driver_file:
                 driver_file.write(response.content)
 
+            click.echo('Extracting generated code at {0}'.format(destination_path))
             with zipfile.ZipFile(generated_zip) as zf:
                 zf.extractall(destination_path)
 
