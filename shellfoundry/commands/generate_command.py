@@ -34,4 +34,4 @@ class GenerateCommandExecutor(object):
                                               destination_path=destination_path,
                                               package_full_path=package_full_path,
                                               shell_filename=shell_filename,
-                                              shell_package=shell_package)
+                                              shell_name=shell_package)
