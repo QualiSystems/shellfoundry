@@ -63,6 +63,9 @@ templates:
       description : TOSCA based template for standard WirelessController devices/virtual appliances
       repository : https://github.com/QualiSystems/shellfoundry-tosca-template
     - name : tosca/compute
+      params:
+        project_name :
+        family_name :
       description : TOSCA based template for standard compute shell
       repository : https://github.com/QualiSystems/shell-tosca-compute-standard
       
