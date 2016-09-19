@@ -2,6 +2,7 @@ from freezegun import freeze_time
 from shellfoundry.utilities.version_utilities import DriverVersionTimestampBased
 from unittest import TestCase
 
+
 class TestDriverVersionTimestampBased(TestCase):
     def test_it_gets_the_expected_build_and_revision_values_according_to_timestamp(self):
         with freeze_time("2012-01-14 12:00:01"):

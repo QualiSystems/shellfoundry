@@ -17,7 +17,7 @@ class ArchiveCreator(object):
         if os.path.splitext(output_filename)[1] == '':
             output_filename += '.zip'
         output_dir = os.path.dirname(output_filename)
-        if not os.path.exists(output_dir):
+        if output_dir and not os.path.exists(output_dir):
             os.makedirs(output_dir)
         relroot = source_dir
         with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip:
