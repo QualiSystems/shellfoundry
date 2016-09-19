@@ -55,7 +55,7 @@ class DriverGenerator(object):
             return
 
         click.echo('Extracting data model ...')
-        with TempDirContext(shell_name) as temp_dir:
+        with TempDirContext(remove_dir_on_error=False, prefix=shell_name) as temp_dir:
             generated_zip = path.join(temp_dir, shell_filename)
             click.echo('Writing temporary file {0}'.format(generated_zip))
             with open(generated_zip, 'wb') as driver_file:
