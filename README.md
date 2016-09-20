@@ -1,24 +1,4 @@
-<div style="
-	position: relative;
-	width: 100%;
-	height: 210px;
-	background-color: #cacaca;
-	background-image: url(http://drops.ricardoalcocer.com/quali_drops/gh_header-XzMZYRoIKo.png)">
-
-  <span style="
-  	color: #0095D4;
-  	font-size: 50px;
-  	font-weight: bold;
-  	position: absolute;
-  	bottom: 0;
-  	right: 0;
-  	padding-right: 10px;
-  	text-shadow: -1px 1px #000;">
-
-  	ShellFoundry
-
-  	</span>
-</div>
+![](http://drops.ricardoalcocer.com/quali_drops/gh_header-XzMZYRoIKo.png)
 
 
 ---
@@ -39,8 +19,6 @@ Command line utility for *Shells Developers* of our **CloudShell** platform.  It
 
 ```
 $ python -m pip install shellfoundry
-
-
 ```
 
 ## Usage
