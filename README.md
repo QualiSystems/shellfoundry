@@ -10,6 +10,13 @@
 
 Command line utility for *Shells Developers* of our **CloudShell** platform.  It helps in creating a new shell based on a template, build an installable shell package and install a shell into your **CloudShell** instance.
 
+## Why use ShellFoundry?
+
+* To create a new shell based on an existing template
+* To package a shell
+* To publish a shell on your **CloudShell**
+* ShellFoundry performs the same tasks as our [PyCharm plugin](https://github.com/QualiSystemsLab/CloudShell-PyCharm-Plugin)
+* Use this CLI if you're not using PyCharm, if you want more control, or to automate your development process
 
 
 ## Installing
@@ -19,15 +26,13 @@ Command line utility for *Shells Developers* of our **CloudShell** platform.  It
 $ python -m pip install shellfoundry
 ```
 
-## Usage
+## Basic Usage
 
 ```
 $ shellfoundry new nutshell
 ```
 
 > For detailed usage information refer to [this guide](docs/usage.md)
-
-
 
 ## Change Log
 
@@ -52,7 +57,7 @@ All your contributiongs are welcomed and encouraged.  We've compiled detailed in
 
 ## Dependencies
 
-Development of **shellfoundry** would not have been possible without the open source libraries it depends on:
+Development of **ShellFoundry** would not have been possible without the open source libraries it depends on:
 
 - [cookiecutter](https://github.com/audreyr/cookiecutter)
 - [requests](http://docs.python-requests.org/)
