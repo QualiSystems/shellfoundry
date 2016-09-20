@@ -25,7 +25,7 @@ $ python -m pip install shellfoundry
 $ shellfoundry new nutshell
 ```
 
-> For detailed usage information refer to [this guide](../docs/usage.md)
+> For detailed usage information refer to [this guide](docs/usage.md)
 
 
 
@@ -39,7 +39,7 @@ $ shellfoundry new nutshell
 
 ## Troubleshooting and Help
 
-For questions, bug reports or feature requests, please refer to the [Issue Tracker](https://github.com/QualiSystems/shellfoundry/issues).  Also, tmake sure you checkout out our [Issue Template](../.github/issue_template.md).
+For questions, bug reports or feature requests, please refer to the [Issue Tracker](https://github.com/QualiSystems/shellfoundry/issues).  Also, tmake sure you checkout out our [Issue Template](.github/issue_template.md).
 
 ## Contributing
 
