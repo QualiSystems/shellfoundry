@@ -1,4 +1,4 @@
-shellfoundry
+﻿shellfoundry
 ============
 
 **Create, Innovate and Automate with ShellFoundry**
@@ -80,3 +80,5 @@ License
    :target: https://pypi.python.org/pypi/shellfoundry
 .. |DependencyStatus| image:: https://dependencyci.com/github/QualiSystems/shellfoundry/badge
    :target: https://dependencyci.com/github/QualiSystems/shellfoundry
+
+
