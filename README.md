@@ -16,7 +16,7 @@ Command line utility for *Shells Developers* of our **CloudShell** platform.  It
 * To package a shell
 * To publish a shell on your **CloudShell**
 * ShellFoundry performs the same tasks as our [PyCharm plugin](https://github.com/QualiSystemsLab/CloudShell-PyCharm-Plugin)
-* Use this CLI if you're not using PyCharm, if you want more control, or to automate your development process
+* Use this CLI if you're using an editor other than PyCharm ( see [here](https://qualisystems.github.io/devguide/introduction/setting-up-the-development-ide.html) for more options ), if you want more control, or to automate your development process
 
 
 ## Installing
