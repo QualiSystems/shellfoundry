@@ -22,7 +22,8 @@ class GenerateCommandExecutor(object):
             click.echo('Code generation supported in TOSCA based shells only', err=True)
             return
 
-        shell_filename = shell_package.get_shell_name() + '.zip'
+        shell_name = shell_package.get_shell_name()
+        shell_filename = shell_name + '.zip'
         package_full_path = path.join(current_path, 'dist', shell_filename)
         destination_path = path.join(current_path, 'src')
 
@@ -34,4 +35,4 @@ class GenerateCommandExecutor(object):
                                               destination_path=destination_path,
                                               package_full_path=package_full_path,
                                               shell_filename=shell_filename,
-                                              shell_name=shell_package)
+                                              shell_name=shell_name)
