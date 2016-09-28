@@ -2,6 +2,11 @@
 History
 =======
 
+0.0.38 (2016-09-28)
+-------------------
+
+* Update reference to cloudshell-rest-api 7.2.0.7 to use PUT method in update shell
+
 0.0.35 (2016-09-15)
 -------------------
 
