@@ -7,11 +7,11 @@ class ShellPackage(object):
 
     def get_shell_name(self):
         """
-        Returns shell name
+        Returns shell namen
         :return:
         """
         head, shell_name = os.path.split(self.path)
-        return shell_name.title().replace('-', '')
+        return shell_name.title().replace('-', '').replace('_', '')
 
     def is_tosca(self):
         """

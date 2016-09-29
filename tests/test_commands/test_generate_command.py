@@ -57,4 +57,4 @@ Entry-Definitions: shell-definition.yml
 
         # Assert
         self.assertTrue(driver_generator.generate_driver.called)
-        self.assertEqual(driver_generator.generate_driver.call_args[1]['shell_filename'], 'Nut_Shell.zip')
+        self.assertEqual(driver_generator.generate_driver.call_args[1]['shell_filename'], 'NutShell.zip')
