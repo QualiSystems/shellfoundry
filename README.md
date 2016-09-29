@@ -44,7 +44,7 @@ $ shellfoundry new nutshell
 
 ## Troubleshooting and Help
 
-For questions, bug reports or feature requests, please refer to the [Issue Tracker](https://github.com/QualiSystems/shellfoundry/issues).  Also, tmake sure you checkout out our [Issue Template](.github/issue_template.md).
+For questions, bug reports or feature requests, please refer to the [Issue Tracker](https://github.com/QualiSystems/shellfoundry/issues).  Also, make sure you checkout out our [Issue Template](.github/issue_template.md).
 
 ## Contributing
 
