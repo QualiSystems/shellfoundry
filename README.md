@@ -34,13 +34,6 @@ $ shellfoundry new nutshell
 
 > For detailed usage information refer to [this guide](docs/usage.md)
 
-## Change Log
-
-
-### September 2016
-
-* [[`9771fffd7b`](https://github.com/qualisystems/shellfoundry/commit/9771fffd7b)] - Merge pull request #78 from QualiSystems/borismod-patch-2 (Boris Modylevsky)
-
 
 ## Troubleshooting and Help
 
