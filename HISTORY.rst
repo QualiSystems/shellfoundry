@@ -2,6 +2,11 @@
 History
 =======
 
+0.0.39 (2016-10-09)
+-------------------
+
+* Pack Shell icon if specified in shell-definition.yml file under metadata\template_icon for TOSCA based shells
+
 0.0.38 (2016-09-28)
 -------------------
 
