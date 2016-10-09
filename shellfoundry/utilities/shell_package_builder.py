@@ -30,6 +30,10 @@ class ShellPackageBuilder(object):
 
             with open(shell_definition_path) as shell_definition_file:
                 shell_definition = yaml.load(shell_definition_file)
+
+                if 'template_icon' in shell_definition['metadata']:
+                    self._copy_artifact(shell_definition['metadata']['template_icon'], package_path)
+
                 for node_type in shell_definition['node_types'].values():
                     if 'artifacts' not in node_type:
                         continue
