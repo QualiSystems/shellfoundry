@@ -38,12 +38,12 @@ templates:
       params:
         project_name :
         family_name : Firewall
-    - name: L1 Switch
-      description : Template for L1 Switch
+    - name: layer-1-switch
+      description : Template for Layer 1 Switch
       repository : https://github.com/QualiSystems/shell-L1-standard
       params:
         project_name :
-        family_name : 
+        family_name :
     - name: Compute
       description : Template for Compute resources
       repository : https://github.com/QualiSystems/shell-compute-standard
@@ -51,19 +51,19 @@ templates:
         project_name :
         family_name :
     - name : tosca/networking/switch
-      params: 
+      params:
         project_name :
         family_name: Switch
       description : TOSCA based template for standard Switch devices/virtual appliances
       repository : https://github.com/QualiSystems/shellfoundry-tosca-template
     - name : tosca/networking/router
-      params: 
+      params:
         project_name :
         family_name: Router
       description : TOSCA based template for standard Router devices/virtual appliances
       repository : https://github.com/QualiSystems/shellfoundry-tosca-template
     - name : tosca/networking/WirelessController
-      params: 
+      params:
         project_name :
         family_name: WirelessController
       description : TOSCA based template for standard WirelessController devices/virtual appliances
@@ -74,4 +74,4 @@ templates:
         family_name :
       description : TOSCA based template for standard compute shell
       repository : https://github.com/QualiSystems/shell-tosca-compute-standard
-      
+
