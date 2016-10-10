@@ -38,6 +38,12 @@ templates:
       params:
         project_name :
         family_name : Firewall
+    - name: L1 Switch
+      description : Template for L1 Switch
+      repository : https://github.com/QualiSystems/shell-L1-standard
+      params:
+        project_name :
+        family_name : 
     - name: Compute
       description : Template for Compute resources
       repository : https://github.com/QualiSystems/shell-compute-standard
