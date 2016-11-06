@@ -2,6 +2,22 @@
 History
 =======
 
+0.0.39 (2016-10-09)
+-------------------
+
+* Pack Shell icon if specified in shell-definition.yml file under metadata\template_icon for TOSCA based shells
+
+0.0.38 (2016-09-28)
+-------------------
+
+* Update reference to cloudshell-rest-api 7.2.0.7 to use PUT method in update shell
+
+0.0.35 (2016-09-15)
+-------------------
+
+* TOSCA support was added to pack and install commands
+* Generate command was added that generates driver data model in Python
+
 0.0.32 (2016-08-10)
 -------------------
 

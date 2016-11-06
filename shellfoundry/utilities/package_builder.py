@@ -1,17 +1,18 @@
 import codecs
 import os
 import shutil
-import zipfile
-
 import click
 import mimetypes
 
+import xml.etree.ElementTree as etree
+from shellfoundry.utilities.version_utilities import DriverVersionTimestampBased
+from shellfoundry.utilities.archive_creator import ArchiveCreator
 from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
 
 class PackageBuilder(object):
-    def __init__(self):
-        pass
+    def __init__(self, driver_version_strategy=None):
+        self.driver_version_strategy = driver_version_strategy or DriverVersionTimestampBased()
 
     def build_package(self, path, package_name, driver_name):
         package_path = os.path.join(path, 'package')
@@ -41,6 +42,11 @@ class PackageBuilder(object):
             f.write(content)
 
     @staticmethod
+    def _save_to_file(content, dest_path):
+        with codecs.open(dest_path, "w") as f:
+            f.write(content)
+
+    @staticmethod
     def _copy_datamodel(package_path, path):
         shell_model_path = os.path.join(path, 'datamodel', 'shell_model.xml')
         src_dm_file_path = os.path.join(path, 'datamodel', 'datamodel.xml')
@@ -50,7 +56,7 @@ class PackageBuilder(object):
             shell_model = PackageBuilder._get_file_content_as_string(shell_model_path)
             dm = PackageBuilder._get_file_content_as_string(src_dm_file_path)
             merger = ShellDataModelMerger()
-            merged_dm  = merger.merge_shell_model(dm, shell_model)
+            merged_dm = merger.merge_shell_model(dm, shell_model)
             if not os.path.exists(dest_dir_path):
                 os.makedirs(dest_dir_path)
             PackageBuilder._save_to_utf_file(merged_dm, os.path.join(dest_dir_path, 'datamodel.xml'))
@@ -85,41 +91,42 @@ class PackageBuilder(object):
             dest_dir_path = os.path.join(package_path, 'Configuration')
             PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
-    @staticmethod
-    def _create_driver(package_path, path, driver_name):
+    def _create_driver(self, package_path, path, driver_name):
         dir_to_zip = os.path.join(path, 'src')
+        drivermetadata_path = os.path.join(dir_to_zip, 'drivermetadata.xml')
+        version = self._update_driver_version(drivermetadata_path)
         zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', driver_name)
-        PackageBuilder._make_archive(zip_file_path, 'zip', dir_to_zip)
+        ArchiveCreator.make_archive(zip_file_path, 'zip', dir_to_zip)
+        if version:  # version was replaced
+            self._update_driver_version(drivermetadata_path, version)
+
+    @staticmethod
+    def _parse_xml(xml_string):
+        parser = etree.XMLParser(encoding='utf-8')
+        return etree.fromstring(xml_string, parser)
+
+    def _update_driver_version(self, metadata_path, version=''):
+        if not os.path.isfile(metadata_path):
+            return None
+
+        metadata = self._get_file_content_as_string(metadata_path)
+        metadata_xml = self._parse_xml(metadata)
+        curver = metadata_xml.get("Version")
+
+        if version:
+            metadata_xml.set('Version', version)
+            self._save_to_file(etree.tostring(metadata_xml), metadata_path)
+            return None
+        elif self.driver_version_strategy.supports_version_pattern(curver):
+            newver = self.driver_version_strategy.get_version(curver)
+            metadata_xml.set('Version', newver)
+            self._save_to_file(etree.tostring(metadata_xml), metadata_path)
+            return curver
+        else:
+            return None
 
     @staticmethod
     def _zip_package(package_path, path, package_name):
         zip_file_path = os.path.join(path, 'dist', package_name)
-        return PackageBuilder._make_archive(zip_file_path, 'zip', package_path)
+        return ArchiveCreator.make_archive(zip_file_path, 'zip', package_path)
 
-    @staticmethod
-    def _make_archive(output_filename, format, source_dir):
-        """
-        Creates archive in specified format recursively of source_dir
-        Replaces shtutil.make_archive in order to be able to test with pyfakefs
-        :param output_filename: Output archive file name. If directory does not exist, it will be created
-        :param format: Archive format to be used. Currently only zip is supported
-        :param source_dir: Directory to scan for archiving
-        :return:
-        """
-        if os.path.splitext(output_filename)[1] == '':
-            output_filename += '.zip'
-        output_dir = os.path.dirname(output_filename)
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        relroot = source_dir
-        with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip:
-            for root, dirs, files in os.walk(source_dir):
-                # add directory (needed for empty dirs)
-                zip.write(root, os.path.relpath(root, relroot))
-                for file in files:
-                    filename = os.path.join(root, file)
-                    if os.path.isfile(filename):  # regular files only
-                        arcname = os.path.join(os.path.relpath(root, relroot), file)
-                        zip.write(filename, arcname)
-
-        return output_filename

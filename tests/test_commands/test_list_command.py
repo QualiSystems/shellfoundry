@@ -21,9 +21,8 @@ class TestListCommand(unittest.TestCase):
         list_command_executor.list()
 
         # Assert
-        echo_mock.assert_called_once_with(u'\r\nSupported templates are:\r\n\r\n'
-                                          u' base:                 description')
-
+        echo_mock.assert_called_once_with(u'\r\nTemplates:\r\n\r\n'
+                                          u'  base                 description')
 
     def test_shows_informative_message_when_offline(self):
         # Arrange
@@ -32,9 +31,7 @@ class TestListCommand(unittest.TestCase):
         list_command_executor = ListCommandExecutor(template_retriever)
 
         # Assert
-        self.assertRaisesRegexp(UsageError, "offline",  list_command_executor.list)
-
-
+        self.assertRaisesRegexp(UsageError, "offline", list_command_executor.list)
 
     @patch('click.echo')
     def test_two_templates_are_displayed(self, echo_mock):
@@ -51,6 +48,6 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_called_once_with(
-            u'\r\nSupported templates are:\r\n\r\n'
-            u' base:                 base description\r\n'
-            u' switch:               switch description')
+            u'\r\nTemplates:\r\n\r\n'
+            u'  base                 base description\r\n'
+            u'  switch               switch description')
