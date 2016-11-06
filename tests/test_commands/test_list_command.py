@@ -21,8 +21,9 @@ class TestListCommand(unittest.TestCase):
         list_command_executor.list()
 
         # Assert
-        echo_mock.assert_called_once_with(u'\r\nTemplates:\r\n\r\n'
-                                          u'  base                 description')
+        echo_mock.assert_called_once_with(u' Template Name  Description \n'
+                                          u'----------------------------\n'
+                                          u' base           description ')
 
     def test_shows_informative_message_when_offline(self):
         # Arrange
@@ -48,6 +49,31 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_called_once_with(
-            u'\r\nTemplates:\r\n\r\n'
-            u'  base                 base description\r\n'
-            u'  switch               switch description')
+            u' Template Name  Description        \n'
+            u'-----------------------------------\n'
+            u' base           base description   \n'
+            u' switch         switch description ')
+
+    @patch('click.echo')
+    def test_two_long_named_templates_are_displayed_on_normal_window(self, echo_mock):
+        # Arrange
+        template_retriever = Mock()
+        template_retriever.get_templates = Mock(return_value=OrderedDict(
+            [('tosca/networking/switch', ShellTemplate('tosca/networking/switch', 'TOSCA based template for standard Switch devices/virtual appliances', '')),
+             ('tosca/networking/WirelessController', ShellTemplate('tosca/networking/WirelessController', 'TOSCA based template for standard WirelessController devices/virtual appliances', ''))]))
+
+        list_command_executor = ListCommandExecutor(template_retriever)
+
+        # Act
+        list_command_executor.list()
+
+        # Assert
+        echo_mock.assert_called_once_with(
+            u' Template Name                        Description                              \n'
+            u'-------------------------------------------------------------------------------\n'
+            u' tosca/networking/switch              TOSCA based template for standard Switch \n'
+            u'                                      devices/virtual appliances               \n'
+            u' tosca/networking/WirelessController  TOSCA based template for standard        \n'
+            u'                                      WirelessController devices/virtual       \n'
+            u'                                      appliances                               ')
+
