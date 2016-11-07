@@ -98,6 +98,3 @@ templates:
         family_name :
       description : TOSCA based template for resource shell
       repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
-
-
-

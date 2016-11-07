@@ -4,7 +4,7 @@
 
 ---
 
-![](http://drops.ricardoalcocer.com/quali_drops/gh_header-XzMZYRoIKo.png)
+![quali](quali.png)
 
 # ShellFoundry CLI
 
@@ -12,12 +12,13 @@ Command line utility for *Shells Developers* of our **CloudShell** platform.  It
 
 ## Why use ShellFoundry?
 
+* To show list of available shell templates
 * To create a new shell based on an existing template
+* To generate Python classes based on your data model, either XML or TOSCA YAML
 * To package a shell
-* To publish a shell on your **CloudShell**
-* ShellFoundry performs the same tasks as our [PyCharm plugin](https://github.com/QualiSystemsLab/CloudShell-PyCharm-Plugin)
-* Use this CLI if you're using an editor other than PyCharm ( see [here](https://qualisystems.github.io/devguide/introduction/setting-up-the-development-ide.html) for more options ), if you want more control, or to automate your development process
-
+* To create set of dependencies for offline usage
+* To import a shell into your **CloudShell**
+* To publish a shell on Quali Community
 
 ## Installing
 
@@ -42,7 +43,7 @@ For questions, bug reports or feature requests, please refer to the [Issue Track
 ## Contributing
 
 
-All your contributiongs are welcomed and encouraged.  We've compiled detailed information about:
+All your contributions are welcomed and encouraged.  We've compiled detailed information about:
 
 * [Contributing](.github/contributing.md)
 * [Creating Pull Requests](.github/pull_request_template.md)
