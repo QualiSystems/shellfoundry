@@ -54,24 +54,50 @@ templates:
       params:
         project_name :
         family_name: Switch
-      description : TOSCA based template for standard Switch devices/virtual appliances
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-template
+      description : TOSCA based template for Switch shell
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
     - name : tosca/networking/router
       params:
         project_name :
         family_name: Router
-      description : TOSCA based template for standard Router devices/virtual appliances
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-template
-    - name : tosca/networking/WirelessController
+      description : TOSCA based template for Router shell
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+    - name : tosca/networking/wireless-controller
       params:
         project_name :
         family_name: WirelessController
-      description : TOSCA based template for standard WirelessController devices/virtual appliances
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-template
+      description : TOSCA based template for Wireless Controller shell
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
     - name : tosca/compute
       params:
         project_name :
         family_name :
-      description : TOSCA based template for standard compute shell
-      repository : https://github.com/QualiSystems/shell-tosca-compute-standard
+      description : TOSCA based template for compute shell
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-compute-template
+    - name : tosca/deployed-app
+      params:
+        project_name :
+        family_name :
+      description : TOSCA based template for deployed app shell
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-deployedapp-template
+    - name : tosca/trafic-generator
+      params:
+        project_name :
+        family_name :
+      description : TOSCA based template for traffic generator shell
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-traffic-generator-template
+    - name : tosca/pdu
+      params:
+        project_name :
+        family_name :
+      description : TOSCA based template for PDU shell
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-pdu-template
+    - name : tosca/resource
+      params:
+        project_name :
+        family_name :
+      description : TOSCA based template for resource shell
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
+
+
 
