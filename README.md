@@ -4,7 +4,7 @@
 
 ---
 
-![](http://drops.ricardoalcocer.com/quali_drops/gh_header-XzMZYRoIKo.png)
+![quali](quali.png)
 
 # ShellFoundry CLI
 
