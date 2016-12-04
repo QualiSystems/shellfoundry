@@ -12,6 +12,7 @@ from shellfoundry.commands.install_command import InstallCommandExecutor
 from shellfoundry.commands.list_command import ListCommandExecutor
 from shellfoundry.commands.new_command import NewCommandExecutor
 from shellfoundry.commands.pack_command import PackCommandExecutor
+from shellfoundry.commands.config_command import ConfigCommandExecutor
 from shellfoundry.utilities.shell_package import ShellPackage
 
 
@@ -81,3 +82,13 @@ def generate():
     """
     PackCommandExecutor().pack()
     GenerateCommandExecutor().generate()
+
+@cli.command()
+@click.argument(u'kv', type=(str, str), default=(None, None), required=False)
+@click.option('--global/--local', 'global_cfg', default=True)
+@click.option('--remove', 'key_to_remove', default=None)
+def config(kv, global_cfg, key_to_remove):
+    """
+    Configures global/local config values to allow deployment over cloudshell
+    """
+    ConfigCommandExecutor(global_cfg).config(kv, key_to_remove)

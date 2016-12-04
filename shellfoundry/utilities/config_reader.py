@@ -3,6 +3,7 @@ import yaml
 
 from shellfoundry.models.install_config import InstallConfig, DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, \
     DEFAULT_PASSWORD, DEFAULT_DOMAIN
+from shellfoundry.utilities.config.config_providers import DefaultConfigProvider
 
 INSTALL = 'install'
 
@@ -14,15 +15,18 @@ DOMAIN = 'domain'
 
 
 class CloudShellConfigReader(object):
+    def __init__(self, config_provider=None):
+        self.config_provider = config_provider or DefaultConfigProvider()
+
     def read(self):
         """
 
         :return:
         :rtype shellfoundry.models.install_config.Installconfig
         """
-        config_path = os.path.join(os.getcwd(), 'cloudshell_config.yml')
+        config_path = self.config_provider.get_config_path()
 
-        if not os.path.isfile(config_path):
+        if config_path is None or not os.path.isfile(config_path):
             return InstallConfig.get_default()
 
         with open(config_path) as stream:
@@ -44,5 +48,3 @@ class CloudShellConfigReader(object):
     @staticmethod
     def _get_with_default(install_config, parameter_name, default_value):
         return install_config[parameter_name] if install_config and parameter_name in install_config else default_value
-
-

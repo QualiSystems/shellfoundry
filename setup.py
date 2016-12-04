@@ -22,7 +22,7 @@ setup(
     url='https://github.com/QualiSystems/shellfoundry',
     packages=find_packages(),
     entry_points={
-        "console_scripts": ['shellfoundry = shellfoundry.bootstrap:cli']
+        "console_scripts": ['shellfoundry = shellfoundry.__main__:main']
     },
     include_package_data=True,
     install_requires=get_file_content('requirements.txt'),
