@@ -9,7 +9,7 @@ class TestConfigRecord(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
 
-    @patch("shellfoundry.utilities.config.config_file_creation.open")
+    @patch("shellfoundry.utilities.config.config_file_creation.open", create=True)
     @patch("shellfoundry.utilities.config.config_file_creation.click.echo")
     def test_failed_to_create_config_file(self, echo_mock, open_mock):
         # Arrange
@@ -24,7 +24,7 @@ class TestConfigRecord(fake_filesystem_unittest.TestCase):
         echo_mock.assert_any_call('Failed to create the file, maybe it is already exists')
         echo_mock.assert_any_call('Failed to create config file')
 
-    @patch("shellfoundry.utilities.config.config_file_creation.open")
+    @patch("shellfoundry.utilities.config.config_file_creation.open", create=True)
     @patch("shellfoundry.utilities.config.config_file_creation.click.echo")
     def test_failed_to_crate_config_file_due_to_already_exists_no_error_is_raised(self, echo_mock, open_mock):
         # Arrange
