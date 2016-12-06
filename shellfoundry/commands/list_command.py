@@ -1,6 +1,7 @@
 import click
 import textwrap
 
+from os import linesep
 from requests.exceptions import SSLError
 from shellfoundry.utilities.template_retriever import TemplateRetriever
 from terminaltables import AsciiTable
@@ -18,15 +19,21 @@ class ListCommandExecutor(object):
 
         template_rows = [['Template Name','Description']]
         for template in templates.values():
-            template_rows.append([template.name, '']) #description is added later by column max width
+            template_rows.append(
+                [template.name, template.description])  # description is later wrapped based on the size of the console
 
         table = AsciiTable(template_rows)
         table.outer_border = False
         table.inner_column_border = False
         max_width = table.column_max_width(1)
+
+        if max_width <= 0: # verify that the console window is not too small, and if so skip the wrapping logic
+            click.echo(table.table)
+            return
+
         row = 1
         for template in templates.values():
-            wrapped_string = '\n'.join(wrap(template.description, max_width))
+            wrapped_string = linesep.join(wrap(template.description, max_width))
             table.table_data[row][1] = wrapped_string
             row += 1
 
