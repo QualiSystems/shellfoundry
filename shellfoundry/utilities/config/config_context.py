@@ -1,29 +1,13 @@
 import yaml
-import click
 
 from shellfoundry.utilities.config_reader import INSTALL
+from shellfoundry.utilities.config.config_file_creation import ConfigFileCreation
 
 
 class ConfigContext(object):
-    def __init__(self, config_file_path):
+    def __init__(self, config_file_path, cfg_creation=None):
         self.config_file_path = config_file_path
-        self.create_config_file_if_needed(config_file_path)
-
-    @staticmethod
-    def create_config_file_if_needed(config_file_path):
-        import os
-        if os.path.exists(config_file_path):
-            return
-        # with open(config_file_path, mode='a+') as stream:
-        try:
-            click.echo('Creating config file...')
-            open(config_file_path, mode='w').close()
-        except:
-            if not os.path.exists(config_file_path):
-                click.echo('Failed to create config file')
-                import sys
-                click.echo(sys.exc_info()[0])
-                raise
+        (cfg_creation or ConfigFileCreation()).create(config_file_path)
 
     def try_save(self, key, value):
         try:

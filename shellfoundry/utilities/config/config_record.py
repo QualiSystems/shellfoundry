@@ -16,10 +16,11 @@ class ConfigRecord(object):
         if config_context.try_save(self.key, self.value):
             click.echo('{}: {} was saved successfully'.format(self.key, self.value))
         else:
-            click.echo('Failed to add key value')
+            click.echo('Failed to save key value')
 
     def delete(self, config_context):
         if config_context.try_delete(self.key):
             click.echo('{} was deleted successfully'.format(self.key))
         else:
+
             click.echo('Failed to delete key')
