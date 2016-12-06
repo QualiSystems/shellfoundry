@@ -9,7 +9,8 @@ class TestConfigRecord(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
 
-    @patch("shellfoundry.utilities.config.config_file_creation.open", create=True)
+    @patch("shellfoundry.utilities.config.config_file_creation.open",
+           create=True)  # create=True to overcome the issue with builtin methods default fallback
     @patch("shellfoundry.utilities.config.config_file_creation.click.echo")
     def test_failed_to_create_config_file(self, echo_mock, open_mock):
         # Arrange
@@ -90,4 +91,3 @@ install:
                         .format("""
 install:
   """, os.linesep, file_content))
-
