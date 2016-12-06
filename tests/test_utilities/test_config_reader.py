@@ -1,7 +1,7 @@
 import os
 
 from pyfakefs import fake_filesystem_unittest
-
+from mock import patch
 from shellfoundry.utilities.config_reader import CloudShellConfigReader
 
 
@@ -73,6 +73,26 @@ install:
 
         # Assert
         self.assertEqual(config.host, 'localhost')
+        self.assertEqual(config.port, 9000)
+        self.assertEqual(config.username, 'admin')
+        self.assertEqual(config.password, 'admin')
+        self.assertEqual(config.domain, 'Global')
+
+    @patch("shellfoundry.utilities.config.config_providers.click.get_app_dir")
+    def test_read_config_data_from_global_configuration(self, get_app_dir_mock):
+        # Arrange
+        self.fs.CreateFile('Quali/shellfoundry/global_config.yml', contents="""
+install:
+  host: somehostaddress
+""")
+        get_app_dir_mock.return_value = 'Quali/shellfoundry/'
+        reader = CloudShellConfigReader()
+
+        # Act
+        config = reader.read()
+
+        # Assert
+        self.assertEqual(config.host, 'somehostaddress')
         self.assertEqual(config.port, 9000)
         self.assertEqual(config.username, 'admin')
         self.assertEqual(config.password, 'admin')
