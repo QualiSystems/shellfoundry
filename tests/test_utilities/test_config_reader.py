@@ -5,7 +5,7 @@ from pyfakefs import fake_filesystem_unittest
 from shellfoundry.utilities.config_reader import CloudShellConfigReader
 
 
-class TestConfigReader(fake_filesystem_unittest.TestCase):
+class TestConfigReader(fake_filesystem_unittest.TestCase): #fortesting
     def setUp(self):
         self.setUpPyfakefs()
 
