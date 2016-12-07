@@ -43,7 +43,7 @@ templates:
       repository : https://github.com/QualiSystems/shell-L1-standard
       params:
         project_name :
-        family_name :
+        family_name : L1 Switch
     - name: Compute
       description : Template for Compute resources
       repository : https://github.com/QualiSystems/shell-compute-standard
