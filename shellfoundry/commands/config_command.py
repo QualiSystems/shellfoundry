@@ -11,7 +11,7 @@ class ConfigCommandExecutor(object):
     def __init__(self, global_cfg):
         self.global_cfg = global_cfg
 
-    def config(self, kv=None, key_to_remove=None):
+    def config(self, kv=(None, None), key_to_remove=None):
         config_file_path = self._get_config_file_path(self.global_cfg)
         if self._should_remove_key(key_to_remove):
             context = ConfigContext(config_file_path)
@@ -23,7 +23,7 @@ class ConfigCommandExecutor(object):
             self._echo_config(config_file_path)
 
     def _should_append_key(self, kv):
-        return kv is not None
+        return None not in kv
 
     def _should_remove_key(self, key_to_remove):
         return key_to_remove is not None
