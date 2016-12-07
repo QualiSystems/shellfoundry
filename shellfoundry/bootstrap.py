@@ -30,11 +30,14 @@ def version():
 
 
 @cli.command()
-def list():
+@click.option(u'--tosca', 'template_type', flag_value='tosca')
+@click.option(u'--legacy', 'template_type', flag_value='legacy')
+@click.option(u'--all', 'template_type', flag_value='all', default=True)
+def list(template_type):
     """
     Lists the available shell templates
     """
-    ListCommandExecutor().list()
+    ListCommandExecutor(template_type).list()
 
 
 @cli.command()

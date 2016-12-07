@@ -3,19 +3,23 @@ import textwrap
 
 from os import linesep
 from requests.exceptions import SSLError
-from shellfoundry.utilities.template_retriever import TemplateRetriever
+from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
 from terminaltables import AsciiTable
 from textwrap import wrap
 
 class ListCommandExecutor(object):
-    def __init__(self, template_retriever=None):
-        self.template_retriever = template_retriever or TemplateRetriever()
+    def __init__(self, template_type=None, template_retriever=None):
+        self.template_retriever = template_retriever or FilteredTemplateRetriever(template_type, TemplateRetriever())
 
     def list(self):
         try:
             templates = self.template_retriever.get_templates()
         except SSLError:
             raise click.UsageError('Could not retrieve the templates list. Are you offline?')
+
+        if not templates:
+            click.echo('No templates matched the criteria')
+            return
 
         template_rows = [['Template Name','Description']]
         for template in templates.values():
