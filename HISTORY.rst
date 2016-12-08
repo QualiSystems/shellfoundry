@@ -2,7 +2,7 @@
 History
 =======
 
-0.0.40 (2016-12-08)
+0.0.41 (2016-12-08)
 -------------------
 
 * Config command was added to allow setting configuration once for all shells in addition to local configuration
