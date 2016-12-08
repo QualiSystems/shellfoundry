@@ -29,12 +29,13 @@ class TestConfigRecord(fake_filesystem_unittest.TestCase):
     @patch("shellfoundry.utilities.config.config_file_creation.click.echo")
     def test_failed_to_crate_config_file_due_to_already_exists_no_error_is_raised(self, echo_mock, open_mock):
         # Arrange
+        # self.fs.CreateFile('/quali/shellfoundry/global_config.yml', contents="""""")
         cfg_path = '/quali/shellfoundry/global_config.yml'
         open_mock.side_effect = [IOError('Failed to create the file, maybe it is already exists')]
 
         # Act
-        with patch("os.path.exists") as path_mock:
-            path_mock.side_effect = [False, True]
+        with patch("shellfoundry.utilities.config.config_file_creation.os.path.exists") as path_mock:
+            path_mock.side_effect = [False, True, True]
             ConfigFileCreation().create(cfg_path)
 
         # Assert

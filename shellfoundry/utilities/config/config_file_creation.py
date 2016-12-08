@@ -15,7 +15,7 @@ class ConfigFileCreation(object):
                     raise
         try:
             click.echo('Creating config file...')
-            open(config_file_path, mode='w+').close()
+            open(config_file_path, mode='w').close()
         except:
             if not os.path.exists(config_file_path):
                 click.echo('Failed to create config file')
