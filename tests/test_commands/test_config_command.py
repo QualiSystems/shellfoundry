@@ -157,7 +157,6 @@ install:
     @patch('shellfoundry.commands.config_command.click.echo')
     def test_adding_key_to_global_config_that_hasnt_been_created_yet(self, echo_mock, get_app_dir_mock):
         # Arrange
-        self.fs.CreateDirectory('/quali/shellfoundry')
         get_app_dir_mock.return_value = '/quali/shellfoundry'
 
         # Act
