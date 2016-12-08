@@ -12,6 +12,8 @@ class ConfigFileCreation(object):
                 os.makedirs(dirname)
             except OSError as exc:
                 if exc.errno != errno.EEXIST:
+                    click.echo('Failed to create config file')
+                    click.echo(exc.message)
                     raise
         try:
             click.echo('Creating config file...')
