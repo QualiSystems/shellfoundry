@@ -2,6 +2,11 @@
 History
 =======
 
+0.0.41 (2016-12-08)
+-------------------
+
+* Config command was added to allow setting configuration once for all shells in addition to local configuration
+
 0.0.39 (2016-10-09)
 -------------------
 

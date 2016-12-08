@@ -53,4 +53,38 @@ The shell package can be installed into CloudShell using the *install* command. 
 $ shellfoundry install
 ```
 
+### Altering CloudShell connection configuration
+
+To alter CloudShell connection information use the *config* command like so:
+
+```bash
+$ shellfoundry config <key> <value>
+```
+
+This will create a global configuration file inside %APPDATA%\Quali\shellfoundry (or equivilent on linux) and will act upon all shells to be installed
+other than those with local configuration file (cloudshell_config.yml).
+
+For times that a local configuration file is more suitable please use this command from shell's root folder:
+
+```bash
+$ shellfoundry --local config <key> <value>
+```
+
+To remove a key from the configuration simply use:
+
+```bash
+$ shellfoundry config --remove <key>
+```
+
+To view install configuration use this:
+
+```bash
+$ shellfoundry config
+```
+
+(in order to switch to local use the --local flag on shell's root folder)
+
+* Replace <key> and <value> with the desired key and value to save into the configuration file.
+* Configuration files are created once shellfoundry config (--global/--local flag) is executed.
+
 Return to [Table of Contents](readme.md)
