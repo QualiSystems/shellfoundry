@@ -26,7 +26,11 @@ $ shellfoundry new nutshell --template networking/router
 ```bash
 $ shellfoundry list
 ```
-To add a new template or modify an existing one, please refer to [Contributing](../.github/contributing.md)
+
+To view only relevant templates, use one of the available filter flags: --tosca, --legacy and --all
+Default view is configurable using the *defaultview* key set to one of the following: tosca, legact or all. To set a config key refer to the *config* command section
+
+* To add a new template or modify an existing one, please refer to [Contributing](../.github/contributing.md)
 
 ## Packaging a shell
 

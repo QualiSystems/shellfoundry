@@ -2,6 +2,11 @@
 History
 =======
 
+0.0.43 (2016-12-11)
+-------------------
+
+* List command is now able to filter results based on shell type (--tosca, --legacy, --all)
+
 0.0.41 (2016-12-08)
 -------------------
 
