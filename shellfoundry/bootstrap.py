@@ -92,3 +92,5 @@ def config(kv, global_cfg, key_to_remove):
     Configures global/local config values to allow deployment over cloudshell
     """
     ConfigCommandExecutor(global_cfg).config(kv, key_to_remove)
+
+# testing deployment
