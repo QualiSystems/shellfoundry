@@ -82,4 +82,4 @@ install:
         command_executor.install()
 
         # Assert
-        echo_mock.assert_called_once_with(u'Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml')
+        echo_mock.assert_called_with(u'Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml')

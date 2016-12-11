@@ -7,7 +7,10 @@ LOCAL_CONFIG_NAME = 'cloudshell_config.yml'
 
 class LocalConfigProvider(object):
     def get_config_path(self):
-        return os.path.join(os.getcwd(), LOCAL_CONFIG_NAME)
+        path = os.path.join(os.getcwd(), LOCAL_CONFIG_NAME)
+        if os.path.exists(path):
+            click.echo('Using local configuration...')
+        return path
 
 class GlobalConfigProvider(object):
     QUALI = 'Quali'

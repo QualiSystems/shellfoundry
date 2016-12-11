@@ -80,7 +80,7 @@ install:
         ConfigCommandExecutor(False).config(('new_key', 'new_value'))
 
         # Assert
-        echo_mock.assert_called_once_with('new_key: new_value was saved successfully')
+        echo_mock.assert_called_with('new_key: new_value was saved successfully')
         desired_result = """install:
   key: value
   new_key: new_value

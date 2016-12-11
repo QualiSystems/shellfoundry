@@ -2,7 +2,7 @@ import os
 
 from pyfakefs import fake_filesystem_unittest
 from mock import patch
-from shellfoundry.utilities.config_reader import CloudShellConfigReader
+from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader, ShellFoundryConfig
 
 
 class TestConfigReader(fake_filesystem_unittest.TestCase):
@@ -20,7 +20,7 @@ install:
     domain: my_domain
     """)
         os.chdir('shell_name')
-        reader = CloudShellConfigReader()
+        reader = Configuration(CloudShellConfigReader())
 
         # Act
         config = reader.read()
@@ -36,7 +36,7 @@ install:
         # Arrange
         self.fs.CreateFile('shell_name/cloudshell_config.yml', contents='install:')
         os.chdir('shell_name')
-        reader = CloudShellConfigReader()
+        reader = Configuration(CloudShellConfigReader())
 
         # Act
         config = reader.read()
@@ -50,7 +50,7 @@ install:
 
     def test_read_file_does_not_exist_default_settings(self):
         # Arrange
-        reader = CloudShellConfigReader()
+        reader = Configuration(CloudShellConfigReader())
 
         # Act
         config = reader.read()
@@ -66,7 +66,7 @@ install:
         # Arrange
         self.fs.CreateFile('shell_name/cloudshell_config.yml', contents='')
         os.chdir('shell_name')
-        reader = CloudShellConfigReader()
+        reader = Configuration(CloudShellConfigReader())
 
         # Act
         config = reader.read()
@@ -86,7 +86,7 @@ install:
   host: somehostaddress
 """)
         get_app_dir_mock.return_value = 'Quali/shellfoundry/'
-        reader = CloudShellConfigReader()
+        reader = Configuration(CloudShellConfigReader())
 
         # Act
         config = reader.read()
@@ -97,3 +97,42 @@ install:
         self.assertEqual(config.username, 'admin')
         self.assertEqual(config.password, 'admin')
         self.assertEqual(config.domain, 'Global')
+
+    def test_read_shellfoundry_settings_all_config_are_set(self):
+        # Arrange
+        self.fs.CreateFile('shell_name/cloudshell_config.yml', contents="""
+install:
+    defaultview: tosca
+    """)
+        os.chdir('shell_name')
+        reader = Configuration(ShellFoundryConfig())
+
+        # Act
+        settings = reader.read()
+
+        #Assert
+        self.assertEqual(settings.defaultview, 'tosca')
+
+    def test_read_shellfoundry_settings_not_config_file_reads_default(self):
+        # Arrange
+        reader = Configuration(ShellFoundryConfig())
+
+        # Act
+        settings = reader.read()
+
+        #Assert
+        self.assertEqual(settings.defaultview, 'all')
+
+    def test_non_valid_config_file_read_default(self):
+        self.fs.CreateFile('shell_name/cloudshell_config.yml', contents="""
+invalidsection:
+    defaultview: tosca
+    """)
+        os.chdir('shell_name')
+        reader = Configuration(ShellFoundryConfig())
+
+        # Act
+        settings = reader.read()
+
+        # Assert
+        self.assertEqual(settings.defaultview, 'all')
