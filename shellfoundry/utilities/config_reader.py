@@ -3,6 +3,7 @@ import yaml
 
 from shellfoundry.models.install_config import InstallConfig, DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, \
     DEFAULT_PASSWORD, DEFAULT_DOMAIN
+from shellfoundry.models.shellfoundry_settings import ShellFoundrySettings, DEFAULT_DEFAULT_VIEW
 from shellfoundry.utilities.config.config_providers import DefaultConfigProvider
 
 INSTALL = 'install'
@@ -12,6 +13,8 @@ PORT = 'port'
 USERNAME = 'username'
 PASSWORD = 'password'
 DOMAIN = 'domain'
+
+DEFAULT_VIEW = 'defaultview'
 
 
 class CloudShellConfigReader(object):
@@ -44,6 +47,31 @@ class CloudShellConfigReader(object):
         domain = self._get_with_default(install_config, DOMAIN, DEFAULT_DOMAIN)
 
         return InstallConfig(host, port, username, password, domain)
+
+    @staticmethod
+    def _get_with_default(install_config, parameter_name, default_value):
+        return install_config[parameter_name] if install_config and parameter_name in install_config else default_value
+
+
+class ShellFoundryConfig(object):
+    def __init__(self, config_provider=None):
+        self.config_provider = config_provider or DefaultConfigProvider()
+
+    def read(self):
+        config_path = self.config_provider.get_config_path()
+
+        if config_path is None or not os.path.isfile(config_path):
+            return ShellFoundrySettings.get_default()
+
+        with open(config_path) as stream:
+            config = yaml.load(stream.read())
+
+        if not config or INSTALL not in config:
+            return ShellFoundrySettings.get_default()
+
+        install_config = config[INSTALL]
+        defaultview = self._get_with_default(install_config, DEFAULT_VIEW, DEFAULT_DEFAULT_VIEW)
+        return ShellFoundrySettings(defaultview)
 
     @staticmethod
     def _get_with_default(install_config, parameter_name, default_value):

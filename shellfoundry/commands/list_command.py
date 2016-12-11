@@ -4,12 +4,14 @@ import textwrap
 from os import linesep
 from requests.exceptions import SSLError
 from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
+from shellfoundry.utilities.config_reader import ShellFoundryConfig
 from terminaltables import AsciiTable
 from textwrap import wrap
 
 class ListCommandExecutor(object):
-    def __init__(self, template_type=None, template_retriever=None):
-        self.template_retriever = template_retriever or FilteredTemplateRetriever(template_type, TemplateRetriever())
+    def __init__(self, default_view=None, template_retriever=None):
+        default_view = default_view or ShellFoundryConfig().read().defaultview
+        self.template_retriever = template_retriever or FilteredTemplateRetriever(default_view, TemplateRetriever())
 
     def list(self):
         try:
