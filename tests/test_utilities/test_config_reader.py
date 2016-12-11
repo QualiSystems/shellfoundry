@@ -2,7 +2,7 @@ import os
 
 from pyfakefs import fake_filesystem_unittest
 from mock import patch
-from shellfoundry.utilities.config_reader import CloudShellConfigReader
+from shellfoundry.utilities.config_reader import CloudShellConfigReader, ShellFoundryConfig
 
 
 class TestConfigReader(fake_filesystem_unittest.TestCase):
@@ -97,3 +97,42 @@ install:
         self.assertEqual(config.username, 'admin')
         self.assertEqual(config.password, 'admin')
         self.assertEqual(config.domain, 'Global')
+
+    def test_read_shellfoundry_settings_all_config_are_set(self):
+        # Arrange
+        self.fs.CreateFile('shell_name/cloudshell_config.yml', contents="""
+install:
+    defaultview: tosca
+    """)
+        os.chdir('shell_name')
+        reader = ShellFoundryConfig()
+
+        # Act
+        settings = reader.read()
+
+        #Assert
+        self.assertEqual(settings.defaultview, 'tosca')
+
+    def test_read_shellfoundry_settings_not_config_file_reads_default(self):
+        # Arrange
+        reader = ShellFoundryConfig()
+
+        # Act
+        settings = reader.read()
+
+        #Assert
+        self.assertEqual(settings.defaultview, 'all')
+
+    def test_non_valid_config_file_read_default(self):
+        self.fs.CreateFile('shell_name/cloudshell_config.yml', contents="""
+invalidsection:
+    defaultview: tosca
+    """)
+        os.chdir('shell_name')
+        reader = ShellFoundryConfig()
+
+        # Act
+        settings = reader.read()
+
+        # Assert
+        self.assertEqual(settings.defaultview, 'all')
