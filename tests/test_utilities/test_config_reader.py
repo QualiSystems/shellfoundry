@@ -2,7 +2,7 @@ import os
 
 from pyfakefs import fake_filesystem_unittest
 from mock import patch
-from shellfoundry.utilities.config_reader import CloudShellConfigReader, ShellFoundryConfig
+from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader, ShellFoundryConfig
 
 
 class TestConfigReader(fake_filesystem_unittest.TestCase):
@@ -20,7 +20,7 @@ install:
     domain: my_domain
     """)
         os.chdir('shell_name')
-        reader = CloudShellConfigReader()
+        reader = Configuration(CloudShellConfigReader())
 
         # Act
         config = reader.read()
@@ -36,7 +36,7 @@ install:
         # Arrange
         self.fs.CreateFile('shell_name/cloudshell_config.yml', contents='install:')
         os.chdir('shell_name')
-        reader = CloudShellConfigReader()
+        reader = Configuration(CloudShellConfigReader())
 
         # Act
         config = reader.read()
@@ -50,7 +50,7 @@ install:
 
     def test_read_file_does_not_exist_default_settings(self):
         # Arrange
-        reader = CloudShellConfigReader()
+        reader = Configuration(CloudShellConfigReader())
 
         # Act
         config = reader.read()
@@ -66,7 +66,7 @@ install:
         # Arrange
         self.fs.CreateFile('shell_name/cloudshell_config.yml', contents='')
         os.chdir('shell_name')
-        reader = CloudShellConfigReader()
+        reader = Configuration(CloudShellConfigReader())
 
         # Act
         config = reader.read()
@@ -86,7 +86,7 @@ install:
   host: somehostaddress
 """)
         get_app_dir_mock.return_value = 'Quali/shellfoundry/'
-        reader = CloudShellConfigReader()
+        reader = Configuration(CloudShellConfigReader())
 
         # Act
         config = reader.read()
@@ -105,7 +105,7 @@ install:
     defaultview: tosca
     """)
         os.chdir('shell_name')
-        reader = ShellFoundryConfig()
+        reader = Configuration(ShellFoundryConfig())
 
         # Act
         settings = reader.read()
@@ -115,7 +115,7 @@ install:
 
     def test_read_shellfoundry_settings_not_config_file_reads_default(self):
         # Arrange
-        reader = ShellFoundryConfig()
+        reader = Configuration(ShellFoundryConfig())
 
         # Act
         settings = reader.read()
@@ -129,7 +129,7 @@ invalidsection:
     defaultview: tosca
     """)
         os.chdir('shell_name')
-        reader = ShellFoundryConfig()
+        reader = Configuration(ShellFoundryConfig())
 
         # Act
         settings = reader.read()

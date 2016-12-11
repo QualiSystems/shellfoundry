@@ -17,62 +17,54 @@ DOMAIN = 'domain'
 DEFAULT_VIEW = 'defaultview'
 
 
-class CloudShellConfigReader(object):
-    def __init__(self, config_provider=None):
+def get_with_default(install_config, parameter_name, default_value):
+    '''
+
+    :param install_config: A dict represents the install section inside the configuration file
+    :param parameter_name: Specific key inside the install section
+    :param default_value: Default value in cases that the key cannot be found
+    :return: The value of the key in the configuration file or default value if key cannot be found
+    '''
+    return install_config[parameter_name] if install_config and parameter_name in install_config else default_value
+
+
+class Configuration(object):
+    def __init__(self, reader, config_provider=None):
+        self.reader = reader
         self.config_provider = config_provider or DefaultConfigProvider()
 
     def read(self):
-        """
-
-        :return:
-        :rtype shellfoundry.models.install_config.Installconfig
-        """
         config_path = self.config_provider.get_config_path()
 
         if config_path is None or not os.path.isfile(config_path):
-            return InstallConfig.get_default()
+            return self.reader.get_defaults()
 
         with open(config_path) as stream:
             config = yaml.load(stream.read())
 
         if not config or INSTALL not in config:
-            return InstallConfig.get_default()
+            return self.reader.get_defaults()
 
-        install_config = config[INSTALL]
+        return self.reader.read_from_config(config[INSTALL])
 
-        host = self._get_with_default(install_config, HOST, DEFAULT_HOST)
-        port = self._get_with_default(install_config, PORT, DEFAULT_PORT)
-        username = self._get_with_default(install_config, USERNAME, DEFAULT_USERNAME)
-        password = self._get_with_default(install_config, PASSWORD, DEFAULT_PASSWORD)
-        domain = self._get_with_default(install_config, DOMAIN, DEFAULT_DOMAIN)
 
+class CloudShellConfigReader(object):
+    def get_defaults(self):
+        return InstallConfig.get_default()
+
+    def read_from_config(self, config):
+        host = get_with_default(config, HOST, DEFAULT_HOST)
+        port = get_with_default(config, PORT, DEFAULT_PORT)
+        username = get_with_default(config, USERNAME, DEFAULT_USERNAME)
+        password = get_with_default(config, PASSWORD, DEFAULT_PASSWORD)
+        domain = get_with_default(config, DOMAIN, DEFAULT_DOMAIN)
         return InstallConfig(host, port, username, password, domain)
-
-    @staticmethod
-    def _get_with_default(install_config, parameter_name, default_value):
-        return install_config[parameter_name] if install_config and parameter_name in install_config else default_value
 
 
 class ShellFoundryConfig(object):
-    def __init__(self, config_provider=None):
-        self.config_provider = config_provider or DefaultConfigProvider()
+    def get_defaults(self):
+        return ShellFoundrySettings.get_default()
 
-    def read(self):
-        config_path = self.config_provider.get_config_path()
-
-        if config_path is None or not os.path.isfile(config_path):
-            return ShellFoundrySettings.get_default()
-
-        with open(config_path) as stream:
-            config = yaml.load(stream.read())
-
-        if not config or INSTALL not in config:
-            return ShellFoundrySettings.get_default()
-
-        install_config = config[INSTALL]
-        defaultview = self._get_with_default(install_config, DEFAULT_VIEW, DEFAULT_DEFAULT_VIEW)
+    def read_from_config(self, config):
+        defaultview = get_with_default(config, DEFAULT_VIEW, DEFAULT_DEFAULT_VIEW)
         return ShellFoundrySettings(defaultview)
-
-    @staticmethod
-    def _get_with_default(install_config, parameter_name, default_value):
-        return install_config[parameter_name] if install_config and parameter_name in install_config else default_value

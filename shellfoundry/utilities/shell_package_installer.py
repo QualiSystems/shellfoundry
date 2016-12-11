@@ -2,14 +2,14 @@ import os
 import click
 from cloudshell.rest.exceptions import ShellNotFoundException
 
-from shellfoundry.utilities.config_reader import CloudShellConfigReader
+from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
 from shellfoundry.utilities.shell_package import ShellPackage
 from cloudshell.rest.api import PackagingRestApiClient
 
 
 class ShellPackageInstaller(object):
     def __init__(self):
-        self.cloudshell_config_reader = CloudShellConfigReader()
+        self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
     def install(self, path):
         shell_package = ShellPackage(path)

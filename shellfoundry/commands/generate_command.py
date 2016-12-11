@@ -1,14 +1,14 @@
 import os
 import click
 from os import path
-from shellfoundry.utilities.config_reader import CloudShellConfigReader
+from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
 from shellfoundry.utilities.driver_generator import DriverGenerator
 from shellfoundry.utilities.shell_package import ShellPackage
 
 
 class GenerateCommandExecutor(object):
     def __init__(self, cloudshell_config_reader=None, driver_generator=None):
-        self.cloudshell_config_reader = cloudshell_config_reader or CloudShellConfigReader()
+        self.cloudshell_config_reader = cloudshell_config_reader or Configuration(CloudShellConfigReader())
         self.driver_generator = driver_generator or DriverGenerator()
 
     def generate(self):
