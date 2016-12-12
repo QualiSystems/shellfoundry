@@ -109,28 +109,28 @@ install:
                  call(u'key: value')]
         echo_mock.assert_has_calls(calls)
 
-        @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
-        @patch('shellfoundry.commands.config_command.click.echo')
-        def test_remove_key_is_allowed(self, echo_mock, get_app_dir_mock):
-            # Arrange
-            self.fs.CreateFile('/quali/shellfoundry/global_config.yml', contents="""
-    install:
-      key: value
-      yetanotherkey: yetanothervalue""")
-            get_app_dir_mock.return_value = '/quali/shellfoundry'
-            key = 'yetanotherkey'
+    @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
+    @patch('shellfoundry.commands.config_command.click.echo')
+    def test_remove_key_is_allowed(self, echo_mock, get_app_dir_mock):
+        # Arrange
+        self.fs.CreateFile('/quali/shellfoundry/global_config.yml', contents="""
+install:
+  key: value
+  yetanotherkey: yetanothervalue""")
+        get_app_dir_mock.return_value = '/quali/shellfoundry'
+        key = 'yetanotherkey'
 
-            # Act
-            ConfigCommandExecutor(True).config(key_to_remove=key)
+        # Act
+        ConfigCommandExecutor(True).config(key_to_remove=key)
 
-            # Assert
-            echo_mock.assert_called_once_with('yetanotherkey was deleted successfully')
-            desired_result = """install:
-      key: value
-    """
-            file_content = self.fs.GetObject('/quali/shellfoundry/global_config.yml').contents
-            self.assertTrue(file_content == desired_result, 'Expected: {}{}Actual: {}'
-                            .format(desired_result, os.linesep, file_content))
+        # Assert
+        echo_mock.assert_called_once_with('yetanotherkey was deleted successfully')
+        desired_result = """install:
+  key: value
+"""
+        file_content = self.fs.GetObject('/quali/shellfoundry/global_config.yml').contents
+        self.assertTrue(file_content == desired_result, 'Expected: {}{}Actual: {}'
+                        .format(desired_result, os.linesep, file_content))
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
