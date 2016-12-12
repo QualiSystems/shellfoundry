@@ -1,13 +1,11 @@
 import yaml
 
 from shellfoundry.utilities.config_reader import INSTALL
-from shellfoundry.utilities.config.config_file_creation import ConfigFileCreation
 
 
 class ConfigContext(object):
     def __init__(self, config_file_path, cfg_creation=None):
         self.config_file_path = config_file_path
-        (cfg_creation or ConfigFileCreation()).create(config_file_path)
 
     def try_save(self, key, value):
         try:
