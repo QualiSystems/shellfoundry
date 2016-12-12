@@ -22,5 +22,5 @@ class ConfigRecord(object):
         if config_context.try_delete(self.key):
             click.echo('{} was deleted successfully'.format(self.key))
         else:
-
+            # add support for typed exceptions in order to have the ability to differentiate between failures
             click.echo('Failed to delete key')

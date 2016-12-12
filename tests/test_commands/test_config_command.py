@@ -1,3 +1,5 @@
+import os
+
 from mock import patch, call
 from pyfakefs import fake_filesystem_unittest
 
@@ -127,9 +129,21 @@ install:
   key: value
 """
         file_content = self.fs.GetObject('/quali/shellfoundry/global_config.yml').contents
-        import os
         self.assertTrue(file_content == desired_result, 'Expected: {}{}Actual: {}'
                         .format(desired_result, os.linesep, file_content))
+
+    @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
+    @patch('shellfoundry.commands.config_command.click.echo')
+    def test_remove_key_from_global_where_global_config_file_does_not_exists(self, echo_mock, get_app_dir_mock):
+        # Arrange
+        get_app_dir_mock.return_value = '/quali/shellfoundry'
+        key = 'yetanotherkey'
+
+        # Act
+        ConfigCommandExecutor(True).config(key_to_remove=key)
+
+        # Assert
+        echo_mock.assert_called_with('Failed to delete key')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
@@ -149,7 +163,6 @@ install:
   key: new_value
 """
         file_content = self.fs.GetObject('/quali/shellfoundry/global_config.yml').contents
-        import os
         self.assertTrue(file_content == desired_result, 'Expected: {}{}Actual: {}'
                         .format(desired_result, os.linesep, file_content))
 
@@ -168,6 +181,29 @@ install:
   key: new_value
 """
         file_content = self.fs.GetObject('/quali/shellfoundry/global_config.yml').contents
-        import os
         self.assertTrue(file_content == desired_result, 'Expected: {}{}Actual: {}'
                         .format(desired_result, os.linesep, file_content))
+
+    @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
+    @patch('shellfoundry.commands.config_command.click.echo')
+    def test_echo_config_data_when_global_config_does_not_exists(self, echo_mock, get_app_dir_mock):
+        # Arrange
+        get_app_dir_mock.return_value = '/quali/shellfoundry'
+
+        # Act
+        ConfigCommandExecutor(True).config()
+
+        # Assert
+        echo_mock.assert_called_with("Global config does not exists")
+
+    @patch('shellfoundry.commands.config_command.click.echo')
+    def test_echo_config_data_when_local_config_does_not_exists(self, echo_mock):
+        # Arrange
+        self.fs.CreateDirectory("/shell_name")
+        os.chdir('shell_name')
+
+        # Act
+        ConfigCommandExecutor(False).config()
+
+        # Assert
+        echo_mock.assert_called_with("Local config does not exists")
