@@ -2,6 +2,11 @@
 History
 =======
 
+<next-version-here>
+-------------------
+
+* Show command was added to view all available versions of a template
+
 0.0.44 (2016-12-12)
 -------------------
 
