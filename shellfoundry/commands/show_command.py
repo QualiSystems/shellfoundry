@@ -19,15 +19,15 @@ class ShowCommandExecutor(object):
         try:
             template_repo = self.template_retriever.get_templates()[template_name].repository
         except:
-            raise click.Abort('Template does not exist')
+            raise click.ClickException('Template does not exist')
 
         if not template_repo:
-            raise click.Abort('Repository url is empty')
+            raise click.ClickException('Repository url is empty')
 
         request = requests.get(VERSIONS_URL.format(*template_repo.split('/')[-2:]))
 
         if request.status_code != requests.codes.ok:
-            raise click.Abort('Failed to receive versions from host')
+            raise click.ClickException('Failed to receive versions from host')
 
         request_arr = ast.literal_eval(request.text)
 
@@ -46,4 +46,4 @@ class ShowCommandExecutor(object):
     def validate_has_versions(self, branches):
         first_branch = next(iter(branches or []), None)
         if first_branch is None:
-            raise click.Abort("No versions has been found for this template")
+            raise click.ClickException("No versions has been found for this template")
