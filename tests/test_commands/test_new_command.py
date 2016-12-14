@@ -218,3 +218,26 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
             extra_context={},
             running_on_same_folder=False)
 
+
+    @httpretty.activate
+    def test_fail_to_generate_shell_when_requested_version_does_not_exists(self):
+        # Arrange
+        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url')}
+        repo_info = ('quali', 'resource-test')
+
+        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/quali/resource-test/zipball/1.1",
+                               body='', status=404, stream=True)
+        template_compiler = Mock()
+
+        # Act
+        with patch.object(TemplateRetriever, 'get_templates', return_value=templates), \
+             patch.object(RepositoryDownloader, '_parse_repo_url', return_value=repo_info), \
+             patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name),\
+             self.assertRaises(BadParameter) as context:
+            NewCommandExecutor(template_retriever=TemplateRetriever(),
+                               repository_downloader=RepositoryDownloader(),
+                               template_compiler=template_compiler) \
+                .new('new_shell', 'tosca/resource/test', '1.1')
+
+        # Assert
+        self.assertTrue('1.1 does not exists or invalid value' in context.exception)

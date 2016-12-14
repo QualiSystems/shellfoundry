@@ -1,11 +1,11 @@
 import os
 import click
-from cookiecutter.main import cookiecutter
 from requests.exceptions import SSLError
 from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplateCompiler
 from shellfoundry.utilities.repository_downloader import RepositoryDownloader
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 from shellfoundry.utilities.template_retriever import TemplateRetriever
+from shellfoundry.exceptions import VersionRequestException
 
 
 class NewCommandExecutor(object):
@@ -54,7 +54,10 @@ class NewCommandExecutor(object):
                                                                                             templates)))
             template_obj = templates[template]
 
-            repo_path = self.repository_downloader.download_template(temp_dir, template_obj.repository, version)
+            try:
+                repo_path = self.repository_downloader.download_template(temp_dir, template_obj.repository, version)
+            except VersionRequestException:
+                raise click.BadParameter(u'{} does not exists or invalid value'.format(version))
 
             self.template_compiler.compile_template(name, repo_path, template_obj.params,
                                                     running_on_same_folder)

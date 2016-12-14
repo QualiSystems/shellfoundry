@@ -16,3 +16,7 @@ class WrongShellYmlException(ShellFoundryBaseException):
 class NoVersionsHaveBeenFoundException(ShellFoundryBaseException):
     def __init__(self, message):
         super(NoVersionsHaveBeenFoundException, self).__init__(message)
+
+class VersionRequestException(ShellFoundryBaseException):
+    def __init__(self, message):
+        super(VersionRequestException, self).__init__(message)

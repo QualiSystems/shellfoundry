@@ -7,6 +7,7 @@ from abc import ABCMeta
 from abc import abstractmethod
 
 from shellfoundry.utilities.template_versions import TemplateVersions
+from shellfoundry.exceptions import VersionRequestException
 
 
 class DownloadedRepoExtractor:
@@ -83,6 +84,8 @@ class RepositoryDownloader:
         local_filename = os.path.join(directory, url.split('/')[-1])
         # NOTE the stream=True parameter
         r = requests.get(url, stream=True)
+        if r.status_code != requests.codes.ok:
+            raise VersionRequestException('Failed to download zip file from {}'.format(url))
         with open(local_filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:  # filter out keep-alive new chunks
