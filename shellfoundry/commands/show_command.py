@@ -1,12 +1,10 @@
 import click
 import requests
-import ast
+import shellfoundry.exceptions as exc
 
 from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
+from shellfoundry.utilities.template_versions import TemplateVersions
 
-
-VERSIONS_URL = 'https://api.github.com/repos/{}/{}/branches'
-NAME_PLACEHOLDER = 'name'
 MASTER_BRANCH_NAME = 'master'
 LATEST_STAMP = '{} (latest)'
 
@@ -24,19 +22,14 @@ class ShowCommandExecutor(object):
         if not template_repo:
             raise click.ClickException('Repository url is empty')
 
-        request = requests.get(VERSIONS_URL.format(*template_repo.split('/')[-2:]))
-
-        if request.status_code != requests.codes.ok:
-            raise click.ClickException('Failed to receive versions from host')
-
-        request_arr = ast.literal_eval(request.text)
-
-        branches = [d[NAME_PLACEHOLDER] for d in request_arr]
+        try:
+            branches = TemplateVersions(*template_repo.split('/')[-2:]).get_versions_of_template()
+        except (requests.RequestException, exc.NoVersionsHaveBeenFoundException) as ex:
+            raise click.ClickException(ex.message)
         branches.remove(MASTER_BRANCH_NAME)
-        branches.sort(reverse=True)
-        self.validate_has_versions(branches)
+        if not TemplateVersions.has_versions(branches): # validating that besides master there are other versions
+            raise click.ClickException("No versions has been found for this template")
         self.mark_latest(branches)
-
         for branch_name in branches:
             click.echo(branch_name)
 

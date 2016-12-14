@@ -4,6 +4,7 @@ import unittest
 from mock import patch, Mock, PropertyMock, call
 from shellfoundry.commands.show_command import ShowCommandExecutor
 from shellfoundry.utilities.template_retriever import TemplateRetriever
+from shellfoundry.utilities.template_versions import TemplateVersions
 from shellfoundry.models.shell_template import ShellTemplate
 
 patch.object = patch.object
@@ -131,6 +132,27 @@ class TestShowCommandExecutor(unittest.TestCase):
             "name": "master"
           }
         ]"""
+
+        shell_template = ShellTemplate('tosca/networking/switch',
+                                       'some description',
+                                       'mock://tosca/networking/switch')
+        template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
+        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
+
+        # Act
+        with patch('shellfoundry.commands.show_command.requests.get') as get_response_mock, \
+            self.assertRaises(click.ClickException) as context:
+            type(get_response_mock.return_value).status_code = PropertyMock(return_value=200)
+            type(get_response_mock.return_value).text = PropertyMock(return_value=raw_response)
+            ShowCommandExecutor(template_retriever_mock).show(template_name)
+
+        # Assert
+        self.assertTrue("No versions has been found for this template" in context.exception)
+
+    def test_show_command_raise_no_versions_found_when_there_are_no_versions_at_all(self):
+        # Arrange
+        template_name = 'tosca/networking/switch'
+        raw_response = """[]"""
 
         shell_template = ShellTemplate('tosca/networking/switch',
                                        'some description',

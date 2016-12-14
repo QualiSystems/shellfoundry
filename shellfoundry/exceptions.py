@@ -1,13 +1,18 @@
 class ShellFoundryBaseException(Exception):
-    def __init__(self, type1, type2=None):
-        super(ShellFoundryBaseException, self).__init__(type1, type2)
+    def __init__(self, message):
+        super(ShellFoundryBaseException, self).__init__(message)
 
 
 class ShellYmlMissingException(ShellFoundryBaseException):
-    def __init__(self, type1, type2=None):
-        super(ShellYmlMissingException, self).__init__(type1, type2)
+    def __init__(self, message):
+        super(ShellYmlMissingException, self).__init__(message)
 
 
 class WrongShellYmlException(ShellFoundryBaseException):
-    def __init__(self, type1, type2=None):
-        super(WrongShellYmlException, self).__init__(type1, type2)
+    def __init__(self, message):
+        super(WrongShellYmlException, self).__init__(message)
+
+
+class NoVersionsHaveBeenFoundException(ShellFoundryBaseException):
+    def __init__(self, message):
+        super(NoVersionsHaveBeenFoundException, self).__init__(message)
