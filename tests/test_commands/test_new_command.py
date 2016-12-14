@@ -214,7 +214,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
         template_compiler.compile_template.smarter_assert_called_once_with(
             CookiecutterTemplateCompiler.compile_template,
             shell_name='new_shell',
-            template_path='mock_temp\\root',
+            template_path=os.path.join('mock_temp', 'root'),
             extra_context={},
             running_on_same_folder=False)
 
