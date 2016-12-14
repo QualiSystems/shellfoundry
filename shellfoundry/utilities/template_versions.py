@@ -6,6 +6,15 @@ VERSIONS_URL = 'https://api.github.com/repos/{}/{}/branches'
 NAME_PLACEHOLDER = 'name'
 
 
+def is_version(vstr):
+    from distutils.version import StrictVersion
+    try:
+        StrictVersion(vstr)
+        return True
+    except:
+        return False
+
+
 class TemplateVersions(object):
     def __init__(self, url_user, url_repo):
         self.template_repo = [url_user, url_repo]
@@ -22,7 +31,7 @@ class TemplateVersions(object):
 
         response_arr = ast.literal_eval(response.text)
         branches = [d[NAME_PLACEHOLDER] for d in response_arr]
-        branches.sort(reverse=True)
+        branches.sort(reverse=True, key=lambda x:(is_version(x), x))
         if not self.has_versions(branches):
             raise exc.NoVersionsHaveBeenFoundException("No versions have been found for this template")
         return branches

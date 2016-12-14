@@ -93,9 +93,5 @@ class RepositoryDownloader:
                     # f.flush() commented by recommendation from J.F.Sebastian
         return local_filename
 
-    def _parse_branch(self, branch):
-
-        return branch
-
     def _get_latest_branch(self, repo):
         return next(iter(TemplateVersions(*repo).get_versions_of_template()))

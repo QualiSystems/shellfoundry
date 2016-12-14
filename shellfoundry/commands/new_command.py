@@ -16,7 +16,7 @@ class NewCommandExecutor(object):
         self.repository_downloader = repository_downloader or RepositoryDownloader()
         self.template_compiler = template_compiler or CookiecutterTemplateCompiler()
 
-    def new(self, name, template, version):
+    def new(self, name, template, version=None):
         """
         Create a new shell based on a template.
         :param str name: The name of the Shell

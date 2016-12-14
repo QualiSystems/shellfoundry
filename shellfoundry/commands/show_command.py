@@ -28,15 +28,10 @@ class ShowCommandExecutor(object):
             raise click.ClickException(ex.message)
         branches.remove(MASTER_BRANCH_NAME)
         if not TemplateVersions.has_versions(branches): # validating that besides master there are other versions
-            raise click.ClickException("No versions has been found for this template")
+            raise click.ClickException("No versions have been found for this template")
         self.mark_latest(branches)
         for branch_name in branches:
             click.echo(branch_name)
 
     def mark_latest(self, branches):
         branches[0] = LATEST_STAMP.format(branches[0])
-
-    def validate_has_versions(self, branches):
-        first_branch = next(iter(branches or []), None)
-        if first_branch is None:
-            raise click.ClickException("No versions has been found for this template")

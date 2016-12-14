@@ -241,3 +241,34 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
 
         # Assert
         self.assertTrue('1.1 does not exists or invalid value' in context.exception)
+
+    @httpretty.activate
+    def test_integration_latest_version_is_default_when_version_was_not_specified(self):
+        # Arrange
+        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url')}
+        repo_info = ('quali', 'resource-test')
+
+        zipfile = mock_template_zip_file()
+        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/quali/resource-test/branches",
+                               body='''[{"name": "master"}, {"name": "1.0"}, {"name": "1.1"}, {"name": "2.0"}]''')
+        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/quali/resource-test/zipball/2.0",
+                               body=zipfile.read(), content_type='application/zip',
+                               content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
+        template_compiler = Mock()
+
+        # Act
+        with patch.object(TemplateRetriever, 'get_templates', return_value=templates), \
+             patch.object(RepositoryDownloader, '_parse_repo_url', return_value=repo_info), \
+             patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
+            NewCommandExecutor(template_retriever=TemplateRetriever(),
+                               repository_downloader=RepositoryDownloader(),
+                               template_compiler=template_compiler) \
+                .new('new_shell', 'tosca/resource/test')
+
+        # Assert
+        template_compiler.compile_template.smarter_assert_called_once_with(
+            CookiecutterTemplateCompiler.compile_template,
+            shell_name='new_shell',
+            template_path=os.path.join('mock_temp', 'root'),
+            extra_context={},
+            running_on_same_folder=False)
