@@ -147,7 +147,7 @@ class TestShowCommandExecutor(unittest.TestCase):
             ShowCommandExecutor(template_retriever_mock).show(template_name)
 
         # Assert
-        self.assertTrue("No versions has been found for this template" in context.exception)
+        self.assertTrue("No versions have been found for this template" in context.exception)
 
     def test_show_command_raise_no_versions_found_when_there_are_no_versions_at_all(self):
         # Arrange
@@ -168,4 +168,4 @@ class TestShowCommandExecutor(unittest.TestCase):
             ShowCommandExecutor(template_retriever_mock).show(template_name)
 
         # Assert
-        self.assertTrue("No versions has been found for this template" in context.exception)
+        self.assertTrue("No versions have been found for this template" in context.exception)

@@ -24,7 +24,7 @@ class TemplateVersions(object):
         branches = [d[NAME_PLACEHOLDER] for d in response_arr]
         branches.sort(reverse=True)
         if not self.has_versions(branches):
-            raise exc.NoVersionsHaveBeenFoundException("No versions has been found for this template")
+            raise exc.NoVersionsHaveBeenFoundException("No versions have been found for this template")
         return branches
 
     @staticmethod
