@@ -46,11 +46,12 @@ def list(default_view):
 @click.option(u'--template', default=u'resource',
               help="Specify a Shell template. Use 'shellfoundry list' to see the list of available templates. "
                    "You can use 'local://<foler>' to specify a locally saved template")
-def new(name, template):
+@click.option(u'--version', default=None)
+def new(name, template, version):
     """
     Creates a new shell based on a template
     """
-    NewCommandExecutor().new(name, template)
+    NewCommandExecutor().new(name, template, version)
 
 
 @cli.command()
