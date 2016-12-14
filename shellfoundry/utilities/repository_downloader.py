@@ -6,6 +6,9 @@ from giturlparse import parse
 from abc import ABCMeta
 from abc import abstractmethod
 
+from shellfoundry.utilities.template_versions import TemplateVersions
+from shellfoundry.exceptions import VersionRequestException
+
 
 class DownloadedRepoExtractor:
     def __init__(self):
@@ -31,9 +34,11 @@ class RepositoryDownloader:
     def __init__(self, repo_extractor=ZipDownloadedRepoExtractor()):
         self.repo_extractor = repo_extractor
 
-    def download_template(self, target_dir, repo_address):
+    def download_template(self, target_dir, repo_address, branch=None):
         user, repo = self._parse_repo_url(repo_address)
-        download_url = self._join_url_all("https://api.github.com/repos", [user, repo, 'zipball', 'master'])
+        if not branch:
+            branch = self._get_latest_branch((user, repo))
+        download_url = self._join_url_all("https://api.github.com/repos", [user, repo, 'zipball', branch])
         archive_path = ''
         try:
             archive_path = self._download_file(download_url, target_dir)
@@ -79,9 +84,14 @@ class RepositoryDownloader:
         local_filename = os.path.join(directory, url.split('/')[-1])
         # NOTE the stream=True parameter
         r = requests.get(url, stream=True)
+        if r.status_code != requests.codes.ok:
+            raise VersionRequestException('Failed to download zip file from {}'.format(url))
         with open(local_filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:  # filter out keep-alive new chunks
                     f.write(chunk)
                     # f.flush() commented by recommendation from J.F.Sebastian
         return local_filename
+
+    def _get_latest_branch(self, repo):
+        return next(iter(TemplateVersions(*repo).get_versions_of_template()))

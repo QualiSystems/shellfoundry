@@ -19,6 +19,17 @@ a shell that is based on a specific template:
 $ shellfoundry new nutshell --template networking/router
 ```
 
+To create a new shell from different template version:
+
+```bash
+$ shellfoundry new nutshell --template networking/router --version <version_number>
+```
+
+To use the latest template, omit the --version option.
+
+* To view all available versions of a given template, please refer to the *show* command.
+** Please note that template versioning is only supported by tosca shells.
+
 ## Listing available templates
 
 **shellfoundry** displays list of the available templates by executing the following command-line:
@@ -31,6 +42,16 @@ To view only relevant templates, use one of the available filter flags: --tosca,
 Default view is configurable using the *defaultview* key set to one of the following: tosca, legact or all. To set a config key refer to the *config* command section
 
 * To add a new template or modify an existing one, please refer to [Contributing](../.github/contributing.md)
+
+## Showing template versions
+
+**shellfoundry** displays list of the versions for a given template by executing the following command-line:
+
+```bash
+$ shellfoundry show <template_name>
+```
+
+The versions will dispay in a descending order from latest down to earliest.
 
 ## Packaging a shell
 

@@ -13,6 +13,7 @@ from shellfoundry.commands.list_command import ListCommandExecutor
 from shellfoundry.commands.new_command import NewCommandExecutor
 from shellfoundry.commands.pack_command import PackCommandExecutor
 from shellfoundry.commands.config_command import ConfigCommandExecutor
+from shellfoundry.commands.show_command import ShowCommandExecutor
 from shellfoundry.utilities.shell_package import ShellPackage
 
 
@@ -45,11 +46,12 @@ def list(default_view):
 @click.option(u'--template', default=u'resource',
               help="Specify a Shell template. Use 'shellfoundry list' to see the list of available templates. "
                    "You can use 'local://<foler>' to specify a locally saved template")
-def new(name, template):
+@click.option(u'--version', default=None)
+def new(name, template, version):
     """
     Creates a new shell based on a template
     """
-    NewCommandExecutor().new(name, template)
+    NewCommandExecutor().new(name, template, version)
 
 
 @cli.command()
@@ -95,3 +97,11 @@ def config(kv, global_cfg, key_to_remove):
     Configures global/local config values to allow deployment over cloudshell
     """
     ConfigCommandExecutor(global_cfg).config(kv, key_to_remove)
+
+@cli.command()
+@click.argument(u'template_name')
+def show(template_name):
+    """
+    Shows all versions of TEMPLATENAME
+    """
+    ShowCommandExecutor().show(template_name)
