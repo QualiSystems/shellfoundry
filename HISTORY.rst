@@ -2,10 +2,11 @@
 History
 =======
 
-<next-version-here>
--------------------
+0.1.0 (2016-12-14)
+------------------
 
 * Show command was added to view all available versions of a template
+* A new option was added to the 'new' command. Please welcome --version. It makes template versioning on shellfoundry.
 
 0.0.44 (2016-12-12)
 -------------------
