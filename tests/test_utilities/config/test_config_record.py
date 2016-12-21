@@ -59,12 +59,11 @@ class TestConfigRecord(fake_filesystem_unittest.TestCase):
         self.fs.CreateFile('/quali/shellfoundry/global_config.yml', contents="""
 install:
   host: someaddress""")
-        config_creation = Mock(spec=ConfigFileCreation, autospec=True)
 
         # Act
         with patch('shellfoundry.utilities.config.config_context.yaml') as yaml_mock:
             yaml_mock.load.side_effect = [Exception()]
-            context = ConfigContext('/quali/shellfoundry/global_config.yml', config_creation)
+            context = ConfigContext('/quali/shellfoundry/global_config.yml')
             record = ConfigRecord('key', 'value')
             record.save(context)
 
@@ -85,12 +84,11 @@ install:
         self.fs.CreateFile('/quali/shellfoundry/global_config.yml', contents="""
 install:
   host: someaddress""")
-        config_creation = Mock(spec=ConfigFileCreation, autospec=True)
 
         # Act
         with patch('shellfoundry.utilities.config.config_context.yaml') as yaml_mock:
             yaml_mock.load.side_effect = [Exception()]
-            context = ConfigContext('/quali/shellfoundry/global_config.yml', config_creation)
+            context = ConfigContext('/quali/shellfoundry/global_config.yml')
             record = ConfigRecord('host')
             record.delete(context)
 
