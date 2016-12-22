@@ -29,7 +29,9 @@ class TemplateRetriever(object):
 
     @staticmethod
     def _get_templates_from_github():
-        return requests.get(TEMPLATES_YML).text
+        session = requests.Session()
+        session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
+        return session.get(TEMPLATES_YML).text
 
 
 class FilteredTemplateRetriever(object):
