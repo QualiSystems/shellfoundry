@@ -1,6 +1,7 @@
 import unittest
 import mock
-from shellfoundry.utilities.template_retriever import TemplateRetriever
+import httpretty
+from shellfoundry.utilities.template_retriever import TemplateRetriever, TEMPLATES_YML
 
 
 class TestTemplateRetriever(unittest.TestCase):
@@ -49,3 +50,22 @@ class TestTemplateRetriever(unittest.TestCase):
 
         # Assert
         self.assertEqual(templates, [])
+
+    @httpretty.activate
+    def test_session_max_retires(self):
+        # Arrange
+        template_retriever = TemplateRetriever()
+
+        httpretty.register_uri('GET', TEMPLATES_YML, body=self.mock_get_templates_from_github())
+
+        # Act
+        templates = template_retriever.get_templates()
+
+        # Assert
+        self.assertEqual(templates['router'].name, 'router')
+        self.assertEqual(templates['router'].description, 'Basic router template')
+        self.assertEqual(templates['router'].repository, 'https://github.com/QualiSystems/shellfoundry-router-template')
+
+        self.assertEqual(templates['switch'].name, 'switch')
+        self.assertEqual(templates['switch'].description, 'Basic switch template')
+        self.assertEqual(templates['switch'].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
