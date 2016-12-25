@@ -8,7 +8,7 @@ DEFAULT_DOMAIN = 'Global'
 class InstallConfig(object):
     def __init__(self, host, port, username, password, domain):
         self.domain = domain
-        self.password = password
+        self.password = self._decode_password(password)
         self.username = username
         self.port = port
         self.host = host
@@ -30,3 +30,7 @@ class InstallConfig(object):
     def get_default():
         return InstallConfig(DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, DEFAULT_PASSWORD, DEFAULT_DOMAIN)
 
+    def _decode_password(self, password):
+        from shellfoundry.utilities.modifiers.configuration.password_modification import PasswordModification
+        pass_mod = PasswordModification()
+        return pass_mod.normalize(password)
