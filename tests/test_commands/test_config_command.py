@@ -1,6 +1,6 @@
 import os
 
-from mock import patch, call
+from mock import patch, call, Mock
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.commands.config_command import ConfigCommandExecutor
@@ -207,3 +207,25 @@ install:
 
         # Assert
         echo_mock.assert_called_with("Local config does not exists")
+
+    @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
+    @patch('platform.node', Mock(return_value='machine-name-here'))
+    def test_set_password_config_password_should_appear_encrypted(self, get_app_dir_mock):
+        # Arrange
+        self.fs.CreateFile('/quali/shellfoundry/global_config.yml', contents="""
+install:
+  key: value
+""")
+        get_app_dir_mock.return_value = '/quali/shellfoundry'
+
+        # Act
+        ConfigCommandExecutor(True).config(('password', 'admin'))
+
+        # Assert
+        desired_result = """install:
+  key: value
+  password: DAUOAQc=
+"""
+        file_content = self.fs.GetObject('/quali/shellfoundry/global_config.yml').contents
+        self.assertTrue(file_content == desired_result, 'Expected: {}{}Actual: {}'
+                        .format(desired_result, os.linesep, file_content))
