@@ -1,4 +1,5 @@
 import base64
+import shellfoundry.exceptions as exceptions
 
 class PasswordModification(object):
     HANDLING_KEY = 'password'
@@ -19,7 +20,10 @@ class PasswordModification(object):
 
     def _get_encryption_key(self):
         from platform import node
-        return node() # returns machine name
+        machine_name = node()
+        if not machine_name:
+            raise exceptions.PlatformNameIsEmptyException()
+        return machine_name
 
     def _decode_encode(self, value, key):
         return ''.join(chr(ord(source) ^ ord(key)) for source, key in zip(value, key * 100))

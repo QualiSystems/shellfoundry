@@ -20,3 +20,8 @@ class NoVersionsHaveBeenFoundException(ShellFoundryBaseException):
 class VersionRequestException(ShellFoundryBaseException):
     def __init__(self, message):
         super(VersionRequestException, self).__init__(message)
+
+class PlatformNameIsEmptyException(ShellFoundryBaseException):
+    def __init__(self, message='Machine name is empty'):
+        super(PlatformNameIsEmptyException, self).__init__(message)
+
