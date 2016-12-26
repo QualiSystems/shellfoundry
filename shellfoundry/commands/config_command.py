@@ -32,18 +32,33 @@ class ConfigCommandExecutor(object):
         return key_to_remove is not None
 
     def _echo_config(self, config_file_path):
-        config_data = self._extract_config_data(config_file_path)
-        if not config_data:
-            click.echo("{} config does not exists".format(self._interpret_config_type()))
-            return
-        if INSTALL not in config_data:
-            click.echo('{} config file has no \'install\' section.'.format(self._interpret_config_type()))
-            return
+        from shellfoundry.utilities.config_reader import Configuration
+
+        defaults_char = '*'
+        config_data = Configuration.readall(config_file_path, mark_defaults=defaults_char)
+        table = self._format_config_as_table(config_data, defaults_char)
+        click.echo(table)
+        click.echo('')
+        click.echo(
+            "* Value marked with '{}' is actually the default value and has not been override by the user.".format(
+                defaults_char))
+
+    def _format_config_as_table(self, config_data, defaults_char):
+        from shellfoundry.utilities.modifiers.configuration.password_modification import PasswordModification
+        table_data = [['Key', 'Value', '']]
         for key, value in config_data[INSTALL].iteritems():
-            if key == 'password':
+            default_val = ''
+            if defaults_char in value:
+                default_val = defaults_char
+                value = value.strip(defaults_char).lstrip()
+            if key == PasswordModification.HANDLING_KEY:
                 value = '[encrypted]'
-            s = '{}: {}'.format(key, value)
-            click.echo(s)
+            table_data.append([key, value, default_val])
+        import terminaltables
+        table = terminaltables.AsciiTable(table_data)
+        table.outer_border = False
+        table.inner_column_border = False
+        return table.table
 
     @staticmethod
     def _get_config_file_path(is_global_flag):
@@ -52,15 +67,5 @@ class ConfigCommandExecutor(object):
             return cfg_provider.get_config_path()
         return LocalConfigProvider().get_config_path()
 
-    @staticmethod
-    def _extract_config_data(config_file_path):
-        import os
-        if not os.path.exists(config_file_path):
-            return None
-        with open(config_file_path, mode='r') as conf_file:
-            return yaml.load(conf_file)
-
     def _interpret_config_type(self):
         return 'Global' if self.global_cfg else 'Local'
-
-

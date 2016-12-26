@@ -47,6 +47,36 @@ class Configuration(object):
 
         return self.reader.read_from_config(config[INSTALL])
 
+    @staticmethod
+    def readall(config_path, mark_defaults=None):
+        """
+        reads configuration from given file and adds missing keys with their defaults
+        """
+        config_data = None
+        import os
+        if os.path.exists(config_path):
+            with open(config_path, mode='r') as conf_file:
+                config_data = yaml.load(conf_file)
+
+        if not config_data or INSTALL not in config_data:
+            config_data = {INSTALL: dict()}
+
+        mark_defaults_f = Configuration._mark_defaults
+        install_cfg_def = dict(
+            (k, mark_defaults_f(v, mark_defaults)) for k, v in InstallConfig.get_default().__dict__.iteritems())
+        sf_cfg_def = dict(
+            (k, mark_defaults_f(v, mark_defaults)) for k, v in ShellFoundrySettings.get_default().__dict__.iteritems())
+        all_cfg = dict(install_cfg_def)
+        all_cfg.update(sf_cfg_def)
+        all_cfg.update(config_data[INSTALL])
+        return {INSTALL: all_cfg}
+
+    @staticmethod
+    def _mark_defaults(value, mark_defaults_char):
+        if not mark_defaults_char:
+            return str(value)
+        return str(value) + ' ' + mark_defaults_char
+
 
 class CloudShellConfigReader(object):
     def get_defaults(self):
