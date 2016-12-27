@@ -2,6 +2,11 @@
 History
 =======
 
+0.1.3 (2016-12-27)
+------------------
+
+* shellfoundry config will now echo all default configuration if not override by user
+
 0.1.2 (2016-12-26)
 ------------------
 
@@ -11,7 +16,7 @@ History
 ------------------
 
 * Show command was added to view all available versions of a template
-* A new option was added to the 'new' command. Please welcome --version. It makes template versioning on shellfoundry.
+* A new option was added to the 'new' command. Please welcome --version. It enables template versioning on shellfoundry.
 
 0.0.44 (2016-12-12)
 -------------------
