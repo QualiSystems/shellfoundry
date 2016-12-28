@@ -26,29 +26,16 @@ not_supported_section:
         ConfigCommandExecutor(True).config()
 
         # Assert
-        echo_mock.assert_called_once_with(u'key: value')
-
-    @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
-    @patch('shellfoundry.commands.config_command.click.echo')
-    def test_invalid_global_config_should_echo_no_install_section(self, echo_mock, get_app_dir_mock):
-        # Arrange
-        self.fs.CreateFile('/quali/shellfoundry/global_config.yml', contents="""
-invalid_section:
-  key: value
-        """)
-        get_app_dir_mock.return_value = '/quali/shellfoundry'
-
-        # Act
-        ConfigCommandExecutor(True).config()
-
-        # Assert
-        # calls = [call(u'username: admin'),
-        #          call(u'domain: Global'),
-        #          call(u'password: [encrypted]'),
-        #          call(u'host: localhost'),
-        #          call(u'port: 9000')]
-        # click_mock.echo.assert_has_calls(calls)
-        echo_mock.assert_called_once_with('Global config file has no \'install\' section.')
+        echo_mock.assert_any_call(
+            u' Key          Value          \n'
+            u'-----------------------------\n '
+            u'username     admin        * \n '
+            u'domain       Global       * \n '
+            u'defaultview  all          * \n '
+            u'key          value          \n '
+            u'password     [encrypted]  * \n '
+            u'host         localhost    * \n '
+            u'port         9000         * ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
@@ -104,10 +91,16 @@ install:
         ConfigCommandExecutor(True).config()
 
         # Assert
-        calls = [call(u'yetanotherkey: yetanothervalue'),
-                 call(u'password: [encrypted]'),
-                 call(u'key: value')]
-        echo_mock.assert_has_calls(calls)
+        echo_mock.assert_any_call(u' Key            Value              \n'
+                                  u'-----------------------------------\n '
+                                  u'username       admin            * \n '
+                                  u'yetanotherkey  yetanothervalue    \n '
+                                  u'domain         Global           * \n '
+                                  u'defaultview    all              * \n '
+                                  u'key            value              \n '
+                                  u'password       [encrypted]        \n '
+                                  u'host           localhost        * \n '
+                                  u'port           9000             * ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
@@ -183,30 +176,6 @@ install:
         file_content = self.fs.GetObject('/quali/shellfoundry/global_config.yml').contents
         self.assertTrue(file_content == desired_result, 'Expected: {}{}Actual: {}'
                         .format(desired_result, os.linesep, file_content))
-
-    @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
-    @patch('shellfoundry.commands.config_command.click.echo')
-    def test_echo_config_data_when_global_config_does_not_exists(self, echo_mock, get_app_dir_mock):
-        # Arrange
-        get_app_dir_mock.return_value = '/quali/shellfoundry'
-
-        # Act
-        ConfigCommandExecutor(True).config()
-
-        # Assert
-        echo_mock.assert_called_with("Global config does not exists")
-
-    @patch('shellfoundry.commands.config_command.click.echo')
-    def test_echo_config_data_when_local_config_does_not_exists(self, echo_mock):
-        # Arrange
-        self.fs.CreateDirectory("/shell_name")
-        os.chdir('shell_name')
-
-        # Act
-        ConfigCommandExecutor(False).config()
-
-        # Assert
-        echo_mock.assert_called_with("Local config does not exists")
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('platform.node', Mock(return_value='machine-name-here'))
