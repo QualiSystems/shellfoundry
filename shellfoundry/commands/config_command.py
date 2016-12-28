@@ -66,6 +66,3 @@ class ConfigCommandExecutor(object):
             cfg_provider = GlobalConfigProvider()
             return cfg_provider.get_config_path()
         return LocalConfigProvider().get_config_path()
-
-    def _interpret_config_type(self):
-        return 'Global' if self.global_cfg else 'Local'
