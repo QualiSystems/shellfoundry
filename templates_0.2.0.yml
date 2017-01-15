@@ -1,124 +1,94 @@
 templates:
-    - name : resource
-      description : Base shell template for inventory resources
+    - name : gen1/resource
+      description : 1st generation shell template for basic inventory resources
       repository : https://github.com/QualiSystems/shell-resource-standard
       params:
         project_name :
-    - name: resource-clean
+    - name: gen1/resource-clean
       params:
         project_name :
-      description : Base shell template for inventory resources (without example commands)
+      description : 1st generation shell template for basic inventory resources (without sample commands)
       repository : https://github.com/QualiSystems/resource-shell-standard-clean
-    - name: deployed-app
+    - name: gen1/deployed-app
       params:
         project_name :
-      description : Template for deployed apps
+      description : 1st generation shell template for a deployed app
       repository : https://github.com/QualiSystems/shell-deployedapp-standard
-    - name: networking/switch
-      description : Template for standard Switch devices/virtual appliances
+    - name: gen1/networking/switch
+      description : 1st generation shell template for a standard switch
       repository : https://github.com/QualiSystems/shell-networking-standard
       params:
         project_name :
         family_name : Switch
-    - name: networking/router
-      description : Template for standard Router devices/virtual appliances
+    - name: gen1/networking/router
+      description : 1st generation shell template for a standard router
       repository : https://github.com/QualiSystems/shell-networking-standard
       params:
         project_name :
         family_name : Router
-    - name: PDU
-      description : Template for PDU devices
+    - name: gen1/pdu
+      description : 1st generation shell template for a standard pdu
       repository : https://github.com/QualiSystems/shell-pdu-standard
       params:
         project_name :
         family_name : PDU
-    - name: Firewall
-      description : Template for Firewall devices
+    - name: gen1/firewall
+      description : 1st generation shell template for a standard firewall
       repository : https://github.com/QualiSystems/shell-firewall-standard
       params:
         project_name :
         family_name : Firewall
     - name: layer-1-switch
-      description : Template for Layer 1 Switch
+      description : A native shell template for layer 1 switches
       repository : https://github.com/QualiSystems/shell-L1-standard
       params:
         project_name :
         family_name :
-    - name: Compute
-      description : Template for Compute resources
+    - name: gen1/compute
+      description : 1st generation shell template for compute servers
       repository : https://github.com/QualiSystems/shell-compute-standard
       params:
         project_name :
         family_name :
-    - name : tosca/networking/switch
+    - name : gen2/networking/switch
       params:
         project_name :
         family_name: Switch
-      description : TOSCA based template for Switch shell
+      description : 2nd generation shell template for a standard switch
       repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
-    - name : tosca/networking/router
+    - name : gen2/networking/router
       params:
         project_name :
         family_name: Router
-      description : TOSCA based template for Router shell
+      description : 2nd generation shell template for a standard router
       repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
-    - name : tosca/networking/wireless-controller
+    - name : gen2/networking/wireless-controller
       params:
         project_name :
         family_name: WirelessController
-      description : TOSCA based template for Wireless Controller shell
+      description : 2nd generation shell template for a standard wireless controller
       repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
-    - name : tosca/compute
+    - name : gen2/compute
       params:
         project_name :
         family_name :
-      description : TOSCA based template for compute shell
+      description : 2nd generation shell template for compute servers
       repository : https://github.com/QualiSystems/shellfoundry-tosca-compute-template
-    - name : tosca/deployed-app
+    - name : gen2/deployed-app
       params:
         project_name :
         family_name :
-      description : TOSCA based template for deployed app shell
+      description : 2nd generation shell template for a deployed app
       repository : https://github.com/QualiSystems/shellfoundry-tosca-deployedapp-template
-    - name : tosca/trafic-generator
+    - name : gen2/pdu
       params:
         project_name :
         family_name :
-      description : TOSCA based template for traffic generator shell
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-traffic-generator-template
-    - name : tosca/pdu
-      params:
-        project_name :
-        family_name :
-      description : TOSCA based template for PDU shell
+      description : 2nd generation shell template for a standard pdu
       repository : https://github.com/QualiSystems/shellfoundry-tosca-pdu-template
-    - name : tosca/resource
+    - name : gen2/resource
       params:
         project_name :
         family_name :
-      description : TOSCA based template for resource shell
+      description : 2nd generation shell template for basic inventory resources
       repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
-    - name : tosca/traffic_generator
-      params:
-        project_name :
-        family_name : TrafficGenerator
-      description : TOSCA based template for traffic generator shell
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-traffic-generator-template
-    - name : tosca/traffic_generator/controller
-      params:
-        project_name :
-        family_name : TrafficController
-      description : TOSCA based template for traffic generator controller shell
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-traffic-generator-template
-    - name : tosca/virtual_traffic_generator
-      params:
-        project_name :
-        family_name : VirtualTrafficGenerator
-      description : TOSCA based template for traffic generator shell
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-traffic-generator-template
-    - name : tosca/virtual_traffic_generator/controller
-      params:
-        project_name :
-        family_name : VirtualTrafficController
-      description : TOSCA based template for traffic generator controller shell
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-traffic-generator-template
