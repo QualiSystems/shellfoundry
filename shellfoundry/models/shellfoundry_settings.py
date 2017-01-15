@@ -1,4 +1,4 @@
-DEFAULT_DEFAULT_VIEW = 'all'
+DEFAULT_DEFAULT_VIEW = 'gen2'
 
 class ShellFoundrySettings(object):
     def __init__(self, defaultview):
