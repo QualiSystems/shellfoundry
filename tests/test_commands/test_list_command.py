@@ -18,7 +18,7 @@ class TestListCommand(unittest.TestCase):
         # between the running console size
 
         template_retriever = Mock()
-        template_retriever.get_templates = Mock(return_value={'base': ShellTemplate('base', 'description', '')})
+        template_retriever.get_templates = Mock(return_value={'gen1/base': ShellTemplate('gen1/base', 'description', '')})
 
         list_command_executor = ListCommandExecutor(template_retriever=template_retriever)
 
@@ -28,7 +28,7 @@ class TestListCommand(unittest.TestCase):
         # Assert
         echo_mock.assert_called_once_with(u' Template Name  Description \n'
                                           u'----------------------------\n'
-                                          u' base           description ')
+                                          u' gen1/base      description ')
 
     def test_shows_informative_message_when_offline(self):
         # Arrange
@@ -48,8 +48,8 @@ class TestListCommand(unittest.TestCase):
 
         template_retriever = Mock()
         template_retriever.get_templates = Mock(return_value=OrderedDict(
-            [('base', ShellTemplate('base', 'base description', '')),
-             ('switch', ShellTemplate('switch', 'switch description', ''))]))
+            [('gen1/base', ShellTemplate('gen1/base', 'base description', '')),
+             ('gen1/switch', ShellTemplate('gen1/switch', 'switch description', ''))]))
 
         list_command_executor = ListCommandExecutor(template_retriever=template_retriever)
 
@@ -60,8 +60,8 @@ class TestListCommand(unittest.TestCase):
         echo_mock.assert_called_once_with(
             u' Template Name  Description        \n'
             u'-----------------------------------\n'
-            u' base           base description   \n'
-            u' switch         switch description ')
+            u' gen1/base      base description   \n'
+            u' gen1/switch    switch description ')
 
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
@@ -72,10 +72,10 @@ class TestListCommand(unittest.TestCase):
 
         template_retriever = Mock()
         template_retriever.get_templates = Mock(return_value=OrderedDict(
-            [('tosca/networking/switch', ShellTemplate('tosca/networking/switch',
+            [('gen2/networking/switch', ShellTemplate('gen2/networking/switch',
                                                        'TOSCA based template for standard Switch devices/virtual appliances',
                                                        '')),
-             ('tosca/networking/WirelessController', ShellTemplate('tosca/networking/WirelessController',
+             ('gen2/networking/WirelessController', ShellTemplate('gen2/networking/WirelessController',
                                                                    'TOSCA based template for standard WirelessController devices/virtual appliances',
                                                                    ''))]))
 
@@ -86,13 +86,13 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_called_once_with(
-            u' Template Name                        Description                              \n'
-            u'-------------------------------------------------------------------------------\n'
-            u' tosca/networking/switch              TOSCA based template for standard Switch \n'
-            u'                                      devices/virtual appliances               \n'
-            u' tosca/networking/WirelessController  TOSCA based template for standard        \n'
-            u'                                      WirelessController devices/virtual       \n'
-            u'                                      appliances                               ')
+            u' Template Name                       Description                              \n'
+            u'------------------------------------------------------------------------------\n'
+            u' gen2/networking/switch              TOSCA based template for standard Switch \n'
+            u'                                     devices/virtual appliances               \n'
+            u' gen2/networking/WirelessController  TOSCA based template for standard        \n'
+            u'                                     WirelessController devices/virtual       \n'
+            u'                                     appliances                               ')
 
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
@@ -101,10 +101,10 @@ class TestListCommand(unittest.TestCase):
         max_width_mock.return_value = 0
         template_retriever = Mock()
         template_retriever.get_templates = Mock(return_value=OrderedDict(
-            [('tosca/networking/switch', ShellTemplate('tosca/networking/switch',
+            [('gen2/networking/switch', ShellTemplate('gen2/networking/switch',
                                                        'TOSCA based template for standard Switch devices/virtual appliances',
                                                        '')),
-             ('tosca/networking/WirelessController', ShellTemplate('tosca/networking/WirelessController',
+             ('gen2/networking/WirelessController', ShellTemplate('gen2/networking/WirelessController',
                                                                    'TOSCA based template for standard WirelessController devices/virtual appliances',
                                                                    ''))]))
 
@@ -115,10 +115,10 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_called_once_with(
-            u' Template Name                        Description                                                                     \n'
-            u'----------------------------------------------------------------------------------------------------------------------\n'
-            u' tosca/networking/switch              TOSCA based template for standard Switch devices/virtual appliances             \n'
-            u' tosca/networking/WirelessController  TOSCA based template for standard WirelessController devices/virtual appliances ')
+            u' Template Name                       Description                                                                     \n'
+            u'---------------------------------------------------------------------------------------------------------------------\n'
+            u' gen2/networking/switch              TOSCA based template for standard Switch devices/virtual appliances             \n'
+            u' gen2/networking/WirelessController  TOSCA based template for standard WirelessController devices/virtual appliances ')
 
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
@@ -127,15 +127,15 @@ class TestListCommand(unittest.TestCase):
         max_width_mock.return_value= 40
         template_retriever = Mock()
         template_retriever.get_templates = Mock(return_value=OrderedDict(
-            [('tosca/networking/switch', ShellTemplate('tosca/networking/switch',
+            [('gen2/networking/switch', ShellTemplate('gen2/networking/switch',
                                                        'TOSCA based template for standard Switch devices/virtual appliances',
                                                        '')),
-             ('tosca/networking/WirelessController', ShellTemplate('tosca/networking/WirelessController',
+             ('gen2/networking/WirelessController', ShellTemplate('gen2/networking/WirelessController',
                                                                    'TOSCA based template for standard WirelessController devices/virtual appliances',
                                                                    '')),
              ('base', ShellTemplate('base', 'base description', '')),
              ('switch', ShellTemplate('switch', 'switch description', ''))]))
-        flag_value = 'tosca'
+        flag_value = 'gen2'
         list_command_executor = ListCommandExecutor(template_retriever=FilteredTemplateRetriever(flag_value, template_retriever))
 
         # Act
@@ -143,13 +143,13 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_called_once_with(
-            u' Template Name                        Description                              \n'
-            u'-------------------------------------------------------------------------------\n'
-            u' tosca/networking/switch              TOSCA based template for standard Switch \n'
-            u'                                      devices/virtual appliances               \n'
-            u' tosca/networking/WirelessController  TOSCA based template for standard        \n'
-            u'                                      WirelessController devices/virtual       \n'
-            u'                                      appliances                               ')
+            u' Template Name                       Description                              \n'
+            u'------------------------------------------------------------------------------\n'
+            u' gen2/networking/switch              TOSCA based template for standard Switch \n'
+            u'                                     devices/virtual appliances               \n'
+            u' gen2/networking/WirelessController  TOSCA based template for standard        \n'
+            u'                                     WirelessController devices/virtual       \n'
+            u'                                     appliances                               ')
 
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
@@ -158,15 +158,15 @@ class TestListCommand(unittest.TestCase):
         max_width_mock.return_value = 62
         template_retriever = Mock()
         template_retriever.get_templates = Mock(return_value=OrderedDict(
-            [('tosca/networking/switch', ShellTemplate('tosca/networking/switch',
+            [('gen2/networking/switch', ShellTemplate('gen2/networking/switch',
                                                        'TOSCA based template for standard Switch devices/virtual appliances',
                                                        '')),
-             ('tosca/networking/WirelessController', ShellTemplate('tosca/networking/WirelessController',
+             ('gen2/networking/WirelessController', ShellTemplate('gen2/networking/WirelessController',
                                                                    'TOSCA based template for standard WirelessController devices/virtual appliances',
                                                                    '')),
-             ('base', ShellTemplate('base', 'base description', '')),
-             ('switch', ShellTemplate('switch', 'switch description', ''))]))
-        flag_value = 'legacy'
+             ('gen1/base', ShellTemplate('gen1/base', 'base description', '')),
+             ('gen1/switch', ShellTemplate('gen1/switch', 'switch description', ''))]))
+        flag_value = 'gen1'
         list_command_executor = ListCommandExecutor(template_retriever=FilteredTemplateRetriever(flag_value, template_retriever))
 
         # Act
@@ -176,8 +176,8 @@ class TestListCommand(unittest.TestCase):
         echo_mock.assert_called_once_with(
             u' Template Name  Description        \n'
             u'-----------------------------------\n'
-            u' base           base description   \n'
-            u' switch         switch description ')
+            u' gen1/base      base description   \n'
+            u' gen1/switch    switch description ')
 
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
@@ -186,12 +186,12 @@ class TestListCommand(unittest.TestCase):
         max_width_mock.return_value = 40
         template_retriever = Mock()
         template_retriever.get_templates = Mock(return_value=OrderedDict(
-            [('base', ShellTemplate('base', 'base description', '')),
-            ('switch', ShellTemplate('switch', 'switch description', '')),
-            ('tosca/networking/switch', ShellTemplate('tosca/networking/switch',
+            [('gen1/base', ShellTemplate('gen1/base', 'base description', '')),
+            ('gen1/switch', ShellTemplate('gen1/switch', 'switch description', '')),
+            ('gen2/networking/switch', ShellTemplate('gen2/networking/switch',
                                                        'TOSCA based template for standard Switch devices/virtual appliances',
                                                        '')),
-             ('tosca/networking/WirelessController', ShellTemplate('tosca/networking/WirelessController',
+             ('gen2/networking/WirelessController', ShellTemplate('gen2/networking/WirelessController',
                                                                    'TOSCA based template for standard WirelessController devices/virtual appliances',
                                                                    ''))]))
         flag_value = 'all'
@@ -202,15 +202,15 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_called_once_with(
-            u' Template Name                        Description                              \n'
-            u'-------------------------------------------------------------------------------\n'
-            u' base                                 base description                         \n'
-            u' switch                               switch description                       \n'
-            u' tosca/networking/switch              TOSCA based template for standard Switch \n'
-            u'                                      devices/virtual appliances               \n'
-            u' tosca/networking/WirelessController  TOSCA based template for standard        \n'
-            u'                                      WirelessController devices/virtual       \n'
-            u'                                      appliances                               ')
+            u' Template Name                       Description                              \n'
+            u'------------------------------------------------------------------------------\n'
+            u' gen1/base                           base description                         \n'
+            u' gen1/switch                         switch description                       \n'
+            u' gen2/networking/switch              TOSCA based template for standard Switch \n'
+            u'                                     devices/virtual appliances               \n'
+            u' gen2/networking/WirelessController  TOSCA based template for standard        \n'
+            u'                                     WirelessController devices/virtual       \n'
+            u'                                     appliances                               ')
 
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
@@ -219,13 +219,13 @@ class TestListCommand(unittest.TestCase):
         max_width_mock.return_value = 40
         template_retriever = Mock()
         template_retriever.get_templates = Mock(return_value=OrderedDict(
-            [('tosca/networking/switch', ShellTemplate('tosca/networking/switch',
+            [('gen2/networking/switch', ShellTemplate('gen2/networking/switch',
                                                        'TOSCA based template for standard Switch devices/virtual appliances',
                                                        '')),
-             ('tosca/networking/WirelessController', ShellTemplate('tosca/networking/WirelessController',
+             ('gen2/networking/WirelessController', ShellTemplate('gen2/networking/WirelessController',
                                                                    'TOSCA based template for standard WirelessController devices/virtual appliances',
                                                                    ''))]))
-        flag_value = 'legacy'
+        flag_value = 'gen1'
         list_command_executor = ListCommandExecutor(template_retriever=FilteredTemplateRetriever(flag_value, template_retriever))
 
         # Act

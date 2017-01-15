@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 from shellfoundry.models.shell_template import ShellTemplate
 
-TEMPLATES_YML = 'https://raw.github.com/QualiSystems/shellfoundry/master/templates.yml'
+TEMPLATES_YML = 'https://raw.github.com/QualiSystems/shellfoundry/master/templates_0.2.0.yml'
 
 
 class TemplateRetriever(object):
@@ -46,12 +46,12 @@ class FilteredTemplateRetriever(object):
         return OrderedDict((k, v) for k, v in templates.iteritems() if self._filter(k))
 
     def _filter(self, template_name):
-        if self.template_type == 'tosca':
+        if self.template_type == 'gen2':
             return self._filter_out_legacy_template(template_name)
         return self._filter_out_tosca_template(template_name)
 
     def _filter_out_legacy_template(self, template_name):
-        return 'tosca' in template_name
+        return 'gen2' in template_name
 
     def _filter_out_tosca_template(self, template_name):
         return not self._filter_out_legacy_template(template_name)

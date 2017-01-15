@@ -31,8 +31,8 @@ def version():
 
 
 @cli.command()
-@click.option(u'--tosca', 'default_view', flag_value='tosca', help="Show tosca templates only")
-@click.option(u'--legacy', 'default_view', flag_value='legacy', help="Show legacy templates only")
+@click.option(u'--gen2', 'default_view', flag_value='gen2', help="Show 2nd generation shell templates")
+@click.option(u'--gen1', 'default_view', flag_value='gen1', help="Show 1st generation shell templates")
 @click.option(u'--all', 'default_view', flag_value='all', help="Show all templates")
 def list(default_view):
     """
