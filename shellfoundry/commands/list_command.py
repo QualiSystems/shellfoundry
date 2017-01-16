@@ -33,7 +33,7 @@ class ListCommandExecutor(object):
         table.outer_border = False
         table.inner_column_border = False
         max_width = table.column_max_width(2)
-        
+
         if max_width <= 0: # verify that the console window is not too small, and if so skip the wrapping logic
             click.echo(table.table)
             return

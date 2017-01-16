@@ -1,0 +1,7 @@
+GEN_ONE = 'gen1'
+GEN_TWO = 'gen2'
+LAYER_ONE = 'layer1'
+NO_FILTER = 'all'
+GEN_ONE_FILTER = 'gen1'
+GEN_TWO_FILTER = 'gen2'
+LAYER_ONE_FILTER = 'layer-1'

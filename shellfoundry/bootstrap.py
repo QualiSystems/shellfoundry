@@ -15,6 +15,7 @@ from shellfoundry.commands.pack_command import PackCommandExecutor
 from shellfoundry.commands.config_command import ConfigCommandExecutor
 from shellfoundry.commands.show_command import ShowCommandExecutor
 from shellfoundry.utilities.shell_package import ShellPackage
+from shellfoundry.utilities import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
 
 
 @click.group()
@@ -31,9 +32,10 @@ def version():
 
 
 @cli.command()
-@click.option(u'--gen2', 'default_view', flag_value='gen2', help="Show 2nd generation shell templates")
-@click.option(u'--gen1', 'default_view', flag_value='gen1', help="Show 1st generation shell templates")
-@click.option(u'--all', 'default_view', flag_value='all', help="Show all templates")
+@click.option(u'--gen2', 'default_view', flag_value=GEN_TWO, help="Show 2nd generation shell templates")
+@click.option(u'--gen1', 'default_view', flag_value=GEN_ONE, help="Show 1st generation shell templates")
+@click.option(u'--layer1', 'default_view', flag_value=LAYER_ONE, help="Show layer1 shell templates")
+@click.option(u'--all', 'default_view', flag_value=NO_FILTER, help="Show all templates")
 def list(default_view):
     """
     Lists the available shell templates
