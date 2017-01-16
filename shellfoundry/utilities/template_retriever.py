@@ -23,6 +23,7 @@ class TemplateRetriever(object):
                 template['name'],
                 template['description'],
                 template['repository'],
+                template['min_cs_ver'],
                 template['params'])
 
         return templatesdic
