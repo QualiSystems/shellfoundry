@@ -2,6 +2,14 @@
 History
 =======
 
+0.2.0 (2017-01-17)
+------------------
+
+* List command filtering parameters have changed (legacy => gen1, tosca => gen2)
+* Added another filtering parameter --layer1
+* Minimum CloudShell version column appears on list command output table
+* gen2 is now the default view for list command
+
 0.1.3 (2016-12-27)
 ------------------
 
