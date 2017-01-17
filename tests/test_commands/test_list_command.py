@@ -27,9 +27,9 @@ class TestListCommand(unittest.TestCase):
         list_command_executor.list()
 
         # Assert
-        echo_mock.assert_called_once_with(u' Template Name  CloudShell Ver.  Description \n'
-                                          u'---------------------------------------------\n'
-                                          u' gen1/base      7.0 and up       description ')
+        echo_mock.assert_any_call(u' Template Name  CloudShell Ver.  Description \n'
+                                  u'---------------------------------------------\n'
+                                  u' gen1/base      7.0 and up       description ')
 
     def test_shows_informative_message_when_offline(self):
         # Arrange
@@ -58,7 +58,7 @@ class TestListCommand(unittest.TestCase):
         list_command_executor.list()
 
         # Assert
-        echo_mock.assert_called_once_with(
+        echo_mock.assert_any_call(
             u' Template Name  CloudShell Ver.  Description        \n'
             u'----------------------------------------------------\n'
             u' gen1/base      7.0 and up       base description   \n'
@@ -86,7 +86,7 @@ class TestListCommand(unittest.TestCase):
         list_command_executor.list()
 
         # Assert
-        echo_mock.assert_called_once_with(
+        echo_mock.assert_any_call(
             u' Template Name                       CloudShell Ver.  Description                              \n'
             u'-----------------------------------------------------------------------------------------------\n'
             u' gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n'
@@ -144,7 +144,7 @@ class TestListCommand(unittest.TestCase):
         list_command_executor.list()
 
         # Assert
-        echo_mock.assert_called_once_with(
+        echo_mock.assert_any_call(
             u' Template Name                       CloudShell Ver.  Description                              \n'
             u'-----------------------------------------------------------------------------------------------\n'
             u' gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n'
@@ -176,7 +176,7 @@ class TestListCommand(unittest.TestCase):
         list_command_executor.list()
 
         # Assert
-        echo_mock.assert_called_once_with(
+        echo_mock.assert_any_call(
             u' Template Name  CloudShell Ver.  Description        \n'
             u'----------------------------------------------------\n'
             u' gen1/base      7.0 and up       base description   \n'
@@ -205,7 +205,7 @@ class TestListCommand(unittest.TestCase):
         list_command_executor.list()
 
         # Assert
-        echo_mock.assert_called_once_with(
+        echo_mock.assert_any_call(
             u' Template Name                       CloudShell Ver.  Description                              \n'
             u'-----------------------------------------------------------------------------------------------\n'
             u' gen1/base                           7.0 and up       base description                         \n'
@@ -218,7 +218,7 @@ class TestListCommand(unittest.TestCase):
 
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
-    def test_list_shows_nothing_because_filter_is_set_for_templates_that_are_not_exists(self, max_width_mock,
+    def test_list_shows_nothing_because_filter_is_set_for_templates_that_do_not_exist(self, max_width_mock,
                                                                                         echo_mock):
         # Arrange
         max_width_mock.return_value = 40
@@ -239,3 +239,28 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_called_once_with('No templates matched the criteria')
+
+    @patch('click.echo')
+    @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
+    def test_devguide_text_note_appears_when_no_filter_was_selected(self, max_width_mock, echo_mock):
+        # Arrange
+        max_width_mock.return_value = 40
+        template_retriever = Mock()
+        template_retriever.get_templates = Mock(return_value=OrderedDict(
+            [('gen2/networking/switch', ShellTemplate('gen2/networking/switch',
+                                                      'TOSCA based template for standard Switch devices/virtual appliances',
+                                                      '', '8.0')),
+             ('gen2/networking/WirelessController', ShellTemplate('gen2/networking/WirelessController',
+                                                                  'TOSCA based template for standard WirelessController devices/virtual appliances',
+                                                                  '', '8.0'))]))
+        flag_value = None
+        list_command_executor = ListCommandExecutor(
+            template_retriever=FilteredTemplateRetriever(flag_value, template_retriever))
+
+        # Act
+        list_command_executor.list()
+
+        # Assert
+        echo_mock.assert_any_call('''
+As of CloudShell 8.0, CloudShell uses 2nd generation shells, to view the list of 1st generation shells use: shellfoundry list --gen1.
+For more information, please visit our devguide: https://qualisystems.github.io/devguide/''')
