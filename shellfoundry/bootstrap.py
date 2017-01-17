@@ -45,7 +45,7 @@ def list(default_view):
 
 @cli.command()
 @click.argument(u'name')
-@click.option(u'--template', default=u'resource',
+@click.option(u'--template', default=u'gen1/resource',
               help="Specify a Shell template. Use 'shellfoundry list' to see the list of available templates. "
                    "You can use 'local://<foler>' to specify a locally saved template")
 @click.option(u'--version', default=None)
