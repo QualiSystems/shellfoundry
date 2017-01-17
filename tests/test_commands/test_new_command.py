@@ -64,7 +64,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
     def test_not_existing_local_template_dir_thrown(self):
         # Arrange
         template_retriever = Mock()
-        template_retriever.get_templates = Mock(return_value={'base': ShellTemplate('base', '', 'url')})
+        template_retriever.get_templates = Mock(return_value={'base': ShellTemplate('base', '', 'url', '7.0')})
 
         repo_downloader = Mock()
         repo_downloader.download_template.return_value = 'repo_path'
@@ -85,7 +85,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
         # Arrange
         template_retriever = Mock()
         template_retriever.get_templates = Mock(
-            return_value={'base': ShellTemplate('base', '', 'https://fakegithub.com/user/repo')})
+            return_value={'base': ShellTemplate('base', '', 'https://fakegithub.com/user/repo', '7.0')})
 
         repo_downloader = Mock()
         repo_downloader.download_template.return_value = 'repo_path'
@@ -109,7 +109,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
     def test_can_generate_online_shell_into_same_directory(self):
         # Arrange
         template_retriever = Mock()
-        template_retriever.get_templates = Mock(return_value={'base': ShellTemplate('base', '', 'url')})
+        template_retriever.get_templates = Mock(return_value={'base': ShellTemplate('base', '', 'url', '7.0')})
 
         repo_downloader = Mock()
         repo_downloader.download_template.return_value = 'repo_path'
@@ -136,7 +136,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
     def test_can_generate_local_template_into_same_directory(self):
         # Arrange
         template_retriever = Mock()
-        template_retriever.get_templates = Mock(return_value={'base': ShellTemplate('base', '', 'url')})
+        template_retriever.get_templates = Mock(return_value={'base': ShellTemplate('base', '', 'url', '7.0')})
 
         repo_downloader = Mock()
         repo_downloader.download_template.return_value = 'repo_path'
@@ -165,7 +165,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
     def test_can_generate_shell_from_local_template(self):
         # Arrange
         template_retriever = Mock()
-        template_retriever.get_templates = Mock(return_value={'base': ShellTemplate('base', '', 'url')})
+        template_retriever.get_templates = Mock(return_value={'base': ShellTemplate('base', '', 'url', '7.0')})
 
         repo_downloader = Mock()
         repo_downloader.download_template.return_value = 'repo_path'
@@ -191,7 +191,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
     @httpretty.activate
     def test_integration_can_generate_shell_from_specific_version(self):
         # Arrange
-        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url')}
+        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url', '7.0')}
         repo_info = ('quali', 'resource-test')
 
         zipfile = mock_template_zip_file()
@@ -222,7 +222,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
     @httpretty.activate
     def test_fail_to_generate_shell_when_requested_version_does_not_exists(self):
         # Arrange
-        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url')}
+        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url', '7.0')}
         repo_info = ('quali', 'resource-test')
 
         httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/quali/resource-test/zipball/1.1",
@@ -245,7 +245,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
     @httpretty.activate
     def test_integration_latest_version_is_default_when_version_was_not_specified(self):
         # Arrange
-        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url')}
+        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url', '7.0')}
         repo_info = ('quali', 'resource-test')
 
         zipfile = mock_template_zip_file()

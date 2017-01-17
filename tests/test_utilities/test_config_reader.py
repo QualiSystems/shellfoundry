@@ -102,7 +102,7 @@ install:
         # Arrange
         self.fs.CreateFile('shell_name/cloudshell_config.yml', contents="""
 install:
-    defaultview: tosca
+    defaultview: gen2
     """)
         os.chdir('shell_name')
         reader = Configuration(ShellFoundryConfig())
@@ -111,7 +111,7 @@ install:
         settings = reader.read()
 
         #Assert
-        self.assertEqual(settings.defaultview, 'tosca')
+        self.assertEqual(settings.defaultview, 'gen2')
 
     def test_read_shellfoundry_settings_not_config_file_reads_default(self):
         # Arrange
@@ -121,7 +121,7 @@ install:
         settings = reader.read()
 
         #Assert
-        self.assertEqual(settings.defaultview, 'all')
+        self.assertEqual(settings.defaultview, 'gen2')
 
     def test_non_valid_config_file_read_default(self):
         self.fs.CreateFile('shell_name/cloudshell_config.yml', contents="""
@@ -135,4 +135,4 @@ invalidsection:
         settings = reader.read()
 
         # Assert
-        self.assertEqual(settings.defaultview, 'all')
+        self.assertEqual(settings.defaultview, 'gen2')

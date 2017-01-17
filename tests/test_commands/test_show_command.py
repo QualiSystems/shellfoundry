@@ -25,7 +25,7 @@ class TestShowCommandExecutor(unittest.TestCase):
 ]"""
         shell_template = ShellTemplate('tosca/networking/switch',
                                        'some description',
-                                       'mock://tosca/networking/switch')
+                                       'mock://tosca/networking/switch', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
 
@@ -56,7 +56,7 @@ class TestShowCommandExecutor(unittest.TestCase):
 
         shell_template = ShellTemplate('tosca/networking/switch',
                                        'some description',
-                                       'mock://tosca/networking/switch')
+                                       'mock://tosca/networking/switch', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
 
@@ -76,7 +76,7 @@ class TestShowCommandExecutor(unittest.TestCase):
 
         shell_template = ShellTemplate('notheright/one',
                                        'some description',
-                                       'mock://not/the/right/one')
+                                       'mock://not/the/right/one', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
 
@@ -94,7 +94,7 @@ class TestShowCommandExecutor(unittest.TestCase):
         repository = ''
         shell_template = ShellTemplate('tosca/networking/switch',
                                        'some description',
-                                       repository)
+                                       repository, '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
 
@@ -111,7 +111,7 @@ class TestShowCommandExecutor(unittest.TestCase):
 
         shell_template = ShellTemplate('tosca/networking/switch',
                                        'some description',
-                                       'mock://tosca/networking/switch')
+                                       'mock://tosca/networking/switch', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
 
@@ -135,7 +135,7 @@ class TestShowCommandExecutor(unittest.TestCase):
 
         shell_template = ShellTemplate('tosca/networking/switch',
                                        'some description',
-                                       'mock://tosca/networking/switch')
+                                       'mock://tosca/networking/switch', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
 
@@ -156,7 +156,7 @@ class TestShowCommandExecutor(unittest.TestCase):
 
         shell_template = ShellTemplate('tosca/networking/switch',
                                        'some description',
-                                       'mock://tosca/networking/switch')
+                                       'mock://tosca/networking/switch', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
 

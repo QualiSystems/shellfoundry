@@ -38,8 +38,8 @@ To use the latest template, omit the --version option.
 $ shellfoundry list
 ```
 
-To view only relevant templates, use one of the available filter flags: --tosca, --legacy and --all
-Default view is configurable using the *defaultview* key set to one of the following: tosca, legact or all. To set a config key refer to the *config* command section
+To view only relevant templates, use one of the available filter flags: --gen2, --gen1, --layer1 and --all
+Default view is configurable using the *defaultview* key set to one of the following: gen2, gen1, layer1 or all. To set a config key refer to the *config* command section
 
 * To add a new template or modify an existing one, please refer to [Contributing](../.github/contributing.md)
 

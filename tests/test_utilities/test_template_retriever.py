@@ -14,11 +14,13 @@ class TestTemplateRetriever(unittest.TestCase):
             repository : https://github.com/QualiSystems/shellfoundry-switch-template
             params:
                 project_name:
+            min_cs_ver: 7.0
           - name : router
             description : Basic router template
             repository : https://github.com/QualiSystems/shellfoundry-router-template
             params:
                 project_name:
+            min_cs_ver: 7.0
         """
 
     @mock.patch('shellfoundry.utilities.template_retriever.TemplateRetriever._get_templates_from_github',
