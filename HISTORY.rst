@@ -2,6 +2,11 @@
 History
 =======
 
+0.2.2 (2017-01-22)
+------------------
+
+* gen2/resource is the now the default template for new command instead of gen1/resource
+
 0.2.0 (2017-01-17)
 ------------------
 
