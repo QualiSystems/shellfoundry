@@ -45,16 +45,16 @@ templates:
         project_name :
         family_name : Firewall
       min_cs_ver: 7.0
-    - name: layer-1-switch
-      description : A native shell template for layer 1 switches
-      repository : https://github.com/QualiSystems/shell-L1-standard
+    - name: gen1/compute
+      description : 1st generation shell template for compute servers
+      repository : https://github.com/QualiSystems/shell-compute-standard
       params:
         project_name :
         family_name :
       min_cs_ver: 7.0
-    - name: gen1/compute
-      description : 1st generation shell template for compute servers
-      repository : https://github.com/QualiSystems/shell-compute-standard
+    - name: layer-1-switch
+      description : A native shell template for layer 1 switches
+      repository : https://github.com/QualiSystems/shell-L1-standard
       params:
         project_name :
         family_name :
@@ -107,4 +107,11 @@ templates:
         family_name :
       description : 2nd generation shell template for basic inventory resources
       repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
+      min_cs_ver: 8.0
+    - name : gen2/firewall
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for firewall resources
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-firewall-template
       min_cs_ver: 8.0
