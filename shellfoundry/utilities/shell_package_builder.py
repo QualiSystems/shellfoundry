@@ -11,7 +11,7 @@ from shellfoundry.utilities.temp_dir_context import TempDirContext
 
 class ShellPackageBuilder(object):
 
-    def pack(self, path):
+    def pack(self, path, debugmode):
         """
         Creates TOSCA based Shell package
         :return:
@@ -26,7 +26,7 @@ class ShellPackageBuilder(object):
             shell_definition_path = tosca_meta['Entry-Definitions']
 
             self._copy_shell_definition(package_path, '', shell_definition_path)
-            self._create_driver('', os.curdir, shell_name)
+            self._create_driver('', os.curdir, shell_name, debugmode)
 
             with open(shell_definition_path) as shell_definition_file:
                 shell_definition = yaml.load(shell_definition_file)
@@ -76,12 +76,13 @@ class ShellPackageBuilder(object):
             src_file_path=shell_package.get_metadata_path(),
             dest_dir_path=os.path.join(package_path, 'TOSCA-Metadata'))
 
-    @staticmethod
-    def _create_driver(path, package_path, shell_name):
+    def _create_driver(self, path, package_path, shell_name, debugmode):
         dir_to_zip = os.path.join(path, 'src')
         driver_name = shell_name + 'Driver'
         zip_file_path = os.path.join(package_path, driver_name)
-        ArchiveCreator.make_archive(zip_file_path, 'zip', dir_to_zip)
+        zip_file_path = ArchiveCreator.make_archive(zip_file_path, 'zip', dir_to_zip)
+        if debugmode:
+           self._add_debug_file(zip_file_path)
 
     @staticmethod
     def _copy_file(src_file_path, dest_dir_path):
@@ -93,3 +94,14 @@ class ShellPackageBuilder(object):
     def _zip_package(package_path, path, package_name):
         zip_file_path = os.path.join(path, 'dist', package_name)
         return ArchiveCreator.make_archive(zip_file_path, 'zip', package_path)
+
+    @staticmethod
+    def _add_debug_file(zip_file_path, wait_for_debugger=True):
+        debugxml = """
+                <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                <properties>
+                <entry key="waitForDebugger">{0}</entry>
+                </properties>
+            """.format(str(wait_for_debugger))
+        debug_path_in_zip = 'debug.xml'
+        ArchiveCreator.add_file_to_archive_from_string(zip_file_path, debugxml, debug_path_in_zip)

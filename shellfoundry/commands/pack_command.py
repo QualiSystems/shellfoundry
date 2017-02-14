@@ -16,7 +16,8 @@ class PackCommandExecutor(object):
         self.package_builder = PackageBuilder()
         self.shell_package_builder = ShellPackageBuilder()
 
-    def pack(self):
+    def pack(self, debugmode=None):
+        print debugmode
 
         current_path = os.getcwd()
 
@@ -24,12 +25,12 @@ class PackCommandExecutor(object):
         if shell_package.is_tosca():
             self.shell_package_builder.pack(current_path)
         else:
-            self._pack_old_school_shell(current_path)
+            self._pack_old_school_shell(current_path, debugmode)
 
-    def _pack_old_school_shell(self, current_path):
+    def _pack_old_school_shell(self, current_path, debugmode):
         try:
             config = self.config_reader.read()
-            self.package_builder.build_package(current_path, config.name, config.driver_name)
+            self.package_builder.build_package(current_path, config.name, config.driver_name, debugmode)
         except ShellYmlMissingException:
             click.echo(u'shell.yml file is missing')
         except WrongShellYmlException:

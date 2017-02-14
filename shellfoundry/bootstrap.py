@@ -47,7 +47,7 @@ def list(default_view):
 @click.argument(u'name')
 @click.option(u'--template', default=u'gen2/resource',
               help="Specify a Shell template. Use 'shellfoundry list' to see the list of available templates. "
-                   "You can use 'local://<foler>' to specify a locally saved template")
+                   "You can use 'local://<folder>' to specify a locally saved template")
 @click.option(u'--version', default=None)
 def new(name, template, version):
     """
@@ -57,19 +57,21 @@ def new(name, template, version):
 
 
 @cli.command()
-def pack():
+@click.option(u'--debug', default=False, help="Packs the driver in debug mode", is_flag=True)
+def pack(debug):
     """
     Creates a shell package
     """
-    PackCommandExecutor().pack()
+    PackCommandExecutor().pack(debug)
 
 
 @cli.command()
-def install():
+@click.option(u'--debug', default=False, help="Installs the driver in debug mode", is_flag=True)
+def install(debug):
     """
     Installs the shell package into CloudShell
     """
-    PackCommandExecutor().pack()
+    PackCommandExecutor().pack(debug)
     InstallCommandExecutor().install()
 
 

@@ -14,13 +14,14 @@ class PackageBuilder(object):
     def __init__(self, driver_version_strategy=None):
         self.driver_version_strategy = driver_version_strategy or DriverVersionTimestampBased()
 
-    def build_package(self, path, package_name, driver_name):
+    def build_package(self, path, package_name, driver_name, debugmode):
         package_path = os.path.join(path, 'package')
         self._copy_metadata(package_path, path)
         self._copy_datamodel(package_path, path)
         self._copy_images(package_path, path)
         self._copy_shellconfig(package_path, path)
-        self._create_driver(package_path, path, driver_name)
+        self._create_driver(package_path, path, driver_name, debugmode)
+
         zip_path = self._zip_package(package_path, path, package_name)
         shutil.rmtree(path=package_path, ignore_errors=True)
         click.echo(u'Shell package was successfully created:')
@@ -91,12 +92,15 @@ class PackageBuilder(object):
             dest_dir_path = os.path.join(package_path, 'Configuration')
             PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
-    def _create_driver(self, package_path, path, driver_name):
+    def _create_driver(self, package_path, path, driver_name, debugmode):
         dir_to_zip = os.path.join(path, 'src')
         drivermetadata_path = os.path.join(dir_to_zip, 'drivermetadata.xml')
         version = self._update_driver_version(drivermetadata_path)
         zip_file_path = os.path.join(package_path, 'Resource Drivers - Python', driver_name)
-        ArchiveCreator.make_archive(zip_file_path, 'zip', dir_to_zip)
+        zip_file_path = ArchiveCreator.make_archive(zip_file_path, 'zip', dir_to_zip)
+        if debugmode:
+            self._add_debug_file(zip_file_path)
+
         if version:  # version was replaced
             self._update_driver_version(drivermetadata_path, version)
 
@@ -124,6 +128,17 @@ class PackageBuilder(object):
             return curver
         else:
             return None
+
+    @staticmethod
+    def _add_debug_file(zip_file_path, wait_for_debugger=True):
+        debugxml = """
+            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <properties>
+            <entry key="waitForDebugger">{0}</entry>
+            </properties>
+        """.format(str(wait_for_debugger))
+        debug_path_in_zip = 'debug.xml'
+        ArchiveCreator.add_file_to_archive_from_string(zip_file_path, debugxml, debug_path_in_zip)
 
     @staticmethod
     def _zip_package(package_path, path, package_name):

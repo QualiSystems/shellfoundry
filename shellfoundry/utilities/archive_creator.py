@@ -32,3 +32,7 @@ class ArchiveCreator(object):
 
         return output_filename
 
+    @staticmethod
+    def add_file_to_archive_from_string(archive_path, file_content, path_in_archive):
+        with zipfile.ZipFile(archive_path, "a", zipfile.ZIP_DEFLATED) as zip:
+            zip.writestr(path_in_archive, file_content)
