@@ -56,7 +56,7 @@ The versions will dispay in a descending order from latest down to earliest.
 ## Packaging a shell
 
 **shellfoundry** allows packing the shell's source code, data model and configuration into a ZIP package.
-Use the *pack* command todo this:
+Use the *pack* command to do this:
 
 ```bash
 $ shellfoundry pack

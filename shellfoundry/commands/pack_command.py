@@ -17,13 +17,11 @@ class PackCommandExecutor(object):
         self.shell_package_builder = ShellPackageBuilder()
 
     def pack(self, debugmode=None):
-        print debugmode
-
         current_path = os.getcwd()
 
         shell_package = ShellPackage(current_path)
         if shell_package.is_tosca():
-            self.shell_package_builder.pack(current_path)
+            self.shell_package_builder.pack(current_path, debugmode)
         else:
             self._pack_old_school_shell(current_path, debugmode)
 

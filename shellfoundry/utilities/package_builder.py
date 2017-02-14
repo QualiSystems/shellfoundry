@@ -14,7 +14,7 @@ class PackageBuilder(object):
     def __init__(self, driver_version_strategy=None):
         self.driver_version_strategy = driver_version_strategy or DriverVersionTimestampBased()
 
-    def build_package(self, path, package_name, driver_name, debugmode):
+    def build_package(self, path, package_name, driver_name, debugmode=None):
         package_path = os.path.join(path, 'package')
         self._copy_metadata(package_path, path)
         self._copy_datamodel(package_path, path)

@@ -11,7 +11,7 @@ from shellfoundry.utilities.temp_dir_context import TempDirContext
 
 class ShellPackageBuilder(object):
 
-    def pack(self, path, debugmode):
+    def pack(self, path, debugmode=None):
         """
         Creates TOSCA based Shell package
         :return:

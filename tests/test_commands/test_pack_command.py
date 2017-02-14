@@ -1,3 +1,4 @@
+import zipfile
 from mock import patch
 from pyfakefs import fake_filesystem_unittest
 from tests.asserts import *
@@ -19,6 +20,7 @@ shell:
     email: chuck@hollywood.io
     description: Save the world
     version: 1.0.0
+    driver_name: nutshell
     """)
         self.fs.CreateFile('nut_shell/datamodel/metadata.xml')
         self.fs.CreateFile('nut_shell/datamodel/datamodel.xml')
@@ -33,7 +35,43 @@ shell:
 
         # Assert
         assertFileExists(self, 'dist/nut_shell.zip')
+        TestPackCommandExecutor.unzip('dist/nut_shell.zip', 'dist/nut_shell')
+        TestPackCommandExecutor.unzip('dist/nut_shell/Resource Drivers - Python/nutshell.zip', 'dist/nutshell')
+        assertFileDoesNotExist(self, 'dist/nutshell/debug.xml')
+
         echo_mock.assert_any_call(u'Shell package was successfully created:')
+
+    @patch('click.echo')
+    @patch('shellfoundry.utilities.python_dependencies_packager.pip')
+    def test_build_package_debugmode_package_created_with_debug_file(self, pip_mock, echo_mock):
+            # Arrange
+            self.fs.CreateFile('nut_shell/shell.yml', contents="""
+    shell:
+        name: nut_shell
+        author: Chuck Norris
+        email: chuck@hollywood.io
+        description: Save the world
+        version: 1.0.0
+        driver_name: nutshell
+        """)
+            self.fs.CreateFile('nut_shell/datamodel/metadata.xml')
+            self.fs.CreateFile('nut_shell/datamodel/datamodel.xml')
+            self.fs.CreateFile('nut_shell/datamodel/shellconfig.xml')
+            self.fs.CreateFile('nut_shell/src/driver.py')
+            os.chdir('nut_shell')
+
+            command_executor = PackCommandExecutor()
+
+            # Act
+            command_executor.pack(debugmode=True)
+
+            # Assert
+            assertFileExists(self, 'dist/nut_shell.zip')
+            TestPackCommandExecutor.unzip('dist/nut_shell.zip', 'dist/nut_shell')
+            TestPackCommandExecutor.unzip('dist/nut_shell/Resource Drivers - Python/nutshell.zip', 'dist/nutshell')
+            assertFileExists(self, 'dist/nutshell/debug.xml')
+
+            echo_mock.assert_any_call(u'Shell package was successfully created:')
 
     @patch('click.echo')
     @patch('shellfoundry.utilities.python_dependencies_packager.pip')
@@ -86,3 +124,10 @@ shell:
 
         # Assert
         self.assertTrue(pack_mock.called)
+
+    @staticmethod
+    def unzip(source_filename, dest_dir):
+        if not os.path.exists(dest_dir):
+            os.makedirs(dest_dir)
+        with zipfile.ZipFile(source_filename) as zf:
+            zf.extractall(dest_dir)
