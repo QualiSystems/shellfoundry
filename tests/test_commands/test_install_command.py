@@ -1,9 +1,12 @@
 import os
-from urllib2 import HTTPError
-from mock import Mock, patch, MagicMock
+
+from urllib2 import HTTPError, URLError
+from mock import Mock, patch, MagicMock, call
 from pyfakefs import fake_filesystem_unittest
+
 from shellfoundry.commands.install_command import InstallCommandExecutor
 from shellfoundry.models.install_config import InstallConfig
+from shellfoundry.exceptions import FatalError
 
 LOGIN_ERROR_MESSAGE = 'Login failed for user: YOUR_USERNAME. Please make sure the username and password are correct.'
 
@@ -12,7 +15,8 @@ class TestInstallCommandExecutor(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
 
-    def test_when_config_files_exist_install_succeeds(self):
+    @patch('click.secho')
+    def test_when_config_files_exist_install_succeeds(self, secho_mock):
         # Arrange
         self.fs.CreateFile('nut_shell/shell.yml', contents="""
 shell:
@@ -38,9 +42,28 @@ install:
         # Assert
         mock_installer.install.assert_called_once_with('nut_shell', InstallConfig('localhost', 9000, 'YOUR_USERNAME',
                                                                                   'YOUR_PASSWORD', 'Global'))
+        secho_mock.assert_any_call('Successfully installed shell', fg='green')
 
-    @patch('click.echo')
-    def test_proper_error_message_displayed_when_login_failed(self, echo_mock):
+    def test_tosca_based_shell_installed_when_tosca_meta_file_exists(self):
+        # Arrange
+        self.fs.CreateFile('nut-shell/TOSCA-Metadata/TOSCA.meta',
+                           contents='TOSCA-Meta-File-Version: 1.0 \n'
+                                    'CSAR-Version: 1.1 \n'
+                                    'Created-By: Anonymous \n'
+                                    'Entry-Definitions: shell-definition.yml')
+
+        os.chdir('nut-shell')
+
+        mock_shell_package_installer = MagicMock()
+        command_executor = InstallCommandExecutor(shell_package_installer=mock_shell_package_installer)
+
+        # Act
+        command_executor.install()
+
+        # Assert
+        self.assertTrue(mock_shell_package_installer.install.called)
+
+    def test_proper_error_message_displayed_when_login_failed(self):
         # Arrange
         self.fs.CreateFile('nut_shell/shell.yml', contents="""
 shell:
@@ -60,7 +83,63 @@ install:
         command_executor = InstallCommandExecutor(installer=mock_installer)
 
         # Act
-        command_executor.install()
+        with self.assertRaises(FatalError) as context:
+            command_executor.install()
 
         # Assert
-        echo_mock.assert_called_once_with(u'Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml')
+        self.assertTrue(context.exception, u'Login to CloudShell failed. Please verify the credentials in the config')
+
+    def test_proper_error_appears_when_connection_to_cs_failed(self):
+        # Arrange
+        self.fs.CreateFile('nut_shell/shell.yml', contents="""
+shell:
+    name: nut_shell
+    """)
+        self.fs.CreateFile('nut_shell/cloudshell_config.yml', contents="""
+install:
+    host: localhost
+    port: 9000
+    username: YOUR_USERNAME
+    password: YOUR_PASSWORD
+    domain: Global
+    """)
+        os.chdir('nut_shell')
+        mock_installer = Mock()
+        mock_installer.install = Mock(side_effect=URLError(''))
+        command_executor = InstallCommandExecutor(installer=mock_installer)
+
+        # Act
+        with self.assertRaises(FatalError) as context:
+            command_executor.install()
+
+        # Assert
+        self.assertTrue(
+            context.exception.message == u'Connection to CloudShell Server failed. Please make sure it is up and running properly.')
+
+    def test_proper_error_appears_when_old_shell_installation_fails(self):
+        # Arrange
+        self.fs.CreateFile('nut_shell/shell.yml', contents="""
+shell:
+    name: nut_shell
+    """)
+        self.fs.CreateFile('nut_shell/cloudshell_config.yml', contents="""
+install:
+    host: localhost
+    port: 9000
+    username: YOUR_USERNAME
+    password: YOUR_PASSWORD
+    domain: Global
+    """)
+        os.chdir('nut_shell')
+        mock_installer = Mock()
+        ex_msg = 'Quali Error: some fancy error here'
+        mock_installer.install = Mock(side_effect=Exception(ex_msg))
+        command_executor = InstallCommandExecutor(installer=mock_installer)
+
+        # Act
+        with self.assertRaises(FatalError) as context:
+            command_executor.install()
+
+        # Assert
+        self.assertTrue(
+            context.exception.message == u"Failed to install shell. CloudShell responded with: '{}'".format(ex_msg))

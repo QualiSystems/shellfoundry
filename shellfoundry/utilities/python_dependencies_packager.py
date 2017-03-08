@@ -24,4 +24,4 @@ class PythonDependenciesPackager:
             pip_args.append(proxy)
         pip_args.append('--requirement={requirements_path}'.format(requirements_path=requirements_path))
         pip_args.append('--dest={dest_path}'.format(dest_path=dest_path))
-        print pip.main(pip_args)
+        pip.main(pip_args)

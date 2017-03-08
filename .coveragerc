@@ -1,0 +1,3 @@
+[report]
+omit =
+    shellfoundry/__main__.py

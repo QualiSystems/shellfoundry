@@ -20,13 +20,13 @@ setup(
     author="Boris Modylevsky",
     author_email='borismod@gmail.com',
     url='https://github.com/QualiSystems/shellfoundry',
-    packages=find_packages(),
+    packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     entry_points={
         "console_scripts": ['shellfoundry = shellfoundry.bootstrap:cli']
     },
     include_package_data=True,
     install_requires=get_file_content('requirements.txt'),
-    license="Apache 2.0",
+    license="Apache Software License 2.0",
     zip_safe=False,
     keywords='shellfoundry sandbox cloud virtualization vcenter cmp cloudshell quali command-line cli',
     classifiers=[

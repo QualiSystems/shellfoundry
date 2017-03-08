@@ -21,7 +21,6 @@ class TestDataModelMerger(unittest.TestCase):
     #     merged_xml = merger.merge_shell_model(dm, shell)
     #     self.assertIsNotNone(merged_xml)
 
-
     def test_merges_attributes(self):
 
         datamodel = """<?xml version="1.0" encoding="utf-8"?>
@@ -85,6 +84,102 @@ class TestDataModelMerger(unittest.TestCase):
             ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}AttributeInfo[@Name='Shell Power Management']"),
                              "Attribute was not found in merged xml"
         )
+
+    def test_exception_thrown_when_family_missing_in_data_model(self):
+
+        datamodel = """<?xml version="1.0" encoding="utf-8"?>
+            <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">
+              <Attributes>
+              </Attributes>
+              <ResourceFamilies>
+                <ResourceFamily Name="Switch" Description="" IsSearchable="true" IsPowerSwitch="true">
+                  <AttachedAttributes />
+                  <AttributeValues />
+                  <Models>
+                  </Models>
+                  <Categories />
+                </ResourceFamily>
+
+              </ResourceFamilies>
+              <DriverDescriptors />
+              <ScriptDescriptors />
+            </DataModelInfo>
+        """
+
+        shell = """
+            <Shell>
+            <ShellAttributes>
+             <AttributeInfo Name="Shell Enable Password" Type="Password" DefaultValue="3M3u7nkDzxWb0aJ/IZYeWw==" IsReadOnly="false">
+                <Rules>
+                 <Rule Name="Configuration" />
+                </Rules>
+                 </AttributeInfo>
+                <AttributeInfo Name="Shell Power Management" Type="Boolean" DefaultValue="False" IsReadOnly="false">
+              <Rules>
+                 <Rule Name="Configuration" />
+              </Rules>
+               </AttributeInfo>
+            </ShellAttributes>
+
+            <ShellModel Family="NON EXISTING FAMILY">
+                <ResourceModel Name="SSwitch" Description="" SupportsConcurrentCommands="true">
+                    <AttachedAttributes>
+                    </AttachedAttributes>
+                    <AttributeValues>
+                    </AttributeValues>
+                    <Drivers>
+                        <DriverName>SSwitchDriver</DriverName>
+                    </Drivers>
+                    <Scripts />
+                </ResourceModel>
+            </ShellModel>
+            </Shell>
+        """
+        merger = ShellDataModelMerger()
+
+        # Assert
+        self.assertRaises(Exception, merger.merge_shell_model, datamodel, shell)
+
+    def test_exception_thrown_when_shell_model_missing_in_data_model(self):
+
+        datamodel = """<?xml version="1.0" encoding="utf-8"?>
+            <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">
+              <Attributes>
+              </Attributes>
+              <ResourceFamilies>
+                <ResourceFamily Name="Switch" Description="" IsSearchable="true" IsPowerSwitch="true">
+                  <AttachedAttributes />
+                  <AttributeValues />
+                  <Models>
+                  </Models>
+                  <Categories />
+                </ResourceFamily>
+              </ResourceFamilies>
+              <DriverDescriptors />
+              <ScriptDescriptors />
+            </DataModelInfo>
+        """
+
+        shell = """
+            <Shell>
+            <ShellAttributes>
+             <AttributeInfo Name="Shell Enable Password" Type="Password" DefaultValue="3M3u7nkDzxWb0aJ/IZYeWw==" IsReadOnly="false">
+                <Rules>
+                 <Rule Name="Configuration" />
+                </Rules>
+                 </AttributeInfo>
+                <AttributeInfo Name="Shell Power Management" Type="Boolean" DefaultValue="False" IsReadOnly="false">
+              <Rules>
+                 <Rule Name="Configuration" />
+              </Rules>
+               </AttributeInfo>
+            </ShellAttributes>
+            </Shell>
+        """
+        merger = ShellDataModelMerger()
+
+        # Assert
+        self.assertRaises(Exception, merger.merge_shell_model, datamodel, shell)
 
     def test_adds_the_shell_model_to_the_datamodel(self):
 

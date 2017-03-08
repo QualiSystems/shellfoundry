@@ -1,11 +1,11 @@
 import os
 import click
-from cookiecutter.main import cookiecutter
 from requests.exceptions import SSLError
 from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplateCompiler
 from shellfoundry.utilities.repository_downloader import RepositoryDownloader
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 from shellfoundry.utilities.template_retriever import TemplateRetriever
+from shellfoundry.exceptions import VersionRequestException
 
 
 class NewCommandExecutor(object):
@@ -16,7 +16,7 @@ class NewCommandExecutor(object):
         self.repository_downloader = repository_downloader or RepositoryDownloader()
         self.template_compiler = template_compiler or CookiecutterTemplateCompiler()
 
-    def new(self, name, template):
+    def new(self, name, template, version=None):
         """
         Create a new shell based on a template.
         :param str name: The name of the Shell
@@ -34,9 +34,11 @@ class NewCommandExecutor(object):
             self._import_local_template(name, running_on_same_folder, template)
 
         else:
-            self._import_online_template(name, running_on_same_folder, template)
+            self._import_online_template(name, running_on_same_folder, template, version)
 
-    def _import_online_template(self, name, running_on_same_folder, template):
+        click.echo('Created shell {0} based on template {1}'.format(name, template))
+
+    def _import_online_template(self, name, running_on_same_folder, template, version):
         # Create a temp folder for the operation to make sure we delete it after
         with TempDirContext(name) as temp_dir:
 
@@ -52,7 +54,10 @@ class NewCommandExecutor(object):
                                                                                             templates)))
             template_obj = templates[template]
 
-            repo_path = self.repository_downloader.download_template(temp_dir, template_obj.repository)
+            try:
+                repo_path = self.repository_downloader.download_template(temp_dir, template_obj.repository, version)
+            except VersionRequestException:
+                raise click.BadParameter(u'{} does not exists or invalid value'.format(version))
 
             self.template_compiler.compile_template(name, repo_path, template_obj.params,
                                                     running_on_same_folder)

@@ -4,34 +4,24 @@ install:
 - pip install -r requirements.txt
 - pip install -r test_requirements.txt
 - pip install coveralls
-
 script: coverage run --source=shellfoundry setup.py test
-
 after_success: coveralls
-
 deploy:
-    - provider: pypi
-      distributions: sdist
-      server: https://testpypi.python.org/pypi
-      user: $username
-      password: $secure
-      on:
-        branch: master
-        tags: false
-        condition: $TRAVIS_PYTHON_VERSION = "2.7"
-
-   # production pypi
-    - provider: pypi
-      distributions: sdist
-      user: $username
-      password:
-        secure: $secure
-      on:
-        branch: master
-        tags: true
-        condition: $TRAVIS_PYTHON_VERSION = "2.7"
-
-env:
-  global:
-    - username=Quali
-    - secure=jhWMWFPYeh0IJDVfpR/7pmdaM+X/i8lxWDdCVINL90wZARUigTTvV9Lf0E4Ios1vUESMj972qt0UMFlht0yWOMJ5PFryZiLKnV9iMJXJ9F7un41FtuE4ldHJgIJo9X0EunIE3IL8aHtaYoqO+Ak6uMzSmsAmRMT6wcq2tOPqhVs5rSmm4accVMVhhZG0Otbh6GBOK9/Z6O4KS5NiglKIQbs1q8xr8f8/nTl/ziiU/wiVkojP6g8uQhdnaj+sEHz15UZtqeJhFyQ5ohVsvlbV0RYmOH/uI6RfQwz59nVikwCRC+MPlX3V9fB4YfiIgPw+YRyC5eZqFmIvzoIMNn/URDKbTEA6PovDQ7qUKaxP8dOGCtN31QYNfkmkYsXPZiLAm1pHxGtn2rK8stPjC4+0IPegJHbWuDc9QuVc4j58wCiefcDK1NnEqmEB1YhzgONDx/IyAj4o4LI8kPh5fx7vX+pPOEmFzEo+KaFiN9duSA607gdBBCgrKZGe7kRZJCMuEl/SW14jAxOrtuF0NikbbZ551TCBgoU0YfGEqT30wfcxX9D2i+yZDrkBtwhwf6vEJWmqMorz+hw8mcSzDF8HMkdzf+Ef6Zq+k9XJYxk+X6zuY+DNkQqIxTzCoQBFDFCZ/UdgtGGy5IE9jFFWxBwseXYdRQbv6TcjeBYj3EPXPrU=
+  - provider: pypi
+    server: https://testpypi.python.org/pypi
+    distributions: "sdist bdist_wheel"
+    user: quali
+    password:
+      secure: SAiYCl0mdmluytjsKmizaKk/10EN3VT3WcweOeJ3QPwu1o1scJ1gmQBggK68UwqQZjZgr6gcjvpoHKyjtDrg8VQuuQ5KKPt5Mldyw5LvyYHuwsN8dpJ7NYysplNOYb2RR0Fua4I12r0NvctUwJRQ1TEgJmBzWLuQ3aIcMVjltG5GDpBEr/6XnHzVu+ksvJ1iCmehgyPHLor2DFVFQ1va2iF3FVAgFwJA+LaW0QMrTI+NCGI/KFCJGkTQjhnpb7KjLG+ThyBCVLL6N4eR/koxGZA4Q8lcbMjsZHF+gjendWXW2frsJftGKoO89aEYi+nhdRjA4IMWZ7iISdXl/A3V4msoVHUXjacSiPQb2pBKlVva7dLDAZTK2nJQcFsvxED+V3vR0LO3FlbQLTl9nmbu75zh8fpQ9jnUhtyAc31Yd/R2bBUv/yymCEurBKzD9ucTxJvXOXFUVbOLcO1X+ODEKIRrKmTEJ7Jwy/3uF3gzOi5WVFcPxHTtIDKNM4ZfWgsxSOzoYfCNB8QEhkcYtIiL7WwzbctuQWFbEnquVsyPN9h/gEiGyggCrJEgfZw1RreSePx6MEsWS47+jl5SecKPX1xtKr9CpHkvPxbWLBSvbPns0TGnqXnIzci8yVLTJnBU39Zpcb2Z1xuflFTmTe1mOEXSFfY0TFVjpDAoSOvjGc4=
+    on:
+      branch: develop
+      condition: $TRAVIS_PYTHON_VERSION = "2.7"
+  - provider: pypi
+    distribution: "sdist bdist_wheel"
+    user: quali
+    password:
+      secure: SAiYCl0mdmluytjsKmizaKk/10EN3VT3WcweOeJ3QPwu1o1scJ1gmQBggK68UwqQZjZgr6gcjvpoHKyjtDrg8VQuuQ5KKPt5Mldyw5LvyYHuwsN8dpJ7NYysplNOYb2RR0Fua4I12r0NvctUwJRQ1TEgJmBzWLuQ3aIcMVjltG5GDpBEr/6XnHzVu+ksvJ1iCmehgyPHLor2DFVFQ1va2iF3FVAgFwJA+LaW0QMrTI+NCGI/KFCJGkTQjhnpb7KjLG+ThyBCVLL6N4eR/koxGZA4Q8lcbMjsZHF+gjendWXW2frsJftGKoO89aEYi+nhdRjA4IMWZ7iISdXl/A3V4msoVHUXjacSiPQb2pBKlVva7dLDAZTK2nJQcFsvxED+V3vR0LO3FlbQLTl9nmbu75zh8fpQ9jnUhtyAc31Yd/R2bBUv/yymCEurBKzD9ucTxJvXOXFUVbOLcO1X+ODEKIRrKmTEJ7Jwy/3uF3gzOi5WVFcPxHTtIDKNM4ZfWgsxSOzoYfCNB8QEhkcYtIiL7WwzbctuQWFbEnquVsyPN9h/gEiGyggCrJEgfZw1RreSePx6MEsWS47+jl5SecKPX1xtKr9CpHkvPxbWLBSvbPns0TGnqXnIzci8yVLTJnBU39Zpcb2Z1xuflFTmTe1mOEXSFfY0TFVjpDAoSOvjGc4=
+    on:
+      branch: master
+      tags: true
+      condition: $TRAVIS_PYTHON_VERSION = "2.7"
