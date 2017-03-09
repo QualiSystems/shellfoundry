@@ -2,6 +2,7 @@ import click
 import requests
 import shellfoundry.exceptions as exc
 
+from shellfoundry.utilities import GEN_TWO_FILTER
 from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
 from shellfoundry.utilities.template_versions import TemplateVersions
 
@@ -11,7 +12,7 @@ LATEST_STAMP = '{} (latest)'
 
 class ShowCommandExecutor(object):
     def __init__(self, template_retriever=None):
-        self.template_retriever = template_retriever or FilteredTemplateRetriever('tosca', TemplateRetriever())
+        self.template_retriever = template_retriever or FilteredTemplateRetriever(GEN_TWO_FILTER, TemplateRetriever())
 
     def show(self, template_name):
         try:
