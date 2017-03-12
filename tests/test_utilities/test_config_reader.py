@@ -5,7 +5,7 @@ from mock import patch
 from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader, ShellFoundryConfig
 
 
-class TestConfigReader(fake_filesystem_unittest.TestCase):
+class TestConfigReader(fake_filesystem_unittest.TestCase): #fortesting
     def setUp(self):
         self.setUpPyfakefs()
 
