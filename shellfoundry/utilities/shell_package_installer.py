@@ -2,6 +2,8 @@ import os
 import click
 import time
 
+from urllib2 import HTTPError
+
 from shellfoundry.exceptions import FatalError
 from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
 from shellfoundry.utilities.shell_package import ShellPackage
@@ -29,7 +31,10 @@ class ShellPackageInstaller(object):
                                show_eta=False,
                                label=cs_connection_label
                                ) as pbar:
-            client = self._open_connection_to_quali_server(cloudshell_config, pbar, retry=CloudShell_Max_Retries)
+            try:
+                client = self._open_connection_to_quali_server(cloudshell_config, pbar, retry=CloudShell_Max_Retries)
+            finally:
+                self._render_pbar_finish(pbar)
 
         pbar_install_shell_len = 2  # amount of possible actions (update and add)
         installation_label = 'Installing shell into CloudShell'.ljust(len(cs_connection_label))
@@ -57,8 +62,11 @@ class ShellPackageInstaller(object):
                                             port=cloudshell_config.port,
                                             domain=cloudshell_config.domain,
                                             password=cloudshell_config.password)
-            self._render_pbar_finish(pbar)
             return client
+        except HTTPError as e:
+            if e.code == 401:
+                raise FatalError(u'Login to CloudShell failed. Please verify the credentials in the config')
+            raise FatalError('Connection to CloudShell Server failed. Please make sure it is up and running properly.')
         except:
             self._increase_pbar(pbar, time_wait=CloudShell_Retry_Interval_Sec)
             return self._open_connection_to_quali_server(cloudshell_config, pbar, retry - 1)

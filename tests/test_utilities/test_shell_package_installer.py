@@ -1,5 +1,6 @@
 import shellfoundry.utilities.shell_package_installer as spi
 
+from urllib2 import HTTPError
 from cloudshell.rest.exceptions import ShellNotFoundException
 from mock import patch, Mock
 from pyfakefs import fake_filesystem_unittest
@@ -78,6 +79,34 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
 
     @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient', new=Mock(side_effect=Exception()))
     def test_fail_to_open_connection_to_cs(self):
+        # Arrange
+        spi.CloudShell_Retry_Interval_Sec = 0  # doing that for test to run faster with no sleeps between connection failures
+        installer = ShellPackageInstaller()
+
+        with self.assertRaises(FatalError) as context:
+            installer.install('work/nut-shell')
+
+        # Assert
+        self.assertTrue(
+            context.exception.message == 'Connection to CloudShell Server failed. Please make sure it is up and running properly.')
+
+    @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient',
+           new=Mock(side_effect=HTTPError('', 401, '', None, None)))
+    def test_fail_to_login_into_cs(self):
+        # Arrange
+        spi.CloudShell_Retry_Interval_Sec = 0  # doing that for test to run faster with no sleeps between connection failures
+        installer = ShellPackageInstaller()
+
+        with self.assertRaises(FatalError) as context:
+            installer.install('work/nut-shell')
+
+        # Assert
+        self.assertTrue(
+            context.exception.message == u'Login to CloudShell failed. Please verify the credentials in the config')
+
+    @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient',
+           new=Mock(side_effect=HTTPError('', 403, '', None, None)))
+    def test_fail_with_http_error_other_than_authentication_error(self):
         # Arrange
         spi.CloudShell_Retry_Interval_Sec = 0  # doing that for test to run faster with no sleeps between connection failures
         installer = ShellPackageInstaller()

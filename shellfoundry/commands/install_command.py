@@ -27,13 +27,19 @@ class InstallCommandExecutor(object):
         click.secho('Successfully installed shell', fg='green')
 
     def _install_old_school_shell(self):
+        error = None
         try:
             cloudshell_config = self.cloudshell_config_reader.read()
             shell_config = self.shell_config_reader.read()
             self.installer.install(shell_config.name, cloudshell_config)
-        except HTTPError:
-            raise FatalError(u'Login to CloudShell failed. Please verify the credentials in the config')
+        except HTTPError as e:
+            if e.code == 401:
+                raise FatalError(u'Login to CloudShell failed. Please verify the credentials in the config')
+            error = e.msg
         except URLError:
             raise FatalError(u'Connection to CloudShell Server failed. Please make sure it is up and running properly.')
         except Exception as e:
-            raise FatalError(u"Failed to install shell. CloudShell responded with: '{}'".format(e.message))
+            error = e.message
+
+        if error:
+            raise FatalError(u"Failed to install shell. CloudShell responded with: '{}'".format(error))
