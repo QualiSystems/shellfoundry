@@ -79,7 +79,7 @@ install:
     """)
         os.chdir('nut_shell')
         mock_installer = Mock()
-        mock_installer.install = Mock(side_effect=HTTPError('', '', LOGIN_ERROR_MESSAGE, None, None))
+        mock_installer.install = Mock(side_effect=HTTPError('', 401, LOGIN_ERROR_MESSAGE, None, None))
         command_executor = InstallCommandExecutor(installer=mock_installer)
 
         # Act
@@ -88,6 +88,33 @@ install:
 
         # Assert
         self.assertTrue(context.exception, u'Login to CloudShell failed. Please verify the credentials in the config')
+
+    def test_proper_error_message_when_non_authentication_http_error_raised(self):
+        # Arrange
+        self.fs.CreateFile('nut_shell/shell.yml', contents="""
+shell:
+    name: nut_shell
+    """)
+        self.fs.CreateFile('nut_shell/cloudshell_config.yml', contents="""
+install:
+    host: localhost
+    port: 9000
+    username: YOUR_USERNAME
+    password: YOUR_PASSWORD
+    domain: Global
+    """)
+        os.chdir('nut_shell')
+        mock_installer = Mock()
+        mock_installer.install = Mock(side_effect=HTTPError('', 404, LOGIN_ERROR_MESSAGE, None, None))
+        command_executor = InstallCommandExecutor(installer=mock_installer)
+
+        # Act
+        with self.assertRaises(FatalError) as context:
+            command_executor.install()
+
+        # Assert
+        self.assertTrue(context.exception, u"Failed to install shell. CloudShell responded with: '{}'".format(
+            'Login to CloudShell failed. Please verify the credentials in the config'))
 
     def test_proper_error_appears_when_connection_to_cs_failed(self):
         # Arrange
