@@ -18,6 +18,7 @@ class PackageBuilder(object):
         package_path = os.path.join(path, 'package')
         self._copy_metadata(package_path, path)
         self._copy_datamodel(package_path, path)
+        self._copy_categories(package_path, path)
         self._copy_images(package_path, path)
         self._copy_shellconfig(package_path, path)
         self._create_driver(package_path, path, driver_name)
@@ -89,6 +90,13 @@ class PackageBuilder(object):
         src_file_path = os.path.join(path, 'datamodel', 'shellconfig.xml')
         if os.path.exists(src_file_path):
             dest_dir_path = os.path.join(package_path, 'Configuration')
+            PackageBuilder._copy_file(dest_dir_path, src_file_path)
+
+    @staticmethod
+    def _copy_categories(package_path, path):
+        src_file_path = os.path.join(path, 'categories', 'categories.xml')
+        if os.path.exists(src_file_path):
+            dest_dir_path = os.path.join(package_path, 'Categories')
             PackageBuilder._copy_file(dest_dir_path, src_file_path)
 
     def _create_driver(self, package_path, path, driver_name):
