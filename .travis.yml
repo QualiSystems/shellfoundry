@@ -14,7 +14,7 @@ deploy:
     password:
       secure: SAiYCl0mdmluytjsKmizaKk/10EN3VT3WcweOeJ3QPwu1o1scJ1gmQBggK68UwqQZjZgr6gcjvpoHKyjtDrg8VQuuQ5KKPt5Mldyw5LvyYHuwsN8dpJ7NYysplNOYb2RR0Fua4I12r0NvctUwJRQ1TEgJmBzWLuQ3aIcMVjltG5GDpBEr/6XnHzVu+ksvJ1iCmehgyPHLor2DFVFQ1va2iF3FVAgFwJA+LaW0QMrTI+NCGI/KFCJGkTQjhnpb7KjLG+ThyBCVLL6N4eR/koxGZA4Q8lcbMjsZHF+gjendWXW2frsJftGKoO89aEYi+nhdRjA4IMWZ7iISdXl/A3V4msoVHUXjacSiPQb2pBKlVva7dLDAZTK2nJQcFsvxED+V3vR0LO3FlbQLTl9nmbu75zh8fpQ9jnUhtyAc31Yd/R2bBUv/yymCEurBKzD9ucTxJvXOXFUVbOLcO1X+ODEKIRrKmTEJ7Jwy/3uF3gzOi5WVFcPxHTtIDKNM4ZfWgsxSOzoYfCNB8QEhkcYtIiL7WwzbctuQWFbEnquVsyPN9h/gEiGyggCrJEgfZw1RreSePx6MEsWS47+jl5SecKPX1xtKr9CpHkvPxbWLBSvbPns0TGnqXnIzci8yVLTJnBU39Zpcb2Z1xuflFTmTe1mOEXSFfY0TFVjpDAoSOvjGc4=
     on:
-      branch: develop
+      branch: master
       condition: $TRAVIS_PYTHON_VERSION = "2.7"
   - provider: pypi
     distribution: "sdist bdist_wheel"

@@ -85,7 +85,8 @@ class TestShowCommandExecutor(unittest.TestCase):
             ShowCommandExecutor(template_retriever_mock).show(template_name)
 
         # Assert
-        self.assertTrue('Template does not exist' in context.exception)
+        self.assertTrue("The template '{}' does not exist, please specify a valid 2nd Gen shell template.".format(
+            template_name) in context.exception)
 
     def test_repository_url_is_empty_raises_error(self):
         # Arrange
@@ -118,8 +119,8 @@ class TestShowCommandExecutor(unittest.TestCase):
         # Act
         with patch('shellfoundry.commands.show_command.requests.get') as get_response_mock, \
             self.assertRaises(click.ClickException) as context:
-                type(get_response_mock.return_value).status_code = PropertyMock(return_value=400)
-                ShowCommandExecutor(template_retriever_mock).show(template_name)
+            type(get_response_mock.return_value).status_code = PropertyMock(return_value=400)
+            ShowCommandExecutor(template_retriever_mock).show(template_name)
 
         # Assert
         self.assertTrue('Failed to receive versions from host' in context.exception)
