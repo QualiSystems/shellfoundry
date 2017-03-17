@@ -10,7 +10,8 @@ class CompositeFilter(object):
                         NO_FILTER: NoFilter}
 
     def filter(self, template_name):
-        return self.filters[self.template_type]().filter(template_name)
+        return self.filters.get(self.template_type, NoFilter)().filter(template_name)
+
 
 class GenOneFilter(object):
     def filter(self, template_name):
