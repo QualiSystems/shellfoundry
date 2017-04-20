@@ -18,7 +18,7 @@ from shellfoundry.utilities.shell_package import ShellPackage
 from shellfoundry.utilities import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
 
 
-@click.group()
+@click.group(epilog='For help on any individual command run shellfoundry COMMAND --help')
 def cli():
     pass
 
