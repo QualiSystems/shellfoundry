@@ -109,7 +109,8 @@ $ shellfoundry config
 
 (in order to switch to local use the --local flag on shell's root folder)
 
-* Replace <key> and <value> with the desired key and value to save into the configuration file.
+* Replace *&lt;key&gt;* and *&lt;value&gt;* with the desired key and value to save into the configuration file.
+* Wrap *&lt;key&gt;* or *&lt;value&gt;* with quotes to allow spaces.
 * Configuration files are created once shellfoundry config (--global/--local flag) is executed.
 
 Return to [Table of Contents](readme.md)
