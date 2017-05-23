@@ -35,6 +35,9 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
         self.setUpPyfakefs()
         mocking_extensions.bootstrap()
 
+        from requests.utils import DEFAULT_CA_BUNDLE_PATH
+        self.fs.CreateFile(DEFAULT_CA_BUNDLE_PATH)
+
     def test_not_existing_template_exception_thrown(self):
         # Arrange
         template_retriever = Mock()
