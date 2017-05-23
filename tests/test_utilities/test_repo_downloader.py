@@ -8,12 +8,13 @@ import os
 
 
 class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
-
-
     def setUp(self):
         self.setUpPyfakefs()
 
-    @httpretty.activate # much preferred way than httpretty.enable because it combine enable and disable in one line
+        from requests.utils import DEFAULT_CA_BUNDLE_PATH
+        self.fs.CreateFile(DEFAULT_CA_BUNDLE_PATH)
+
+    @httpretty.activate  # much preferred way than httpretty.enable because it combine enable and disable in one line
     def test_extracts_and_calls_api_url_from_https_addrses(self):
         test_dir = '/test_dir'
         self.fs.CreateDirectory(test_dir)
@@ -23,8 +24,10 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
         expected_versions_url = 'https://api.github.com/repos/org/repo/branches'
 
         httpretty.register_uri(httpretty.GET, expected_api_url,
-                               body="repo-main/,repo-main/shell.txt,repo-main/datamodel/datamodel.xml", streaming=True, status=200)
-        httpretty.register_uri(httpretty.GET, expected_versions_url, body="[{\"name\": \"master\"}]", streaming=True, status=200)
+                               body="repo-main/,repo-main/shell.txt,repo-main/datamodel/datamodel.xml", streaming=True,
+                               status=200)
+        httpretty.register_uri(httpretty.GET, expected_versions_url, body="[{\"name\": \"master\"}]", streaming=True,
+                               status=200)
 
         RepositoryDownloader(repo_extractor=TestRepositoryDownloader.FakeExtractor(self.fs)) \
             .download_template(test_dir, input_https_address)
@@ -41,8 +44,10 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
         expected_versions_url = 'https://api.github.com/repos/org/repo/branches'
 
         httpretty.register_uri(httpretty.GET, expected_api_url,
-                               body="repo-main/,repo-main/shell.txt,repo-main/datamodel/datamodel.xml", streaming=True, status=200)
-        httpretty.register_uri(httpretty.GET, expected_versions_url, body="[{\"name\": \"master\"}]", streaming=True, status=200)
+                               body="repo-main/,repo-main/shell.txt,repo-main/datamodel/datamodel.xml", streaming=True,
+                               status=200)
+        httpretty.register_uri(httpretty.GET, expected_versions_url, body="[{\"name\": \"master\"}]", streaming=True,
+                               status=200)
 
         RepositoryDownloader(repo_extractor=TestRepositoryDownloader.FakeExtractor(self.fs)) \
             .download_template(test_dir, input_https_address)
@@ -59,14 +64,15 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
         expected_versions_url = 'https://api.github.com/repos/org/repo/branches'
 
         httpretty.register_uri(httpretty.GET, expected_api_url,
-                               body="repo-main/,repo-main/shell.txt,repo-main/datamodel/datamodel.xml", streaming=True, status=200)
-        httpretty.register_uri(httpretty.GET, expected_versions_url, body="[{\"name\": \"master\"}]", streaming=True, status=200)
+                               body="repo-main/,repo-main/shell.txt,repo-main/datamodel/datamodel.xml", streaming=True,
+                               status=200)
+        httpretty.register_uri(httpretty.GET, expected_versions_url, body="[{\"name\": \"master\"}]", streaming=True,
+                               status=200)
 
         result = RepositoryDownloader(repo_extractor=TestRepositoryDownloader.FakeExtractor(self.fs)) \
             .download_template(test_dir, input_https_address)
 
         self.assertEqual(result, os.path.join(test_dir, "repo-main/"))
-
 
     class FakeExtractor(DownloadedRepoExtractor):
         def __init__(self, fs):
