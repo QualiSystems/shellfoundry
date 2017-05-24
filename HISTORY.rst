@@ -2,6 +2,11 @@
 History
 =======
 
+0.2.7 (2017-05-16)
+------------------
+
+* Shellfoundry will now pack categories.xml if exists
+
 0.2.2 (2017-01-22)
 ------------------
 
