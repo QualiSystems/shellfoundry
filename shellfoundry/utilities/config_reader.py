@@ -53,7 +53,6 @@ class Configuration(object):
         reads configuration from given file and adds missing keys with their defaults
         """
         config_data = None
-        import os
         if os.path.exists(config_path):
             with open(config_path, mode='r') as conf_file:
                 config_data = yaml.load(conf_file)
