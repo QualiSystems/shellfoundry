@@ -21,6 +21,7 @@ setup(
     author_email='borismod@gmail.com',
     url='https://github.com/QualiSystems/shellfoundry',
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    package_data={'shellfoundry': ['data/*.yml']},
     entry_points={
         "console_scripts": ['shellfoundry = shellfoundry.bootstrap:cli']
     },
