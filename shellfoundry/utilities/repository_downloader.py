@@ -34,10 +34,8 @@ class RepositoryDownloader:
     def __init__(self, repo_extractor=ZipDownloadedRepoExtractor()):
         self.repo_extractor = repo_extractor
 
-    def download_template(self, target_dir, repo_address, branch=None):
+    def download_template(self, target_dir, repo_address, branch):
         user, repo = self._parse_repo_url(repo_address)
-        if not branch:
-            branch = self._get_latest_branch((user, repo))
         download_url = self._join_url_all("https://api.github.com/repos", [user, repo, 'zipball', branch])
         archive_path = ''
         try:
@@ -49,7 +47,17 @@ class RepositoryDownloader:
             root_dir = repo_content[0]
 
             return os.path.join(target_dir, root_dir)
+        except VersionRequestException:
+            branch = self._get_latest_branch((user, repo))
+            download_url = self._join_url_all("https://api.github.com/repos", [user, repo, 'zipball', branch])
+            archive_path = self._download_file(download_url, target_dir)
 
+            repo_content = self.repo_extractor.extract_to_folder(archive_path, target_dir)
+
+            # The first entry is always the root folder by git zipball convention
+            root_dir = repo_content[0]
+
+            return os.path.join(target_dir, root_dir)
         finally:
             if os.path.exists(archive_path):
                 os.remove(archive_path)

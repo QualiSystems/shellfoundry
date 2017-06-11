@@ -1,5 +1,6 @@
 import click
-import shellfoundry
+
+from shellfoundry import __file__ as sf_file
 
 from os import linesep, path
 from requests.exceptions import SSLError
@@ -12,7 +13,7 @@ from cloudshell.rest.exceptions import FeatureUnavailable
 from terminaltables import AsciiTable
 from textwrap import wrap
 
-ALTERNATIVE_TEMPLATES_PATH = path.join(path.dirname(shellfoundry.__file__), 'data', 'templates.yml')
+ALTERNATIVE_TEMPLATES_PATH = path.join(path.dirname(sf_file), 'data', 'templates.yml')
 
 
 class ListCommandExecutor(object):
