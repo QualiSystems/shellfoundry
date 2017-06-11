@@ -1,12 +1,18 @@
 import click
-import textwrap
+import shellfoundry
 
-from os import linesep
+from os import linesep, path
 from requests.exceptions import SSLError
 from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
 from shellfoundry.utilities.config_reader import Configuration, ShellFoundryConfig
+from shellfoundry.utilities.standards.standards_filter import StandardsFilter
+from shellfoundry.utilities.cloudshell_api import CloudShellClient
+from ..exceptions import FatalError
+from cloudshell.rest.exceptions import FeatureUnavailable
 from terminaltables import AsciiTable
 from textwrap import wrap
+
+ALTERNATIVE_TEMPLATES_PATH = path.join(path.dirname(shellfoundry.__file__), 'data', 'templates.yml')
 
 
 class ListCommandExecutor(object):
@@ -14,12 +20,18 @@ class ListCommandExecutor(object):
         dv = default_view or Configuration(ShellFoundryConfig()).read().defaultview
         self.template_retriever = template_retriever or FilteredTemplateRetriever(dv, TemplateRetriever())
         self.show_info_msg = default_view is None
+        self._cloudshell = CloudShellClient()
 
     def list(self):
+        cs_client = self._create_cloudshell_client()
+
         try:
-            templates = self.template_retriever.get_templates()
+            standards = cs_client.get_installed_standards()
+            templates = StandardsFilter().filter(standards, self.template_retriever.get_templates())
         except SSLError:
             raise click.UsageError('Could not retrieve the templates list. Are you offline?')
+        except FeatureUnavailable:
+            templates = self.template_retriever.get_templates(alternative=ALTERNATIVE_TEMPLATES_PATH)
 
         if not templates:
             click.echo('No templates matched the criteria')
@@ -54,3 +66,10 @@ class ListCommandExecutor(object):
             click.echo('''
 As of CloudShell 8.0, CloudShell uses 2nd generation shells, to view the list of 1st generation shells use: shellfoundry list --gen1.
 For more information, please visit our devguide: https://qualisystems.github.io/devguide/''')
+
+    def _create_cloudshell_client(self):
+        try:
+            cs_client = self._cloudshell.create_client()
+        except FatalError:
+            raise click.UsageError('Could not retrieve the templates list. Are you offline?')
+        return cs_client
