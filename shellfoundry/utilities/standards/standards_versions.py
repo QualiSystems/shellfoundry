@@ -9,6 +9,11 @@ def trim_standard(standard):
     return standard.lower().lstrip('cloudshell').rstrip('standard').strip('_').replace('_', '-')
 
 
+class StandardVersionsFactory(object):
+    def create(self, standards):
+        return StandardVersions(standards)
+
+
 class StandardVersions(object):
     def __init__(self, standards):
         for standard in standards:
@@ -19,3 +24,4 @@ class StandardVersions(object):
         for curr_standard in self.standards:
             if standard in curr_standard.values():
                 return max(curr_standard[VERSIONS_KEY])
+        raise Exception('Failed to find latest version')

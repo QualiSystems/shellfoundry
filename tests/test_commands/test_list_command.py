@@ -49,7 +49,7 @@ class TestListCommand(unittest.TestCase):
 
         template_retriever = Mock()
         template_retriever.get_templates = Mock(return_value=OrderedDict(
-            [('gen1/base', ShellTemplate('gen1/base', 'base description', '', '7.0')),
+            [('gen1/base', ShellTemplate('gen1/base', 'base description', '', '7.0', 'base')),
              ('gen1/switch', ShellTemplate('gen1/switch', 'switch description', '', '7.0'))]))
 
         list_command_executor = ListCommandExecutor(template_retriever=template_retriever)

@@ -8,7 +8,7 @@ from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplate
 from shellfoundry.utilities.repository_downloader import RepositoryDownloader
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 from shellfoundry.utilities.template_retriever import TemplateRetriever
-from shellfoundry.utilities.standards import StandardVersions, Standards
+from shellfoundry.utilities.standards import StandardVersionsFactory, Standards
 from shellfoundry.exceptions import VersionRequestException
 from shellfoundry.utilities.template_versions import TemplateVersions
 from cloudshell.rest.exceptions import FeatureUnavailable
@@ -20,17 +20,20 @@ class NewCommandExecutor(object):
     def __init__(self, template_compiler=None,
                  template_retriever=None,
                  repository_downloader=None,
-                 standards=None):
+                 standards=None,
+                 standard_versions=None):
         """
         :param CookiecutterTemplateCompiler template_compiler:
         :param TemplateRetriever template_retriever:
         :param RepositoryDownloader repository_downloader:
         :param Standards standards:
+        :param StandardVersionsFactory standard_versions:
         """
         self.template_retriever = template_retriever or TemplateRetriever()
         self.repository_downloader = repository_downloader or RepositoryDownloader()
         self.template_compiler = template_compiler or CookiecutterTemplateCompiler()
         self.standards = standards or Standards()
+        self.standard_versions = standard_versions or StandardVersionsFactory()
 
     def new(self, name, template, version=None):
         """
@@ -75,7 +78,7 @@ class NewCommandExecutor(object):
             template_obj = templates[template]
 
             if not version:
-                version = StandardVersions(standards).get_latest_version(template_obj.standard)
+                version = self._get_template_latest_version(standards, template_obj.standard)
 
             try:
                 repo_path = self.repository_downloader.download_template(temp_dir, template_obj.repository, version)
@@ -90,6 +93,12 @@ class NewCommandExecutor(object):
 
             self.template_compiler.compile_template(name, repo_path, template_obj.params,
                                                     running_on_same_folder)
+
+    def _get_template_latest_version(self, standards_list, standard):
+        try:
+            return self.standard_versions.create(standards_list).get_latest_version(standard)
+        except Exception as e:
+            click.ClickException(e.message)
 
     def _import_local_template(self, name, running_on_same_folder, template):
         repo_path = self._remove_prefix(template, NewCommandExecutor.LOCAL_TEMPLATE_URL_PREFIX)
