@@ -4,6 +4,14 @@ from shellfoundry.utilities.config_reader import Configuration, CloudShellConfig
 from urllib2 import HTTPError
 
 
+def create_cloudshell_client():
+    try:
+        cs_client = CloudShellClient().create_client()
+    except FatalError:
+        raise
+    return cs_client
+
+
 class CloudShellClient(object):
     ConnectionFailureMessage = 'Connection to CloudShell Server failed. Please make sure it is up and running properly.'
 

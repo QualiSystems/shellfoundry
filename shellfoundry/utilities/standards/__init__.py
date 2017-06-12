@@ -1,2 +1,4 @@
-from standards_filter import StandardsFilter, StandardVersions
+from standards_versions import StandardVersions
 from standards_retriever import Standards
+from standards_versions import trim_standard
+from consts import STANDARD_NAME_KEY, VERSIONS_KEY

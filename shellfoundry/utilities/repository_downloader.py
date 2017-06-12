@@ -1,11 +1,11 @@
 import os
 import zipfile
 import requests
-from giturlparse import parse
 
 from abc import ABCMeta
 from abc import abstractmethod
 
+from .template_url import construct_template_url
 from shellfoundry.utilities.template_versions import TemplateVersions
 from shellfoundry.exceptions import VersionRequestException
 
@@ -35,21 +35,9 @@ class RepositoryDownloader:
         self.repo_extractor = repo_extractor
 
     def download_template(self, target_dir, repo_address, branch):
-        user, repo = self._parse_repo_url(repo_address)
-        download_url = self._join_url_all("https://api.github.com/repos", [user, repo, 'zipball', branch])
+        download_url = construct_template_url(repo_address, branch)
         archive_path = ''
         try:
-            archive_path = self._download_file(download_url, target_dir)
-
-            repo_content = self.repo_extractor.extract_to_folder(archive_path, target_dir)
-
-            # The first entry is always the root folder by git zipball convention
-            root_dir = repo_content[0]
-
-            return os.path.join(target_dir, root_dir)
-        except VersionRequestException:
-            branch = self._get_latest_branch((user, repo))
-            download_url = self._join_url_all("https://api.github.com/repos", [user, repo, 'zipball', branch])
             archive_path = self._download_file(download_url, target_dir)
 
             repo_content = self.repo_extractor.extract_to_folder(archive_path, target_dir)
@@ -61,32 +49,6 @@ class RepositoryDownloader:
         finally:
             if os.path.exists(archive_path):
                 os.remove(archive_path)
-
-    def _join_url_all(self, url, fragments):
-        for frag in fragments:
-            url = url + '/' + frag
-        return url
-
-    def _try_parse_git_url(self, url):
-        if url.startswith('git@'):
-            parsed_repo = parse(url)
-            return True, parsed_repo.owner, parsed_repo.repo
-        else:
-            return False, None, None
-
-    def _try_parse_http_url(self, url):
-        if url.startswith('http'):
-            fragments = url.split("/")
-            return True, fragments[-2], fragments[-1]
-        else:
-            return False, None, None
-
-    def _parse_repo_url(self, url):
-        success, user, repo = self._try_parse_git_url(url)
-        if not success:
-            success, user, repo = self._try_parse_http_url(url)
-
-        return user, repo
 
     def _download_file(self, url, directory):
         local_filename = os.path.join(directory, url.split('/')[-1])

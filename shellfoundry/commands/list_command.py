@@ -1,35 +1,35 @@
 import click
 
-from shellfoundry import __file__ as sf_file
-
-from os import linesep, path
+from os import linesep
 from requests.exceptions import SSLError
+from shellfoundry import ALTERNATIVE_TEMPLATES_PATH
 from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
 from shellfoundry.utilities.config_reader import Configuration, ShellFoundryConfig
-from shellfoundry.utilities.standards.standards_filter import StandardsFilter
-from shellfoundry.utilities.cloudshell_api import CloudShellClient
+from shellfoundry.utilities.standards import Standards
 from ..exceptions import FatalError
 from cloudshell.rest.exceptions import FeatureUnavailable
 from terminaltables import AsciiTable
 from textwrap import wrap
 
-ALTERNATIVE_TEMPLATES_PATH = path.join(path.dirname(sf_file), 'data', 'templates.yml')
-
 
 class ListCommandExecutor(object):
-    def __init__(self, default_view=None, template_retriever=None):
+    def __init__(self, default_view=None, template_retriever=None, standards=None):
+        """
+        :param str default_view:
+        :param TemplateRetriever template_retriever:
+        :param Standards standards:
+        """
         dv = default_view or Configuration(ShellFoundryConfig()).read().defaultview
         self.template_retriever = template_retriever or FilteredTemplateRetriever(dv, TemplateRetriever())
         self.show_info_msg = default_view is None
-        self._cloudshell = CloudShellClient()
+        self.standards = standards or Standards()
 
     def list(self):
-        cs_client = self._create_cloudshell_client()
 
         try:
-            standards = cs_client.get_installed_standards()
-            templates = StandardsFilter().filter(standards, self.template_retriever.get_templates())
-        except SSLError:
+            standards = self.standards.fetch()
+            templates = self.template_retriever.get_templates(standards=standards)
+        except (SSLError, FatalError):
             raise click.UsageError('Could not retrieve the templates list. Are you offline?')
         except FeatureUnavailable:
             templates = self.template_retriever.get_templates(alternative=ALTERNATIVE_TEMPLATES_PATH)
@@ -67,10 +67,3 @@ class ListCommandExecutor(object):
             click.echo('''
 As of CloudShell 8.0, CloudShell uses 2nd generation shells, to view the list of 1st generation shells use: shellfoundry list --gen1.
 For more information, please visit our devguide: https://qualisystems.github.io/devguide/''')
-
-    def _create_cloudshell_client(self):
-        try:
-            cs_client = self._cloudshell.create_client()
-        except FatalError:
-            raise click.UsageError('Could not retrieve the templates list. Are you offline?')
-        return cs_client

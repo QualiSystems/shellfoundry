@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 from shellfoundry.models.shell_template import ShellTemplate
 from .filters import CompositeFilter
+from .standards import trim_standard, STANDARD_NAME_KEY
 from shellfoundry.utilities import GEN_TWO, SEPARATOR
 
 TEMPLATES_YML = 'https://raw.github.com/QualiSystems/shellfoundry/master/templates_v1.yml'
@@ -16,6 +17,7 @@ class TemplateRetriever(object):
         """
 
         alternative_path = kwargs.get('alternative', None)
+        standards = kwargs.get('standards', [])
 
         if alternative_path:
             response = self._get_templates_from_path(alternative_path)
@@ -36,7 +38,7 @@ class TemplateRetriever(object):
                 self._get_standard_out_of_name(template['name']),
                 template['params'])
 
-        return templatesdic
+        return self._filter_by_standards(templatesdic, standards)
 
     @staticmethod
     def _get_templates_from_github():
@@ -62,6 +64,22 @@ class TemplateRetriever(object):
         if template[type_index] != GEN_TWO:
             return default
         return template[standard_index]
+
+    @staticmethod
+    def _filter_by_standards(templates, standards):
+        """
+        :type templates collections.OrderedDict
+        :type standards list
+        :return:
+        """
+        if not standards:
+            return templates
+
+        trimmed_standards = [trim_standard(standard[STANDARD_NAME_KEY]) for standard in standards]
+        template_names = [x.name for x in templates.itervalues() if
+                          x.standard in trimmed_standards]  # creates a list of all matching templates names by available standard
+
+        return OrderedDict((name, templates[name]) for name in template_names)
 
 
 class FilteredTemplateRetriever(object):
