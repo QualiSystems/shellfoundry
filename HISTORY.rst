@@ -2,6 +2,13 @@
 History
 =======
 
+1.0.0 (2017-06-12)
+------------------
+
+* Please upgrade to this version as from now on, older versions will be obsolete
+* list command will now show templates that are installable on your cloudshell
+* new command will now create the latest version of the template that match the standards installed on your cloudshell
+
 0.2.7 (2017-05-16)
 ------------------
 
