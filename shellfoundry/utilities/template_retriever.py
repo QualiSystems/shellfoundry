@@ -76,8 +76,7 @@ class TemplateRetriever(object):
             return templates
 
         trimmed_standards = [trim_standard(standard[STANDARD_NAME_KEY]) for standard in standards]
-        template_names = [x.name for x in templates.itervalues() if
-                          x.standard in trimmed_standards]  # creates a list of all matching templates names by available standard
+        template_names = [x.name for x in templates.itervalues() if not x.standard or x.standard in trimmed_standards]  # creates a list of all matching templates names by available standard
 
         return OrderedDict((name, templates[name]) for name in template_names)
 
