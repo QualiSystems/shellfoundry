@@ -16,6 +16,12 @@ class StandardVersionsFactory(object):
 
 class StandardVersions(object):
     def __init__(self, standards):
+        if not standards:
+            import os
+            from shellfoundry import __file__ as sf_file
+            raise Exception('Standards list is empty. Please verify that {} exists'
+                            .format(os.path.join(os.path.dirname(sf_file),
+                                                 'data', 'standards.json')))
         for standard in standards:
             standard[STANDARD_NAME_KEY] = trim_standard(standard[STANDARD_NAME_KEY])
         self.standards = standards

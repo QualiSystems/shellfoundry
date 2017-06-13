@@ -16,7 +16,6 @@ class ListCommandExecutor(object):
     def __init__(self, default_view=None, template_retriever=None, standards=None):
         """
         :param str default_view:
-        :param TemplateRetriever template_retriever:
         :param Standards standards:
         """
         dv = default_view or Configuration(ShellFoundryConfig()).read().defaultview

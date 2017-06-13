@@ -1,4 +1,5 @@
 from ..cloudshell_api import create_cloudshell_client
+import json
 
 
 class Standards(object):
@@ -20,4 +21,4 @@ class Standards(object):
     def _fetch_from_alternative_path(alternative_path):
         with open(alternative_path, mode='r') as stream:
             response = stream.read()
-        return response
+        return json.loads(response)
