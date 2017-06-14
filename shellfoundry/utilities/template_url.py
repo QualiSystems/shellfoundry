@@ -2,6 +2,7 @@ from giturlparse import parse
 
 
 def construct_template_url(repo_address, branch):
+    branch = branch or ''
     user, repo = _parse_repo_url(repo_address)
     download_url = _join_url_all("https://api.github.com/repos", [user, repo, 'zipball', branch])
     return download_url
@@ -32,6 +33,4 @@ def _try_parse_http_url(url):
 
 
 def _join_url_all(url, fragments):
-    for frag in fragments:
-        url = url + '/' + frag
-    return url
+    return '/'.join([url] + [fragment for fragment in fragments if fragment])
