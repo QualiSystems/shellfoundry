@@ -1,25 +1,37 @@
 import click
-import textwrap
 
 from os import linesep
 from requests.exceptions import SSLError
+from shellfoundry import ALTERNATIVE_TEMPLATES_PATH
 from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
 from shellfoundry.utilities.config_reader import Configuration, ShellFoundryConfig
+from shellfoundry.utilities.standards import Standards
+from ..exceptions import FatalError
+from cloudshell.rest.exceptions import FeatureUnavailable
 from terminaltables import AsciiTable
 from textwrap import wrap
 
 
 class ListCommandExecutor(object):
-    def __init__(self, default_view=None, template_retriever=None):
+    def __init__(self, default_view=None, template_retriever=None, standards=None):
+        """
+        :param str default_view:
+        :param Standards standards:
+        """
         dv = default_view or Configuration(ShellFoundryConfig()).read().defaultview
         self.template_retriever = template_retriever or FilteredTemplateRetriever(dv, TemplateRetriever())
         self.show_info_msg = default_view is None
+        self.standards = standards or Standards()
 
     def list(self):
+
         try:
-            templates = self.template_retriever.get_templates()
-        except SSLError:
+            standards = self.standards.fetch()
+            templates = self.template_retriever.get_templates(standards=standards)
+        except (SSLError, FatalError):
             raise click.UsageError('Could not retrieve the templates list. Are you offline?')
+        except FeatureUnavailable:
+            templates = self.template_retriever.get_templates(alternative=ALTERNATIVE_TEMPLATES_PATH)
 
         if not templates:
             click.echo('No templates matched the criteria')

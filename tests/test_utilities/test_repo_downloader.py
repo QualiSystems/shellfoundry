@@ -30,7 +30,7 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
                                status=200)
 
         RepositoryDownloader(repo_extractor=TestRepositoryDownloader.FakeExtractor(self.fs)) \
-            .download_template(test_dir, input_https_address)
+            .download_template(test_dir, input_https_address, 'master')
 
         self.assertIsNotNone(httpretty.last_request())
 
@@ -50,7 +50,7 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
                                status=200)
 
         RepositoryDownloader(repo_extractor=TestRepositoryDownloader.FakeExtractor(self.fs)) \
-            .download_template(test_dir, input_https_address)
+            .download_template(test_dir, input_https_address, 'master')
 
         self.assertIsNotNone(httpretty.last_request())
 
@@ -70,7 +70,7 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
                                status=200)
 
         result = RepositoryDownloader(repo_extractor=TestRepositoryDownloader.FakeExtractor(self.fs)) \
-            .download_template(test_dir, input_https_address)
+            .download_template(test_dir, input_https_address, 'master')
 
         self.assertEqual(result, os.path.join(test_dir, "repo-main/"))
 

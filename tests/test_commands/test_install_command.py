@@ -87,7 +87,8 @@ install:
             command_executor.install()
 
         # Assert
-        self.assertTrue(context.exception, u'Login to CloudShell failed. Please verify the credentials in the config')
+        self.assertTrue(str(context.exception) ==
+                        u'Login to CloudShell failed. Please verify the credentials in the config')
 
     def test_proper_error_message_when_non_authentication_http_error_raised(self):
         # Arrange
@@ -113,8 +114,10 @@ install:
             command_executor.install()
 
         # Assert
-        self.assertTrue(context.exception, u"Failed to install shell. CloudShell responded with: '{}'".format(
-            'Login to CloudShell failed. Please verify the credentials in the config'))
+        self.assertTrue(str(context.exception) == u"Failed to install shell. CloudShell responded with: '{}'"
+                        .format('Login failed for user: YOUR_USERNAME. '
+                                'Please make sure the username and password are correct.'),
+                        "Actual: {}".format(context.exception))
 
     def test_proper_error_appears_when_connection_to_cs_failed(self):
         # Arrange

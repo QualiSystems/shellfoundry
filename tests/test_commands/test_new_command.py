@@ -7,12 +7,17 @@ from mock import Mock, patch
 from pyfakefs import fake_filesystem_unittest
 from quali.testing.extensions import mocking_extensions
 from requests.exceptions import SSLError
+from cloudshell.rest.api import FeatureUnavailable
+from shellfoundry import ALTERNATIVE_TEMPLATES_PATH, ALTERNATIVE_STANDARDS_PATH
 from shellfoundry.commands.new_command import NewCommandExecutor
 from shellfoundry.models.shell_template import ShellTemplate
 from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplateCompiler
 from shellfoundry.utilities.template_retriever import TemplateRetriever
 from shellfoundry.utilities.repository_downloader import RepositoryDownloader
 from shellfoundry.utilities.temp_dir_context import TempDirContext
+from shellfoundry.utilities.standards import StandardVersionsFactory, Standards
+from shellfoundry.utilities.template_versions import TemplateVersions
+from shellfoundry.utilities.template_retriever import TEMPLATES_YML
 
 patch.object = patch.object
 
@@ -60,9 +65,10 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
 
         command_executor = NewCommandExecutor(template_retriever=template_retriever,
                                               repository_downloader=repo_downloader,
-                                              template_compiler=template_compiler)
+                                              template_compiler=template_compiler,
+                                              standards=Mock())
         # Act
-        self.assertRaisesRegexp(UsageError, "offline",  command_executor.new, 'nut_shell', 'base', 'master')
+        self.assertRaisesRegexp(UsageError, "offline", command_executor.new, 'nut_shell', 'base', 'master')
 
     def test_not_existing_local_template_dir_thrown(self):
         # Arrange
@@ -81,8 +87,9 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
         # Act
         # Message should at least contain the bad dir name
         self.assertRaisesRegexp(BadParameter, 'shell_template_root',
-                               command_executor.new,
-                               'new_shell', 'local:{template_dir}'.format(template_dir='shell_template_root'), 'master')
+                                command_executor.new,
+                                'new_shell', 'local:{template_dir}'.format(template_dir='shell_template_root'),
+                                'master')
 
     def test_cookiecutter_called_for_existing_template(self):
         # Arrange
@@ -95,9 +102,13 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
 
         template_compiler = Mock()
 
+        standards = Mock()
+        standards.fetch.return_value = []
+
         command_executor = NewCommandExecutor(template_retriever=template_retriever,
                                               repository_downloader=repo_downloader,
-                                              template_compiler=template_compiler)
+                                              template_compiler=template_compiler,
+                                              standards=standards)
         # Act
         command_executor.new('nut_shell', 'base', 'master')
 
@@ -119,9 +130,13 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
 
         template_compiler = Mock()
 
+        standards = Mock()
+        standards.fetch.return_value = []
+
         command_executor = NewCommandExecutor(template_retriever=template_retriever,
                                               repository_downloader=repo_downloader,
-                                              template_compiler=template_compiler)
+                                              template_compiler=template_compiler,
+                                              standards=standards)
 
         self.fs.CreateDirectory('linux-shell')
         os.chdir('linux-shell')
@@ -194,7 +209,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
     @httpretty.activate
     def test_integration_can_generate_shell_from_specific_version(self):
         # Arrange
-        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url', '7.0')}
+        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url/test', '8.1', 'resource')}
         repo_info = ('quali', 'resource-test')
 
         zipfile = mock_template_zip_file()
@@ -203,15 +218,22 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
                                content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
         template_compiler = Mock()
 
+        standards = Mock()
+        standards.fetch.return_value = [
+            {'StandardName': "cloudshell_resource_standard", 'Versions': ['1.0.0', '1.0.1']}]
+
+        template_versions = ['master', '1.0.0', '1.0.1']
+
         # Act
-        with patch.object(TemplateRetriever, 'get_templates', return_value=templates),\
-            patch.object(RepositoryDownloader, '_parse_repo_url', return_value=repo_info),\
-            patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
+        with patch.object(TemplateRetriever, 'get_templates', return_value=templates), \
+             patch('shellfoundry.utilities.template_url._parse_repo_url', return_value=repo_info), \
+             patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
             NewCommandExecutor(template_retriever=TemplateRetriever(),
                                repository_downloader=RepositoryDownloader(),
-                               template_compiler=template_compiler)\
+                               template_compiler=template_compiler,
+                               standards=standards,
+                               standard_versions=StandardVersionsFactory()) \
                 .new('new_shell', 'tosca/resource/test', '1.1')
-
 
         # Assert
         template_compiler.compile_template.smarter_assert_called_once_with(
@@ -221,51 +243,101 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
             extra_context={},
             running_on_same_folder=False)
 
+    @httpretty.activate
+    def test_integration_can_generate_gen1_shell_from_specific_version(self):
+        # Arrange
+        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url/test', '8.1', 'resource'),
+                     'gen1/resource': ShellTemplate('gen1/resource', '', 'gen1/test', '7.0')}
+        repo_info = ('quali', 'resource-test')
+
+        zipfile = mock_template_zip_file()
+        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/quali/resource-test/zipball",
+                               body=zipfile.read(), content_type='application/zip',
+                               content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
+        template_compiler = Mock()
+
+        standards = Mock()
+        standards.fetch.return_value = [
+            {'StandardName': "cloudshell_resource_standard", 'Versions': ['1.0.0', '1.0.1']}]
+
+        # Act
+        with patch.object(TemplateRetriever, 'get_templates', return_value=templates), \
+             patch('shellfoundry.utilities.template_url._parse_repo_url', return_value=repo_info), \
+             patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
+            NewCommandExecutor(template_retriever=TemplateRetriever(),
+                               repository_downloader=RepositoryDownloader(),
+                               template_compiler=template_compiler,
+                               standards=standards,
+                               standard_versions=StandardVersionsFactory()) \
+                .new('new_shell', 'gen1/resource')
+
+        # Assert
+        template_compiler.compile_template.smarter_assert_called_once_with(
+            CookiecutterTemplateCompiler.compile_template,
+            shell_name='new_shell',
+            template_path=os.path.join('mock_temp', 'root'),
+            extra_context={},
+            running_on_same_folder=False)
 
     @httpretty.activate
     def test_fail_to_generate_shell_when_requested_version_does_not_exists(self):
         # Arrange
-        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url', '7.0')}
+        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url/test', '8.1', 'resource')}
         repo_info = ('quali', 'resource-test')
 
         httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/quali/resource-test/zipball/1.1",
                                body='', status=404, stream=True)
         template_compiler = Mock()
 
+        standards = Mock()
+        standards.fetch.return_value = [
+            {'StandardName': "cloudshell_resource_standard", 'Versions': ['1.0.0', '1.0.1']}]
+
+        template_versions = ['master', '1.0.0', '1.0.1']
+
         # Act
         with patch.object(TemplateRetriever, 'get_templates', return_value=templates), \
-             patch.object(RepositoryDownloader, '_parse_repo_url', return_value=repo_info), \
-             patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name),\
+             patch('shellfoundry.utilities.template_url._parse_repo_url', return_value=repo_info), \
+             patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name), \
+             patch.object(TemplateVersions, 'get_versions_of_template', return_value=template_versions), \
              self.assertRaises(BadParameter) as context:
             NewCommandExecutor(template_retriever=TemplateRetriever(),
                                repository_downloader=RepositoryDownloader(),
-                               template_compiler=template_compiler) \
+                               template_compiler=template_compiler,
+                               standards=standards,
+                               standard_versions=StandardVersionsFactory()) \
                 .new('new_shell', 'tosca/resource/test', '1.1')
 
         # Assert
-        self.assertTrue('1.1 does not exists or invalid value' in context.exception)
+        self.assertTrue('Requested standard version (\'1.1\') does not match template version. \n'
+                        'Available versions for test-resource: 1.0.0, 1.0.1' in context.exception,
+                        'Actual: {}'.format(context.exception))
 
     @httpretty.activate
     def test_integration_latest_version_is_default_when_version_was_not_specified(self):
         # Arrange
-        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url', '7.0')}
+        templates = {'tosca/resource/test': ShellTemplate('test-resource', '', 'url', '8.1', 'resource')}
         repo_info = ('quali', 'resource-test')
 
         zipfile = mock_template_zip_file()
-        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/quali/resource-test/branches",
-                               body='''[{"name": "master"}, {"name": "1.0"}, {"name": "1.1"}, {"name": "2.0"}]''')
-        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/quali/resource-test/zipball/2.0",
+        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/quali/resource-test/zipball/2.0.1",
                                body=zipfile.read(), content_type='application/zip',
                                content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
         template_compiler = Mock()
 
+        standards = Mock()
+        standards.fetch.return_value = [
+            {'StandardName': "cloudshell_resource_standard", 'Versions': ['2.0.0', '2.0.1']}]
+
         # Act
         with patch.object(TemplateRetriever, 'get_templates', return_value=templates), \
-             patch.object(RepositoryDownloader, '_parse_repo_url', return_value=repo_info), \
+             patch('shellfoundry.utilities.template_url._parse_repo_url', return_value=repo_info), \
              patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
             NewCommandExecutor(template_retriever=TemplateRetriever(),
                                repository_downloader=RepositoryDownloader(),
-                               template_compiler=template_compiler) \
+                               template_compiler=template_compiler,
+                               standards=standards,
+                               standard_versions=StandardVersionsFactory()) \
                 .new('new_shell', 'tosca/resource/test')
 
         # Assert
@@ -275,3 +347,112 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
             template_path=os.path.join('mock_temp', 'root'),
             extra_context={},
             running_on_same_folder=False)
+
+    @httpretty.activate
+    def test_new_cmd_creates_gen2_in_latest_version_that_matches_the_standard_version_on_cs(self):
+        # Arrange
+        templates = """templates:
+    - name : gen1/resource
+      description : 1st generation shell template for basic inventory resources
+      repository : https://github.com/QualiSystems/shell-resource-standard
+      params:
+        project_name :
+      min_cs_ver: 7.0
+    - name : gen2/networking/switch
+      params:
+        project_name :
+        family_name: Switch
+      description : 2nd generation shell template for a standard switch
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+      min_cs_ver: 8.0"""
+
+        template_compiler = Mock()
+
+        standards = Mock()
+        standards.fetch.return_value = [{'StandardName': "cloudshell_networking_standard",
+                                         'Versions': ['5.0.0', '5.0.1']}]
+
+        zipfile = mock_template_zip_file()
+
+        httpretty.register_uri(httpretty.GET, TEMPLATES_YML, body=templates)
+        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.1",
+                               body=zipfile.read(), content_type='application/zip',
+                               content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
+
+        # Act
+        with \
+            patch.object(TemplateRetriever, '_get_templates_from_github', return_value=templates), \
+            patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
+            cmd = NewCommandExecutor(template_retriever=TemplateRetriever(),
+                                     repository_downloader=RepositoryDownloader(),
+                                     template_compiler=template_compiler, standards=standards,
+                                     standard_versions=StandardVersionsFactory())
+            cmd.new('new_shell', 'gen2/networking/switch')
+
+            # Assert
+            template_compiler.compile_template.smarter_assert_called_once_with(
+                CookiecutterTemplateCompiler.compile_template,
+                shell_name='new_shell',
+                template_path=os.path.join('mock_temp', 'root'),
+                extra_context={'family_name': "Switch", "project_name": None},
+                running_on_same_folder=False)
+
+    @httpretty.activate
+    def test_new_cmd_creates_gen2_when_get_cs_standards_feature_is_unavailable(self):
+        # Arrange
+        self.fs.add_real_file(ALTERNATIVE_STANDARDS_PATH)
+        self.fs.add_real_file(ALTERNATIVE_TEMPLATES_PATH)
+
+        template_compiler = Mock()
+        zipfile = mock_template_zip_file()
+
+        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.0",
+                               body=zipfile.read(), content_type='application/zip',
+                               content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
+
+        # Act
+        with \
+            patch.object(Standards, '_fetch_from_cloudshell', side_effect=FeatureUnavailable()), \
+            patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
+            cmd = NewCommandExecutor(template_retriever=TemplateRetriever(),
+                                     repository_downloader=RepositoryDownloader(),
+                                     template_compiler=template_compiler, standards=Standards(),
+                                     standard_versions=StandardVersionsFactory())
+            cmd.new('new_shell', 'gen2/networking/switch')
+
+            # Assert
+            template_compiler.compile_template.smarter_assert_called_once_with(
+                CookiecutterTemplateCompiler.compile_template,
+                shell_name='new_shell',
+                template_path=os.path.join('mock_temp', 'root'),
+                extra_context={'family_name': "Switch", "project_name": None},
+                running_on_same_folder=False)
+
+    @httpretty.activate
+    def test_requested_template_does_not_exists_raises_an_error(self):
+        # Arrange
+        self.fs.add_real_file(ALTERNATIVE_STANDARDS_PATH)
+        self.fs.add_real_file(ALTERNATIVE_TEMPLATES_PATH)
+
+        template_compiler = Mock()
+        zipfile = mock_template_zip_file()
+
+        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.0",
+                               body=zipfile.read(), content_type='application/zip',
+                               content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
+
+        # Act
+        with \
+            patch.object(Standards, '_fetch_from_cloudshell', side_effect=FeatureUnavailable()), \
+            patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
+            cmd = NewCommandExecutor(template_retriever=TemplateRetriever(),
+                                     repository_downloader=RepositoryDownloader(),
+                                     template_compiler=template_compiler, standards=Standards(),
+                                     standard_versions=StandardVersionsFactory())
+        # Assert
+            output_msg = "Template gen2/doesnot/exists does not exist. Supported templates are: gen1/resource, " \
+                         "gen1/resource-clean, gen1/deployed-app, gen1/networking/switch, gen1/networking/router," \
+                         " gen1/pdu, gen1/firewall, gen1/compute, layer-1-switch, gen2/networking/switch, " \
+                         "gen2/networking/router, gen2/networking/wireless-controller, gen2/compute, " \
+                         "gen2/deployed-app, gen2/pdu, gen2/resource, gen2/firewall"
+            self.assertRaisesRegexp(BadParameter, output_msg, cmd.new, 'new_shell', 'gen2/doesnot/exists')

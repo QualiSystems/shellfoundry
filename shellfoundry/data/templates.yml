@@ -1,0 +1,117 @@
+templates:
+    - name : gen1/resource
+      description : 1st generation shell template for basic inventory resources
+      repository : https://github.com/QualiSystems/shell-resource-standard
+      params:
+        project_name :
+      min_cs_ver: 7.0
+    - name: gen1/resource-clean
+      params:
+        project_name :
+      description : 1st generation shell template for basic inventory resources (without sample commands)
+      repository : https://github.com/QualiSystems/resource-shell-standard-clean
+      min_cs_ver: 7.0
+    - name: gen1/deployed-app
+      params:
+        project_name :
+      description : 1st generation shell template for a deployed app
+      repository : https://github.com/QualiSystems/shell-deployedapp-standard
+      min_cs_ver: 7.0
+    - name: gen1/networking/switch
+      description : 1st generation shell template for a standard switch
+      repository : https://github.com/QualiSystems/shell-networking-standard
+      params:
+        project_name :
+        family_name : Switch
+      min_cs_ver: 7.0
+    - name: gen1/networking/router
+      description : 1st generation shell template for a standard router
+      repository : https://github.com/QualiSystems/shell-networking-standard
+      params:
+        project_name :
+        family_name : Router
+      min_cs_ver: 7.0
+    - name: gen1/pdu
+      description : 1st generation shell template for a standard pdu
+      repository : https://github.com/QualiSystems/shell-pdu-standard
+      params:
+        project_name :
+        family_name : PDU
+      min_cs_ver: 7.0
+    - name: gen1/firewall
+      description : 1st generation shell template for a standard firewall
+      repository : https://github.com/QualiSystems/shell-firewall-standard
+      params:
+        project_name :
+        family_name : Firewall
+      min_cs_ver: 7.0
+    - name: gen1/compute
+      description : 1st generation shell template for compute servers
+      repository : https://github.com/QualiSystems/shell-compute-standard
+      params:
+        project_name :
+        family_name :
+      min_cs_ver: 7.0
+    - name: layer-1-switch
+      description : A native shell template for layer 1 switches
+      repository : https://github.com/QualiSystems/shell-L1-standard
+      params:
+        project_name :
+        family_name :
+      min_cs_ver: 7.0
+    - name : gen2/networking/switch
+      params:
+        project_name :
+        family_name: Switch
+      description : 2nd generation shell template for a standard switch
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+      min_cs_ver: 8.0
+    - name : gen2/networking/router
+      params:
+        project_name :
+        family_name: Router
+      description : 2nd generation shell template for a standard router
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+      min_cs_ver: 8.0
+    - name : gen2/networking/wireless-controller
+      params:
+        project_name :
+        family_name: WirelessController
+      description : 2nd generation shell template for a standard wireless controller
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+      min_cs_ver: 8.0
+    - name : gen2/compute
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for compute servers
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-compute-template
+      min_cs_ver: 8.0
+    - name : gen2/deployed-app
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for a deployed app
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-deployedapp-template
+      min_cs_ver: 8.0
+    - name : gen2/pdu
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for a standard pdu
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-pdu-template
+      min_cs_ver: 8.0
+    - name : gen2/resource
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for basic inventory resources
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
+      min_cs_ver: 8.0
+    - name : gen2/firewall
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for firewall resources
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-firewall-template
+      min_cs_ver: 8.0
