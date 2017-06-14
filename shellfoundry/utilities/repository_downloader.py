@@ -24,6 +24,7 @@ class DownloadedRepoExtractor:
 class ZipDownloadedRepoExtractor (DownloadedRepoExtractor):
 
     def extract_to_folder(self, repo_link, folder):
+        super(ZipDownloadedRepoExtractor, self).extract_to_folder(repo_link, folder)
         with zipfile.ZipFile(repo_link, "r") as z:
             infos = z.infolist()
             z.extractall(folder)
@@ -62,6 +63,3 @@ class RepositoryDownloader:
                     f.write(chunk)
                     # f.flush() commented by recommendation from J.F.Sebastian
         return local_filename
-
-    def _get_latest_branch(self, repo):
-        return next(iter(TemplateVersions(*repo).get_versions_of_template()))

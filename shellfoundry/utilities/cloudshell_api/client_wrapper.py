@@ -4,9 +4,9 @@ from shellfoundry.utilities.config_reader import Configuration, CloudShellConfig
 from urllib2 import HTTPError
 
 
-def create_cloudshell_client():
+def create_cloudshell_client(retries=1):
     try:
-        cs_client = CloudShellClient().create_client()
+        cs_client = CloudShellClient().create_client(retries=retries)
     except FatalError:
         raise
     return cs_client
@@ -27,8 +27,11 @@ class CloudShellClient(object):
             raise FatalError(self.ConnectionFailureMessage)
         try:
             return self._create_client()
-        except:
-            return self.create_client(retries=retries-1)
+        except FatalError as e:
+            retry = retries - 1
+            if retry == 0:
+                raise e
+            return self.create_client(retries=retry)
 
     def _create_client(self):
         try:
