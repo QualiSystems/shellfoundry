@@ -1,11 +1,7 @@
-import os
-
 import click
 import pkg_resources
-from cloudshell.rest.api import PackagingRestApiClient
-from cloudshell.rest.exceptions import ShellNotFoundException
-from requests import post
 
+from shellfoundry.decorators import shellfoundry_version_check
 from shellfoundry.commands.dist_command import DistCommandExecutor
 from shellfoundry.commands.generate_command import GenerateCommandExecutor
 from shellfoundry.commands.install_command import InstallCommandExecutor
@@ -14,7 +10,6 @@ from shellfoundry.commands.new_command import NewCommandExecutor
 from shellfoundry.commands.pack_command import PackCommandExecutor
 from shellfoundry.commands.config_command import ConfigCommandExecutor
 from shellfoundry.commands.show_command import ShowCommandExecutor
-from shellfoundry.utilities.shell_package import ShellPackage
 from shellfoundry.utilities import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
 
 
@@ -36,6 +31,7 @@ def version():
 @click.option(u'--gen1', 'default_view', flag_value=GEN_ONE, help="Show 1st generation shell templates")
 @click.option(u'--layer1', 'default_view', flag_value=LAYER_ONE, help="Show layer1 shell templates")
 @click.option(u'--all', 'default_view', flag_value=NO_FILTER, help="Show all templates")
+@shellfoundry_version_check
 def list(default_view):
     """
     Lists the available shell templates
@@ -49,6 +45,7 @@ def list(default_view):
               help="Specify a Shell template. Use 'shellfoundry list' to see the list of available templates. "
                    "You can use 'local://<foler>' to specify a locally saved template")
 @click.option(u'--version', default=None)
+@shellfoundry_version_check
 def new(name, template, version):
     """
     Creates a new shell based on a template
