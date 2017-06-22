@@ -1,8 +1,9 @@
-import click
-
 from xmlrpclib import ServerProxy
-from pip.utils import get_installed_version
-from urlparse import urljoin
+try:
+    from pip.utils import get_installed_version
+except ImportError:
+    def get_installed_version(package_name):
+        return __import__(package_name).__version__
 from shellfoundry import PACKAGE_NAME
 from distutils.version import StrictVersion
 
@@ -20,9 +21,6 @@ SEPARATOR = '/'
 class Index(object):
     def __init__(self, url):
         self.url = url
-
-    def json_url(self, package):
-        return urljoin(self.url, '/'.join([package, 'json']))
 
 
 PyPI = Index('https://pypi.python.org/pypi/')
