@@ -456,3 +456,14 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
                          "gen2/networking/router, gen2/networking/wireless-controller, gen2/compute, " \
                          "gen2/deployed-app, gen2/pdu, gen2/resource, gen2/firewall"
             self.assertRaisesRegexp(BadParameter, output_msg, cmd.new, 'new_shell', 'gen2/doesnot/exists')
+
+    def test_new_command_with_invalid_shell_name_raises_bad_parameter_error(self):
+        # Arrange
+        shell_name = '15vido'
+
+        # Act
+        cmd = NewCommandExecutor()
+
+        # Assert
+        output_msg = u"Shell name must begin with a letter and contain only alpha-numeric characters and spaces."
+        self.assertRaisesRegexp(BadParameter, output_msg, cmd.new, shell_name, 'gen2/resource')
