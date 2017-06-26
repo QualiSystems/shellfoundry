@@ -6,6 +6,7 @@ History
 ------------------
 
 * new command now conforms to CloudShell naming rules
+* new command aborts if there is a new major version on pypi
 
 1.0.0 (2017-06-19)
 ------------------
