@@ -2,6 +2,11 @@
 History
 =======
 
+1.0.1 (2017-06-26)
+------------------
+
+* new command now conforms to CloudShell naming rules
+
 1.0.0 (2017-06-19)
 ------------------
 

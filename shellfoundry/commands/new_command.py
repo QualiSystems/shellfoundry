@@ -11,6 +11,7 @@ from shellfoundry.utilities.template_retriever import TemplateRetriever
 from shellfoundry.utilities.standards import StandardVersionsFactory, Standards
 from shellfoundry.exceptions import VersionRequestException
 from shellfoundry.utilities.template_versions import TemplateVersions
+from shellfoundry.utilities.validations import ShellNameValidations
 from cloudshell.rest.exceptions import FeatureUnavailable
 
 
@@ -21,19 +22,22 @@ class NewCommandExecutor(object):
                  template_retriever=None,
                  repository_downloader=None,
                  standards=None,
-                 standard_versions=None):
+                 standard_versions=None,
+                 shell_name_validations=None):
         """
         :param CookiecutterTemplateCompiler template_compiler:
         :param TemplateRetriever template_retriever:
         :param RepositoryDownloader repository_downloader:
         :param Standards standards:
         :param StandardVersionsFactory standard_versions:
+        :param ShellNameValidations shell_name_validations:
         """
         self.template_retriever = template_retriever or TemplateRetriever()
         self.repository_downloader = repository_downloader or RepositoryDownloader()
         self.template_compiler = template_compiler or CookiecutterTemplateCompiler()
         self.standards = standards or Standards()
         self.standard_versions = standard_versions or StandardVersionsFactory()
+        self.shell_name_validations = shell_name_validations or ShellNameValidations()
 
     def new(self, name, template, version=None):
         """
@@ -48,6 +52,10 @@ class NewCommandExecutor(object):
         if name == os.path.curdir:
             name = os.path.split(os.getcwd())[1]
             running_on_same_folder = True
+
+        if not self.shell_name_validations.validate_shell_name(name):
+            raise click.BadParameter(
+                u"Shell name must begin with a letter and contain only alpha-numeric characters and spaces.")
 
         if self._is_local_template(template):
             self._import_local_template(name, running_on_same_folder, template)
