@@ -31,7 +31,7 @@ def version():
 @click.option(u'--gen1', 'default_view', flag_value=GEN_ONE, help="Show 1st generation shell templates")
 @click.option(u'--layer1', 'default_view', flag_value=LAYER_ONE, help="Show layer1 shell templates")
 @click.option(u'--all', 'default_view', flag_value=NO_FILTER, help="Show all templates")
-@shellfoundry_version_check
+@shellfoundry_version_check(abort_if_major=False)
 def list(default_view):
     """
     Lists the available shell templates
@@ -45,7 +45,7 @@ def list(default_view):
               help="Specify a Shell template. Use 'shellfoundry list' to see the list of available templates. "
                    "You can use 'local://<foler>' to specify a locally saved template")
 @click.option(u'--version', default=None)
-@shellfoundry_version_check
+@shellfoundry_version_check(abort_if_major=True)
 def new(name, template, version):
     """
     Creates a new shell based on a template
