@@ -31,7 +31,7 @@ def version():
 @click.option(u'--gen1', 'default_view', flag_value=GEN_ONE, help="Show 1st generation shell templates")
 @click.option(u'--layer1', 'default_view', flag_value=LAYER_ONE, help="Show layer1 shell templates")
 @click.option(u'--all', 'default_view', flag_value=NO_FILTER, help="Show all templates")
-@shellfoundry_version_check(abort_if_major=False)
+@shellfoundry_version_check(abort_if_major=True)
 def list(default_view):
     """
     Lists the available shell templates
