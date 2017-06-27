@@ -2,6 +2,11 @@
 History
 =======
 
+1.0.2 (2017-06-27)
+------------------
+
+* list command aborts if there is a new major version on pypi
+
 1.0.1 (2017-06-26)
 ------------------
 
