@@ -2,11 +2,11 @@ import click
 import requests
 import shellfoundry.exceptions as exc
 
+from shellfoundry import MASTER_BRANCH_NAME
 from shellfoundry.utilities import GEN_TWO_FILTER
 from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
 from shellfoundry.utilities.template_versions import TemplateVersions
 
-MASTER_BRANCH_NAME = 'master'
 LATEST_STAMP = '{} (latest)'
 
 
