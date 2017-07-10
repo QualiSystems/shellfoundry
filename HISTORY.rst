@@ -2,16 +2,22 @@
 History
 =======
 
-1.0.2 (2017-06-27)
+1.0.3 (2017-06-28)
 ------------------
 
 * list command aborts if there is a new major version on pypi
+* old shellfoundry versions are NOT supported anymore.
+  Please use `pip install shellfoundry -U` in order to upgrade to the newest version
+
+1.0.2 (2017-06-27)
+------------------
+
+* new command aborts if there is a new major version on pypi
 
 1.0.1 (2017-06-26)
 ------------------
 
 * new command now conforms to CloudShell naming rules
-* new command aborts if there is a new major version on pypi
 
 1.0.0 (2017-06-19)
 ------------------
