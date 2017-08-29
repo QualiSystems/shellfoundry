@@ -5,6 +5,6 @@ click
 pyyaml
 terminaltables
 cloudshell-automation-api>=7.0.0.0,<8.2.0.0
-cloudshell-rest-api>=8.1.0.1
+cloudshell-rest-api>=8.1.1.0
 colorama
 giturlparse.py

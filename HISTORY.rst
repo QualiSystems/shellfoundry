@@ -2,6 +2,11 @@
 History
 =======
 
+1.0.4 (2017-08-28)
+------------------
+
+* Fixed some inconsistencies between update and add shell specifically around the shell name
+
 1.0.3 (2017-06-28)
 ------------------
 
