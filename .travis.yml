@@ -8,7 +8,7 @@ script: coverage run --source=shellfoundry setup.py test
 after_success: coveralls
 deploy:
   - provider: pypi
-    server: https://test.python.org/legacy
+    server: https://test.pypi.org/legacy/
     distributions: "sdist bdist_wheel"
     user: quali
     password:
