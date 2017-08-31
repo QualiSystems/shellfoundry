@@ -127,5 +127,5 @@ templates:
         project_name :
         family_name :
       description : 2nd generation shell template for broadband media
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-broadband_media-template/
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-broadband_media-template
       min_cs_ver: 8.1
