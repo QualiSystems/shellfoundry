@@ -4,20 +4,17 @@
 import os
 
 from cookiecutter.main import cookiecutter
-from shellfoundry.commands.config_command import ConfigCommandExecutor
-from shellfoundry.utilities.config_reader import Configuration, AUTHOR
+from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
 
 
 class CookiecutterTemplateCompiler(object):
     def __init__(self):
-        pass
+        self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
     def compile_template(self, shell_name, template_path, extra_context, running_on_same_folder):
 
         extra_context["project_name"] = shell_name
-        config_path = ConfigCommandExecutor._get_config_file_path(is_global_flag=True)
-        extra_context["full_name"] = Configuration.get_configuration_attr(config_path=config_path,
-                                                                          attr_name=AUTHOR)
+        extra_context["full_name"] = self.cloudshell_config_reader.read().author
 
         if running_on_same_folder:
             output_dir = os.path.pardir

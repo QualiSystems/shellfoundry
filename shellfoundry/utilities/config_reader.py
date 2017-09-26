@@ -79,10 +79,6 @@ class Configuration(object):
             return str(value)
         return "{value} {default_char}".format(value=str(value), default_char=mark_defaults_char)
 
-    @staticmethod
-    def get_configuration_attr(config_path, attr_name):
-        return Configuration.readall(config_path=config_path)[INSTALL][attr_name]
-
 
 class CloudShellConfigReader(object):
     def get_defaults(self):
