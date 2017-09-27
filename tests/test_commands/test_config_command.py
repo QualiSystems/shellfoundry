@@ -33,6 +33,7 @@ not_supported_section:
             u'domain       Global       * \n '
             u'defaultview  gen2         * \n '
             u'key          value          \n '
+            u'author       Anonymous    * \n '
             u'password     [encrypted]  * \n '
             u'host         localhost    * \n '
             u'port         9000         * ')
@@ -98,6 +99,7 @@ install:
                                   u'domain         Global           * \n '
                                   u'defaultview    gen2             * \n '
                                   u'key            value              \n '
+                                  u'author         Anonymous        * \n '
                                   u'password       [encrypted]        \n '
                                   u'host           localhost        * \n '
                                   u'port           9000             * ')
