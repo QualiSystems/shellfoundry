@@ -1,11 +1,15 @@
-import click
-import yaml
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
-from shellfoundry.utilities.config_reader import INSTALL
+import click
+
+from shellfoundry.utilities.config_reader import Configuration, INSTALL
 from shellfoundry.utilities.config.config_context import ConfigContext
 from shellfoundry.utilities.config.config_providers import LocalConfigProvider, GlobalConfigProvider
 from shellfoundry.utilities.config.config_record import ConfigRecord
 from shellfoundry.utilities.config.config_file_creation import ConfigFileCreation
+
+DEFAULTS_CHAR = "*"
 
 
 class ConfigCommandExecutor(object):
@@ -32,16 +36,14 @@ class ConfigCommandExecutor(object):
         return key_to_remove is not None
 
     def _echo_config(self, config_file_path):
-        from shellfoundry.utilities.config_reader import Configuration
 
-        defaults_char = '*'
-        config_data = Configuration.readall(config_file_path, mark_defaults=defaults_char)
-        table = self._format_config_as_table(config_data, defaults_char)
+        config_data = Configuration.readall(config_file_path, mark_defaults=DEFAULTS_CHAR)
+        table = self._format_config_as_table(config_data, DEFAULTS_CHAR)
         click.echo(table)
         click.echo('')
         click.echo(
             "* Value marked with '{}' is actually the default value and has not been override by the user.".format(
-                defaults_char))
+                DEFAULTS_CHAR))
 
     def _format_config_as_table(self, config_data, defaults_char):
         from shellfoundry.utilities.modifiers.configuration.password_modification import PasswordModification
