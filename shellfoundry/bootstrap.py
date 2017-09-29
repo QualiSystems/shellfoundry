@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import click
 import pkg_resources
 
@@ -7,6 +10,7 @@ from shellfoundry.commands.generate_command import GenerateCommandExecutor
 from shellfoundry.commands.install_command import InstallCommandExecutor
 from shellfoundry.commands.list_command import ListCommandExecutor
 from shellfoundry.commands.new_command import NewCommandExecutor
+from shellfoundry.commands.extend_command import ExtendCommandExecutor
 from shellfoundry.commands.pack_command import PackCommandExecutor
 from shellfoundry.commands.config_command import ConfigCommandExecutor
 from shellfoundry.commands.show_command import ShowCommandExecutor
@@ -43,7 +47,7 @@ def list(default_view):
 @click.argument(u'name')
 @click.option(u'--template', default=u'gen2/resource',
               help="Specify a Shell template. Use 'shellfoundry list' to see the list of available templates. "
-                   "You can use 'local://<foler>' to specify a locally saved template")
+                   "You can use 'local://<folder>' to specify a locally saved template")
 @click.option(u'--version', default=None)
 @shellfoundry_version_check(abort_if_major=True)
 def new(name, template, version):
@@ -87,6 +91,7 @@ def generate():
     PackCommandExecutor().pack()
     GenerateCommandExecutor().generate()
 
+
 @cli.command()
 @click.argument(u'kv', type=(str, str), default=(None, None), required=False)
 @click.option('--global/--local', 'global_cfg', default=True)
@@ -97,6 +102,7 @@ def config(kv, global_cfg, key_to_remove):
     """
     ConfigCommandExecutor(global_cfg).config(kv, key_to_remove)
 
+
 @cli.command()
 @click.argument(u'template_name')
 def show(template_name):
@@ -104,3 +110,23 @@ def show(template_name):
     Shows all versions of TEMPLATENAME
     """
     ShowCommandExecutor().show(template_name)
+
+
+@cli.command()
+@click.argument(u'name')
+@click.argument(u'source')
+@click.option('--attribute', 'add_attribute', multiple=True, default=None,
+              help="Creates a commented out attribute in the shell definition")
+# @click.option('--command', 'add_command', multiple=True, default=None, help="Creates a commented out new command template to be filled by the developer")
+# @click.option('--edit', 'edit_command', multiple=True, default=None, help="Copy the full command logic to the driver")
+def extend(name, source, add_attribute):
+    """
+    Creates a new shell based on a existed
+
+    NAME - extended shell folder name\n
+    SOURCE - Specify a original Shell location.\n
+    \tYou can use 'local://<folder>' to specify a locally saved Shell folder
+    \tor 'local://<folder>/<shell_name>.zip' to specify a locally saved Shell archive
+    """
+
+    ExtendCommandExecutor().extend(name, source, add_attribute)
