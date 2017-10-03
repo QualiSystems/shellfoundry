@@ -21,7 +21,8 @@ class ShellPackageInstaller(object):
 
     def install(self, path):
         shell_package = ShellPackage(path)
-        shell_filename = shell_package.get_shell_name() + '.zip'
+        shell_name = shell_package.get_name_from_definition()
+        shell_filename = shell_name + '.zip'
         package_full_path = os.path.join(path, 'dist', shell_filename)
 
         cloudshell_config = self.cloudshell_config_reader.read()
@@ -42,7 +43,7 @@ class ShellPackageInstaller(object):
                                show_eta=False,
                                label=installation_label) as pbar:
             try:
-                client.update_shell(package_full_path)
+                client.update_shell(package_full_path, shell_name)
             except ShellNotFoundException:
                 self._increase_pbar(pbar, Default_Time_Wait)
                 self._add_new_shell(client, package_full_path)

@@ -3,12 +3,12 @@ python: 2.7
 install:
 - pip install -r requirements.txt
 - pip install -r test_requirements.txt
-- pip install coveralls
+- pip install coveralls==1.1 # pinpointing the version. too learn more take a look at https://github.com/QualiSystems/shellfoundry/issues/175
 script: coverage run --source=shellfoundry setup.py test
 after_success: coveralls
 deploy:
   - provider: pypi
-    server: https://testpypi.python.org/pypi
+    server: https://test.pypi.org/legacy/
     distributions: "sdist bdist_wheel"
     user: quali
     password:

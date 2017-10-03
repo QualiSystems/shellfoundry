@@ -18,6 +18,7 @@ class ShellPackageBuilder(object):
         """
         shell_package = ShellPackage(path)
         shell_name = shell_package.get_shell_name()
+        shell_real_name = shell_package.get_name_from_definition()
         with TempDirContext(shell_name) as package_path:
 
             self._copy_tosca_meta(package_path, '')
@@ -26,7 +27,7 @@ class ShellPackageBuilder(object):
             shell_definition_path = tosca_meta['Entry-Definitions']
 
             self._copy_shell_definition(package_path, '', shell_definition_path)
-            self._create_driver('', os.curdir, shell_name)
+            self._create_driver('', os.curdir, shell_real_name.replace('-', '').replace('_', '').replace(' ', ''))
 
             with open(shell_definition_path) as shell_definition_file:
                 shell_definition = yaml.load(shell_definition_file)
@@ -40,7 +41,7 @@ class ShellPackageBuilder(object):
                     for artifact in node_type['artifacts'].values():
                         self._copy_artifact(artifact['file'], package_path)
 
-            zip_path = self._zip_package(package_path, '', shell_name)
+            zip_path = self._zip_package(package_path, '', shell_real_name)
 
             click.echo(u'Shell package was successfully created: ' + zip_path)
 
