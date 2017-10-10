@@ -4,8 +4,7 @@
 import click
 import os
 import shutil
-import zipfile
-
+import re
 
 from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
 from shellfoundry.utilities.constants import TEMPLATE_AUTHOR_FIELD, METADATA_AUTHOR_FIELD, TEMPLATE_BASED_ON
@@ -30,39 +29,29 @@ class ExtendCommandExecutor(object):
         self.shell_gen_validations = shell_gen_validations or ShellGenerationValidations()
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
-    def extend(self, name, source, attribute_names):
+    def extend(self, source, attribute_names):
         """ Create a new shell based on a already existed shell
-        :param str name: The name of the Shell
         :param str source: The path to existed Shell. Can be url or local path
         :param tuple attribute_names: Sequence of attribute names that should be added
         """
 
-        if name == os.path.curdir:
-            name = os.path.split(os.getcwd())[1]
-            shell_dir = os.path.join(os.path.pardir, name)
-        else:
-            shell_dir = os.path.join(os.path.curdir, name)
-
-        if os.path.exists(shell_dir):
-            raise click.BadParameter(u"Extended Shell folder '{}' already exist.".format(os.path.abspath(shell_dir)))
-
-        if not self.shell_name_validations.validate_shell_name(name):
-            raise click.BadParameter(
-                u"Shell name must begin with a letter and contain only alpha-numeric characters and spaces.")
-
-        with TempDirContext(name) as temp_dir:
+        with TempDirContext("Extended_Shell_Temp_Dir") as temp_dir:
             try:
                 if self._is_local(source):
-                    shell_path = self._copy_local_shell(name,
-                                                        self._remove_prefix(source,
-                                                                            ExtendCommandExecutor.LOCAL_TEMPLATE_URL_PREFIX),
-                                                        temp_dir)
+                    temp_shell_path = self._copy_local_shell(self._remove_prefix(source,
+                                                                                 ExtendCommandExecutor.LOCAL_TEMPLATE_URL_PREFIX),
+                                                             temp_dir)
                 else:
-                    shell_path = self._copy_online_shell(source, temp_dir)
+                    temp_shell_path = self._copy_online_shell(source, temp_dir)
             except VersionRequestException as err:
                 raise click.ClickException(err.message)
             except Exception:
+                # raise
                 raise click.BadParameter(u"Check correctness of entered attributes")
+
+            # Remove shell version from folder name
+            shell_path = re.sub(r"-\d+(\.\d+)*/?$", "", temp_shell_path)
+            os.rename(temp_shell_path, shell_path)
 
             if not self.shell_gen_validations.validate_2nd_gen(shell_path):
                 raise click.ClickException(u"Invalid second generation Shell.")
@@ -74,21 +63,30 @@ class ExtendCommandExecutor(object):
             self._add_based_on(shell_path, modificator)
             self._add_attributes(shell_path, attribute_names)
 
-            shutil.move(shell_path, shell_dir)
+            try:
+                shutil.move(shell_path, os.path.curdir)
+            except shutil.Error as err:
+                raise click.BadParameter(err.message)
 
-        click.echo("Created shell {0} based on source {1}".format(name, source))
+        click.echo("Created shell based on source {}".format(source))
 
-    def _copy_local_shell(self, name, source, destination):
+    def _copy_local_shell(self, source, destination):
         """ Copy shell and extract if needed """
 
         if os.path.isdir(source):
+            source = source.rstrip(os.sep)
+            name = os.path.basename(source)
             ext_shell_path = os.path.join(destination, name)
             shutil.copytree(source, ext_shell_path)
-        elif zipfile.is_zipfile(source):
-            ext_shell_path = self.repository_downloader.repo_extractor.extract_to_folder(source, destination)[0]
-            if not os.path.isdir(ext_shell_path):
-                ext_shell_path = os.path.dirname(ext_shell_path)
-            ext_shell_path = os.path.join(destination, ext_shell_path)
+        # elif zipfile.is_zipfile(source):
+        #
+        #     name = os.path.basename(source).replace(".zip", "")
+        #     shell_path = self.repository_downloader.repo_extractor.extract_to_folder(source, destination)[0]
+        #     if not os.path.isdir(shell_path):
+        #         shell_path = os.path.dirname(shell_path)
+        #         shell_path = os.path.join(destination, shell_path)
+        #
+        #     ext_shell_path = os.path.join(os.path.dirname(shell_path.rstrip(os.sep)), name)
         else:
             raise
 

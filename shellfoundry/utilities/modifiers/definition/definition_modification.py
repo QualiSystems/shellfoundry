@@ -66,8 +66,10 @@ class DefinitionModification(object):
         :params fields tuple/list: sequence of properties name that will be added
         """
 
-        for name in reversed(attribute_names):
-            self._add_property(attribute_name=name)
+        results = map(self._add_property, attribute_names)
+
+        for item in zip(attribute_names, results):
+            self._comment_attribute(*item)
 
     def _find_entry_definition(self):
         """  """
@@ -134,14 +136,46 @@ class DefinitionModification(object):
 
         nodes = loaded.get("node_types")
 
+        is_last = False
         if nodes:
             for key, value in nodes.iteritems():
                 if key.startswith("vendor."):
                     properties_data = value.get("properties", {})
                     if properties_data:
                         properties_data.update({attribute_name: TEMPLATE_PROPERTY})
+                        is_last = False
                     else:
                         value.insert(1, "properties", {attribute_name: TEMPLATE_PROPERTY})
+                        is_last = True
                     break
 
             self._edit_file(yaml_file=self.entry_definition, yaml_parser=yaml_parser, data=loaded)
+
+        return is_last
+
+    def _comment_attribute(self, attribute_name, is_last=False):
+        """ Comment attribute in shell-definishion.yaml file """
+
+        spaces = None
+        need_comment = False
+        lines = []
+        with open(self.entry_definition, "r") as f:
+            for line in f:
+                stripped = line.lstrip(' ')
+                if stripped.startswith("{}:".format(attribute_name)):
+                    if is_last:
+                        lines[-1] = "# {}".format(lines[-1])
+                    spaces = len(line) - len(stripped)
+                    need_comment = True
+                    lines.append("# {}".format(line))
+                    continue
+
+                if need_comment and spaces and (len(line) - len(stripped)) > spaces:
+                    lines.append("# {}".format(line))
+                    continue
+
+                need_comment = False
+                lines.append(line)
+
+        with open(self.entry_definition, "w") as f:
+            f.writelines(lines)

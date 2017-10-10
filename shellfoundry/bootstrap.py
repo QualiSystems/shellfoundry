@@ -113,20 +113,17 @@ def show(template_name):
 
 
 @cli.command()
-@click.argument(u'name')
+# @click.argument(u'name', type=str, default="", required=False)
 @click.argument(u'source')
-@click.option('--attribute', 'add_attribute', multiple=True, default=None,
-              help="Creates a commented out attribute in the shell definition")
+@click.option('--attribute', 'add_attribute', multiple=True, default=None, help="Creates a commented out attribute in the shell definition")
 # @click.option('--command', 'add_command', multiple=True, default=None, help="Creates a commented out new command template to be filled by the developer")
 # @click.option('--edit', 'edit_command', multiple=True, default=None, help="Copy the full command logic to the driver")
-def extend(name, source, add_attribute):
+def extend(source, add_attribute):
     """
     Creates a new shell based on a existed
 
-    NAME - extended shell folder name\n
     SOURCE - Specify a original Shell location.\n
     \tYou can use 'local://<folder>' to specify a locally saved Shell folder
-    \tor 'local://<folder>/<shell_name>.zip' to specify a locally saved Shell archive
     """
 
-    ExtendCommandExecutor().extend(name, source, add_attribute)
+    ExtendCommandExecutor().extend(source, add_attribute)

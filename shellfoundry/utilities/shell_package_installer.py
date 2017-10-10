@@ -24,7 +24,8 @@ class ShellPackageInstaller(object):
 
     def install(self, path):
         shell_package = ShellPackage(path)
-        shell_name = shell_package.get_shell_name()
+        # shell_name = shell_package.get_shell_name()
+        shell_name = shell_package.get_name_from_definition()
         shell_filename = shell_name + ".zip"
         package_full_path = os.path.join(path, "dist", shell_filename)
 

@@ -23,9 +23,13 @@ class ConfigCommandExecutor(object):
             context = ConfigContext(config_file_path)
             ConfigRecord(key_to_remove).delete(context)
         elif self._should_append_key(kv):
-            self.cfg_creation.create(config_file_path)
-            context = ConfigContext(config_file_path)
-            ConfigRecord(*kv).save(context)
+            field, name = kv
+            if not name:
+                raise click.BadArgumentUsage("Field '{}' can not be empty".format(field))
+            else:
+                self.cfg_creation.create(config_file_path)
+                context = ConfigContext(config_file_path)
+                ConfigRecord(*kv).save(context)
         else:
             self._echo_config(config_file_path)
 
