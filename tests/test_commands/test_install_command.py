@@ -30,6 +30,7 @@ install:
     username: YOUR_USERNAME
     password: YOUR_PASSWORD
     domain: Global
+    author: AUTHOR
     """)
         os.chdir('nut_shell')
 
@@ -41,7 +42,7 @@ install:
 
         # Assert
         mock_installer.install.assert_called_once_with('nut_shell', InstallConfig('localhost', 9000, 'YOUR_USERNAME',
-                                                                                  'YOUR_PASSWORD', 'Global'))
+                                                                                  'YOUR_PASSWORD', 'Global', "AUTHOR"))
         secho_mock.assert_any_call('Successfully installed shell', fg='green')
 
     def test_tosca_based_shell_installed_when_tosca_meta_file_exists(self):

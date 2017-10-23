@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 import zipfile
 import requests
@@ -6,7 +9,6 @@ from abc import ABCMeta
 from abc import abstractmethod
 
 from .template_url import construct_template_url
-from shellfoundry.utilities.template_versions import TemplateVersions
 from shellfoundry.exceptions import VersionRequestException
 
 
@@ -31,7 +33,7 @@ class ZipDownloadedRepoExtractor (DownloadedRepoExtractor):
         return [info.filename for info in infos]
 
 
-class RepositoryDownloader:
+class RepositoryDownloader(object):
     def __init__(self, repo_extractor=ZipDownloadedRepoExtractor()):
         self.repo_extractor = repo_extractor
 
@@ -39,7 +41,7 @@ class RepositoryDownloader:
         download_url = construct_template_url(repo_address, branch)
         archive_path = ''
         try:
-            archive_path = self._download_file(download_url, target_dir)
+            archive_path = self.download_file(download_url, target_dir)
 
             repo_content = self.repo_extractor.extract_to_folder(archive_path, target_dir)
 
@@ -51,7 +53,7 @@ class RepositoryDownloader:
             if os.path.exists(archive_path):
                 os.remove(archive_path)
 
-    def _download_file(self, url, directory):
+    def download_file(self, url, directory):
         local_filename = os.path.join(directory, url.split('/')[-1])
         # NOTE the stream=True parameter
         r = requests.get(url, stream=True)
