@@ -52,6 +52,27 @@ templates:
         project_name :
         family_name :
       min_cs_ver: 7.0
+    - name : gen1/custom-service
+      params:
+        project_name :
+        family_name :
+      description : 1st generation shell template for custom service
+      repository : https://github.com/QualiSystems/shell-custom-service-standard
+      min_cs_ver: 7.0
+    - name : gen1/cloud-service
+      params:
+        project_name :
+        family_name :
+      description : 1st generation shell template for cloud service
+      repository : https://github.com/QualiSystems/shell-cloud-service-standard
+      min_cs_ver: 7.0
+    - name : gen1/traffic-controller-service
+      params:
+        project_name :
+        family_name :
+      description : 1st generation shell template for cloud service
+      repository : https://github.com/QualiSystems/shell-traffic-controller-standard
+      min_cs_ver: 7.0
     - name: layer-1-switch
       description : A native shell template for layer 1 switches
       repository : https://github.com/QualiSystems/shell-L1-standard
@@ -129,3 +150,10 @@ templates:
       description : 2nd generation shell template for broadband media
       repository : https://github.com/QualiSystems/shellfoundry-tosca-broadband_media-template
       min_cs_ver: 8.1
+    - name : gen2/sdn
+      params:
+        project_name :
+        family_name:
+      description : 2nd generation shell template for a SDN controller
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-sdn-template
+      min_cs_ver: 8.0
