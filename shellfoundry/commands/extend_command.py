@@ -49,12 +49,12 @@ class ExtendCommandExecutor(object):
                 # raise
                 raise click.BadParameter(u"Check correctness of entered attributes")
 
+            if not self.shell_gen_validations.validate_2nd_gen(temp_shell_path):
+                raise click.ClickException(u"Invalid second generation Shell.")
+
             # Remove shell version from folder name
             shell_path = re.sub(r"-\d+(\.\d+)*/?$", "", temp_shell_path)
             os.rename(temp_shell_path, shell_path)
-
-            if not self.shell_gen_validations.validate_2nd_gen(shell_path):
-                raise click.ClickException(u"Invalid second generation Shell.")
 
             self._remove_quali_signature(shell_path)
 

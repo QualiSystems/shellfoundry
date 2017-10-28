@@ -4,6 +4,7 @@
 import click
 import os
 import time
+import json
 
 from urllib2 import HTTPError
 
@@ -104,7 +105,6 @@ class ShellPackageInstaller(object):
             raise FatalError(self._parse_installation_error("Failed to add new shell", e))
 
     def _parse_installation_error(self, base_message, error):
-        import json
         cs_message = json.loads(error.message)["Message"]
         return "{}. CloudShell responded with: '{}'".format(base_message, cs_message)
 
