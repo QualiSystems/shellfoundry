@@ -9,3 +9,4 @@ cloudshell-rest-api>=8.2.1.0
 colorama
 giturlparse.py
 ruamel.yaml==0.15.33
+click-didyoumean

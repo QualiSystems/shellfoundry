@@ -16,8 +16,10 @@ from shellfoundry.commands.config_command import ConfigCommandExecutor
 from shellfoundry.commands.show_command import ShowCommandExecutor
 from shellfoundry.utilities import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
 
+from click_didyoumean import DYMGroup
 
-@click.group()
+
+@click.group(cls=DYMGroup)
 def cli():
     pass
 
