@@ -147,7 +147,7 @@ templates:
       description : 2nd generation shell template for broadband media
       repository : https://github.com/QualiSystems/shellfoundry-tosca-broadband_media-template
       min_cs_ver: 8.1
-    - name : gen2/sdn
+    - name : gen2/sdn-controller
       params:
         project_name :
         family_name:
