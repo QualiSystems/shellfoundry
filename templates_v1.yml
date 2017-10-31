@@ -150,7 +150,7 @@ templates:
     - name : gen2/sdn-controller
       params:
         project_name :
-        family_name:
+        family_name: SDNController
       description : 2nd generation shell template for a SDN controller
       repository : https://github.com/QualiSystems/shellfoundry-tosca-sdn-template
       min_cs_ver: 8.0
