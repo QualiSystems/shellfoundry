@@ -15,14 +15,13 @@ from shellfoundry.commands.pack_command import PackCommandExecutor
 from shellfoundry.commands.config_command import ConfigCommandExecutor
 from shellfoundry.commands.show_command import ShowCommandExecutor
 from shellfoundry.utilities import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
+from clickclick import AliasedGroup
 
-from click_didyoumean import DYMGroup
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-
-@click.group(cls=DYMGroup)
+@click.group(cls=AliasedGroup, context_settings=CONTEXT_SETTINGS)
 def cli():
     pass
-
 
 @cli.command()
 def version():
@@ -33,10 +32,10 @@ def version():
 
 
 @cli.command()
-@click.option(u'--gen2', 'default_view', flag_value=GEN_TWO, help="Show 2nd generation shell templates")
-@click.option(u'--gen1', 'default_view', flag_value=GEN_ONE, help="Show 1st generation shell templates")
-@click.option(u'--layer1', 'default_view', flag_value=LAYER_ONE, help="Show layer1 shell templates")
-@click.option(u'--all', 'default_view', flag_value=NO_FILTER, help="Show all templates")
+@click.option(u'-g2', u'--gen2', 'default_view', flag_value=GEN_TWO, help="Show 2nd generation shell templates")
+@click.option(u'-g1', u'--gen1', 'default_view', flag_value=GEN_ONE, help="Show 1st generation shell templates")
+@click.option(u'-l1', u'--layer1', 'default_view', flag_value=LAYER_ONE, help="Show layer1 shell templates")
+@click.option(u'-a', u'--all', 'default_view', flag_value=NO_FILTER, help="Show all templates")
 @shellfoundry_version_check(abort_if_major=True)
 def list(default_view):
     """
@@ -47,10 +46,10 @@ def list(default_view):
 
 @cli.command()
 @click.argument(u'name')
-@click.option(u'--template', default=u'gen2/resource',
+@click.option(u'-t', u'--template', default=u'gen2/resource',
               help="Specify a Shell template. Use 'shellfoundry list' to see the list of available templates. "
                    "You can use 'local://<folder>' to specify a locally saved template")
-@click.option(u'--version', default=None)
+@click.option(u'-v', u'--version', default=None)
 @shellfoundry_version_check(abort_if_major=True)
 def new(name, template, version):
     """
