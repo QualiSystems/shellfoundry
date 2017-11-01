@@ -46,7 +46,7 @@ class ConfigCommandExecutor(object):
         click.echo(table)
         click.echo('')
         click.echo(
-            "* Value marked with '{}' is actually the default value and has not been override by the user.".format(
+            "Values marked with '{}' are the default values.".format(
                 DEFAULTS_CHAR))
 
     def _format_config_as_table(self, config_data, defaults_char):
