@@ -65,7 +65,7 @@ install:
         self.assertTrue(mock_shell_package_installer.install.called)
 
     @patch('click.secho')
-    def test_install_layer_one_shell(self, echo_mock):
+    def test_install_layer_one_shell(self, secho_mock):
         # Arrange
         self.fs.CreateFile('cloudshell-L1-test/datamodel/datamodel.xml')
         os.chdir('cloudshell-L1-test')
@@ -77,7 +77,9 @@ install:
         command_executor.install()
 
         # Assert
-        echo_mock.assert_any_call(u'Installing a L1 shell directly via shellfoundry is not supported')
+        secho_mock.assert_any_call("Installing a L1 shell directly via shellfoundry is not supported. "
+                                   "Please follow the L1 shell import procedure described in help.quali.com.",
+                                   fg="yellow")
 
     def test_proper_error_message_displayed_when_login_failed(self):
         # Arrange
