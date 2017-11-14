@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import unittest
 
 from pyfakefs import fake_filesystem_unittest
@@ -24,6 +27,13 @@ class TestShellPackage(unittest.TestCase):
 
         # Assert
         self.assertEqual(shell_name, 'NutShell')
+
+    def test_is_layer_one(self):
+        # Arrange
+        shell_package = ShellPackage('work/folders/cloudshell-L1-test')
+
+        # Assert
+        self.assertTrue(shell_package.is_layer_one())
 
 
 class TestShellPackageWithFileSystem(fake_filesystem_unittest.TestCase):
