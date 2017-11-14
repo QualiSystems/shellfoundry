@@ -64,9 +64,8 @@ install:
         # Assert
         self.assertTrue(mock_shell_package_installer.install.called)
 
-    @patch('click.echo')
-    def test_layer_one_shell(self, echo_mock):
-        # Arrange
+    @patch('click.secho')
+    def test_install_layer_one_shell(self, echo_mock):
         # Arrange
         self.fs.CreateFile('cloudshell-L1-test/datamodel/datamodel.xml')
         os.chdir('cloudshell-L1-test')

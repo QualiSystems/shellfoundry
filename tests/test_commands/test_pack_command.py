@@ -65,9 +65,9 @@ shell:
         # Assert
         echo_mock.assert_any_call(u'shell.yml file is missing')
 
-    @patch('click.echo')
+    @patch('click.secho')
     @patch('shellfoundry.utilities.python_dependencies_packager.pip')
-    def test_proper_error_message_displayed_when_shell_yml_missing(self, pip_mock, echo_mock):
+    def test_pack_layer_one_shell(self, pip_mock, echo_mock):
         # Arrange
         self.fs.CreateFile('cloudshell-L1-test/datamodel/datamodel.xml')
         os.chdir('cloudshell-L1-test')
