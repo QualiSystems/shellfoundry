@@ -1,5 +1,10 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 import yaml
+
+LAYER_ONE_PREFIX = "CloudshellL1"
 
 
 class ShellPackage(object):
@@ -25,6 +30,15 @@ class ShellPackage(object):
         if not self.real_shell_name or should_reload:
             self._reload_name()
         return self.real_shell_name
+
+    def is_layer_one(self):
+        """
+        Determines whether a shell is Layer 1
+        :return:
+        :rtype: bool
+        """
+
+        return bool(LAYER_ONE_PREFIX in self.get_shell_name())
 
     def is_tosca(self):
         """
