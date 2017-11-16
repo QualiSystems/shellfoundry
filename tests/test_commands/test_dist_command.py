@@ -1,8 +1,9 @@
+
+import os
 from mock import Mock
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.commands.dist_command import DistCommandExecutor
-from tests.asserts import *
 
 
 class TestDistCommandExecutor(fake_filesystem_unittest.TestCase):
@@ -35,3 +36,6 @@ shell:
         self.assertEqual(args[0].split(os.path.sep)[-2], 'src')
         self.assertEqual(args[1].split(os.path.sep)[-1], 'offline_requirements')
         self.assertEqual(args[1].split(os.path.sep)[-2], 'dist')
+
+        ls = os.listdir(os.path.dirname(args[1]))
+        self.assertEqual(ls[0], 'nut_shell_offline_requirements.zip')
