@@ -37,3 +37,8 @@ class FatalError(click.ClickException):
 
     def show(self, file=None):
         click.secho('Error: {}'.format(self.format_message()), err=True, fg='red')
+
+
+class YmlFieldMissingException(Exception):
+    def __init__(self, message):
+        super(YmlFieldMissingException, self).__init__(message)

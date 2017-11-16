@@ -1,6 +1,7 @@
 from .password_modification import PasswordModification
 
-DEFAULT_MODIFIER = (lambda x: x) # Default modifier returns the passed value unchanged
+DEFAULT_MODIFIER = (lambda x: x)  # Default modifier returns the passed value unchanged
+
 
 class AggregatedModifiers(object):
     def __init__(self, modifiers=None, default=None):
@@ -15,5 +16,5 @@ class AggregatedModifiers(object):
         return self.default_modifier(value)
 
     @staticmethod
-    def _default_modifier(value): # Default modifier returns the passed value unchanged
+    def _default_modifier(value):  # Default modifier returns the passed value unchanged
         return value

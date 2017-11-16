@@ -2,6 +2,19 @@
 History
 =======
 
+1.1.1 (2017-11-14)
+------------------
+
+* Added new online templates
+* Added specific error message to Layer 1 Shells pack and install commands
+
+1.1.0 (2017-10-30)
+------------------
+
+* Added author field to shellfoundry configuration
+* Added extend command behavior
+* Added verification when upgrading an official shell to unofficial
+
 1.0.4 (2017-08-28)
 ------------------
 

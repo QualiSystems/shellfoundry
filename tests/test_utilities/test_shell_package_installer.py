@@ -1,18 +1,24 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import click
+
 import shellfoundry.utilities.shell_package_installer as spi
 
 from urllib2 import HTTPError
 from cloudshell.rest.exceptions import ShellNotFoundException
 from mock import patch, Mock
 from pyfakefs import fake_filesystem_unittest
-from shellfoundry.utilities.shell_package_installer import ShellPackageInstaller
+from shellfoundry.utilities.shell_package_installer import ShellPackageInstaller, SHELL_IS_OFFICIAL_FLAG
+from cloudshell.rest.exceptions import ShellNotFoundException, FeatureUnavailable
 from shellfoundry.exceptions import FatalError
-from cloudshell.rest.api import PackagingRestApiClient
 
 
-def mock_rest_client(update_side_effect, add_side_effect):
+def mock_rest_client(update_side_effect, add_side_effect, get_side_effect):
     mock_client = Mock()
     mock_client.update_shell = Mock(side_effect=update_side_effect)
     mock_client.add_shell = Mock(side_effect=add_side_effect)
+    mock_client.get_shell.return_value = {SHELL_IS_OFFICIAL_FLAG: get_side_effect}
     return mock_client
 
 
@@ -33,6 +39,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
     def test_install_shell_updates_an_existing_shell(self, rest_client_mock):
         # Arrange
         mock_client = Mock()
+        mock_client.get_shell.return_value = {SHELL_IS_OFFICIAL_FLAG: False}
         rest_client_mock.return_value = mock_client
         installer = ShellPackageInstaller()
 
@@ -50,6 +57,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         # Arrange
         mock_client = Mock()
         mock_client.update_shell = Mock(side_effect=ShellNotFoundException())
+        mock_client.get_shell.return_value = {SHELL_IS_OFFICIAL_FLAG: False}
         rest_client_mock.return_value = mock_client
         installer = ShellPackageInstaller()
 
@@ -68,6 +76,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         # Arrange
         mock_client = Mock()
         mock_client.update_shell = Mock(side_effect=Exception())
+        mock_client.get_shell.return_value = {SHELL_IS_OFFICIAL_FLAG: False}
         rest_client_mock.return_value = mock_client
         installer = ShellPackageInstaller()
 
@@ -132,7 +141,8 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
 
     @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient', new=Mock(
         return_value=mock_rest_client(update_side_effect=ShellNotFoundException(),
-                                      add_side_effect=Exception(add_shell_error_message('Failed to add shell')))))
+                                      add_side_effect=Exception(add_shell_error_message('Failed to add shell')),
+                                      get_side_effect=False)))
     def test_fail_to_update_and_than_add_shell(self):
         # Arrange
         self.fs.CreateFile('work/nut-shell/TOSCA-Metadata/TOSCA.meta',
@@ -166,3 +176,72 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         # Assert
         self.assertTrue(
             context.exception.message == "Failed to add new shell. CloudShell responded with: 'Failed to add shell'")
+
+    @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient')
+    @patch('shellfoundry.utilities.shell_package_installer.click.confirm', new=Mock())
+    @patch('shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition',
+           new=Mock(return_value='NutShell'))
+    def test_install_shell_updates_official_shell_confirm(self, rest_client_mock):
+        # Arrange
+        mock_client = Mock()
+        mock_client.get_shell.return_value = {SHELL_IS_OFFICIAL_FLAG: True}
+        rest_client_mock.return_value = mock_client
+        installer = ShellPackageInstaller()
+
+        # Act
+        with patch('click.echo'):
+            installer.install('work/nut-shell')
+
+        # Assert
+        self.assertTrue(mock_client.update_shell.called)
+
+    @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient')
+    @patch('shellfoundry.utilities.shell_package_installer.click.confirm', new=Mock(side_effect=(click.Abort)))
+    @patch('shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition',
+           new=Mock(return_value='NutShell'))
+    def test_install_shell_updates_official_shell_abort(self, rest_client_mock):
+        # Arrange
+        mock_client = Mock()
+        mock_client.get_shell.return_value = {SHELL_IS_OFFICIAL_FLAG: True}
+        rest_client_mock.return_value = mock_client
+        installer = ShellPackageInstaller()
+
+        # Act
+        with self.assertRaises(click.Abort):
+            installer.install('work/nut-shell')
+
+    @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient')
+    @patch('shellfoundry.utilities.shell_package_installer.click.confirm', new=Mock(side_effect=(FeatureUnavailable)))
+    @patch('shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition',
+           new=Mock(return_value='NutShell'))
+    def test_install_shell_updates_official_shell_feature_unavailable(self, rest_client_mock):
+        # Arrange
+        mock_client = Mock()
+        mock_client.get_shell.return_value = {SHELL_IS_OFFICIAL_FLAG: True}
+        rest_client_mock.return_value = mock_client
+        installer = ShellPackageInstaller()
+
+        # Act
+        with patch('click.echo'):
+            installer.install('work/nut-shell')
+
+        # Assert
+        self.assertTrue(mock_client.update_shell.called)
+
+    @patch('shellfoundry.utilities.shell_package_installer.PackagingRestApiClient')
+    @patch('shellfoundry.utilities.shell_package_installer.click.confirm', new=Mock(side_effect=(ShellNotFoundException)))
+    @patch('shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition',
+           new=Mock(return_value='NutShell'))
+    def test_install_shell_updates_official_shell_feature_unavailable(self, rest_client_mock):
+        # Arrange
+        mock_client = Mock()
+        mock_client.get_shell.return_value = {SHELL_IS_OFFICIAL_FLAG: True}
+        rest_client_mock.return_value = mock_client
+        installer = ShellPackageInstaller()
+
+        # Act
+        with patch('click.echo'):
+            installer.install('work/nut-shell')
+
+        # Assert
+        self.assertTrue(mock_client.update_shell.called)

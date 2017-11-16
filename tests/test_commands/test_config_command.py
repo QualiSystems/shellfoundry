@@ -1,5 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 
+from click import BadArgumentUsage
 from mock import patch, call, Mock
 from pyfakefs import fake_filesystem_unittest
 
@@ -33,6 +37,7 @@ not_supported_section:
             u'domain       Global       * \n '
             u'defaultview  gen2         * \n '
             u'key          value          \n '
+            u'author       Anonymous    * \n '
             u'password     [encrypted]  * \n '
             u'host         localhost    * \n '
             u'port         9000         * ')
@@ -98,6 +103,7 @@ install:
                                   u'domain         Global           * \n '
                                   u'defaultview    gen2             * \n '
                                   u'key            value              \n '
+                                  u'author         Anonymous        * \n '
                                   u'password       [encrypted]        \n '
                                   u'host           localhost        * \n '
                                   u'port           9000             * ')
@@ -176,6 +182,15 @@ install:
         file_content = self.fs.GetObject('/quali/shellfoundry/global_config.yml').contents
         self.assertTrue(file_content == desired_result, 'Expected: {}{}Actual: {}'
                         .format(desired_result, os.linesep, file_content))
+
+    @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
+    @patch('shellfoundry.commands.config_command.click.echo')
+    def test_adding_key_to_global_config_with_empty_value(self, echo_mock, get_app_dir_mock):
+        # Arrange
+        get_app_dir_mock.return_value = '/quali/shellfoundry'
+
+        with self.assertRaisesRegexp(BadArgumentUsage, "Field '.+' can not be empty"):
+            ConfigCommandExecutor(True).config(('key', ''))
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('platform.node', Mock(return_value='machine-name-here'))
