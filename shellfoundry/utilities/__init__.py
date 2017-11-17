@@ -29,7 +29,12 @@ PyPI = Index('https://pypi.python.org/pypi/')
 def is_index_version_greater_than_current():
     MAJOR_INDEX = 0
 
-    installed, index = (StrictVersion(get_installed_version(PACKAGE_NAME)), StrictVersion(max_version_from_index()))
+    try:
+        version_from_index = StrictVersion(max_version_from_index())
+    except:
+        version_from_index = StrictVersion('0.0.0')
+
+    installed, index = (StrictVersion(get_installed_version(PACKAGE_NAME)), version_from_index)
     is_major_release = False
 
     is_greater_version = index > installed
