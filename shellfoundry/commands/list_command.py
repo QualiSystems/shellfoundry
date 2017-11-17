@@ -1,7 +1,7 @@
 import click
 
 from os import linesep
-from requests.exceptions import SSLError
+from requests.exceptions import SSLError, HTTPError, ConnectionError
 from shellfoundry import ALTERNATIVE_TEMPLATES_PATH
 from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
 from shellfoundry.utilities.config_reader import Configuration, ShellFoundryConfig
@@ -27,8 +27,14 @@ class ListCommandExecutor(object):
 
         try:
             standards = self.standards.fetch()
+        except:
+            raise click.UsageError('Could not retrieve the available standards from CloudShell. \r\n'
+                                   'Check the connectivity configuration using \'shellfoundry config\' '
+                                   'and make sure CloudShell is available.')
+
+        try:
             templates = self.template_retriever.get_templates(standards=standards)
-        except (SSLError, FatalError):
+        except (SSLError, FatalError, ConnectionError):
             raise click.UsageError('Could not retrieve the templates list. Are you offline?')
         except FeatureUnavailable:
             templates = self.template_retriever.get_templates(alternative=ALTERNATIVE_TEMPLATES_PATH)

@@ -72,7 +72,7 @@ class NewCommandExecutor(object):
                 standards = self.standards.fetch()
                 templates = self.template_retriever.get_templates(standards=standards)
             except (SSLError, FatalError):
-                raise click.UsageError("Cannot retrieve templates list, are you offline?")
+                raise click.UsageError("Cannot retrieve templates list. Are you offline?")
             except FeatureUnavailable:
                 standards = self.standards.fetch(alternative=ALTERNATIVE_STANDARDS_PATH)
                 templates = self.template_retriever.get_templates(
