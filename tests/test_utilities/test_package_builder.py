@@ -183,6 +183,29 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         assertFileExists(self, 'aws/amazon_web_services/package/Categories/categories.xml')
         assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip')
 
+    def test_pack_succeeds_when_categories_file_and_images_exists(self):
+        # Arrange
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/datamodel/datamodel.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/categories/categories.xml', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/categories/category1.png', contents='')
+        self.fs.CreateFile('work/aws/amazon_web_services/src/driver.py', contents='')
+        os.chdir('work')
+        builder = PackageBuilder()
+
+        # Act
+        with patch('click.echo'):
+            builder.build_package('aws/amazon_web_services', 'aws', 'AwsDriver')
+
+        # Assert
+        assertFileExists(self, 'aws/amazon_web_services/dist/aws.zip')
+        TestPackageBuilder.unzip('aws/amazon_web_services/dist/aws.zip', 'aws/amazon_web_services/package')
+        assertFileExists(self, 'aws/amazon_web_services/package/metadata.xml')
+        assertFileExists(self, 'aws/amazon_web_services/package/DataModel/datamodel.xml')
+        assertFileExists(self, 'aws/amazon_web_services/package/Categories/categories.xml')
+        assertFileExists(self, 'aws/amazon_web_services/package/Categories/category1.png')
+        assertFileExists(self, 'aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip')
+
     def test_it_replaces_wildcard_according_to_versioning_policy(self):
         self.fs.CreateFile('work/aws/amazon_web_services/datamodel/metadata.xml', contents='')
         self.fs.CreateFile('work/aws/amazon_web_services/datamodel/datamodel.xml', contents='')

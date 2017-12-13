@@ -79,6 +79,13 @@ class PackageBuilder(object):
             for image in images:
                 PackageBuilder._copy_file(dest_dir_path,  os.path.join(root, image))
 
+        dest_dir_path = os.path.join(package_path, 'Categories')
+        categories_dir = os.path.join(path, 'categories')
+        for root, _, files in os.walk(categories_dir):
+            images = [dir_file for dir_file in files if PackageBuilder._is_image(dir_file)]
+            for image in images:
+                PackageBuilder._copy_file(dest_dir_path, os.path.join(root, image))
+
     @staticmethod
     def _copy_file(dest_dir_path, src_file_path):
         if not os.path.exists(dest_dir_path):
