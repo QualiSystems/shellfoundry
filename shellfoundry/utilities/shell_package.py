@@ -52,7 +52,7 @@ class ShellPackage(object):
         """
         Returns file path of the TOSCA meta file
         :param path:
-        :return: TOSCA.met path
+        :return: TOSCA.meta path
         :rtype: str
         """
         return os.path.join(self.path, 'TOSCA-Metadata', 'TOSCA.meta')
