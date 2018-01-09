@@ -12,6 +12,7 @@ from shellfoundry.utilities.modifiers.definition.definition_modification import 
 from shellfoundry.utilities.repository_downloader import RepositoryDownloader
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 from shellfoundry.utilities.validations import ShellNameValidations, ShellGenerationValidations
+from shellfoundry.utilities.shell_package import ShellPackage
 from shellfoundry.exceptions import VersionRequestException
 
 
@@ -49,12 +50,14 @@ class ExtendCommandExecutor(object):
                 # raise
                 raise click.BadParameter(u"Check correctness of entered attributes")
 
-            if not self.shell_gen_validations.validate_2nd_gen(temp_shell_path):
-                raise click.ClickException(u"Invalid second generation Shell.")
-
             # Remove shell version from folder name
             shell_path = re.sub(r"-\d+(\.\d+)*/?$", "", temp_shell_path)
             os.rename(temp_shell_path, shell_path)
+
+            if not self.shell_gen_validations.validate_2nd_gen(shell_path):
+                raise click.ClickException(u"Invalid second generation Shell.")
+
+            self._unpack_driver_archive(shell_path)
 
             self._remove_quali_signature(shell_path)
 
@@ -64,6 +67,7 @@ class ExtendCommandExecutor(object):
             self._add_attributes(shell_path, attribute_names)
 
             try:
+                # pass
                 shutil.move(shell_path, os.path.curdir)
             except shutil.Error as err:
                 raise click.BadParameter(err.message)
@@ -113,6 +117,16 @@ class ExtendCommandExecutor(object):
     @staticmethod
     def _remove_prefix(string, prefix):
         return string.rpartition(prefix)[-1]
+
+    def _unpack_driver_archive(self, shell_path):
+        """ Unpack driver files from ZIP-archive """
+
+        zip_driver_path = "{}Driver.zip".format(os.path.join(shell_path, ShellPackage(shell_path).get_shell_name()))
+
+        if os.path.exists(zip_driver_path):
+            self.repository_downloader.repo_extractor.extract_to_folder(zip_driver_path,
+                                                                        os.path.join(shell_path, "src"))
+            os.remove(zip_driver_path)
 
     @staticmethod
     def _remove_quali_signature(shell_path):

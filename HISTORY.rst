@@ -2,6 +2,11 @@
 History
 =======
 
+1.1.2 (2018-01-09)
+------------------
+
+* Fixed extend command logic (unzip driver archive)
+
 1.1.1 (2017-11-14)
 ------------------
 
