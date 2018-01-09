@@ -87,6 +87,7 @@ class TestExtendCommandExecutor(unittest.TestCase):
             with self.assertRaises(ClickException):
                 self.tested_instance.extend("some_path", ("new_attribute",))
 
+    @mock.patch("shellfoundry.commands.extend_command.os.rename", new=mock.MagicMock())
     @mock.patch("shellfoundry.commands.extend_command.ShellGenerationValidations.validate_2nd_gen",
                 new=mock.MagicMock(return_value=False))
     @mock.patch("shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_online_shell",
