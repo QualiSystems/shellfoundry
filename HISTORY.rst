@@ -2,6 +2,16 @@
 History
 =======
 
+1.1.5 (2018-03-01)
+------------------
+
+* Added new online template for Traffic Generator Controller Service
+
+1.1.4 (2018-02-21)
+------------------
+
+* Added new online template for Traffic Generator Chassis 2 Generation
+
 1.1.2 (2018-01-09)
 ------------------
 
