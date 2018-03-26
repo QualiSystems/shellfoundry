@@ -20,6 +20,7 @@ SHELL_IS_OFFICIAL_FLAG = "IsOfficial"
 
 
 class ShellPackageInstaller(object):
+    GLOBAL_DOMAIN = 'Global'
     def __init__(self):
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
@@ -31,6 +32,9 @@ class ShellPackageInstaller(object):
         package_full_path = os.path.join(path, "dist", shell_filename)
 
         cloudshell_config = self.cloudshell_config_reader.read()
+
+        if cloudshell_config.domain != self.GLOBAL_DOMAIN:
+            raise FatalError("Gen2 shells could not be installed into non Global domain.")
 
         cs_connection_label = "Connecting to CloudShell at {}:{}".format(cloudshell_config.host, cloudshell_config.port)
         with click.progressbar(length=CLOUDSHELL_MAX_RETRIES,
