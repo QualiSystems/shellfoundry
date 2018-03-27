@@ -1,6 +1,10 @@
 =======
 History
 =======
+1.1.6 (2018-03-27)
+------------------
+
+* Added limitation installing a gen2 shell(regular/service) into a non global domain
 
 1.1.5 (2018-03-01)
 ------------------
