@@ -19,6 +19,8 @@ from shellfoundry.exceptions import VersionRequestException
 class ExtendCommandExecutor(object):
     LOCAL_TEMPLATE_URL_PREFIX = "local:"
     SIGN_FILENAME = "signed"
+    ARTIFACTS = {"driver": "src",
+                 "deployment": "deplyoments"}
 
     def __init__(self, repository_downloader=None, shell_name_validations=None, shell_gen_validations=None):
         """
@@ -57,11 +59,9 @@ class ExtendCommandExecutor(object):
             if not self.shell_gen_validations.validate_2nd_gen(shell_path):
                 raise click.ClickException(u"Invalid second generation Shell.")
 
-            self._unpack_driver_archive(shell_path)
-
-            self._remove_quali_signature(shell_path)
-
             modificator = DefinitionModification(shell_path)
+            self._unpack_driver_archive(shell_path, modificator)
+            self._remove_quali_signature(shell_path)
             self._change_author(shell_path, modificator)
             self._add_based_on(shell_path, modificator)
             self._add_attributes(shell_path, attribute_names)
@@ -118,15 +118,23 @@ class ExtendCommandExecutor(object):
     def _remove_prefix(string, prefix):
         return string.rpartition(prefix)[-1]
 
-    def _unpack_driver_archive(self, shell_path):
+    def _unpack_driver_archive(self, shell_path, modificator=None):
         """ Unpack driver files from ZIP-archive """
 
-        zip_driver_path = "{}Driver.zip".format(os.path.join(shell_path, ShellPackage(shell_path).get_shell_name()))
+        if not modificator:
+            modificator = DefinitionModification(shell_path)
 
-        if os.path.exists(zip_driver_path):
-            self.repository_downloader.repo_extractor.extract_to_folder(zip_driver_path,
-                                                                        os.path.join(shell_path, "src"))
-            os.remove(zip_driver_path)
+        artifacts = modificator.get_artifacts_files(artifact_name_list=self.ARTIFACTS.keys())
+
+        for artifact_name, artifact_path in artifacts.iteritems():
+
+            artifact_path = os.path.join(shell_path, artifact_path)
+
+            if os.path.exists(artifact_path):
+                self.repository_downloader.repo_extractor.extract_to_folder(artifact_path,
+                                                                            os.path.join(shell_path,
+                                                                                         self.ARTIFACTS[artifact_name]))
+                os.remove(artifact_path)
 
     @staticmethod
     def _remove_quali_signature(shell_path):
