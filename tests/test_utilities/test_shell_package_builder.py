@@ -37,8 +37,9 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
                                     '        file: NutShellDriver.zip\n'
                                     '        type: tosca.artifacts.File')
 
-        self.fs.CreateFile('nut-shell/nxos.png',
-                           contents='IMAGE')
+        self.fs.CreateFile('nut-shell/nxos.png', contents='IMAGE')
+
+        self.fs.CreateFile('nut-shell/src/driver.py', contents='DRIVER CONTENT')
 
         os.chdir('nut-shell')
 
@@ -85,6 +86,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
 
         self.fs.CreateFile('nut-shell/shell.png', contents='SHELL_IMAGE')
         self.fs.CreateFile('nut-shell/nxos.png', contents='IMAGE')
+        self.fs.CreateFile('nut-shell/src/driver.py', contents='DRIVER CONTENT')
 
         os.chdir('nut-shell')
 
@@ -129,8 +131,8 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
                                     '        file: NutShellDriver.zip\n'
                                     '        type: tosca.artifacts.File')
 
-        self.fs.CreateFile('nut_shell/nxos.png',
-                           contents='IMAGE')
+        self.fs.CreateFile('nut_shell/nxos.png', contents='IMAGE')
+        self.fs.CreateFile('nut_shell/src/driver.py', contents='DRIVER CONTENT')
 
         os.chdir('nut_shell')
 
@@ -219,3 +221,38 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
         assertFileExists(self, 'dist/package_content/TOSCA-Metadata/TOSCA.meta')
         assertFileExists(self, 'dist/package_content/shell-definition.yml')
 
+    def test_tosca_based_shell_failed(self):
+        # Arrange
+        self.fs.CreateFile('nut-shell/TOSCA-Metadata/TOSCA.meta',
+                           contents='TOSCA-Meta-File-Version: 1.0 \n'
+                                    'CSAR-Version: 1.1 \n'
+                                    'Created-By: Anonymous\n'
+                                    'Entry-Definitions: shell-definition.yml')
+
+        self.fs.CreateFile('nut-shell/shell-definition.yml',
+                           contents='tosca_definitions_version: tosca_simple_yaml_1_0\n'
+                                    'metadata:\n'
+                                    '  template_name: NutShell\n'
+                                    '  template_author: Anonymous\n'
+                                    '  template_version: 1.0.0\n'
+                                    'node_types:\n'
+                                    '  vendor.switch.NXOS:\n'
+                                    '    derived_from: cloudshell.nodes.Switch\n'
+                                    '    artifacts:\n'
+                                    '      icon:\n'
+                                    '        file: nxos.png\n'
+                                    '        type: tosca.artifacts.File\n'
+                                    '      driver:\n'
+                                    '        file: NutShellDriver.zip\n'
+                                    '        type: tosca.artifacts.File')
+
+        self.fs.CreateFile('nut-shell/nxos.png', contents='IMAGE')
+
+        os.chdir('nut-shell')
+
+        shell_package_builder = ShellPackageBuilder()
+
+        # Act
+        with self.assertRaisesRegexp(Exception, "Invalid driver structure."):
+            with patch('click.echo'):
+                shell_package_builder.pack('/nut-shell')

@@ -1,6 +1,12 @@
 =======
 History
 =======
+1.1.7 (2018-04-03)
+------------------
+
+* Shellfoundry will now pack deployment options if exists
+* Modified unpack method logic in extended command
+
 1.1.6 (2018-03-27)
 ------------------
 
