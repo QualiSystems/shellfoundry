@@ -37,8 +37,9 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
                                     '        file: NutShellDriver.zip\n'
                                     '        type: tosca.artifacts.File')
 
-        self.fs.CreateFile('nut-shell/nxos.png',
-                           contents='IMAGE')
+        self.fs.CreateFile('nut-shell/nxos.png', contents='IMAGE')
+
+        self.fs.CreateFile('nut-shell/src/driver.py', contents='DRIVER CONTENT')
 
         os.chdir('nut-shell')
 
@@ -85,6 +86,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
 
         self.fs.CreateFile('nut-shell/shell.png', contents='SHELL_IMAGE')
         self.fs.CreateFile('nut-shell/nxos.png', contents='IMAGE')
+        self.fs.CreateFile('nut-shell/src/driver.py', contents='DRIVER CONTENT')
 
         os.chdir('nut-shell')
 
@@ -129,8 +131,8 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
                                     '        file: NutShellDriver.zip\n'
                                     '        type: tosca.artifacts.File')
 
-        self.fs.CreateFile('nut_shell/nxos.png',
-                           contents='IMAGE')
+        self.fs.CreateFile('nut_shell/nxos.png', contents='IMAGE')
+        self.fs.CreateFile('nut-shell/src/driver.py', contents='DRIVER CONTENT')
 
         os.chdir('nut_shell')
 
