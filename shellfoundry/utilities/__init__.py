@@ -42,7 +42,7 @@ def is_index_version_greater_than_current():
 
 
 def max_version_from_index():
-    ctx = ssl.SSLContext(protocol=ssl.PROTOCOL_TLS)
+    ctx = ssl.SSLContext(protocol=ssl.PROTOCOL_SSLv23)
     proxy = ServerProxy(PyPI.url, context=ctx)
     releases = proxy.package_releases(PACKAGE_NAME)
     max_version = max(releases)
