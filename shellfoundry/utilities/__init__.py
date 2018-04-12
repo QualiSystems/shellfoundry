@@ -1,4 +1,5 @@
 from xmlrpclib import ServerProxy
+import ssl
 try:
     from pip.utils import get_installed_version
 except ImportError:
@@ -41,7 +42,8 @@ def is_index_version_greater_than_current():
 
 
 def max_version_from_index():
-    proxy = ServerProxy(PyPI.url)
+    ctx = ssl.SSLContext(protocol=ssl.PROTOCOL_TLS)
+    proxy = ServerProxy(PyPI.url, context=ctx)
     releases = proxy.package_releases(PACKAGE_NAME)
     max_version = max(releases)
     return max_version
