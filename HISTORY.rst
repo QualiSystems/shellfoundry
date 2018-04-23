@@ -1,6 +1,13 @@
 =======
 History
 =======
+
+1.1.8 (2018-04-23)
+------------------
+
+* Fixed typo in pack command behaviour
+* Added new online template for Cloud Provider
+
 1.1.7 (2018-04-03)
 ------------------
 

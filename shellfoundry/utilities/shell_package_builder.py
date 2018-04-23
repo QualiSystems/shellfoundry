@@ -14,7 +14,7 @@ from shellfoundry.utilities.temp_dir_context import TempDirContext
 
 class ShellPackageBuilder(object):
     DRIVER_DIR = "src"
-    DEPLOY_DIR = "deplyoments"
+    DEPLOY_DIR = "deployments"
 
     def pack(self, path):
         """
