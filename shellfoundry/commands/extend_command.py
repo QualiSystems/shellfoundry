@@ -20,7 +20,7 @@ class ExtendCommandExecutor(object):
     LOCAL_TEMPLATE_URL_PREFIX = "local:"
     SIGN_FILENAME = "signed"
     ARTIFACTS = {"driver": "src",
-                 "deployment": "deplyoments"}
+                 "deployment": "deployments"}
 
     def __init__(self, repository_downloader=None, shell_name_validations=None, shell_gen_validations=None):
         """
