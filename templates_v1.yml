@@ -185,7 +185,6 @@ templates:
     - name : gen2/cloud-provider
       params:
         project_name :
-        family_name :
       description : 2nd generation shell template for a cloud provider
       repository : https://github.com/QualiSystems/shellfoundry-tosca-cloudprovider-template
       min_cs_ver: 9.0
