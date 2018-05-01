@@ -1,10 +1,13 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import click
 
 from os import linesep
 from requests.exceptions import SSLError
 from shellfoundry import ALTERNATIVE_TEMPLATES_PATH
 from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
-from shellfoundry.utilities.config_reader import Configuration, ShellFoundryConfig
+from shellfoundry.utilities.config_reader import Configuration, ShellFoundryConfig, CloudShellConfigReader
 from shellfoundry.utilities.standards import Standards
 from ..exceptions import FatalError
 from cloudshell.rest.exceptions import FeatureUnavailable
@@ -22,22 +25,35 @@ class ListCommandExecutor(object):
         self.template_retriever = template_retriever or FilteredTemplateRetriever(dv, TemplateRetriever())
         self.show_info_msg = default_view is None
         self.standards = standards or Standards()
+        self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
     def list(self):
+        """  """
+
+        online_mode = self.cloudshell_config_reader.read().online_mode.lower() == "true"
+        template_location = self.cloudshell_config_reader.read().template_location
 
         try:
             standards = self.standards.fetch()
-            templates = self.template_retriever.get_templates(standards=standards)
-        except (SSLError, FatalError):
-            raise click.UsageError('Could not retrieve the templates list. Are you offline?')
+            if online_mode:
+                try:
+                    templates = self.template_retriever.get_templates(standards=standards)
+                except SSLError:
+                    raise click.UsageError("Could not retrieve the templates list. Are you offline?")
+            else:
+                templates = self.template_retriever.get_templates(template_location=template_location)
+        except FatalError as err:
+            raise click.UsageError(err.message)
         except FeatureUnavailable:
-            templates = self.template_retriever.get_templates(alternative=ALTERNATIVE_TEMPLATES_PATH)
+            if online_mode:
+                templates = self.template_retriever.get_templates(alternative=ALTERNATIVE_TEMPLATES_PATH)
+            else:
+                templates = self.template_retriever.get_templates(template_location=template_location)
 
         if not templates:
-            click.echo('No templates matched the criteria')
-            return
+            raise click.ClickException("No templates matched the criteria")
 
-        template_rows = [['Template Name', 'CloudShell Ver.', 'Description']]
+        template_rows = [["Template Name", "CloudShell Ver.", "Description"]]
         for template in templates.values():
             cs_ver_txt = str(template.min_cs_ver) + " and up"
             template_rows.append(
@@ -63,6 +79,6 @@ class ListCommandExecutor(object):
         click.echo(output)
 
         if self.show_info_msg:
-            click.echo('''
+            click.echo("""
 As of CloudShell 8.0, CloudShell uses 2nd generation shells, to view the list of 1st generation shells use: shellfoundry list --gen1.
-For more information, please visit our devguide: https://qualisystems.github.io/devguide/''')
+For more information, please visit our devguide: https://qualisystems.github.io/devguide/""")

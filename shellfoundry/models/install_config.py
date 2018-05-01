@@ -10,7 +10,7 @@ DEFAULT_PASSWORD = "admin"
 DEFAULT_DOMAIN = "Global"
 DEFAULT_AUTHOR = "Anonymous"
 DEFAULT_ONLINE_MODE = "True"
-DEFAULT_TEMPLATE_LOCATION = ""
+DEFAULT_TEMPLATE_LOCATION = "Empty"
 
 
 class InstallConfig(object):

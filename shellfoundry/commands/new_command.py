@@ -1,18 +1,23 @@
-import os
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import click
+import os
+
+from requests.exceptions import SSLError
+
+from cloudshell.rest.exceptions import FeatureUnavailable
+from ..exceptions import FatalError
 
 from shellfoundry import ALTERNATIVE_STANDARDS_PATH, ALTERNATIVE_TEMPLATES_PATH, MASTER_BRANCH_NAME
-from requests.exceptions import SSLError
-from ..exceptions import FatalError
+from shellfoundry.exceptions import VersionRequestException
 from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplateCompiler
 from shellfoundry.utilities.repository_downloader import RepositoryDownloader
+from shellfoundry.utilities.standards import StandardVersionsFactory, Standards
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 from shellfoundry.utilities.template_retriever import TemplateRetriever
-from shellfoundry.utilities.standards import StandardVersionsFactory, Standards
-from shellfoundry.exceptions import VersionRequestException
 from shellfoundry.utilities.template_versions import TemplateVersions
 from shellfoundry.utilities.validations import ShellNameValidations
-from cloudshell.rest.exceptions import FeatureUnavailable
 
 
 class NewCommandExecutor(object):

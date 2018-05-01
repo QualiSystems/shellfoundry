@@ -349,7 +349,7 @@ For more information, please visit our devguide: https://qualisystems.github.io/
         standards = Mock()
         standards.fetch.return_value = [{'StandardName': 'cloudshell_resource_standard', "Versions": ['5.0.0']}]
 
-        template_retriever = FilteredTemplateRetriever(flag_value,TemplateRetriever())
+        template_retriever = FilteredTemplateRetriever(flag_value, TemplateRetriever())
 
         httpretty.register_uri(httpretty.GET, TEMPLATES_YML, body=templates)
 

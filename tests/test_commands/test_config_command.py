@@ -31,16 +31,18 @@ not_supported_section:
 
         # Assert
         echo_mock.assert_any_call(
-            u' Key          Value          \n'
-            u'-----------------------------\n '
-            u'username     admin        * \n '
-            u'domain       Global       * \n '
-            u'defaultview  gen2         * \n '
-            u'key          value          \n '
-            u'author       Anonymous    * \n '
-            u'password     [encrypted]  * \n '
-            u'host         localhost    * \n '
-            u'port         9000         * ')
+            u' Key                Value          \n'
+            u'----------------------------------\n '
+            u'username           admin        * \n '
+            u'domain             Global       * \n '
+            u'defaultview        gen2         * \n '
+            u'key                value          \n '
+            u'author             Anonymous    * \n '
+            u'online_mode        True         * \n '
+            u'template_location  Empty        * \n '
+            u'password           [encrypted]  * \n '
+            u'host               localhost    * \n '
+            u'port               9000         * ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
@@ -96,17 +98,19 @@ install:
         ConfigCommandExecutor(True).config()
 
         # Assert
-        echo_mock.assert_any_call(u' Key            Value              \n'
-                                  u'-----------------------------------\n '
-                                  u'username       admin            * \n '
-                                  u'yetanotherkey  yetanothervalue    \n '
-                                  u'domain         Global           * \n '
-                                  u'defaultview    gen2             * \n '
-                                  u'key            value              \n '
-                                  u'author         Anonymous        * \n '
-                                  u'password       [encrypted]        \n '
-                                  u'host           localhost        * \n '
-                                  u'port           9000             * ')
+        echo_mock.assert_any_call(u' Key               Value              \n'
+                                  u'--------------------------------------\n '
+                                  u'username           admin            * \n '
+                                  u'yetanotherkey      yetanothervalue    \n '
+                                  u'domain             Global           * \n '
+                                  u'defaultview        gen2             * \n '
+                                  u'key                value              \n '
+                                  u'author             Anonymous        * \n '
+                                  u'online_mode        True             * \n '
+                                  u'template_location  Empty            * \n '
+                                  u'password           [encrypted]        \n '
+                                  u'host               localhost        * \n '
+                                  u'port               9000             * ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
