@@ -182,10 +182,9 @@ templates:
       description : 2nd generation shell template for a traffic-generator controller service
       repository : https://github.com/QualiSystems/shellfoundry-tosca-traffic-generator-controller-service-template
       min_cs_ver: 8.3
-    - name : gen2/cloudprovider
+    - name : gen2/cloud-provider
       params:
         project_name :
-        family_name : CloudProvider
       description : 2nd generation shell template for a cloud provider
       repository : https://github.com/QualiSystems/shellfoundry-tosca-cloudprovider-template
       min_cs_ver: 9.0
