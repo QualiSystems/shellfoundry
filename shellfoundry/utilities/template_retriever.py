@@ -5,6 +5,7 @@ import click
 import os
 import requests
 import yaml
+import json
 
 from collections import OrderedDict
 
@@ -72,10 +73,20 @@ class TemplateRetriever(object):
             templ_info = []
             for root, directories, filenames in os.walk(template_location):
                 for filename in filenames:
+                    # if filename == TEMPLATE_INFO_FILE:
+                    #     full_path = os.path.join(root, filename)
+                        # with open(full_path, mode='r') as stream:
+                        #     templ_info.append(yaml.load(stream.read()))
                     if filename == TEMPLATE_INFO_FILE:
                         full_path = os.path.join(root, filename)
-                        with open(full_path, mode='r') as stream:
-                            templ_info.append(yaml.load(stream.read()))
+                        with open(full_path, mode='r') as f:
+                            templ_data = json.load(f)
+                            templ_info.append({"name": templ_data.get("template_name", "Undefined"),
+                                               "description": templ_data.get("template_descr", "Undefined"),
+                                               "min_cs_ver": templ_data.get("server_version", "Undefined"),
+                                               "repository": templ_data.get("template_repository", "Undefined"),
+                                               "params": {"project_name": templ_data.get("project_name", None),
+                                                          "family_name": templ_data.get("family_name", None)}})
 
             if templ_info:
                 templates = yaml.dump({"templates": templ_info})

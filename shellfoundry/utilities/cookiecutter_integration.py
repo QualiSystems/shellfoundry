@@ -26,7 +26,7 @@ class CookiecutterTemplateCompiler(object):
                      extra_context=extra_context,
                      overwrite_if_exists=False, output_dir=output_dir)
 
-        self._remove_template_info_file(output_dir)
+        # self._remove_template_info_file(output_dir)
 
     @staticmethod
     def _remove_template_info_file(shell_path):
