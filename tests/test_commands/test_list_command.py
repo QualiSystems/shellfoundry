@@ -3,7 +3,7 @@ import httpretty
 
 from pyfakefs import fake_filesystem_unittest
 
-from click import UsageError
+from click import UsageError, ClickException
 from mock import Mock, patch
 from requests.exceptions import SSLError
 from cloudshell.rest.api import FeatureUnavailable
@@ -248,8 +248,7 @@ class TestListCommand(unittest.TestCase):
 
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
-    def test_list_shows_nothing_because_filter_is_set_for_templates_that_do_not_exist(self, max_width_mock,
-                                                                                        echo_mock):
+    def test_list_shows_nothing_because_filter_is_set_for_templates_that_do_not_exist(self, max_width_mock, echo_mock):
         # Arrange
         max_width_mock.return_value = 40
         template_retriever = Mock()
@@ -269,10 +268,13 @@ class TestListCommand(unittest.TestCase):
             template_retriever=FilteredTemplateRetriever(flag_value, template_retriever), standards=standards)
 
         # Act
-        list_command_executor.list()
+        # list_command_executor.list()
 
         # Assert
-        echo_mock.assert_called_once_with('No templates matched the criteria')
+
+        self.assertRaisesRegexp(ClickException, "No templates matched the criteria", list_command_executor.list)
+
+        # echo_mock.assert_called_once_with('No templates matched the criteria')
 
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
