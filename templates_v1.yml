@@ -188,3 +188,9 @@ templates:
       description : 2nd generation shell template for a cloud provider
       repository : https://github.com/QualiSystems/shellfoundry-tosca-cloudprovider-template
       min_cs_ver: 9.0
+    - name : gen2/loadbalancer
+      params:
+        project_name :
+      description : 2nd generation shell template for a loadbalancer
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-loadbalancer-template
+      min_cs_ver: 8.3
