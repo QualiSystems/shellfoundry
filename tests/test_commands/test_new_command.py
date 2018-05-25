@@ -167,6 +167,9 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
 
         local_template = os.path.abspath(self.fs.CreateDirectory('shell_template_root').name)
 
+        self.fs.CreateFile(os.path.join(local_template, "cookiecutter.json"),
+                           contents="""{'family_name' : 'Family Name'}""")
+
         shell_dir = self.fs.CreateDirectory('linux-shell').name
         os.chdir(shell_dir)
 
@@ -195,6 +198,9 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
                                               template_compiler=template_compiler)
 
         local_template = self.fs.CreateDirectory('shell_template_root').name
+
+        self.fs.CreateFile(os.path.join(local_template, "cookiecutter.json"),
+                           contents="""{'family_name' : 'Family Name'}""")
 
         # Act
         command_executor.new('new_shell', 'local:{template_dir}'.format(template_dir=local_template), 'master')
