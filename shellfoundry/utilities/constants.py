@@ -11,7 +11,7 @@ METADATA_AUTHOR_FIELD = "Created-By"
 TEMPLATE_AUTHOR_FIELD = "metadata/template_author"
 TEMPLATE_VERSION = "metadata/template_version"
 TEMPLATE_BASED_ON = "metadata/template_based_on"
-TEMPLATE_INFO_FILE = "template_info.yml"
+TEMPLATE_INFO_FILE = "cookiecutter.json"
 
 CLOUDSHELL_MAX_RETRIES = 5
 CLOUDSHELL_RETRY_INTERVAL_SEC = 0.5
