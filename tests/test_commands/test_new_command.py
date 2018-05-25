@@ -168,7 +168,10 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
         local_template = os.path.abspath(self.fs.CreateDirectory('shell_template_root').name)
 
         self.fs.CreateFile(os.path.join(local_template, "cookiecutter.json"),
-                           contents="""{'family_name' : 'Family Name'}""")
+                           contents="""{
+            "project_name": "Shell",
+            "family_name" : "Family"
+        }""")
 
         shell_dir = self.fs.CreateDirectory('linux-shell').name
         os.chdir(shell_dir)
@@ -200,7 +203,10 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
         local_template = self.fs.CreateDirectory('shell_template_root').name
 
         self.fs.CreateFile(os.path.join(local_template, "cookiecutter.json"),
-                           contents="""{'family_name' : 'Family Name'}""")
+                           contents="""{
+            "project_name": "Shell",
+            "family_name" : "Family"
+        }""")
 
         # Act
         command_executor.new('new_shell', 'local:{template_dir}'.format(template_dir=local_template), 'master')
@@ -381,7 +387,8 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
         zipfile = mock_template_zip_file()
 
         httpretty.register_uri(httpretty.GET, TEMPLATES_YML, body=templates)
-        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.1",
+        httpretty.register_uri(httpretty.GET,
+                               "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.1",
                                body=zipfile.read(), content_type='application/zip',
                                content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
 
@@ -412,7 +419,8 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
         template_compiler = Mock()
         zipfile = mock_template_zip_file()
 
-        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.0",
+        httpretty.register_uri(httpretty.GET,
+                               "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.0",
                                body=zipfile.read(), content_type='application/zip',
                                content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
 
@@ -443,7 +451,8 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
         template_compiler = Mock()
         zipfile = mock_template_zip_file()
 
-        httpretty.register_uri(httpretty.GET, "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.0",
+        httpretty.register_uri(httpretty.GET,
+                               "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.0",
                                body=zipfile.read(), content_type='application/zip',
                                content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
 
@@ -455,7 +464,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
                                      repository_downloader=RepositoryDownloader(),
                                      template_compiler=template_compiler, standards=Standards(),
                                      standard_versions=StandardVersionsFactory())
-        # Assert
+            # Assert
             output_msg = "Template gen2/doesnot/exists does not exist. Supported templates are: gen1/resource, " \
                          "gen1/resource-clean, gen1/deployed-app, gen1/networking/switch, gen1/networking/router," \
                          " gen1/pdu, gen1/firewall, gen1/compute, layer-1-switch, gen2/networking/switch, " \
