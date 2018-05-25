@@ -183,7 +183,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
             CookiecutterTemplateCompiler.compile_template,
             shell_name=shell_dir,
             template_path=local_template,
-            extra_context={},
+            extra_context={"family_name" : "Family"},
             running_on_same_folder=True)
 
     def test_can_generate_shell_from_local_template(self):
@@ -215,7 +215,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
             CookiecutterTemplateCompiler.compile_template,
             shell_name='new_shell',
             template_path='shell_template_root',
-            extra_context={},
+            extra_context={"family_name" : "Family"},
             running_on_same_folder=False)
 
     @httpretty.activate
