@@ -135,8 +135,10 @@ class NewCommandExecutor(object):
             if value not in family_name:
                 raise click.UsageError("Incorrect family name provided.")
             extra_context = {"family_name": value}
-        else:
+        elif family_name:
             extra_context = {"family_name": family_name}
+        else:
+            extra_context = {}
 
         self.template_compiler.compile_template(shell_name=name,
                                                 template_path=repo_path,
