@@ -1,18 +1,25 @@
-import os
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import click
+import os
+import json
+
+from requests.exceptions import SSLError
+
+from cloudshell.rest.exceptions import FeatureUnavailable
+from ..exceptions import FatalError
 
 from shellfoundry import ALTERNATIVE_STANDARDS_PATH, ALTERNATIVE_TEMPLATES_PATH, MASTER_BRANCH_NAME
-from requests.exceptions import SSLError
-from ..exceptions import FatalError
+from shellfoundry.exceptions import VersionRequestException
+from shellfoundry.utilities.constants import TEMPLATE_INFO_FILE
 from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplateCompiler
 from shellfoundry.utilities.repository_downloader import RepositoryDownloader
+from shellfoundry.utilities.standards import StandardVersionsFactory, Standards
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 from shellfoundry.utilities.template_retriever import TemplateRetriever
-from shellfoundry.utilities.standards import StandardVersionsFactory, Standards
-from shellfoundry.exceptions import VersionRequestException
 from shellfoundry.utilities.template_versions import TemplateVersions
 from shellfoundry.utilities.validations import ShellNameValidations
-from cloudshell.rest.exceptions import FeatureUnavailable
 
 
 class NewCommandExecutor(object):
@@ -99,8 +106,10 @@ class NewCommandExecutor(object):
                     u'template version. \nAvailable versions for {}: {}'
                     .format(version, template_obj.name, branches_str))
 
-            self.template_compiler.compile_template(name, repo_path, template_obj.params,
-                                                    running_on_same_folder)
+            self.template_compiler.compile_template(shell_name=name,
+                                                    template_path=repo_path,
+                                                    extra_context=template_obj.params,
+                                                    running_on_same_folder=running_on_same_folder)
 
     def _get_template_latest_version(self, standards_list, standard):
         try:
@@ -115,7 +124,25 @@ class NewCommandExecutor(object):
             raise click.BadParameter("Could not locate a template folder at: {template_path}"
                                      .format(template_path=repo_path))
 
-        self.template_compiler.compile_template(shell_name=name, template_path=repo_path, extra_context={},
+        full_path = os.path.join(repo_path, TEMPLATE_INFO_FILE)
+        with open(full_path, mode='r') as f:
+            templ_data = json.load(f)
+
+        family_name = templ_data.get("family_name")
+        if isinstance(family_name, list):
+            value = click.prompt("Please, choose one of the possible family name: {}".format(", ".join(family_name)),
+                                 default=family_name[0])
+            if value not in family_name:
+                raise click.UsageError("Incorrect family name provided.")
+            extra_context = {"family_name": value}
+        elif family_name:
+            extra_context = {"family_name": family_name}
+        else:
+            extra_context = {}
+
+        self.template_compiler.compile_template(shell_name=name,
+                                                template_path=repo_path,
+                                                extra_context=extra_context,
                                                 running_on_same_folder=running_on_same_folder)
 
     def _is_local_template(self, template):

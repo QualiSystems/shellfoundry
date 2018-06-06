@@ -1,5 +1,8 @@
-from ..cloudshell_api import create_cloudshell_client
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import json
+from ..cloudshell_api import create_cloudshell_client
 
 
 class Standards(object):
