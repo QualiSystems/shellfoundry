@@ -59,14 +59,22 @@ def release_version(parsed_args):
     :todo: create new preview release on github
     """
 
-    with open("shell.yml", 'r') as f:
-        shell = yaml.safe_load(f)
-    shell['shell']['version'] = parsed_args.release
-    with open("shell.yml", 'w') as f:
-        yaml.safe_dump(shell, f, default_flow_style=False)
-
-    with open("version.txt", 'w') as f:
-        f.write(parsed_args.release)
+    if os.path.exists('shell-definition.yaml'):
+        # second gen
+        with open('shell-definition.yaml', 'r') as f:
+            shell_definition = yaml.safe_load(f)
+        shell_definition['metadata']['template_version'] = parsed_args.release
+        with open("shell-definition.yaml", 'w') as f:
+            yaml.safe_dump(shell_definition, f, default_flow_style=False)
+    else:
+        # first gen
+        with open('shell.yml', 'r') as f:
+            shell = yaml.safe_load(f)
+        shell['shell']['version'] = parsed_args.release
+        with open("shell.yml", 'w') as f:
+            yaml.safe_dump(shell, f, default_flow_style=False)
+        with open("version.txt", 'w') as f:
+            f.write(parsed_args.release)
 
     drivermetadata = ET.parse('src/drivermetadata.xml')
     driver = drivermetadata.getroot()
@@ -77,25 +85,27 @@ def release_version(parsed_args):
         PackCommandExecutor().pack()
         DistCommandExecutor().dist()
 
+    repo = Repo('.')
     if parsed_args.commit:
         message = 'version ' + parsed_args.release
         if parsed_args.message:
             message += ' - ' + parsed_args.message
-        repo = Repo('.')
         repo.git.add('.')
         repo.git.commit('-m {}'.format(message))
         repo.git.push()
         repo.git.push('.', 'development:master')
         repo.git.push('origin', 'master:master')
 
-    create_release(parsed_args)
+    create_release(parsed_args, repo)
 
 
-def create_release(parsed_args):
+def create_release(parsed_args, repo):
 
     api_url = 'https://api.github.com/'
     uploads_url = 'https://uploads.github.com/'
-    repo_name = os.path.basename(os.getcwd())
+    url = repo.config_reader().get('remote "origin"', 'url')
+    org_name = url.split('/')[3]
+    repo_name = url.split('/')[-1].split('.')[0]
 
     data = '{"scopes": ["repo", "user"], "note": "testing' + str(random.randint(0, 1000)) + '"}'
     r = requests.post(api_url + 'authorizations', data=data, auth=(parsed_args.user, parsed_args.password))
@@ -106,7 +116,7 @@ def create_release(parsed_args):
     headers = {'Authorization': 'token ' + str(auth['token'])}
     body = parsed_args.message if parsed_args.message else ''
     data = {'tag_name': tag_name, 'name': repo_name + ' ' + tag_name, 'body': body, 'prerelease': True}
-    r = requests.post(api_url + 'repos/qualisystems/{}/releases'.format(repo_name), headers=headers, json=data)
+    r = requests.post(api_url + 'repos/{}/{}/releases'.format(org_name, repo_name), headers=headers, json=data)
     rel = r.json()
 
     headers = {'Authorization': 'token ' + str(auth['token']),
@@ -115,7 +125,7 @@ def create_release(parsed_args):
     for zip_file in glob.glob(os.path.join(os.getcwd(), 'dist', '*.zip')):
         params = {'name': os.path.basename(zip_file)}
         data = open(zip_file, 'rb').read()
-        r = requests.post(uploads_url + 'repos/qualisystems/{}/releases/{}/assets'.format(repo_name, rel['id']),
+        r = requests.post(uploads_url + 'repos/{}/{}/releases/{}/assets'.format(org_name, repo_name, rel['id']),
                           headers=headers, params=params, data=data)
 
     r = requests.delete(api_url + 'authorizations/' + str(auth['id']),
@@ -126,8 +136,10 @@ def test_version():
 
     InstallCommandExecutor().install()
 
-    if pytest.main([]) > 0:
-        raise SystemExit
+    shell_test = glob.glob('tests/*_shell.py')
+    if shell_test:
+        if pytest.main(shell_test) > 0:
+            raise SystemExit
 
 
 if __name__ == "__main__":
