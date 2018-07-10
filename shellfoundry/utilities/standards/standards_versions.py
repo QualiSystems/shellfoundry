@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+from pkg_resources import parse_version
+
 from .consts import STANDARD_NAME_KEY, VERSIONS_KEY
 
 
@@ -29,5 +34,6 @@ class StandardVersions(object):
     def get_latest_version(self, standard):
         for curr_standard in self.standards:
             if standard in curr_standard.values():
-                return max(curr_standard[VERSIONS_KEY])
+                return unicode(max(map(parse_version, curr_standard[VERSIONS_KEY])))
+                # return max(curr_standard[VERSIONS_KEY])
         raise Exception('Failed to find latest version')
