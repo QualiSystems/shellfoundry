@@ -3,9 +3,11 @@
 
 import json
 from ..cloudshell_api import create_cloudshell_client
+from shellfoundry.decorators.standards import standard_transformation
 
 
 class Standards(object):
+    @standard_transformation
     def fetch(self, **kwargs):
         alternative = kwargs.get('alternative', None)
         if not alternative:
