@@ -138,7 +138,7 @@ class TemplateRetriever(object):
         :return:
         """
         if not standards:
-            return templates
+            return OrderedDict(sorted(templates.iteritems()))
 
         filtered_templates = defaultdict(list)
         for template_name, templates_list in templates.iteritems():

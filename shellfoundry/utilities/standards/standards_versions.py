@@ -17,10 +17,15 @@ class StandardVersions(object):
             raise Exception('Standards list is empty. Please verify that {} exists'
                             .format(os.path.join(os.path.dirname(sf_file),
                                                  'data', 'standards.json')))
+
         self.standards = standards
 
     def get_latest_version(self, standard):
-        latest_version = unicode(max(map(parse_version, self.standards.get(standard, None))))
+
+        standards = self.standards.get(standard, None)
+        if standards is None:
+            raise Exception('Failed to find latest version')
+
+        latest_version = unicode(max(map(parse_version, standards)))
         if latest_version:
             return latest_version
-        raise Exception('Failed to find latest version')
