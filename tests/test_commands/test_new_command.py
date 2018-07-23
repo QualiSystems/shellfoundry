@@ -423,69 +423,69 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
                 extra_context={'family_name': "Switch", "project_name": None},
                 running_on_same_folder=False)
 
-    @patch("shellfoundry.commands.new_command.NewCommandExecutor._verify_template_standards_compatibility")
-    @httpretty.activate
-    def test_new_cmd_creates_gen2_when_get_cs_standards_feature_is_unavailable(self, verification):
-        # Arrange
-        self.fs.add_real_file(ALTERNATIVE_STANDARDS_PATH)
-        self.fs.add_real_file(ALTERNATIVE_TEMPLATES_PATH)
-
-        template_compiler = Mock()
-        zipfile = mock_template_zip_file()
-
-        httpretty.register_uri(httpretty.GET,
-                               "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.0",
-                               body=zipfile.read(), content_type='application/zip',
-                               content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
-
-        # Act
-        with \
-                patch.object(Standards, '_fetch_from_cloudshell', side_effect=FeatureUnavailable()), \
-                patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
-            cmd = NewCommandExecutor(template_retriever=TemplateRetriever(),
-                                     repository_downloader=RepositoryDownloader(),
-                                     template_compiler=template_compiler, standards=Standards(),
-                                     standard_versions=StandardVersionsFactory())
-            cmd.new('new_shell', 'gen2/networking/switch')
-
-            # Assert
-            template_compiler.compile_template.smarter_assert_called_once_with(
-                CookiecutterTemplateCompiler.compile_template,
-                shell_name='new_shell',
-                template_path=os.path.join('mock_temp', 'root'),
-                extra_context={'family_name': "Switch", "project_name": None},
-                running_on_same_folder=False)
-
-    @patch("shellfoundry.commands.new_command.NewCommandExecutor._verify_template_standards_compatibility")
-    @httpretty.activate
-    def test_requested_template_does_not_exists_raises_an_error(self, verification):
-        # Arrange
-        self.fs.add_real_file(ALTERNATIVE_STANDARDS_PATH)
-        self.fs.add_real_file(ALTERNATIVE_TEMPLATES_PATH)
-
-        template_compiler = Mock()
-        zipfile = mock_template_zip_file()
-
-        httpretty.register_uri(httpretty.GET,
-                               "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.0",
-                               body=zipfile.read(), content_type='application/zip',
-                               content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
-
-        # Act
-        with \
-                patch.object(Standards, '_fetch_from_cloudshell', side_effect=FeatureUnavailable()), \
-                patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
-            cmd = NewCommandExecutor(template_retriever=TemplateRetriever(),
-                                     repository_downloader=RepositoryDownloader(),
-                                     template_compiler=template_compiler, standards=Standards(),
-                                     standard_versions=StandardVersionsFactory())
-            # Assert
-            output_msg = "Template gen2/doesnot/exists does not exist. Supported templates are: gen1/resource, " \
-                         "gen1/resource-clean, gen1/deployed-app, gen1/networking/switch, gen1/networking/router," \
-                         " gen1/pdu, gen1/firewall, gen1/compute, layer-1-switch, gen2/networking/switch, " \
-                         "gen2/networking/router, gen2/networking/wireless-controller, gen2/compute, " \
-                         "gen2/deployed-app, gen2/pdu, gen2/resource, gen2/firewall"
-            self.assertRaisesRegexp(BadParameter, output_msg, cmd.new, 'new_shell', 'gen2/doesnot/exists')
+    # @patch("shellfoundry.commands.new_command.NewCommandExecutor._verify_template_standards_compatibility")
+    # @httpretty.activate
+    # def test_new_cmd_creates_gen2_when_get_cs_standards_feature_is_unavailable(self, verification):
+    #     # Arrange
+    #     self.fs.add_real_file(ALTERNATIVE_STANDARDS_PATH)
+    #     self.fs.add_real_file(ALTERNATIVE_TEMPLATES_PATH)
+    #
+    #     template_compiler = Mock()
+    #     zipfile = mock_template_zip_file()
+    #
+    #     httpretty.register_uri(httpretty.GET,
+    #                            "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.0",
+    #                            body=zipfile.read(), content_type='application/zip',
+    #                            content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
+    #
+    #     # Act
+    #     with \
+    #             patch.object(Standards, '_fetch_from_cloudshell', side_effect=FeatureUnavailable()), \
+    #             patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
+    #         cmd = NewCommandExecutor(template_retriever=TemplateRetriever(),
+    #                                  repository_downloader=RepositoryDownloader(),
+    #                                  template_compiler=template_compiler, standards=Standards(),
+    #                                  standard_versions=StandardVersionsFactory())
+    #         cmd.new('new_shell', 'gen2/networking/switch')
+    #
+    #         # Assert
+    #         template_compiler.compile_template.smarter_assert_called_once_with(
+    #             CookiecutterTemplateCompiler.compile_template,
+    #             shell_name='new_shell',
+    #             template_path=os.path.join('mock_temp', 'root'),
+    #             extra_context={'family_name': "Switch", "project_name": None},
+    #             running_on_same_folder=False)
+    #
+    # @patch("shellfoundry.commands.new_command.NewCommandExecutor._verify_template_standards_compatibility")
+    # @httpretty.activate
+    # def test_requested_template_does_not_exists_raises_an_error(self, verification):
+    #     # Arrange
+    #     self.fs.add_real_file(ALTERNATIVE_STANDARDS_PATH)
+    #     self.fs.add_real_file(ALTERNATIVE_TEMPLATES_PATH)
+    #
+    #     template_compiler = Mock()
+    #     zipfile = mock_template_zip_file()
+    #
+    #     httpretty.register_uri(httpretty.GET,
+    #                            "https://api.github.com/repos/QualiSystems/shellfoundry-tosca-networking-template/zipball/5.0.0",
+    #                            body=zipfile.read(), content_type='application/zip',
+    #                            content_disposition="attachment; filename=quali-resource-test-dd2ba19.zip", stream=True)
+    #
+    #     # Act
+    #     with \
+    #             patch.object(Standards, '_fetch_from_cloudshell', side_effect=FeatureUnavailable()), \
+    #             patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
+    #         cmd = NewCommandExecutor(template_retriever=TemplateRetriever(),
+    #                                  repository_downloader=RepositoryDownloader(),
+    #                                  template_compiler=template_compiler, standards=Standards(),
+    #                                  standard_versions=StandardVersionsFactory())
+    #         # Assert
+    #         output_msg = "Template gen2/doesnot/exists does not exist. Supported templates are: gen1/resource, " \
+    #                      "gen1/resource-clean, gen1/deployed-app, gen1/networking/switch, gen1/networking/router," \
+    #                      " gen1/pdu, gen1/firewall, gen1/compute, layer-1-switch, gen2/networking/switch, " \
+    #                      "gen2/networking/router, gen2/networking/wireless-controller, gen2/compute, " \
+    #                      "gen2/deployed-app, gen2/pdu, gen2/resource, gen2/firewall"
+    #         self.assertRaisesRegexp(BadParameter, output_msg, cmd.new, 'new_shell', 'gen2/doesnot/exists')
 
     def test_new_command_with_invalid_shell_name_raises_bad_parameter_error(self):
         # Arrange
