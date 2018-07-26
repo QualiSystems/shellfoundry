@@ -41,7 +41,8 @@ class ListCommandExecutor(object):
                 except SSLError:
                     raise click.UsageError("Could not retrieve the templates list. Are you offline?")
             else:
-                templates = self.template_retriever.get_templates(template_location=template_location)
+                templates = self.template_retriever.get_templates(template_location=template_location,
+                                                                  standards=standards)
         except FatalError as err:
             raise click.UsageError(err.message)
         except FeatureUnavailable:
@@ -55,6 +56,7 @@ class ListCommandExecutor(object):
 
         template_rows = [["Template Name", "CloudShell Ver.", "Description"]]
         for template in templates.values():
+            template = template[0]
             cs_ver_txt = str(template.min_cs_ver) + " and up"
             template_rows.append(
                 [template.name, cs_ver_txt,
@@ -71,6 +73,7 @@ class ListCommandExecutor(object):
 
         row = 1
         for template in templates.values():
+            template = template[0]
             wrapped_string = linesep.join(wrap(template.description, max_width))
             table.table_data[row][2] = wrapped_string
             row += 1

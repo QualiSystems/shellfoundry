@@ -56,7 +56,7 @@ def max_version_from_index():
         raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
                                            "are you offline? Error: {}".format(err.errmsg))
     except Exception, err:
-        print ShellFoundryVersionException("Unexpected error during shellfoundry version check. "
+        raise ShellFoundryVersionException("Unexpected error during shellfoundry version check. "
                                            "Error: {}.".format(err.message))
 
 
