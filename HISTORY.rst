@@ -2,6 +2,12 @@
 History
 =======
 
+1.2.0 (2018-07-26)
+------------------
+
+* Extended the "new" command behaviour for offline mode
+* Added verification is template and standard version are compatible
+
 1.1.9 (2018-05-03)
 ------------------
 
