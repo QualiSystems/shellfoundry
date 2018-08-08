@@ -310,12 +310,16 @@ class TestListCommand(unittest.TestCase):
 As of CloudShell 8.0, CloudShell uses 2nd generation shells, to view the list of 1st generation shells use: shellfoundry list --gen1.
 For more information, please visit our devguide: https://qualisystems.github.io/devguide/''')
 
+
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
     @patch('shellfoundry.commands.list_command.Configuration')
+    @patch.object(TemplateRetriever, '_get_min_cs_version')
     @httpretty.activate
-    def test_templates_are_filtered_based_upon_the_result_of_cs_standards(self, conf_class, max_width_mock, echo_mock):
+    def test_templates_are_filtered_based_upon_the_result_of_cs_standards(self, _get_min_cs_version, conf_class,
+                                                                          max_width_mock, echo_mock):
         # Arrange
+        _get_min_cs_version.return_value = None
         configuration = MagicMock(read=MagicMock(return_value=MagicMock(online_mode="True")))
         conf_class.return_value = configuration
         max_width_mock.return_value = 40
@@ -380,10 +384,12 @@ For more information, please visit our devguide: https://qualisystems.github.io/
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
     @patch('shellfoundry.commands.list_command.Configuration')
+    @patch.object(TemplateRetriever, '_get_min_cs_version')
     @httpretty.activate
-    def test_templates_are_filtered_based_upon_the_result_of_cs_standards_gen2(self, conf_class, max_width_mock,
-                                                                               echo_mock):
+    def test_templates_are_filtered_based_upon_the_result_of_cs_standards_gen2(self, _get_min_cs_version, conf_class,
+                                                                               max_width_mock, echo_mock):
         # Arrange
+        _get_min_cs_version.return_value = None
         configuration = MagicMock(read=MagicMock(return_value=MagicMock(online_mode="True")))
         conf_class.return_value = configuration
         max_width_mock.return_value = 40
