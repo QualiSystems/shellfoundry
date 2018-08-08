@@ -275,7 +275,8 @@ class TestListCommand(unittest.TestCase):
             template_retriever=FilteredTemplateRetriever(flag_value, template_retriever), standards=standards)
 
         # Act
-        with self.assertRaisesRegexp(ClickException, "No templates matched the criteria"):
+        with self.assertRaisesRegexp(ClickException, "No templates matched the view criteria(gen1/gen2) or "
+                                                     "available templates and standards are not compatible"):
             list_command_executor.list()
 
             # Assert

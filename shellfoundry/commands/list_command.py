@@ -52,7 +52,8 @@ class ListCommandExecutor(object):
                 templates = self.template_retriever.get_templates(template_location=template_location)
 
         if not templates:
-            raise click.ClickException("No templates matched the criteria")
+            raise click.ClickException("No templates matched the view criteria(gen1/gen2) or "
+                                       "available templates and standards are not compatible")
 
         template_rows = [["Template Name", "CloudShell Ver.", "Description"]]
         for template in templates.values():
