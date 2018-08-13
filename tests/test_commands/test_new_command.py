@@ -408,6 +408,7 @@ class TestMainCli(fake_filesystem_unittest.TestCase):
         # Act
         with \
                 patch.object(TemplateRetriever, '_get_templates_from_github', return_value=templates), \
+                patch.object(TemplateRetriever, '_get_min_cs_version', return_value=None), \
                 patch.object(TempDirContext, '__enter__', return_value=self.fs.CreateDirectory('mock_temp').name):
             cmd = NewCommandExecutor(template_retriever=TemplateRetriever(),
                                      repository_downloader=RepositoryDownloader(),

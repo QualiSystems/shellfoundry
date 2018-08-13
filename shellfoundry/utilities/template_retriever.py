@@ -9,6 +9,7 @@ import json
 import re
 
 from collections import OrderedDict, defaultdict
+from pkg_resources import parse_version
 
 from .filters import CompositeFilter
 from shellfoundry.models.shell_template import ShellTemplate
@@ -16,6 +17,7 @@ from shellfoundry.utilities import GEN_TWO, SEPARATOR
 from shellfoundry.utilities.constants import TEMPLATE_INFO_FILE
 
 TEMPLATES_YML = 'https://raw.github.com/QualiSystems/shellfoundry/master/templates_v1.yml'
+SERVER_VERSION_KEY = "server_version"
 
 
 class TemplateRetriever(object):
@@ -86,16 +88,16 @@ class TemplateRetriever(object):
                             templ_data = json.load(f)
                         templ_info.append({"name": templ_data.get("template_name", "Undefined"),
                                            "description": templ_data.get("template_descr", "Undefined"),
-                                           "min_cs_ver": templ_data.get("server_version", "Undefined"),
+                                           "min_cs_ver": templ_data.get(SERVER_VERSION_KEY, "Undefined"),
                                            "repository": "",
                                            "standard_version": {standard_version: {"repo": root,
                                                                                    "min_cs_ver": templ_data.get(
-                                                                                       "server_version", "Undefined")}},
+                                                                                       SERVER_VERSION_KEY, "Undefined")}},
                                            "params": {"project_name": templ_data.get("project_name", None),
                                                       "family_name": templ_data.get("family_name", None)}})
 
             if templ_info:
-                templates = {"templates": templ_info}
+                templates = {"templates": sorted(templ_info, key=lambda data: data["standard_version"].keys()[0])}
             else:
                 templates = None
 
@@ -137,6 +139,7 @@ class TemplateRetriever(object):
         :type standards dict
         :return:
         """
+
         if not standards:
             return OrderedDict(sorted(templates.iteritems()))
 
@@ -149,9 +152,31 @@ class TemplateRetriever(object):
             elif clear_template_name in standards.keys():
                 for template in templates_list:
                     if not template.standard_version or template.standard_version.keys()[0] in standards[clear_template_name]:
+                        if template.repository:
+                            template.min_cs_ver = TemplateRetriever._get_min_cs_version(repository=template.repository,
+                                                                                        standard_name=template.standard,
+                                                                                        standards=standards) or template.min_cs_ver
                         filtered_templates[template_name].append(template)
 
         return OrderedDict(sorted(filtered_templates.iteritems()))
+
+    @staticmethod
+    def _get_min_cs_version(repository, standard_name, standards):
+        """ Get minimal CloudShell Server Version available for provided template """
+
+        min_standard_version = unicode(min(map(parse_version, standards[standard_name])))
+        repository = repository.replace("https://github.com", "https://raw.github.com")
+        url = "/".join([repository, min_standard_version, "cookiecutter.json"])
+
+        session = requests.Session()
+        session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
+        responce = session.get(url)
+
+        if responce.status_code == 200:
+            data = json.loads(responce.text)
+            return data.get(SERVER_VERSION_KEY, None)
+        else:
+            return
 
 
 class FilteredTemplateRetriever(object):

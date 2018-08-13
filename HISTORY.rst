@@ -2,6 +2,11 @@
 History
 =======
 
+1.2.1 (2018-08-13)
+------------------
+
+* Added dynamical determination of minimal CloudShell version from templates
+
 1.2.0 (2018-07-26)
 ------------------
 
