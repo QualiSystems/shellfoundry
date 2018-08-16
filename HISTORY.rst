@@ -2,6 +2,11 @@
 History
 =======
 
+1.2.2 (2018-08-16)
+------------------
+
+* Fixed bug in verification template and standards compatibility
+
 1.2.1 (2018-08-13)
 ------------------
 
