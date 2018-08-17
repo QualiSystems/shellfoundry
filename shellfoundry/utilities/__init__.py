@@ -30,9 +30,6 @@ class Index(object):
         self.url = url
 
 
-PyPI = Index('https://pypi.python.org/pypi/')
-
-
 def is_index_version_greater_than_current():
     MAJOR_INDEX = 0
 
@@ -50,7 +47,7 @@ def is_index_version_greater_than_current():
 def max_version_from_index():
     try:
         url = 'https://pypi.org/pypi/{}/json'.format(PACKAGE_NAME)
-        r = requests.get(url, stream=True)
+        r = requests.get(url)
         if r.status_code != requests.codes.ok:
             raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
                                                "are you offline?")
