@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from xmlrpclib import ServerProxy, ProtocolError
+import requests
+import json
 try:
     from pip.utils import get_installed_version
 except ImportError:
@@ -48,16 +49,18 @@ def is_index_version_greater_than_current():
 
 def max_version_from_index():
     try:
-        proxy = ServerProxy(PyPI.url)
-        releases = proxy.package_releases(PACKAGE_NAME)
-        max_version = max(releases)
-        return max_version
-    except ProtocolError, err:
-        raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
-                                           "are you offline? Error: {}".format(err.errmsg))
+        url = 'https://pypi.org/pypi/{}/json'.format(PACKAGE_NAME)
+        r = requests.get(url, stream=True)
+        if r.status_code != requests.codes.ok:
+            raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
+                                               "are you offline?")
+        else:
+            content = json.loads(r.content)
+            max_version = content['info']['version']
+            return max_version
     except Exception, err:
-        raise ShellFoundryVersionException("Unexpected error during shellfoundry version check. "
-                                           "Error: {}.".format(err.message))
+        raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
+                                           "are you offline? Error: {}".format(err.message))
 
 
 def get_index_of_biggest_component_between_two_versions(v1, v2):
