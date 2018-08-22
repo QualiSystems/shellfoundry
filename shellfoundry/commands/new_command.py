@@ -178,8 +178,6 @@ class NewCommandExecutor(object):
                                                 running_on_same_folder=running_on_same_folder)
 
     def _get_template_latest_version(self, standards_list, standard):
-        """ Get the latest template version based on provided standards list """
-
         try:
             return self.standard_versions.create(standards_list).get_latest_version(standard)
         except Exception as e:
@@ -272,15 +270,17 @@ class NewCommandExecutor(object):
     def _verify_template_standards_compatibility(template_path, standards):
         """ Check is template and available standards on cloudshell are compatible """
 
-        with open(os.path.join(template_path, "{{cookiecutter.project_slug}}", "shell-definition.yaml")) as stream:
-            match = re.search(r"cloudshell_standard:\s*cloudshell_(?P<name>\S+)_standard_(?P<version>\S+)\.\w+$",
-                              stream.read(),
-                              re.MULTILINE)
-            if match:
-                name = str(match.groupdict()["name"]).replace("_", "-")
-                version = str(match.groupdict()["version"].replace("_", "."))
+        shell_def_path = os.path.join(template_path, "{{cookiecutter.project_slug}}", "shell-definition.yaml")
+        if os.path.exists(shell_def_path):
+            with open(shell_def_path) as stream:
+                match = re.search(r"cloudshell_standard:\s*cloudshell_(?P<name>\S+)_standard_(?P<version>\S+)\.\w+$",
+                                  stream.read(),
+                                  re.MULTILINE)
+                if match:
+                    name = str(match.groupdict()["name"]).replace("_", "-")
+                    version = str(match.groupdict()["version"].replace("_", "."))
 
-                if name not in standards or version not in standards[name]:
-                    raise click.ClickException("Shell template and available standards are not compatible")
-            else:
-                raise click.ClickException("Can not determine standard version for provided template")
+                    if name not in standards or version not in standards[name]:
+                        raise click.ClickException("Shell template and available standards are not compatible")
+                else:
+                    raise click.ClickException("Can not determine standard version for provided template")
