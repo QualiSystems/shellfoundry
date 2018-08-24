@@ -140,7 +140,7 @@ History
 0.0.44 (2016-12-12)
 -------------------
 
-* Fixed a bug in config command which caused shellfoundry to crash when config file has not existed
+* Fixed a bug in config command which caused shellfoundry to crash when config file was missing
 
 0.0.43 (2016-12-11)
 -------------------

@@ -211,9 +211,9 @@ class NewCommandExecutor(object):
                     raise click.BadParameter(
                         "Requested template version ({version}) "
                         "does not exist at templates location ({path}).\n"
-                        "Existed template versions ({existed_versions})".format(version=version,
+                        "Existing template versions: {existing_versions}".format(version=version,
                                                                                 path=templates_location,
-                                                                                existed_versions=", ".join(avail_templates.keys())))
+                                                                                existing_versions=", ".join(avail_templates.keys())))
             else:
                 raise click.BadParameter("Requested template version ({version}) "
                                          "does not compatible with available Standards on CloudShell Server "
