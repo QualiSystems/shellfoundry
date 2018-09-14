@@ -27,7 +27,7 @@ KEY_DESCRIPTIONS = {
     USERNAME: "CloudShell administrator username.",
     PASSWORD: "CloudShell administrator password [encrypted]",
     DOMAIN: "CloudShell domain. For 2nd Gen Shells, the domain must be 'Global'.",
-    AUTHOR: "The author to be specified in a new shell’s metadata.",
+    AUTHOR: "The author to be specified in the metadata of new shells.",
     ONLINE_MODE: "Set to True if this computer can/should access the internet, otherwise set to False.",
     TEMPLATE_LOCATION: "(Required if online_mode is False) Full folder path to the offline shell templates.",
     DEFAULT_VIEW: "Default list view. Possible values are: gen, gen2, all and layer1. (Default = gen2)."

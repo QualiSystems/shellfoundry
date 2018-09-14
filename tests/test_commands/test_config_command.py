@@ -30,19 +30,28 @@ not_supported_section:
         ConfigCommandExecutor(True).config()
 
         # Assert
-        echo_mock.assert_any_call(
-            u' Key                Value          \n'
-            u'-----------------------------------\n '
-            u'username           admin        * \n '
-            u'domain             Global       * \n '
-            u'defaultview        gen2         * \n '
-            u'online_mode        True         * \n '
-            u'author             Anonymous    * \n '
-            u'host               localhost    * \n '
-            u'key                value          \n '
-            u'template_location  Empty        * \n '
-            u'password           [encrypted]  * \n '
-            u'port               9000         * ')
+        echo_mock.assert_any_call(u' Key                Value        D  Description                                \n'
+                                  u'-------------------------------------------------------------------------------\n '
+                                  u'username           admin        *  CloudShell administrator username.         \n '
+                                  u'domain             Global       *  CloudShell domain. For 2nd Gen Shells, the \n '
+                                  u'                                   domain must be \'Global\'.                   \n '
+                                  u'defaultview        gen2         *  Default list view. Possible values are:    \n '
+                                  u'                                   gen, gen2, all and layer1. (Default =      \n '
+                                  u'                                   gen2).                                     \n '
+                                  u'online_mode        True         *  Set to True if this computer can/should    \n '
+                                  u'                                   access the internet, otherwise set to      \n '
+                                  u'                                   False.                                     \n '
+                                  u'author             Anonymous    *  The author to be specified in the metadata \n '
+                                  u'                                   of new shells.                             \n '
+                                  u'host               localhost    *  The hostname or IP address of the          \n '
+                                  u'                                   CloudShell Portal machine.                 \n '
+                                  u'key                value                                                      \n '
+                                  u'template_location  Empty        *  (Required if online_mode is False) Full    \n '
+                                  u'                                   folder path to the offline shell           \n '
+                                  u'                                   templates.                                 \n '
+                                  u'password           [encrypted]  *  CloudShell administrator password          \n '
+                                  u'                                   [encrypted]                                \n '
+                                  u'port               9000         *  Quali API Port. (Default = 9000).          ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
@@ -98,19 +107,30 @@ install:
         ConfigCommandExecutor(True).config()
 
         # Assert
-        echo_mock.assert_any_call(u' Key                Value              \n'
-                                  u'---------------------------------------\n '
-                                  u'username           admin            * \n '
-                                  u'yetanotherkey      yetanothervalue    \n '
-                                  u'domain             Global           * \n '
-                                  u'defaultview        gen2             * \n '
-                                  u'online_mode        True             * \n '
-                                  u'author             Anonymous        * \n '
-                                  u'host               localhost        * \n '
-                                  u'key                value              \n '
-                                  u'template_location  Empty            * \n '
-                                  u'password           [encrypted]        \n '
-                                  u'port               9000             * ')
+        print echo_mock.mock_calls[0]
+        echo_mock.assert_any_call(u' Key                Value            D  Description                            \n'
+                                  u'-------------------------------------------------------------------------------\n '
+                                  u'username           admin            *  CloudShell administrator username.     \n '
+                                  u'yetanotherkey      yetanothervalue                                            \n '
+                                  u'domain             Global           *  CloudShell domain. For 2nd Gen Shells, \n '
+                                  u'                                       the domain must be \'Global\'.           \n '
+                                  u'defaultview        gen2             *  Default list view. Possible values     \n '
+                                  u'                                       are: gen, gen2, all and layer1.        \n '
+                                  u'                                       (Default = gen2).                      \n '
+                                  u'online_mode        True             *  Set to True if this computer           \n '
+                                  u'                                       can/should access the internet,        \n '
+                                  u'                                       otherwise set to False.                \n '
+                                  u'author             Anonymous        *  The author to be specified in the      \n '
+                                  u'                                       metadata of new shells.                \n '
+                                  u'host               localhost        *  The hostname or IP address of the      \n '
+                                  u'                                       CloudShell Portal machine.             \n '
+                                  u'key                value                                                      \n '
+                                  u'template_location  Empty            *  (Required if online_mode is False)     \n '
+                                  u'                                       Full folder path to the offline shell  \n '
+                                  u'                                       templates.                             \n '
+                                  u'password           [encrypted]         CloudShell administrator password      \n '
+                                  u'                                       [encrypted]                            \n '
+                                  u'port               9000             *  Quali API Port. (Default = 9000).      ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
@@ -193,7 +213,7 @@ install:
         # Arrange
         get_app_dir_mock.return_value = '/quali/shellfoundry'
 
-        with self.assertRaisesRegexp(BadArgumentUsage, "Field '.+' can not be empty"):
+        with self.assertRaisesRegexp(BadArgumentUsage, "Field '.+' cannot be empty"):
             ConfigCommandExecutor(True).config(('key', ''))
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')

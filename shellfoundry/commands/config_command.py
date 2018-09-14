@@ -62,7 +62,7 @@ class ConfigCommandExecutor(object):
                 value = '[encrypted]'
             table_data.append([key, "\n".join(wrap(value, 23)), default_val, ""])
         import terminaltables
-        table = terminaltables.SingleTable(table_data)
+        table = terminaltables.AsciiTable(table_data)
         table.outer_border = False
         table.inner_column_border = False
         table.inner_row_border = False
