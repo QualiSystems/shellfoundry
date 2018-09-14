@@ -19,8 +19,19 @@ DOMAIN = "domain"
 AUTHOR = "author"
 ONLINE_MODE = "online_mode"
 TEMPLATE_LOCATION = "template_location"
-
 DEFAULT_VIEW = "defaultview"
+
+KEY_DESCRIPTIONS = {
+    HOST: "The hostname or IP address of the CloudShell Portal machine.",
+    PORT: "Quali API Port. (Default = 9000).",
+    USERNAME: "CloudShell administrator username.",
+    PASSWORD: "CloudShell administrator password [encrypted]",
+    DOMAIN: "CloudShell domain. For 2nd Gen Shells, the domain must be 'Global'.",
+    AUTHOR: "The author to be specified in a new shell’s metadata.",
+    ONLINE_MODE: "Set to True if this computer can/should access the internet, otherwise set to False.",
+    TEMPLATE_LOCATION: "(Required if online_mode is False) Full folder path to the offline shell templates.",
+    DEFAULT_VIEW: "Default list view. Possible values are: gen, gen2, all and layer1. (Default = gen2)."
+}
 
 
 def get_with_default(install_config, parameter_name, default_value):
@@ -37,6 +48,13 @@ class Configuration(object):
     def __init__(self, reader, config_provider=None):
         self.reader = reader
         self.config_provider = config_provider or DefaultConfigProvider()
+
+    @staticmethod
+    def get_key_description(key):
+        if key in KEY_DESCRIPTIONS:
+            return KEY_DESCRIPTIONS[key]
+        else:
+            return ""
 
     def read(self):
         config_path = self.config_provider.get_config_path()

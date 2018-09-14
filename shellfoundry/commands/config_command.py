@@ -8,6 +8,7 @@ from shellfoundry.utilities.config.config_context import ConfigContext
 from shellfoundry.utilities.config.config_providers import LocalConfigProvider, GlobalConfigProvider
 from shellfoundry.utilities.config.config_record import ConfigRecord
 from shellfoundry.utilities.config.config_file_creation import ConfigFileCreation
+from textwrap import wrap
 
 DEFAULTS_CHAR = "*"
 
@@ -25,7 +26,7 @@ class ConfigCommandExecutor(object):
         elif self._should_append_key(kv):
             field, name = kv
             if not name:
-                raise click.BadArgumentUsage("Field '{}' can not be empty".format(field))
+                raise click.BadArgumentUsage("Field '{}' cannot be empty".format(field))
             else:
                 self.cfg_creation.create(config_file_path)
                 context = ConfigContext(config_file_path)
@@ -46,12 +47,12 @@ class ConfigCommandExecutor(object):
         click.echo(table)
         click.echo('')
         click.echo(
-            "* Value marked with '{}' is actually the default value and has not been override by the user.".format(
+            "* Values marked with '{}' are the default values and were not changed by the user.".format(
                 DEFAULTS_CHAR))
 
     def _format_config_as_table(self, config_data, defaults_char):
         from shellfoundry.utilities.modifiers.configuration.password_modification import PasswordModification
-        table_data = [['Key', 'Value', '']]
+        table_data = [['Key', 'Value', 'D', 'Description']]
         for key, value in config_data[INSTALL].iteritems():
             default_val = ''
             if defaults_char in value:
@@ -59,11 +60,17 @@ class ConfigCommandExecutor(object):
                 value = value.strip(defaults_char).lstrip()
             if key == PasswordModification.HANDLING_KEY:
                 value = '[encrypted]'
-            table_data.append([key, value, default_val])
+            table_data.append([key, "\n".join(wrap(value, 23)), default_val, ""])
         import terminaltables
-        table = terminaltables.AsciiTable(table_data)
+        table = terminaltables.SingleTable(table_data)
         table.outer_border = False
         table.inner_column_border = False
+        table.inner_row_border = False
+
+        max_width = table.column_max_width(3)
+        for row in range(1, len(table.table_data)):
+            table.table_data[row][3] = "\n".join(wrap(Configuration.get_key_description(table.table_data[row][0]), max_width))
+
         return table.table
 
     @staticmethod
