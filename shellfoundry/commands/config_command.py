@@ -68,6 +68,8 @@ class ConfigCommandExecutor(object):
         table.inner_row_border = False
 
         max_width = table.column_max_width(3)
+        if max_width < 0: # travis might fail to get the correct screen size, and then max_width<0, which will fail to wrap later
+            max_width = 50
         for row in range(1, len(table.table_data)):
             table.table_data[row][3] = "\n".join(wrap(Configuration.get_key_description(table.table_data[row][0]), max_width))
 
