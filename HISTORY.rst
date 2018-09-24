@@ -2,6 +2,11 @@
 History
 =======
 
+1.2.3 (2018-09-24)
+------------------
+
+* Removed unnecessary cloudshell-automation-api dependency from requirements
+
 1.2.2 (2018-08-16)
 ------------------
 
