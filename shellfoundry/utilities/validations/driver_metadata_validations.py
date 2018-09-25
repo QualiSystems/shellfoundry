@@ -76,3 +76,5 @@ class DriverMetadataValidations(object):
                 err = 'The following commands do not exist in the driver.py but still mentioned in ' \
                       'the DriverMetadata.xml file: {}.\nPlease update the metadata or driver files accordingly.'.format(', '.join(missing))
                 raise Exception(err)
+
+            #TODO: add validation for command inputs as well
