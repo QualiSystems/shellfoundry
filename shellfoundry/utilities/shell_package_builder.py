@@ -10,6 +10,8 @@ import yaml
 from shellfoundry.utilities.archive_creator import ArchiveCreator
 from shellfoundry.utilities.shell_package import ShellPackage
 from shellfoundry.utilities.temp_dir_context import TempDirContext
+from shellfoundry.utilities.validations import DriverMetadataValidations
+from shellfoundry.exceptions import FatalError
 
 
 class ShellPackageBuilder(object):
@@ -106,6 +108,12 @@ class ShellPackageBuilder(object):
     def _create_driver(path, package_path, dir_path, driver_name, mandatory=True):
         dir_to_zip = os.path.join(path, dir_path)
         if os.path.exists(dir_to_zip):
+            try:
+                driver_validation = DriverMetadataValidations()
+                driver_validation.validate_driver_metadata(dir_to_zip)
+            except Exception as ex:
+                raise FatalError(ex.message)
+
             zip_file_path = os.path.join(package_path, driver_name)
             ArchiveCreator.make_archive(zip_file_path, "zip", dir_to_zip)
         elif mandatory:
