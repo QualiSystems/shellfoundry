@@ -1,12 +1,8 @@
 import os
 import xml.etree.ElementTree as etree
-import re
-from inspect import getmembers, isfunction, ismethod, isclass
 import ast
 import _ast
-import imp
-import sys
-from importlib import import_module
+
 
 class DriverMetadataValidations(object):
 
@@ -36,7 +32,6 @@ class DriverMetadataValidations(object):
                     if i.name == driver_name:
                         module_classes.append(i)
 
-            # module_classes = [_ for _ in tree.body if isinstance(_, _ast.ClassDef)]
             commands = {}
             for f in module_classes[0].body:
                 if isinstance(f, _ast.FunctionDef) and not f.name.startswith('_'):
@@ -77,4 +72,4 @@ class DriverMetadataValidations(object):
                       'the DriverMetadata.xml file: {}.\nPlease update the metadata or driver files accordingly.'.format(', '.join(missing))
                 raise Exception(err)
 
-            #TODO: add validation for command inputs as well
+            # TODO: add validation for command inputs as well
