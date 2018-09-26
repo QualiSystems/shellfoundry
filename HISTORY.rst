@@ -2,10 +2,11 @@
 History
 =======
 
-1.2.3 (2018-09-24)
+1.2.3 (2018-09-26)
 ------------------
 
 * Removed unnecessary cloudshell-automation-api dependency from requirements
+* Set static version for package click in requirements. click==6.7
 
 1.2.2 (2018-08-16)
 ------------------
