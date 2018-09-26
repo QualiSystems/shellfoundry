@@ -1,7 +1,7 @@
 requests
 cookiecutter
 qpm
-click
+click==6.7
 pyyaml
 terminaltables
 cloudshell-rest-api>=8.2.1.0
