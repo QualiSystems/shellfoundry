@@ -36,6 +36,7 @@ setup(
         "Topic :: Software Development :: Libraries",
         "License :: OSI Approved :: Apache Software License",
     ],
+    python_requires='>=2.7, <3.0.*',
     test_suite='tests',
     tests_require=get_file_content('test_requirements.txt')
 )
