@@ -60,7 +60,7 @@ class ListCommandExecutor(object):
         except FatalError as err:
             raise click.UsageError(err.message)
         except FeatureUnavailable:
-            standards = self.standards.fetch(alternative=ALTERNATIVE_STANDARDS_PATH)
+            standards = {}
             if online_mode:
                 templates = self.template_retriever.get_templates(alternative=ALTERNATIVE_TEMPLATES_PATH)
             else:

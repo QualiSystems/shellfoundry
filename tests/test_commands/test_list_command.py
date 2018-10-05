@@ -308,8 +308,8 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_any_call('''
-As of CloudShell 8.0, CloudShell uses 2nd generation shells, to view the list of 1st generation shells use: shellfoundry list --gen1.
-For more information, please visit our devguide: https://qualisystems.github.io/devguide/''')
+As of CloudShell 8.0, CloudShell uses 2nd generation shells. To view the list of the 1st generation shells use: shellfoundry list --gen1.
+For more information, please visit our dev guide at: https://devguide.quali.com''')
 
 
     @patch('click.echo')
@@ -387,6 +387,80 @@ For more information, please visit our devguide: https://qualisystems.github.io/
     @patch('shellfoundry.commands.list_command.Configuration')
     @patch.object(TemplateRetriever, '_get_min_cs_version')
     @httpretty.activate
+    def test_templates_urls_are_filtered_based_upon_the_result_of_cs_standards(self, _get_min_cs_version, conf_class,
+                                                                               max_width_mock, echo_mock):
+        # Arrange
+        _get_min_cs_version.return_value = None
+        configuration = MagicMock(read=MagicMock(return_value=MagicMock(online_mode="True")))
+        conf_class.return_value = configuration
+        max_width_mock.return_value = 40
+        templates = """templates:
+        - name : gen1/resource
+          description : base description
+          repository : https://github.com/QualiSystems/shell-resource-standard
+          params:
+            project_name :
+          min_cs_ver: 7.0
+        - name : gen1/switch
+          description : switch description
+          repository : https://github.com/QualiSystems/shell-switch-standard
+          params:
+            project_name :
+          min_cs_ver: 7.0
+        - name : gen2/resource
+          params:
+            project_name :
+            family_name:
+          description : 2nd generation shell template for a standard resource
+          repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
+          min_cs_ver: 8.0
+        - name : gen2/networking/switch
+          params:
+            project_name :
+            family_name: Switch
+          description : 2nd generation shell template for a standard switch
+          repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+          min_cs_ver: 8.0
+        - name : gen2/networking/wireless-controller
+          params:
+            project_name :
+            family_name: WirelessController
+          description : 2nd generation shell template for a standard wireless controller
+          repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+          min_cs_ver: 8.0"""
+
+        flag_value = 'all'
+
+        standards = Mock()
+        standards.fetch.return_value = {"resource": ['5.0.0']}
+
+        template_retriever = FilteredTemplateRetriever(flag_value, TemplateRetriever())
+
+        httpretty.register_uri(httpretty.GET, TEMPLATES_YML, body=templates)
+
+        list_command_executor = ListCommandExecutor(template_retriever=template_retriever, standards=standards,
+                                                    offline_links=True)
+
+        # Act
+        list_command_executor.list()
+
+        # Assert
+        echo_mock.assert_any_call(
+            """ Template Name  Download URL                             
+---------------------------------------------------------
+ gen1/resource  https://api.github.com/repos/QualiSystem 
+                s/shell-resource-standard/zipball        
+ gen1/switch    https://api.github.com/repos/QualiSystem 
+                s/shell-switch-standard/zipball          
+ gen2/resource  https://api.github.com/repos/QualiSystem 
+                s/shellfoundry-tosca-resource-           
+                template/zipball/5.0.0                   """)
+
+    @patch('click.echo')
+    @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
+    @patch('shellfoundry.commands.list_command.Configuration')
+    @patch.object(TemplateRetriever, '_get_min_cs_version')
+    @httpretty.activate
     def test_templates_are_filtered_based_upon_the_result_of_cs_standards_gen2(self, _get_min_cs_version, conf_class,
                                                                                max_width_mock, echo_mock):
         # Arrange
@@ -452,6 +526,79 @@ For more information, please visit our devguide: https://qualisystems.github.io/
             u' gen2/networking/wireless-controller  8.0 and up       2nd generation shell template for a \n'
             u'                                                       standard wireless controller        ')
 
+    @patch('click.echo')
+    @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
+    @patch('shellfoundry.commands.list_command.Configuration')
+    @patch.object(TemplateRetriever, '_get_min_cs_version')
+    @httpretty.activate
+    def test_templates_urls_are_filtered_based_upon_the_result_of_cs_standards_gen2(self, _get_min_cs_version, conf_class,
+                                                                                    max_width_mock, echo_mock):
+        # Arrange
+        _get_min_cs_version.return_value = None
+        configuration = MagicMock(read=MagicMock(return_value=MagicMock(online_mode="True")))
+        conf_class.return_value = configuration
+        max_width_mock.return_value = 40
+        templates = """templates:
+            - name : gen1/resource
+              description : base description
+              repository : https://github.com/QualiSystems/shell-resource-standard
+              params:
+                project_name :
+              min_cs_ver: 7.0
+            - name : gen1/switch
+              description : switch description
+              repository : https://github.com/QualiSystems/shell-switch-standard
+              params:
+                project_name :
+              min_cs_ver: 7.0
+            - name : gen2/resource
+              params:
+                project_name :
+                family_name:
+              description : 2nd generation shell template for a standard resource
+              repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
+              min_cs_ver: 8.0
+            - name : gen2/networking/switch
+              params:
+                project_name :
+                family_name: Switch
+              description : 2nd generation shell template for a standard switch
+              repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+              min_cs_ver: 8.0
+            - name : gen2/networking/wireless-controller
+              params:
+                project_name :
+                family_name: WirelessController
+              description : 2nd generation shell template for a standard wireless controller
+              repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+              min_cs_ver: 8.0"""
+
+        flag_value = 'gen2'
+
+        standards = Mock()
+        standards.fetch.return_value = {"networking": ['5.0.0']}
+
+        template_retriever = FilteredTemplateRetriever(flag_value, TemplateRetriever())
+
+        httpretty.register_uri(httpretty.GET, TEMPLATES_YML, body=templates)
+
+        list_command_executor = ListCommandExecutor(template_retriever=template_retriever, standards=standards,
+                                                    offline_links=True)
+
+        # Act
+        list_command_executor.list()
+
+        # Assert
+        echo_mock.assert_any_call(
+            """ Template Name                        Download URL                             
+-------------------------------------------------------------------------------
+ gen2/networking/switch               https://api.github.com/repos/QualiSystem 
+                                      s/shellfoundry-tosca-networking-         
+                                      template/zipball/5.0.0                   
+ gen2/networking/wireless-controller  https://api.github.com/repos/QualiSystem 
+                                      s/shellfoundry-tosca-networking-         
+                                      template/zipball/5.0.0                   """)
+
 
 class TestListCommandWithFakeFs(fake_filesystem_unittest.TestCase):
     def setUp(self):
@@ -482,6 +629,46 @@ class TestListCommandWithFakeFs(fake_filesystem_unittest.TestCase):
             u' gen2/resource                        8.0 and up       2nd generation shell template for basic inventory resources \n'
             u' layer-1-switch                       7.0 and up       A native shell template for layer 1 switches                ')
 
+    @staticmethod
+    def get_8_0_templates_url_output():
+        return (
+               """ Template Name                        Download URL                                                 
+---------------------------------------------------------------------------------------------------
+ gen1/compute                         https://api.github.com/repos/QualiSystems/shell-compute-     
+                                      standard/zipball                                             
+ gen1/deployed-app                    https://api.github.com/repos/QualiSystems/shell-deployedapp- 
+                                      standard/zipball                                             
+ gen1/firewall                        https://api.github.com/repos/QualiSystems/shell-firewall-    
+                                      standard/zipball                                             
+ gen1/networking/router               https://api.github.com/repos/QualiSystems/shell-networking-  
+                                      standard/zipball                                             
+ gen1/networking/switch               https://api.github.com/repos/QualiSystems/shell-networking-  
+                                      standard/zipball                                             
+ gen1/pdu                             https://api.github.com/repos/QualiSystems/shell-pdu-         
+                                      standard/zipball                                             
+ gen1/resource                        https://api.github.com/repos/QualiSystems/shell-resource-    
+                                      standard/zipball                                             
+ gen1/resource-clean                  https://api.github.com/repos/QualiSystems/resource-shell-    
+                                      standard-clean/zipball                                       
+ gen2/compute                         https://api.github.com/repos/QualiSystems/shellfoundry-      
+                                      tosca-compute-template/zipball                               
+ gen2/deployed-app                    https://api.github.com/repos/QualiSystems/shellfoundry-      
+                                      tosca-deployedapp-template/zipball                           
+ gen2/firewall                        https://api.github.com/repos/QualiSystems/shellfoundry-      
+                                      tosca-firewall-template/zipball                              
+ gen2/networking/router               https://api.github.com/repos/QualiSystems/shellfoundry-      
+                                      tosca-networking-template/zipball                            
+ gen2/networking/switch               https://api.github.com/repos/QualiSystems/shellfoundry-      
+                                      tosca-networking-template/zipball                            
+ gen2/networking/wireless-controller  https://api.github.com/repos/QualiSystems/shellfoundry-      
+                                      tosca-networking-template/zipball                            
+ gen2/pdu                             https://api.github.com/repos/QualiSystems/shellfoundry-      
+                                      tosca-pdu-template/zipball                                   
+ gen2/resource                        https://api.github.com/repos/QualiSystems/shellfoundry-      
+                                      tosca-resource-template/zipball                              
+ layer-1-switch                       https://api.github.com/repos/QualiSystems/shell-L1-standard/ 
+                                      zipball                                                      """)
+
     @patch('click.echo')
     @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
     def test_get_cs_standards_unavailable_shows_cs_8_0_shipped_templates(self, max_width_mock, echo_mock):
@@ -502,4 +689,27 @@ class TestListCommandWithFakeFs(fake_filesystem_unittest.TestCase):
 
         # Assert
         templates_output = self.get_8_0_templates_output()
+        echo_mock.assert_any_call(templates_output)
+
+    @patch('click.echo')
+    @patch('shellfoundry.commands.list_command.AsciiTable.column_max_width')
+    def test_get_cs_standards_unavailable_shows_cs_8_0_shipped_templates(self, max_width_mock, echo_mock):
+        # Assert
+        max_width_mock.return_value = 60
+
+        from shellfoundry import ALTERNATIVE_TEMPLATES_PATH
+        self.fs.add_real_file(ALTERNATIVE_TEMPLATES_PATH)
+
+        standards = Mock(fetch=Mock(side_effect=FeatureUnavailable()))
+
+        template_retriever = FilteredTemplateRetriever('all', TemplateRetriever())
+
+        list_command_executor = ListCommandExecutor(template_retriever=template_retriever, standards=standards,
+                                                    offline_links=True)
+
+        # Act
+        list_command_executor.list()
+
+        # Assert
+        templates_output = self.get_8_0_templates_url_output()
         echo_mock.assert_any_call(templates_output)
