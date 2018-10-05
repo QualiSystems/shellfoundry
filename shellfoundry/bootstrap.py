@@ -35,12 +35,13 @@ def version():
 @click.option(u'--gen1', 'default_view', flag_value=GEN_ONE, help="Show 1st generation shell templates")
 @click.option(u'--layer1', 'default_view', flag_value=LAYER_ONE, help="Show layer1 shell templates")
 @click.option(u'--all', 'default_view', flag_value=NO_FILTER, help="Show all templates")
+@click.option(u'--urls', 'offline_links', flag_value=NO_FILTER, help="Show download links for offline templates")
 @shellfoundry_version_check(abort_if_major=True)
-def list(default_view):
+def list(default_view, offline_links):
     """
     Lists the available shell templates
     """
-    ListCommandExecutor(default_view).list()
+    ListCommandExecutor(default_view, offline_links=offline_links).list()
 
 
 @cli.command()
