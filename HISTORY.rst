@@ -2,7 +2,12 @@
 History
 =======
 
-1.2.3 (2018-09-26)
+1.2.5 (2018-10-04)
+------------------
+
+* Set strict python version
+
+1.2.4 (2018-09-26)
 ------------------
 
 * Removed unnecessary cloudshell-automation-api dependency from requirements
