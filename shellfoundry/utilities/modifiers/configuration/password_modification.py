@@ -1,6 +1,7 @@
 import base64
 import shellfoundry.exceptions as exceptions
 
+
 class PasswordModification(object):
     HANDLING_KEY = 'password'
 
