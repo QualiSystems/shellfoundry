@@ -1,6 +1,8 @@
-import os
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 import click
+import os
 
 from shellfoundry.exceptions import WrongShellYmlException, ShellYmlMissingException
 from shellfoundry.utilities.package_builder import PackageBuilder
@@ -21,7 +23,9 @@ class PackCommandExecutor(object):
         current_path = os.getcwd()
 
         shell_package = ShellPackage(current_path)
-        if shell_package.is_tosca():
+        if shell_package.is_layer_one():
+            click.secho("Packaging a L1 shell directly via shellfoundry is not supported.", fg="yellow")
+        elif shell_package.is_tosca():
             self.shell_package_builder.pack(current_path)
         else:
             self._pack_old_school_shell(current_path)

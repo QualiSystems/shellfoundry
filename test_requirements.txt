@@ -1,5 +1,5 @@
 mock
-pyfakefs
-httpretty
+pyfakefs==3.2
+httpretty==0.8.14
 quali-testing-helpers
 freezegun

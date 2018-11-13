@@ -43,13 +43,13 @@ class TestStandards(fake_filesystem_unittest.TestCase):
         # Act
         results = Standards().fetch(alternative=ALTERNATIVE_STANDARDS_PATH)
 
-        standards = [{"StandardName": "cloudshell_compute_standard", "Versions": ['2.0.0']},
-                     {"StandardName": "cloudshell_deployed_app_standard", "Versions": ['1.0.0']},
-                     {"StandardName": "cloudshell_firewall_standard", "Versions": ['3.0.0']},
-                     {"StandardName": "cloudshell_networking_standard", "Versions": ['5.0.0']},
-                     {"StandardName": "cloudshell_on_prem_app_standard", "Versions": ['1.0.0']},
-                     {"StandardName": "cloudshell_pdu_standard", "Versions": ['2.0.0']},
-                     {"StandardName": "cloudshell_resource_standard", "Versions": ['2.0.0']}]
+        standards = {"compute": ['2.0.0'],
+                     "deployed-app": ['1.0.0'],
+                     "firewall": ['3.0.0'],
+                     "networking": ['5.0.0'],
+                     "on-prem-app": ['1.0.0'],
+                     "pdu": ['2.0.0'],
+                     "resource": ['2.0.0']}
 
         # Assert
         self.assertEqual(results, standards)

@@ -2,6 +2,7 @@ import click
 import errno
 import os
 
+
 class ConfigFileCreation(object):
     def create(self, config_file_path):
         if os.path.exists(config_file_path):
