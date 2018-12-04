@@ -98,7 +98,7 @@ def generate():
 @click.option('--remove', 'key_to_remove', default=None)
 def config(kv, global_cfg, key_to_remove):
     """
-    Configures global/local config values to allow deployment over cloudshell
+    Configures global/local config values used by shellfoundry
     """
     ConfigCommandExecutor(global_cfg).config(kv, key_to_remove)
 
@@ -120,9 +120,9 @@ def show(template_name):
 # @click.option('--edit', 'edit_command', multiple=True, default=None, help="Copy the full command logic to the driver")
 def extend(source, add_attribute):
     """
-    Creates a new shell based on a existed
+    Creates a new shell based on an existing shell
 
-    SOURCE - Specify a original Shell location.\n
+    SOURCE - Specify the original Shell location.\n
     \tYou can use 'local://<folder>' to specify a locally saved Shell folder
     """
 
