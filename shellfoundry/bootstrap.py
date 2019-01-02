@@ -7,6 +7,7 @@ import pkg_resources
 from shellfoundry.decorators import shellfoundry_version_check
 from shellfoundry.commands.dist_command import DistCommandExecutor
 from shellfoundry.commands.generate_command import GenerateCommandExecutor
+from shellfoundry.commands.get_templates_command import GetTemplatesCommandExecutor
 from shellfoundry.commands.install_command import InstallCommandExecutor
 from shellfoundry.commands.list_command import ListCommandExecutor
 from shellfoundry.commands.new_command import NewCommandExecutor
@@ -127,3 +128,14 @@ def extend(source, add_attribute):
     """
 
     ExtendCommandExecutor().extend(source, add_attribute)
+
+@cli.command()
+@click.argument(u'cs_version')
+@click.option('--output_dir', 'output_dir', default=None, help="Folder where templates will be saved")
+def get_templates(cs_version, output_dir):
+    """ Download all templates which are compatible with provided CloudShell Version
+
+    CS_VERSION - CloudShell Version
+    """
+
+    GetTemplatesCommandExecutor().get_templates(cs_version, output_dir)
