@@ -50,18 +50,22 @@ class GetTemplatesCommandExecutor(object):
                     os.mkdir(templates_path)
                     archive_path = os.path.join(output_dir, "{}.zip".format(archive_name))
                     if os.path.exists(archive_path):
-                        click.confirm(
-                            text="Templates archive for CloudShell Version {cs_version} already exist on path {path}."
-                                 "\nDo you wish to overwrite it?".format(cs_version=cs_version,
-                                                                         path=archive_path),
-                            abort=True)
+                        # click.confirm(
+                        #     text="Templates archive for CloudShell Version {cs_version} already exist on path {path}."
+                        #          "\nDo you wish to overwrite it?".format(cs_version=cs_version,
+                        #                                                  path=archive_path),
+                        #     abort=True)
                         os.remove(archive_path)
 
                     threads = []
                     lock = RLock()
+                    print repos
                     for repo in repos:
+                        repo_dir = os.path.join(templates_path, repo.split("/")[-1])
+                        os.mkdir(repo_dir)
+
                         template_thread = Thread(target=self.download_template,
-                                                 args=(repo, cs_version, templates_path, lock))
+                                                 args=(repo, cs_version, repo_dir, lock))
                         threads.append(template_thread)
 
                     for thread in threads:
@@ -86,7 +90,7 @@ class GetTemplatesCommandExecutor(object):
         result_branch = self.template_retriever.get_latest_template(repository, cs_version)
         if result_branch:
             try:
-                lock.acquire()
+                # lock.acquire()
                 self.repository_downloader.download_template(target_dir=templates_path,
                                                              repo_address=repository,
                                                              branch=result_branch,
@@ -96,4 +100,5 @@ class GetTemplatesCommandExecutor(object):
                                                                                                result_branch),
                             fg="red")
             finally:
-                lock.release()
+                pass
+                # lock.release()

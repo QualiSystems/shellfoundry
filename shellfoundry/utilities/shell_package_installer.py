@@ -26,6 +26,8 @@ class ShellPackageInstaller(object):
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
     def install(self, path):
+        """ Install new or Update existed Shell """
+
         shell_package = ShellPackage(path)
         # shell_name = shell_package.get_shell_name()
         shell_name = shell_package.get_name_from_definition()
@@ -81,6 +83,43 @@ class ShellPackageInstaller(object):
             except Exception as e:
                 self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
                 raise FatalError(self._parse_installation_error("Failed to update shell", e))
+            finally:
+                self._render_pbar_finish(pbar)
+
+    def delete(self, shell_name):
+        """ Delete Shell """
+
+        cloudshell_config = self.cloudshell_config_reader.read()
+
+        if cloudshell_config.domain != self.GLOBAL_DOMAIN:
+            raise click.UsageError("Gen2 shells could not be deleted from non Global domain.")
+
+        cs_connection_label = "Connecting to CloudShell at {}:{}".format(cloudshell_config.host, cloudshell_config.port)
+        with click.progressbar(length=CLOUDSHELL_MAX_RETRIES,
+                               show_eta=False,
+                               label=cs_connection_label
+                               ) as pbar:
+            try:
+                client = self._open_connection_to_quali_server(cloudshell_config, pbar, retry=CLOUDSHELL_MAX_RETRIES)
+            finally:
+                self._render_pbar_finish(pbar)
+
+        pbar_install_shell_len = 2  # amount of possible actions (update and add)
+        installation_label = "Deleting shell from CloudShell".ljust(len(cs_connection_label))
+        with click.progressbar(length=pbar_install_shell_len,
+                               show_eta=False,
+                               label=installation_label) as pbar:
+            try:
+                client.delete_shell(shell_name)
+            except FeatureUnavailable:
+                self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
+                raise FatalError("Delete shell unavailable (probably due to CloudShell version below 9.2)")
+            except ShellNotFoundException:
+                self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
+                raise FatalError("Shell '{shell_name}' doesn't exist on CloudShell".format(shell_name=shell_name))
+            except Exception as e:
+                self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
+                raise FatalError(self._parse_installation_error("Failed to delete shell", e))
             finally:
                 self._render_pbar_finish(pbar)
 
