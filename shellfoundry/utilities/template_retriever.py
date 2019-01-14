@@ -16,8 +16,7 @@ from threading import Thread, RLock
 from .filters import CompositeFilter
 from shellfoundry.models.shell_template import ShellTemplate
 from shellfoundry.utilities import GEN_TWO, SEPARATOR
-from shellfoundry.utilities.constants import GITHUB_USER, GITHUB_PASSWORD, \
-    TEMPLATE_INFO_FILE, TEMPLATES_YML, SERVER_VERSION_KEY
+from shellfoundry.utilities.constants import TEMPLATE_INFO_FILE, TEMPLATES_YML, SERVER_VERSION_KEY
 
 
 class TemplateRetriever(object):
