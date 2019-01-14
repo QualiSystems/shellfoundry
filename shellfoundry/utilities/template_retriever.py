@@ -208,7 +208,7 @@ class TemplateRetriever(object):
         else:
             return
 
-    def get_repo_branches(self, repository):
+    def get_repo_branches(self, repository, github_login=None, github_password=None):
         """ Get all available branches for provided repository """
 
         if repository.endswith("/"):
@@ -216,7 +216,8 @@ class TemplateRetriever(object):
         request = "{}/branches".format(repository.replace("https://github.com", "https://api.github.com/repos"))
 
         session = requests.Session()
-        session.auth = (GITHUB_USER, GITHUB_PASSWORD)
+        if github_login and github_password:
+            session.auth = (github_login, github_password)
         session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
         responce = session.get(request)
 
@@ -224,6 +225,9 @@ class TemplateRetriever(object):
             data = json.loads(responce.text)
             branches = [item["name"] for item in data]
         else:
+            click.ClickException(json.loads(responce.text).get("message",
+                                                               "Error during determination repository branches. "
+                                                               "Probably wrong GitHub credentials"))
             branches = []
 
         repo_branches = []
@@ -239,10 +243,10 @@ class TemplateRetriever(object):
 
         return repo_branches
 
-    def get_latest_template(self, repo, version):
+    def get_latest_template(self, repo, version, github_login=None, github_password=None):
         """ Get latest template version based on CloudShell version """
 
-        for branch in self.get_repo_branches(repo):
+        for branch in self.get_repo_branches(repo, github_login, github_password):
             cs_version = self._get_min_cs_version(repository=repo,
                                                   standard_name=None,
                                                   standards=None,

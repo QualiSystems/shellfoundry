@@ -33,7 +33,8 @@ class GetTemplatesCommandExecutor(object):
         :param str output_dir: Output directory to download templates
         """
 
-        online_mode = self.cloudshell_config_reader.read().online_mode.lower() == "true"
+        shellfoundry_config = self.cloudshell_config_reader.read()
+        online_mode = shellfoundry_config.online_mode.lower() == "true"
         if online_mode:
             try:
                 response = self.template_retriever._get_templates_from_github()
@@ -50,22 +51,22 @@ class GetTemplatesCommandExecutor(object):
                     os.mkdir(templates_path)
                     archive_path = os.path.join(output_dir, "{}.zip".format(archive_name))
                     if os.path.exists(archive_path):
-                        # click.confirm(
-                        #     text="Templates archive for CloudShell Version {cs_version} already exist on path {path}."
-                        #          "\nDo you wish to overwrite it?".format(cs_version=cs_version,
-                        #                                                  path=archive_path),
-                        #     abort=True)
+                        click.confirm(
+                            text="Templates archive for CloudShell Version {cs_version} already exist on path {path}."
+                                 "\nDo you wish to overwrite it?".format(cs_version=cs_version,
+                                                                         path=archive_path),
+                            abort=True)
                         os.remove(archive_path)
 
                     threads = []
-                    lock = RLock()
-                    print repos
                     for repo in repos:
                         repo_dir = os.path.join(templates_path, repo.split("/")[-1])
                         os.mkdir(repo_dir)
 
                         template_thread = Thread(target=self.download_template,
-                                                 args=(repo, cs_version, repo_dir, lock))
+                                                 args=(repo, cs_version, repo_dir,
+                                                       shellfoundry_config.github_login,
+                                                       shellfoundry_config.github_password))
                         threads.append(template_thread)
 
                     for thread in threads:
@@ -86,11 +87,10 @@ class GetTemplatesCommandExecutor(object):
         else:
             click.echo("Please, move shellfoundry to online mode. See, shellfoundry config command")
 
-    def download_template(self, repository, cs_version, templates_path, lock):
+    def download_template(self, repository, cs_version, templates_path):
         result_branch = self.template_retriever.get_latest_template(repository, cs_version)
         if result_branch:
             try:
-                # lock.acquire()
                 self.repository_downloader.download_template(target_dir=templates_path,
                                                              repo_address=repository,
                                                              branch=result_branch,
@@ -101,4 +101,3 @@ class GetTemplatesCommandExecutor(object):
                             fg="red")
             finally:
                 pass
-                # lock.release()

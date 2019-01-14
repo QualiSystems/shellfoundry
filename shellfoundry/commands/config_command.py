@@ -57,7 +57,7 @@ class ConfigCommandExecutor(object):
             if defaults_char in value:
                 default_val = defaults_char
                 value = value.strip(defaults_char).lstrip()
-            if key == PasswordModification.HANDLING_KEY:
+            if key in PasswordModification.HANDLING_KEYS:
                 value = '[encrypted]'
             table_data.append([key, value, default_val])
         import terminaltables

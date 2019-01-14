@@ -1,4 +1,4 @@
-requests[security]
+requests
 cookiecutter
 qpm
 click==6.7
