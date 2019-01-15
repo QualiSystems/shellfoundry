@@ -4,8 +4,6 @@
 import base64
 import binascii
 
-from platform import node
-
 import shellfoundry.exceptions as exceptions
 
 
@@ -31,6 +29,7 @@ class PasswordModification(object):
 
     def _get_encryption_key(self):
         """  """
+        from platform import node
 
         machine_name = node()
         if not machine_name:
