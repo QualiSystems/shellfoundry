@@ -25,7 +25,7 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
         os.chdir("work")
 
         install_config = InstallConfig("localhost", 9000, "YOUR_USERNAME", "YOUR_PASSWORD", "Global", "author",
-                                       "online_mode", "template_location")
+                                       "online_mode", "template_location", "github_login", "github_password")
 
         shell_installer = ShellInstaller()
 

@@ -42,6 +42,8 @@ not_supported_section:
             u'key                value          \n '
             u'template_location  Empty        * \n '
             u'password           [encrypted]  * \n '
+            u'github_login               \n '
+            u'github_password    [encrypted]        \n '
             u'port               9000         * ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
@@ -109,6 +111,8 @@ install:
                                   u'host               localhost        * \n '
                                   u'key                value              \n '
                                   u'template_location  Empty            * \n '
+                                  u'github_login               \n '
+                                  u'github_password    [encrypted]        \n '
                                   u'password           [encrypted]        \n '
                                   u'port               9000             * ')
 
@@ -212,7 +216,7 @@ install:
         # Assert
         desired_result = """install:
   key: value
-  password: DAUOAQc=
+  password: FRYMHwc=
 """
         file_content = self.fs.GetObject('/quali/shellfoundry/global_config.yml').contents
         self.assertTrue(file_content == desired_result, 'Expected: {}{}Actual: {}'
