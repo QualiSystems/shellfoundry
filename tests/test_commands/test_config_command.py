@@ -201,7 +201,8 @@ install:
             ConfigCommandExecutor(True).config(('key', ''))
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
-    @patch('platform.node', Mock(return_value='machine-name-here'))
+    @patch('shellfoundry.utilities.modifiers.configuration.password_modification.platform.node',
+           Mock(return_value='machine-name-here'))
     def test_set_password_config_password_should_appear_encrypted(self, get_app_dir_mock):
         # Arrange
         self.fs.CreateFile('/quali/shellfoundry/global_config.yml', contents="""

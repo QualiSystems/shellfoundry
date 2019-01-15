@@ -33,6 +33,8 @@ install:
     author: AUTHOR
     online_mode: ONLINE_MODE
     template_location: TEMPLATE_LOCATION
+    github_login: GITHUB_LOGIN
+    github_password: GITHUB_PASSWORD
     """)
         os.chdir('nut_shell')
 

@@ -24,25 +24,29 @@ class TestInstallConfig(unittest.TestCase):
 
         self.assertNotEqual(config1, config2)
 
-    @patch("platform.node", Mock(return_value="machine-name-here"))
+    @patch("shellfoundry.utilities.modifiers.configuration.password_modification.platform.node",
+           Mock(return_value="machine-name-here"))
     def test_encrypted_password_field_becomes_decrypted(self):
         config = InstallConfig("localhost", 9000, "YOUR_USERNAME", "DAUOAQc=", "Global", "author",
                                "online_mode", "template_location", "github_login", "github_password")
         self.assertEqual("admin", config.password)
 
-    @patch("platform.node", Mock(return_value="machine-name-here"))
+    @patch("shellfoundry.utilities.modifiers.configuration.password_modification.platform.node",
+           Mock(return_value="machine-name-here"))
     def test_non_encrypted_password_field_stays_regular(self):
         config = InstallConfig("localhost", 9000, "YOUR_USERNAME", "admin", "Global", "author",
                                "online_mode", "template_location", "github_login", "github_password")
         self.assertEqual("admin", config.password)
 
-    @patch("platform.node", Mock(return_value="machine-name-here"))
+    @patch("shellfoundry.utilities.modifiers.configuration.password_modification.platform.node",
+           Mock(return_value="machine-name-here"))
     def test_encrypted_github_password_field_becomes_decrypted(self):
         config = InstallConfig("localhost", 9000, "CS_USERNAME", "CS_PASSWORD", "Global", "author",
                                "online_mode", "template_location", "github_login", "DAUOAQc=")
         self.assertEqual("admin", config.github_password)
 
-    @patch("platform.node", Mock(return_value="machine-name-here"))
+    @patch("shellfoundry.utilities.modifiers.configuration.password_modification.platform.node",
+           Mock(return_value="machine-name-here"))
     def test_non_encrypted_github_password_field_stays_regular(self):
         config = InstallConfig("localhost", 9000, "YOUR_USERNAME", "admin", "Global", "author",
                                "online_mode", "template_location", "github_login", "admin")
