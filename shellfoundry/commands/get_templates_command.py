@@ -5,7 +5,7 @@ import click
 import os
 import shutil
 import yaml
-from threading import Thread, RLock
+from threading import Thread
 
 from requests.exceptions import SSLError
 
@@ -59,6 +59,7 @@ class GetTemplatesCommandExecutor(object):
                         os.remove(archive_path)
 
                     threads = []
+                    results = []
                     for repo in repos:
                         repo_dir = os.path.join(templates_path, repo.split("/")[-1])
                         os.mkdir(repo_dir)
@@ -66,38 +67,46 @@ class GetTemplatesCommandExecutor(object):
                         template_thread = Thread(target=self.download_template,
                                                  args=(repo, cs_version, repo_dir,
                                                        shellfoundry_config.github_login,
-                                                       shellfoundry_config.github_password))
+                                                       shellfoundry_config.github_password, results))
                         threads.append(template_thread)
 
                     for thread in threads:
                         thread.start()
-
                     for thread in threads:
                         thread.join()
+
+                    if results:
+                        raise click.ClickException(results[0])
 
                     shutil.make_archive(templates_path, "zip", templates_path)
                     shutil.move("{}.zip".format(templates_path), output_dir)
 
-                templates_archive = "{}.zip".format(os.path.join(output_dir, templates_path))
                 click.echo(
                     "Downloaded templates for CloudShell {cs_version} to {templates}".format(cs_version=cs_version,
-                                                                                             templates=templates_archive))
+                                                                                             templates=os.path.abspath(
+                                                                                                 archive_path)))
             except SSLError:
                 raise click.UsageError("Could not retrieve the templates list to download. Are you offline?")
         else:
             click.echo("Please, move shellfoundry to online mode. See, shellfoundry config command")
 
-    def download_template(self, repository, cs_version, templates_path):
-        result_branch = self.template_retriever.get_latest_template(repository, cs_version)
-        if result_branch:
-            try:
-                self.repository_downloader.download_template(target_dir=templates_path,
-                                                             repo_address=repository,
-                                                             branch=result_branch,
-                                                             is_need_construct=True)
-            except VersionRequestException:
-                click.secho("Failed to download template from repository {} version {}".format(repository,
-                                                                                               result_branch),
-                            fg="red")
-            finally:
-                pass
+    def download_template(self, repository, cs_version, templates_path, github_login, github_password, results):
+        try:
+            result_branch = self.template_retriever.get_latest_template(repository, cs_version,
+                                                                        github_login, github_password)
+
+            if result_branch:
+                try:
+                    self.repository_downloader.download_template(target_dir=templates_path,
+                                                                 repo_address=repository,
+                                                                 branch=result_branch,
+                                                                 is_need_construct=True)
+                except VersionRequestException:
+                    click.secho("Failed to download template from repository {} version {}".format(repository,
+                                                                                                   result_branch),
+                                fg="red")
+                finally:
+                    pass
+
+        except click.ClickException, err:
+            results.append(err.message)

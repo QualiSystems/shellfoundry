@@ -168,6 +168,13 @@ templates:
       description : 2nd generation shell template for a custom service
       repository : https://github.com/QualiSystems/shellfoundry-tosca-custom-service-template
       min_cs_ver: 8.3
+    - name : gen2/admin-only-custom-service
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for a admin only custom service
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-admin-only-custom-service-template
+      min_cs_ver: 8.3
     - name : gen2/cloud-service
       params:
         project_name :

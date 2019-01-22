@@ -224,10 +224,8 @@ class TemplateRetriever(object):
             data = json.loads(responce.text)
             branches = [item["name"] for item in data]
         else:
-            click.ClickException(json.loads(responce.text).get("message",
-                                                               "Error during determination repository branches. "
-                                                               "Probably wrong GitHub credentials"))
-            branches = []
+            raise click.ClickException("Error during determination GitHub repository branches. {}".format(
+                json.loads(responce.text).get("message", "Probably wrong GitHub credentials")))
 
         repo_branches = []
         for item in branches:

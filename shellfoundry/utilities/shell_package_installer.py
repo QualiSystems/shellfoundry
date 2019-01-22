@@ -21,7 +21,7 @@ SHELL_IS_OFFICIAL_FLAG = "IsOfficial"
 
 class ShellPackageInstaller(object):
     GLOBAL_DOMAIN = 'Global'
-    
+
     def __init__(self):
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
@@ -113,7 +113,7 @@ class ShellPackageInstaller(object):
                 client.delete_shell(shell_name)
             except FeatureUnavailable:
                 self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
-                raise FatalError("Delete shell unavailable (probably due to CloudShell version below 9.2)")
+                raise FatalError("Delete shell command unavailable (probably due to CloudShell version below 9.2)")
             except ShellNotFoundException:
                 self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
                 raise FatalError("Shell '{shell_name}' doesn't exist on CloudShell".format(shell_name=shell_name))
