@@ -5,7 +5,7 @@ import click
 import os
 import shutil
 import yaml
-from threading import Thread
+from threading import Thread, currentThread
 
 from requests.exceptions import SSLError
 
@@ -42,32 +42,29 @@ class GetTemplatesCommandExecutor(object):
                 repos = set(template["repository"] for template in config["templates"])
 
                 if not output_dir:
-                    output_dir = os.path.curdir
+                    output_dir = os.path.abspath(os.path.curdir)
 
                 archive_name = "shellfoundry_templates_{}".format(cs_version)
 
+                archive_path = os.path.join(output_dir, "{}.zip".format(archive_name))
+                if os.path.exists(archive_path):
+                    click.confirm(
+                        text="Templates archive for CloudShell Version {cs_version} already exists in path {path}."
+                             "\nDo you wish to overwrite it?".format(cs_version=cs_version,
+                                                                     path=archive_path),
+                        abort=True)
+                    os.remove(archive_path)
+
                 with TempDirContext(archive_name) as temp_dir:
-                    templates_path = os.path.join(temp_dir, archive_name)
-                    os.mkdir(templates_path)
-                    archive_path = os.path.join(output_dir, "{}.zip".format(archive_name))
-                    if os.path.exists(archive_path):
-                        click.confirm(
-                            text="Templates archive for CloudShell Version {cs_version} already exist on path {path}."
-                                 "\nDo you wish to overwrite it?".format(cs_version=cs_version,
-                                                                         path=archive_path),
-                            abort=True)
-                        os.remove(archive_path)
-
+                    templates_path = temp_dir
                     threads = []
-                    results = []
-                    for repo in repos:
-                        repo_dir = os.path.join(templates_path, repo.split("/")[-1])
-                        os.mkdir(repo_dir)
-
-                        template_thread = Thread(target=self.download_template,
-                                                 args=(repo, cs_version, repo_dir,
+                    errors = []
+                    for i, repo in enumerate(repos):
+                        template_thread = Thread(name=str(i),
+                                                 target=self.download_template,
+                                                 args=(repo, cs_version, templates_path,
                                                        shellfoundry_config.github_login,
-                                                       shellfoundry_config.github_password, results))
+                                                       shellfoundry_config.github_password, errors))
                         threads.append(template_thread)
 
                     for thread in threads:
@@ -75,11 +72,11 @@ class GetTemplatesCommandExecutor(object):
                     for thread in threads:
                         thread.join()
 
-                    if results:
-                        raise click.ClickException(results[0])
+                    if errors:
+                        raise click.ClickException(errors[0])
 
-                    shutil.make_archive(templates_path, "zip", templates_path)
-                    shutil.move("{}.zip".format(templates_path), output_dir)
+                    os.chdir(output_dir)
+                    shutil.make_archive(archive_name, "zip", templates_path)
 
                 click.echo(
                     "Downloaded templates for CloudShell {cs_version} to {templates}".format(cs_version=cs_version,
@@ -90,23 +87,29 @@ class GetTemplatesCommandExecutor(object):
         else:
             click.echo("Please, move shellfoundry to online mode. See, shellfoundry config command")
 
-    def download_template(self, repository, cs_version, templates_path, github_login, github_password, results):
+    def download_template(self, repository, cs_version, templates_path, github_login, github_password, errors):
         try:
             result_branch = self.template_retriever.get_latest_template(repository, cs_version,
                                                                         github_login, github_password)
 
             if result_branch:
                 try:
-                    self.repository_downloader.download_template(target_dir=templates_path,
-                                                                 repo_address=repository,
-                                                                 branch=result_branch,
-                                                                 is_need_construct=True)
+                    template_path = os.path.join(templates_path, currentThread().getName())
+                    os.mkdir(template_path)
+                    res = self.repository_downloader.download_template(target_dir=template_path,
+                                                                       repo_address=repository,
+                                                                       branch=result_branch,
+                                                                       is_need_construct=True)
+
+                    shutil.copytree(res, os.path.join(templates_path, repository.split("/")[-1]))
+                    shutil.rmtree(path=template_path, ignore_errors=True)
                 except VersionRequestException:
-                    click.secho("Failed to download template from repository {} version {}".format(repository,
-                                                                                                   result_branch),
-                                fg="red")
+                    errors.append(
+                        "Failed to download template from repository {} version {}".format(repository, result_branch))
+                except shutil.Error:
+                    errors.append("Failed to build correct template '{}' structure".format(repository))
                 finally:
                     pass
 
         except click.ClickException, err:
-            results.append(err.message)
+            errors.append(err.message)

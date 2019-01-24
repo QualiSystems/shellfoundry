@@ -9,8 +9,7 @@ import requests
 import yaml
 
 from collections import OrderedDict, defaultdict
-from distutils.version import StrictVersion
-from pkg_resources import parse_version
+from pkg_resources import parse_version, SetuptoolsVersion
 from threading import Thread, RLock
 
 from .filters import CompositeFilter
@@ -224,17 +223,15 @@ class TemplateRetriever(object):
             data = json.loads(responce.text)
             branches = [item["name"] for item in data]
         else:
-            raise click.ClickException("Error during determination GitHub repository branches. {}".format(
+            raise click.ClickException("Cannot access GitHub repository branches. {}".format(
                 json.loads(responce.text).get("message", "Probably wrong GitHub credentials")))
 
         repo_branches = []
         for item in branches:
             if item == "master":
                 repo_branches.append(item)
-            try:
-                repo_branches.append(StrictVersion(item))
-            except:
-                pass
+            elif isinstance(parse_version(item), SetuptoolsVersion):  # only numeric version
+                repo_branches.append(parse_version(item))
 
         repo_branches.reverse()
 
@@ -248,9 +245,10 @@ class TemplateRetriever(object):
                                                   standard_name=None,
                                                   standards=None,
                                                   branch=branch)
+
             if cs_version:
                 try:
-                    if StrictVersion(version) >= StrictVersion(cs_version):
+                    if parse_version(version) >= parse_version(cs_version):
                         return str(branch)
                 except:
                     pass
