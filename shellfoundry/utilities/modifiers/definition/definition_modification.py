@@ -71,6 +71,22 @@ class DefinitionModification(object):
         for item in zip(attribute_names, results):
             self._comment_attribute(*item)
 
+    def get_artifacts_files(self, artifact_name_list):
+        """  """
+        yaml_parser = yaml.YAML()
+        shell_definition = self._load_yaml(yaml_parser, self.entry_definition)
+
+        for node_type in shell_definition["node_types"].values():
+            if "artifacts" not in node_type:
+                continue
+
+            result = {}
+            for artifact_name, artifact in node_type["artifacts"].iteritems():
+                if artifact_name in artifact_name_list:
+                    result.update({artifact_name: artifact["file"]})
+
+            return result
+
     def _find_entry_definition(self):
         """  """
 

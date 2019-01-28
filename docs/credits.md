@@ -7,5 +7,6 @@ Development of **shellfoundry** would not have been possible without the open so
 - **click** [http://click.pocoo.org/5/](http://click.pocoo.org/5/)
 - **pyyaml** [http://pyyaml.org/](http://pyyaml.org/)
 - **colorama** [https://github.com/tartley/colorama]
+- **ruamel.yaml** [https://pypi.python.org/pypi/ruamel.yaml]
 
 Return to [Table of Contents](readme.md)

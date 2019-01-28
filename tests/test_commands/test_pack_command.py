@@ -65,6 +65,21 @@ shell:
         # Assert
         echo_mock.assert_any_call(u'shell.yml file is missing')
 
+    @patch('click.secho')
+    @patch('shellfoundry.utilities.python_dependencies_packager.pip')
+    def test_pack_layer_one_shell(self, pip_mock, secho_mock):
+        # Arrange
+        self.fs.CreateFile('cloudshell-L1-test/datamodel/datamodel.xml')
+        os.chdir('cloudshell-L1-test')
+
+        command_executor = PackCommandExecutor()
+
+        # Act
+        command_executor.pack()
+
+        # Assert
+        secho_mock.assert_any_call("Packaging a L1 shell directly via shellfoundry is not supported.", fg="yellow")
+
     @patch('shellfoundry.commands.pack_command.ShellPackageBuilder.pack')
     def test_tosca_based_shell_packager_called_when_shell_contains_tosca_meta_file(self, pack_mock):
         # Arrange

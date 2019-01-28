@@ -2,6 +2,83 @@
 History
 =======
 
+1.2.5 (2018-10-04)
+------------------
+
+* Set strict python version
+
+1.2.4 (2018-09-26)
+------------------
+
+* Removed unnecessary cloudshell-automation-api dependency from requirements
+* Set static version for package click in requirements. click==6.7
+
+1.2.2 (2018-08-16)
+------------------
+
+* Fixed bug in verification template and standards compatibility
+
+1.2.1 (2018-08-13)
+------------------
+
+* Added dynamical determination of minimal CloudShell version from templates
+
+1.2.0 (2018-07-26)
+------------------
+
+* Extended the "new" command behaviour for offline mode
+* Added verification is template and standard version are compatible
+
+1.1.9 (2018-05-03)
+------------------
+
+* Added offline mode functionality
+
+1.1.8 (2018-04-23)
+------------------
+
+* Fixed typo in pack command behaviour
+* Added new online template for Cloud Provider
+
+1.1.7 (2018-04-03)
+------------------
+
+* Shellfoundry will now pack deployment options if exists
+* Modified unpack method logic in extended command
+
+1.1.6 (2018-03-27)
+------------------
+
+* Added limitation installing a gen2 shell(regular/service) into a non global domain
+
+1.1.5 (2018-03-01)
+------------------
+
+* Added new online template for Traffic Generator Controller Service
+
+1.1.4 (2018-02-21)
+------------------
+
+* Added new online template for Traffic Generator Chassis 2 Generation
+
+1.1.2 (2018-01-09)
+------------------
+
+* Fixed extend command logic (unzip driver archive)
+
+1.1.1 (2017-11-14)
+------------------
+
+* Added new online templates
+* Added specific error message to Layer 1 Shells pack and install commands
+
+1.1.0 (2017-10-30)
+------------------
+
+* Added author field to shellfoundry configuration
+* Added extend command behavior
+* Added verification when upgrading an official shell to unofficial
+
 1.0.4 (2017-08-28)
 ------------------
 
@@ -74,7 +151,7 @@ History
 0.0.44 (2016-12-12)
 -------------------
 
-* Fixed a bug in config command which caused shellfoundry to crash when config file has not existed
+* Fixed a bug in config command which caused shellfoundry to crash when config file was missing
 
 0.0.43 (2016-12-11)
 -------------------

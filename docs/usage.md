@@ -78,6 +78,16 @@ The shell package can be installed into CloudShell using the *install* command. 
 $ shellfoundry install
 ```
 
+## Customizing a 2nd Gen Shell
+
+**shellfoundry** allows customization of a shells.
+
+```bash
+$ shellfoundy extend <URL/path-to-Shell-template>
+```
+
+This command downloads the source code of the Shell you wish to customize to your local machine and updates the Shell’s Author with the author specified in **shellfoundry**
+
 ### Altering CloudShell connection configuration
 
 To alter CloudShell connection information use the *config* command like so:

@@ -57,6 +57,8 @@ class TestExtendCommandExecutor(unittest.TestCase):
                 new=mock.MagicMock(return_value=True))
     @mock.patch("shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_local_shell",
                 new=mock.MagicMock(return_value="extended_shell_path"))
+    @mock.patch("shellfoundry.commands.extend_command.ExtendCommandExecutor._unpack_driver_archive",
+                new=mock.MagicMock())
     @mock.patch("shellfoundry.commands.extend_command.os", new=mock.MagicMock())
     @mock.patch("shellfoundry.commands.extend_command.shutil", new=mock.MagicMock())
     def test_extend_from_local_success(self):
@@ -69,6 +71,8 @@ class TestExtendCommandExecutor(unittest.TestCase):
                 new=mock.MagicMock(return_value=True))
     @mock.patch("shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_online_shell",
                 new=mock.MagicMock(return_value="extended_shell_path"))
+    @mock.patch("shellfoundry.commands.extend_command.ExtendCommandExecutor._unpack_driver_archive",
+                new=mock.MagicMock())
     @mock.patch("shellfoundry.commands.extend_command.os", new=mock.MagicMock())
     @mock.patch("shellfoundry.commands.extend_command.shutil", new=mock.MagicMock())
     def test_extend_from_remote_success(self):
@@ -83,6 +87,7 @@ class TestExtendCommandExecutor(unittest.TestCase):
             with self.assertRaises(ClickException):
                 self.tested_instance.extend("some_path", ("new_attribute",))
 
+    @mock.patch("shellfoundry.commands.extend_command.os.rename", new=mock.MagicMock())
     @mock.patch("shellfoundry.commands.extend_command.ShellGenerationValidations.validate_2nd_gen",
                 new=mock.MagicMock(return_value=False))
     @mock.patch("shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_online_shell",
@@ -96,6 +101,8 @@ class TestExtendCommandExecutor(unittest.TestCase):
                 new=mock.MagicMock(return_value=True))
     @mock.patch("shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_local_shell",
                 new=mock.MagicMock(return_value="extended_shell_path"))
+    @mock.patch("shellfoundry.commands.extend_command.ExtendCommandExecutor._unpack_driver_archive",
+                new=mock.MagicMock())
     @mock.patch("shellfoundry.commands.extend_command.os", new=mock.MagicMock())
     @mock.patch("shellfoundry.commands.extend_command.shutil.move", new=mock.MagicMock(side_effect=shutil.Error))
     def test_extend_failed_copy_from_temp_folder(self):
