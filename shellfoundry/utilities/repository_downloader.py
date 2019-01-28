@@ -37,8 +37,11 @@ class RepositoryDownloader(object):
     def __init__(self, repo_extractor=ZipDownloadedRepoExtractor()):
         self.repo_extractor = repo_extractor
 
-    def download_template(self, target_dir, repo_address, branch):
-        download_url = construct_template_url(repo_address, branch)
+    def download_template(self, target_dir, repo_address, branch, is_need_construct=True):
+        if is_need_construct:
+            download_url = construct_template_url(repo_address, branch)
+        else:
+            download_url = repo_address
         archive_path = ''
         try:
             archive_path = self.download_file(download_url, target_dir)

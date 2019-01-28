@@ -20,7 +20,7 @@ class ExtendCommandExecutor(object):
     LOCAL_TEMPLATE_URL_PREFIX = "local:"
     SIGN_FILENAME = "signed"
     ARTIFACTS = {"driver": "src",
-                 "deployment": "deplyoments"}
+                 "deployment": "deployments"}
 
     def __init__(self, repository_downloader=None, shell_name_validations=None, shell_gen_validations=None):
         """
@@ -33,8 +33,8 @@ class ExtendCommandExecutor(object):
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
     def extend(self, source, attribute_names):
-        """ Create a new shell based on a already existed shell
-        :param str source: The path to existed Shell. Can be url or local path
+        """ Create a new shell based on an already existing shell
+        :param str source: The path to the existing shell. Can be a url or local path
         :param tuple attribute_names: Sequence of attribute names that should be added
         """
 

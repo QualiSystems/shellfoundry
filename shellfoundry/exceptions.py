@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import click
 
 
@@ -42,3 +45,8 @@ class FatalError(click.ClickException):
 class YmlFieldMissingException(Exception):
     def __init__(self, message):
         super(YmlFieldMissingException, self).__init__(message)
+
+
+class ShellFoundryVersionException(Exception):
+    def __init__(self, message):
+        super(ShellFoundryVersionException, self).__init__(message)

@@ -1,12 +1,19 @@
-from xmlrpclib import ServerProxy
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import ssl
+
+from xmlrpclib import ServerProxy, ProtocolError
 try:
     from pip.utils import get_installed_version
 except ImportError:
     def get_installed_version(package_name):
         return __import__(package_name).__version__
-from shellfoundry import PACKAGE_NAME
+
 from distutils.version import StrictVersion
+
+from shellfoundry import PACKAGE_NAME
+from shellfoundry.exceptions import ShellFoundryVersionException
 
 
 GEN_ONE = 'gen1'
@@ -42,11 +49,18 @@ def is_index_version_greater_than_current():
 
 
 def max_version_from_index():
-    ctx = ssl.SSLContext(protocol=ssl.PROTOCOL_SSLv23)
-    proxy = ServerProxy(PyPI.url, context=ctx)
-    releases = proxy.package_releases(PACKAGE_NAME)
-    max_version = max(releases)
-    return max_version
+    try:
+        ctx = ssl.SSLContext(protocol=ssl.PROTOCOL_SSLv23)
+        proxy = ServerProxy(PyPI.url, context=ctx)
+        releases = proxy.package_releases(PACKAGE_NAME)
+        max_version = max(releases)
+        return max_version
+    except ProtocolError, err:
+        raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
+                                           "are you offline? Error: {}".format(err.errmsg))
+    except Exception, err:
+        raise ShellFoundryVersionException("Unexpected error during shellfoundry version check. "
+                                           "Error: {}.".format(err.message))
 
 
 def get_index_of_biggest_component_between_two_versions(v1, v2):

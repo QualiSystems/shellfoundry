@@ -1,6 +1,45 @@
 =======
 History
 =======
+
+1.2.5 (2018-10-04)
+------------------
+
+* Set strict python version
+
+1.2.4 (2018-09-26)
+------------------
+
+* Removed unnecessary cloudshell-automation-api dependency from requirements
+* Set static version for package click in requirements. click==6.7
+
+1.2.2 (2018-08-16)
+------------------
+
+* Fixed bug in verification template and standards compatibility
+
+1.2.1 (2018-08-13)
+------------------
+
+* Added dynamical determination of minimal CloudShell version from templates
+
+1.2.0 (2018-07-26)
+------------------
+
+* Extended the "new" command behaviour for offline mode
+* Added verification is template and standard version are compatible
+
+1.1.9 (2018-05-03)
+------------------
+
+* Added offline mode functionality
+
+1.1.8 (2018-04-23)
+------------------
+
+* Fixed typo in pack command behaviour
+* Added new online template for Cloud Provider
+
 1.1.7 (2018-04-03)
 ------------------
 
@@ -112,7 +151,7 @@ History
 0.0.44 (2016-12-12)
 -------------------
 
-* Fixed a bug in config command which caused shellfoundry to crash when config file has not existed
+* Fixed a bug in config command which caused shellfoundry to crash when config file was missing
 
 0.0.43 (2016-12-11)
 -------------------
