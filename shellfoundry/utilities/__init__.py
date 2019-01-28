@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import ssl
+
 from xmlrpclib import ServerProxy, ProtocolError
 try:
     from pip.utils import get_installed_version
@@ -48,7 +50,8 @@ def is_index_version_greater_than_current():
 
 def max_version_from_index():
     try:
-        proxy = ServerProxy(PyPI.url)
+        ctx = ssl.SSLContext(protocol=ssl.PROTOCOL_SSLv23)
+        proxy = ServerProxy(PyPI.url, context=ctx)
         releases = proxy.package_releases(PACKAGE_NAME)
         max_version = max(releases)
         return max_version
@@ -64,3 +67,5 @@ def get_index_of_biggest_component_between_two_versions(v1, v2):
     for i in xrange(0, len(v1)):
         if v1[i] > v2[i]:
             return i
+
+
