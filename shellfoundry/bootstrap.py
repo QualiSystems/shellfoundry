@@ -5,8 +5,10 @@ import click
 import pkg_resources
 
 from shellfoundry.decorators import shellfoundry_version_check
+from shellfoundry.commands.delete_command import DeleteCommandExecutor
 from shellfoundry.commands.dist_command import DistCommandExecutor
 from shellfoundry.commands.generate_command import GenerateCommandExecutor
+from shellfoundry.commands.get_templates_command import GetTemplatesCommandExecutor
 from shellfoundry.commands.install_command import InstallCommandExecutor
 from shellfoundry.commands.list_command import ListCommandExecutor
 from shellfoundry.commands.new_command import NewCommandExecutor
@@ -51,43 +53,38 @@ def list(default_view):
 @click.option(u'--version', default=None)
 @shellfoundry_version_check(abort_if_major=True)
 def new(name, template, version):
-    """
-    Creates a new shell based on a template
-    """
+    """ Creates a new shell based on a template """
+
     NewCommandExecutor().new(name, template, version)
 
 
 @cli.command()
 def pack():
-    """
-    Creates a shell package
-    """
+    """ Creates a shell package """
+
     PackCommandExecutor().pack()
 
 
 @cli.command()
 def install():
-    """
-    Installs the shell package into CloudShell
-    """
+    """ Installs the shell package into CloudShell """
+
     PackCommandExecutor().pack()
     InstallCommandExecutor().install()
 
 
 @cli.command()
 def dist():
-    """
-    Creates a deployable Shell which can be distributed to a production environment
-    """
+    """ Creates a deployable Shell which can be distributed to a production environment """
+
     PackCommandExecutor().pack()
     DistCommandExecutor().dist()
 
 
 @cli.command()
 def generate():
-    """
-    Generates Python driver data model to be used in driver code
-    """
+    """ Generates Python driver data model to be used in driver code """
+
     PackCommandExecutor().pack()
     GenerateCommandExecutor().generate()
 
@@ -97,18 +94,16 @@ def generate():
 @click.option('--global/--local', 'global_cfg', default=True)
 @click.option('--remove', 'key_to_remove', default=None)
 def config(kv, global_cfg, key_to_remove):
-    """
-    Configures global/local config values used by shellfoundry
-    """
+    """ Configures global/local config values used by shellfoundry """
+
     ConfigCommandExecutor(global_cfg).config(kv, key_to_remove)
 
 
 @cli.command()
 @click.argument(u'template_name')
 def show(template_name):
-    """
-    Shows all versions of TEMPLATENAME
-    """
+    """ Shows all versions of TEMPLATE NAME """
+
     ShowCommandExecutor().show(template_name)
 
 
@@ -119,11 +114,31 @@ def show(template_name):
 # @click.option('--command', 'add_command', multiple=True, default=None, help="Creates a commented out new command template to be filled by the developer")
 # @click.option('--edit', 'edit_command', multiple=True, default=None, help="Copy the full command logic to the driver")
 def extend(source, add_attribute):
-    """
-    Creates a new shell based on an existing shell
+    """ Creates a new shell based on an existing shell
 
     SOURCE - Specify the original Shell location.\n
     \tYou can use 'local://<folder>' to specify a locally saved Shell folder
     """
 
     ExtendCommandExecutor().extend(source, add_attribute)
+
+@cli.command()
+@click.argument(u'cs_version')
+@click.option('--output_dir', 'output_dir', default=None, help="Folder where templates will be saved")
+def get_templates(cs_version, output_dir):
+    """ Download all templates which are compatible with provided CloudShell Version
+
+    CS_VERSION - CloudShell Version
+    """
+
+    GetTemplatesCommandExecutor().get_templates(cs_version, output_dir)
+
+@cli.command()
+@click.argument(u'name')
+def delete(name):
+    """ Deletes the shell from CloudShell
+
+    NAME - Shell name installed on CloudShell
+    """
+
+    DeleteCommandExecutor().delete(name)

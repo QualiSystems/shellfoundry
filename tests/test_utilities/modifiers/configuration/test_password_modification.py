@@ -1,8 +1,9 @@
 import unittest
 
 from mock import patch, Mock
-from shellfoundry.utilities.modifiers.configuration.password_modification import  PasswordModification
+from shellfoundry.utilities.modifiers.configuration.password_modification import PasswordModification
 from shellfoundry.exceptions import PlatformNameIsEmptyException
+
 
 class TestPasswordModification(unittest.TestCase):
     @patch('platform.node', Mock(return_value=''))

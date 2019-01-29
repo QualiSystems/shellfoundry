@@ -4,7 +4,7 @@ qpm
 click==6.7
 pyyaml
 terminaltables
-cloudshell-rest-api>=8.2.1.0
+cloudshell-rest-api>=8.2.2.0
 colorama
 giturlparse.py
 ruamel.yaml==0.15.33

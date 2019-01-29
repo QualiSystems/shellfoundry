@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import datetime
 import os
 
 from cookiecutter.main import cookiecutter
@@ -14,8 +15,10 @@ class CookiecutterTemplateCompiler(object):
 
     def compile_template(self, shell_name, template_path, extra_context, running_on_same_folder):
 
-        extra_context["project_name"] = shell_name
-        extra_context["full_name"] = self.cloudshell_config_reader.read().author
+        extra_context.update({"project_name": shell_name,
+                              "full_name": self.cloudshell_config_reader.read().author,
+                              "release_date": datetime.datetime.now().strftime("%B %Y"),
+                              })
 
         if running_on_same_folder:
             output_dir = os.path.pardir
