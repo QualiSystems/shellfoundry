@@ -65,7 +65,7 @@ class ShellPackage(object):
         # fetch entry definition from tosca.meta file
         with open(self.get_metadata_path()) as stream:
             s = stream.read()
-            entry_definition = dict(map(str.strip, line.split(':', 1)) for line in s.splitlines())['Entry-Definitions']
+            entry_definition = dict(map(str.strip, line.split(':', 1)) for line in s.splitlines() if line.strip())['Entry-Definitions']
 
         # fetch template name from entry definition file retrieved earlier
         with open(os.path.join(self.path, entry_definition)) as stream:

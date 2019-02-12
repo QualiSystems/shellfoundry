@@ -45,6 +45,17 @@ Created-By: Anonymous
 Entry-Definitions: shell-definition.yml
     """)
 
+        self.fs.CreateFile('nut_shell/shell-definition.yml', contents="""
+        metadata:
+          template_name: NutShell
+        node_types:
+          vendor.NutShell:
+            artifacts:
+              driver:
+                file: NutShell.zip
+                type: tosca.artifacts.File
+                    """)
+
         os.chdir('nut_shell')
 
         driver_generator = MagicMock()

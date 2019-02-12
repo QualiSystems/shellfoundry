@@ -2,6 +2,19 @@
 History
 =======
 
+1.2.7 (2019-02-12)
+------------------
+
+* Fixed issue in "generate" command after renaming root folder
+
+1.2.6 (2019-01-30)
+------------------
+
+* Added "get_templates" command
+* Added "delete" command
+* Removed driver zip-file after pack command
+* Added generating shell documentation based on the template
+
 1.2.5 (2018-10-04)
 ------------------
 
