@@ -2,6 +2,11 @@
 History
 =======
 
+1.2.7 (2019-02-12)
+------------------
+
+* Fixed issue in "generate" command after renaming root folder
+
 1.2.6 (2019-01-30)
 ------------------
 
