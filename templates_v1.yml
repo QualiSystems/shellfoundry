@@ -126,6 +126,13 @@ templates:
       description : 2nd generation shell template for basic inventory resources
       repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
       min_cs_ver: 8.0
+    - name : gen2/resource-with-connected-commands
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for basic inventory resources with connected commands
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-resource_with_connected_commands-template
+      min_cs_ver: 9.2
     - name : gen2/firewall
       params:
         project_name :
