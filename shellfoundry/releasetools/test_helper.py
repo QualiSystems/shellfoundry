@@ -26,6 +26,8 @@ def create_session_from_cloudshell_config():
 
 def create_autoload_context(address, client_install_path='', controller='', port='', user='', password=''):
 
+    session = CloudShellAPISession('localhost', 'admin', 'admin', 'Global')
+
     context = InitCommandContext()
 
     resource = ResourceContextDetails()
@@ -38,6 +40,9 @@ def create_autoload_context(address, client_install_path='', controller='', port
                            'Password': password}
     context.connectivity = ConnectivityContext()
     context.resource = resource
+    context.connectivity.server_address = 'localhost'
+    context.connectivity.admin_auth_token = session.token_id
+    context.connectivity.cloudshell_api_scheme = CloudShellSessionContext.DEFAULT_API_SCHEME
     return context
 
 
