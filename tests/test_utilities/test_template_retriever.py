@@ -48,13 +48,13 @@ class TestTemplateRetriever(unittest.TestCase):
         templates = template_retriever.get_templates()
 
         # Assert
-        self.assertEqual(templates['gen1/router'].name, 'gen1/router')
-        self.assertEqual(templates['gen1/router'].description, 'Basic router template')
-        self.assertEqual(templates['gen1/router'].repository, 'https://github.com/QualiSystems/shellfoundry-router-template')
+        self.assertEqual(templates['gen1/router'][0].name, 'gen1/router')
+        self.assertEqual(templates['gen1/router'][0].description, 'Basic router template')
+        self.assertEqual(templates['gen1/router'][0].repository, 'https://github.com/QualiSystems/shellfoundry-router-template')
 
-        self.assertEqual(templates['gen1/switch'].name, 'gen1/switch')
-        self.assertEqual(templates['gen1/switch'].description, 'Basic switch template')
-        self.assertEqual(templates['gen1/switch'].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
+        self.assertEqual(templates['gen1/switch'][0].name, 'gen1/switch')
+        self.assertEqual(templates['gen1/switch'][0].description, 'Basic switch template')
+        self.assertEqual(templates['gen1/switch'][0].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
 
     @mock.patch('shellfoundry.utilities.template_retriever.TemplateRetriever._get_templates_from_github',
                 lambda x: "")
@@ -79,13 +79,13 @@ class TestTemplateRetriever(unittest.TestCase):
         templates = template_retriever.get_templates()
 
         # Assert
-        self.assertEqual(templates['gen1/router'].name, 'gen1/router')
-        self.assertEqual(templates['gen1/router'].description, 'Basic router template')
-        self.assertEqual(templates['gen1/router'].repository, 'https://github.com/QualiSystems/shellfoundry-router-template')
+        self.assertEqual(templates['gen1/router'][0].name, 'gen1/router')
+        self.assertEqual(templates['gen1/router'][0].description, 'Basic router template')
+        self.assertEqual(templates['gen1/router'][0].repository, 'https://github.com/QualiSystems/shellfoundry-router-template')
 
-        self.assertEqual(templates['gen1/switch'].name, 'gen1/switch')
-        self.assertEqual(templates['gen1/switch'].description, 'Basic switch template')
-        self.assertEqual(templates['gen1/switch'].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
+        self.assertEqual(templates['gen1/switch'][0].name, 'gen1/switch')
+        self.assertEqual(templates['gen1/switch'][0].description, 'Basic switch template')
+        self.assertEqual(templates['gen1/switch'][0].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
 
     @httpretty.activate
     def test_filtered_template_retriever_gen1_success(self):
@@ -99,13 +99,13 @@ class TestTemplateRetriever(unittest.TestCase):
 
         # Assert
         self.assertEqual(len(templates), 2)
-        self.assertEqual(templates['gen1/router'].name, 'gen1/router')
-        self.assertEqual(templates['gen1/router'].description, 'Basic router template')
-        self.assertEqual(templates['gen1/router'].repository, 'https://github.com/QualiSystems/shellfoundry-router-template')
+        self.assertEqual(templates['gen1/router'][0].name, 'gen1/router')
+        self.assertEqual(templates['gen1/router'][0].description, 'Basic router template')
+        self.assertEqual(templates['gen1/router'][0].repository, 'https://github.com/QualiSystems/shellfoundry-router-template')
 
-        self.assertEqual(templates['gen1/switch'].name, 'gen1/switch')
-        self.assertEqual(templates['gen1/switch'].description, 'Basic switch template')
-        self.assertEqual(templates['gen1/switch'].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
+        self.assertEqual(templates['gen1/switch'][0].name, 'gen1/switch')
+        self.assertEqual(templates['gen1/switch'][0].description, 'Basic switch template')
+        self.assertEqual(templates['gen1/switch'][0].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
 
     @httpretty.activate
     def test_filtered_template_retriever_gen2_success(self):
@@ -119,13 +119,13 @@ class TestTemplateRetriever(unittest.TestCase):
 
         # Assert
         self.assertEqual(len(templates), 2)
-        self.assertEqual(templates['gen2/switch'].name, 'gen2/switch')
-        self.assertEqual(templates['gen2/switch'].description, 'Basic switch template')
-        self.assertEqual(templates['gen2/switch'].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
+        self.assertEqual(templates['gen2/switch'][0].name, 'gen2/switch')
+        self.assertEqual(templates['gen2/switch'][0].description, 'Basic switch template')
+        self.assertEqual(templates['gen2/switch'][0].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
 
-        self.assertEqual(templates['gen2/software-asset'].name, 'gen2/software-asset')
-        self.assertEqual(templates['gen2/software-asset'].description, 'Basic software-asset template')
-        self.assertEqual(templates['gen2/software-asset'].repository, 'https://github.com/QualiSystems/shellfoundry-software-asset-template')
+        self.assertEqual(templates['gen2/software-asset'][0].name, 'gen2/software-asset')
+        self.assertEqual(templates['gen2/software-asset'][0].description, 'Basic software-asset template')
+        self.assertEqual(templates['gen2/software-asset'][0].repository, 'https://github.com/QualiSystems/shellfoundry-software-asset-template')
 
     @httpretty.activate
     def test_filtered_template_retriever_all_success(self):
@@ -139,21 +139,21 @@ class TestTemplateRetriever(unittest.TestCase):
 
         # Assert
         self.assertEqual(len(templates), 4)
-        self.assertEqual(templates['gen1/router'].name, 'gen1/router')
-        self.assertEqual(templates['gen1/router'].description, 'Basic router template')
-        self.assertEqual(templates['gen1/router'].repository, 'https://github.com/QualiSystems/shellfoundry-router-template')
+        self.assertEqual(templates['gen1/router'][0].name, 'gen1/router')
+        self.assertEqual(templates['gen1/router'][0].description, 'Basic router template')
+        self.assertEqual(templates['gen1/router'][0].repository, 'https://github.com/QualiSystems/shellfoundry-router-template')
 
-        self.assertEqual(templates['gen1/switch'].name, 'gen1/switch')
-        self.assertEqual(templates['gen1/switch'].description, 'Basic switch template')
-        self.assertEqual(templates['gen1/switch'].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
+        self.assertEqual(templates['gen1/switch'][0].name, 'gen1/switch')
+        self.assertEqual(templates['gen1/switch'][0].description, 'Basic switch template')
+        self.assertEqual(templates['gen1/switch'][0].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
 
-        self.assertEqual(templates['gen2/switch'].name, 'gen2/switch')
-        self.assertEqual(templates['gen2/switch'].description, 'Basic switch template')
-        self.assertEqual(templates['gen2/switch'].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
+        self.assertEqual(templates['gen2/switch'][0].name, 'gen2/switch')
+        self.assertEqual(templates['gen2/switch'][0].description, 'Basic switch template')
+        self.assertEqual(templates['gen2/switch'][0].repository, 'https://github.com/QualiSystems/shellfoundry-switch-template')
 
-        self.assertEqual(templates['gen2/software-asset'].name, 'gen2/software-asset')
-        self.assertEqual(templates['gen2/software-asset'].description, 'Basic software-asset template')
-        self.assertEqual(templates['gen2/software-asset'].repository, 'https://github.com/QualiSystems/shellfoundry-software-asset-template')
+        self.assertEqual(templates['gen2/software-asset'][0].name, 'gen2/software-asset')
+        self.assertEqual(templates['gen2/software-asset'][0].description, 'Basic software-asset template')
+        self.assertEqual(templates['gen2/software-asset'][0].repository, 'https://github.com/QualiSystems/shellfoundry-software-asset-template')
 
 
 class TestTemplateRetrieverFakeFS(pyfakefs.fake_filesystem_unittest.TestCase):
@@ -188,5 +188,5 @@ templates:
         self.assertEqual(len(templates), 2)
         self.assertTrue('gen1/resource' in templates)
         self.assertTrue('gen2/software-asset' in templates)
-        self.assertEqual(templates['gen1/resource'].standard, None)
-        self.assertEqual(templates['gen2/software-asset'].standard, 'software-asset')
+        self.assertEqual(templates['gen1/resource'][0].standard, None)
+        self.assertEqual(templates['gen2/software-asset'][0].standard, 'software-asset')

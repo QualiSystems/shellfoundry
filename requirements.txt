@@ -1,12 +1,12 @@
 requests
 cookiecutter
 qpm
-click
+click==6.7
 pyyaml
 terminaltables
-cloudshell-automation-api>=7.0.0.0,<8.2.0.0
-cloudshell-rest-api>=8.2.1.0
+cloudshell-rest-api>=8.2.2.0
 colorama
 giturlparse.py
 PyYAML
 ruamel.yaml==0.15.33
+cryptography==2.1.4

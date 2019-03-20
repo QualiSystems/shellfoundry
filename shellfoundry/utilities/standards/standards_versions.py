@@ -1,12 +1,7 @@
-from .consts import STANDARD_NAME_KEY, VERSIONS_KEY
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
-
-def trim_standard(standard):
-    """
-    :type standard str
-    :return:
-    """
-    return standard.lower().lstrip('cloudshell').rstrip('standard').strip('_').replace('_', '-')
+from pkg_resources import parse_version
 
 
 class StandardVersionsFactory(object):
@@ -22,12 +17,15 @@ class StandardVersions(object):
             raise Exception('Standards list is empty. Please verify that {} exists'
                             .format(os.path.join(os.path.dirname(sf_file),
                                                  'data', 'standards.json')))
-        for standard in standards:
-            standard[STANDARD_NAME_KEY] = trim_standard(standard[STANDARD_NAME_KEY])
+
         self.standards = standards
 
     def get_latest_version(self, standard):
-        for curr_standard in self.standards:
-            if standard in curr_standard.values():
-                return max(curr_standard[VERSIONS_KEY])
-        raise Exception('Failed to find latest version')
+
+        standards = self.standards.get(standard, None)
+        if standards is None:
+            raise Exception('Failed to find latest version')
+
+        latest_version = unicode(max(map(parse_version, standards)))
+        if latest_version:
+            return latest_version
