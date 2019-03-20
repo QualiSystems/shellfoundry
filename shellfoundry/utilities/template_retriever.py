@@ -9,7 +9,8 @@ import requests
 import yaml
 
 from collections import OrderedDict, defaultdict
-from pkg_resources import parse_version, SetuptoolsVersion
+from pkg_resources import parse_version
+from pkg_resources.extern.packaging.version import Version
 from threading import Thread, RLock
 
 from .filters import CompositeFilter
@@ -230,7 +231,7 @@ class TemplateRetriever(object):
         for item in branches:
             if item == "master":
                 repo_branches.append(item)
-            elif isinstance(parse_version(item), SetuptoolsVersion):  # only numeric version
+            elif isinstance(parse_version(item), Version):  # only numeric version
                 repo_branches.append(parse_version(item))
 
         repo_branches.reverse()
