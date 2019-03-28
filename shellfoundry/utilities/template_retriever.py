@@ -20,6 +20,8 @@ from shellfoundry.utilities.constants import TEMPLATE_INFO_FILE, TEMPLATES_YML, 
 
 
 class TemplateRetriever(object):
+    NAME_PLACEHOLDER = "name"
+
     def get_templates(self, **kwargs):
         """ Get templates
         :return: Dictionary of shellfoundry.ShellTemplate
@@ -201,9 +203,8 @@ class TemplateRetriever(object):
         session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
         responce = session.get(url)
 
-        if responce.status_code == 200:
-            data = json.loads(responce.text)
-            return data.get(SERVER_VERSION_KEY, None)
+        if responce.status_code == requests.codes.ok:
+            return responce.json().get(SERVER_VERSION_KEY, None)
         else:
             return
 
@@ -218,14 +219,11 @@ class TemplateRetriever(object):
         if github_login and github_password:
             session.auth = (github_login, github_password)
         session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
-        responce = session.get(request)
+        response = session.get(request)
 
-        if responce.status_code == 200:
-            data = json.loads(responce.text)
-            branches = [item["name"] for item in data]
-        else:
-            raise click.ClickException("Cannot access GitHub repository branches. {}".format(
-                json.loads(responce.text).get("message", "Probably wrong GitHub credentials")))
+        response.raise_for_status()
+
+        branches = [item[self.NAME_PLACEHOLDER] for item in response.json()]
 
         repo_branches = []
         for item in branches:

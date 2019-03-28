@@ -74,11 +74,12 @@ def install():
 
 
 @cli.command()
-def dist():
+@click.option('--enable_cs_repo', is_flag=True, help="")
+def dist(enable_cs_repo):
     """ Creates a deployable Shell which can be distributed to a production environment """
 
     PackCommandExecutor().pack()
-    DistCommandExecutor().dist()
+    DistCommandExecutor().dist(enable_cs_repo)
 
 
 @cli.command()
