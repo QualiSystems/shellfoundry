@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 
 from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader

@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import codecs
 import os
 import unittest
@@ -19,7 +22,7 @@ class TestPythonDependenciesPackager(fake_filesystem_unittest.TestCase):
         requirements_file = 'req/requirements.requirements_file'
         self.fs.CreateFile(requirements_file, contents="")
 
-        with patch('shellfoundry.utilities.python_dependencies_packager.pip.main') as mock_pip:
+        with patch('shellfoundry.utilities.python_dependencies_packager.pip_main') as mock_pip:
             # Act
             packager = PythonDependenciesPackager()
             packager.save_offline_dependencies(requirements_file, 'dst')
@@ -37,7 +40,7 @@ class TestPythonDependenciesPackager(fake_filesystem_unittest.TestCase):
             requirements_file = 'req/requirements.requirements_file'
             self.fs.CreateFile(requirements_file, contents="")
 
-            with patch('shellfoundry.utilities.python_dependencies_packager.pip.main') as mock_pip:
+            with patch('shellfoundry.utilities.python_dependencies_packager.pip_main') as mock_pip:
                 # Act
                 packager = PythonDependenciesPackager()
                 packager.save_offline_dependencies(requirements_file, 'dst')
@@ -58,7 +61,7 @@ class TestPythonDependenciesPackager(fake_filesystem_unittest.TestCase):
         nested_file = 'dst/nested/test.txt'
         self.fs.CreateFile(nested_file, contents="")
 
-        with mock.patch('shellfoundry.utilities.python_dependencies_packager.pip') as mock_pip:
+        with mock.patch('shellfoundry.utilities.python_dependencies_packager.pip_main') as mock_pip:
             # Act
             packager = PythonDependenciesPackager()
             packager.save_offline_dependencies(requirements_file, 'dst')
@@ -69,7 +72,7 @@ class TestPythonDependenciesPackager(fake_filesystem_unittest.TestCase):
     def test_does_nothing_if_requirements_file_does_not_exist(self):
         requirements_file = 'req/requirements.requirements_file'
 
-        with mock.patch('shellfoundry.utilities.python_dependencies_packager.pip') as mock_pip:
+        with mock.patch('shellfoundry.utilities.python_dependencies_packager.pip_main') as mock_pip:
             # Act
             packager = PythonDependenciesPackager()
             packager.save_offline_dependencies(requirements_file, 'dst')
