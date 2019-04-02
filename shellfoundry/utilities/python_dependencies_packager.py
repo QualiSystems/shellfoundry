@@ -1,4 +1,8 @@
-import pip
+try:
+    from pip import main as _main
+except:
+    from pip._internal import main as _main
+
 import os
 
 import shutil
@@ -24,4 +28,4 @@ class PythonDependenciesPackager:
             pip_args.append(proxy)
         pip_args.append('--requirement={requirements_path}'.format(requirements_path=requirements_path))
         pip_args.append('--dest={dest_path}'.format(dest_path=dest_path))
-        pip.main(pip_args)
+        _main(pip_args)

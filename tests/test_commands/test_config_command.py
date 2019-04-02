@@ -1,5 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 
+from click import BadArgumentUsage
 from mock import patch, call, Mock
 from pyfakefs import fake_filesystem_unittest
 
@@ -27,15 +31,20 @@ not_supported_section:
 
         # Assert
         echo_mock.assert_any_call(
-            u' Key          Value          \n'
-            u'-----------------------------\n '
-            u'username     admin        * \n '
-            u'domain       Global       * \n '
-            u'defaultview  gen2         * \n '
-            u'key          value          \n '
-            u'password     [encrypted]  * \n '
-            u'host         localhost    * \n '
-            u'port         9000         * ')
+            u' Key                Value          \n'
+            u'-----------------------------------\n '
+            u'username           admin        * \n '
+            u'domain             Global       * \n '
+            u'github_login                    * \n '
+            u'online_mode        True         * \n '
+            u'author             Anonymous    * \n '
+            u'github_password    [encrypted]  * \n '
+            u'host               localhost    * \n '
+            u'key                value          \n '
+            u'template_location  Empty        * \n '
+            u'password           [encrypted]  * \n '
+            u'port               9000         * \n '
+            u'defaultview        gen2         * ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
@@ -91,16 +100,21 @@ install:
         ConfigCommandExecutor(True).config()
 
         # Assert
-        echo_mock.assert_any_call(u' Key            Value              \n'
-                                  u'-----------------------------------\n '
-                                  u'username       admin            * \n '
-                                  u'yetanotherkey  yetanothervalue    \n '
-                                  u'domain         Global           * \n '
-                                  u'defaultview    gen2             * \n '
-                                  u'key            value              \n '
-                                  u'password       [encrypted]        \n '
-                                  u'host           localhost        * \n '
-                                  u'port           9000             * ')
+        echo_mock.assert_any_call(u' Key                Value              \n'
+                                  u'---------------------------------------\n '
+                                  u'username           admin            * \n '
+                                  u'yetanotherkey      yetanothervalue    \n '
+                                  u'domain             Global           * \n '
+                                  u'github_login                        * \n '
+                                  u'online_mode        True             * \n '
+                                  u'author             Anonymous        * \n '
+                                  u'github_password    [encrypted]      * \n '
+                                  u'host               localhost        * \n '
+                                  u'key                value              \n '
+                                  u'template_location  Empty            * \n '
+                                  u'password           [encrypted]        \n '
+                                  u'port               9000             * \n '
+                                  u'defaultview        gen2             * ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
@@ -176,6 +190,15 @@ install:
         file_content = self.fs.GetObject('/quali/shellfoundry/global_config.yml').contents
         self.assertTrue(file_content == desired_result, 'Expected: {}{}Actual: {}'
                         .format(desired_result, os.linesep, file_content))
+
+    @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
+    @patch('shellfoundry.commands.config_command.click.echo')
+    def test_adding_key_to_global_config_with_empty_value(self, echo_mock, get_app_dir_mock):
+        # Arrange
+        get_app_dir_mock.return_value = '/quali/shellfoundry'
+
+        with self.assertRaisesRegexp(BadArgumentUsage, "Field '.+' can not be empty"):
+            ConfigCommandExecutor(True).config(('key', ''))
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('platform.node', Mock(return_value='machine-name-here'))

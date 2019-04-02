@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 import click
 from os import path
@@ -22,7 +25,8 @@ class GenerateCommandExecutor(object):
             click.echo('Code generation supported in TOSCA based shells only', err=True)
             return
 
-        shell_name = shell_package.get_shell_name()
+        # shell_name = shell_package.get_shell_name()
+        shell_name = shell_package.get_name_from_definition()
         shell_filename = shell_name + '.zip'
         package_full_path = path.join(current_path, 'dist', shell_filename)
         destination_path = path.join(current_path, 'src')

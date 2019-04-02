@@ -8,5 +8,3 @@ def assertFileExists(obj, file_path):
 
 def assertFileDoesNotExist(obj, file_path):
     obj.assertFalse(os.path.exists(file_path), msg='File/directory {0} exists'.format(file_path))
-
-

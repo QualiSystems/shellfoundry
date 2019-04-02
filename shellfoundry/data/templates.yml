@@ -115,10 +115,3 @@ templates:
       description : 2nd generation shell template for firewall resources
       repository : https://github.com/QualiSystems/shellfoundry-tosca-firewall-template
       min_cs_ver: 8.0
-    - name : gen2/software-asset
-      params:
-        project_name :
-        family_name :
-      description : 2nd generation shell template for software assets
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-software_asset-template
-      min_cs_ver: 8.1

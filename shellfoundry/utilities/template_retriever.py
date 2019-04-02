@@ -1,39 +1,258 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import click
+import json
+import os
+import re
 import requests
 import yaml
-from collections import OrderedDict
 
-from shellfoundry.models.shell_template import ShellTemplate
+from collections import OrderedDict, defaultdict
+from pkg_resources import parse_version
+from pkg_resources.extern.packaging.version import Version
+from threading import Thread, RLock
+
 from .filters import CompositeFilter
-
-TEMPLATES_YML = 'https://raw.github.com/QualiSystems/shellfoundry/master/templates_0.2.0.yml'
+from shellfoundry.models.shell_template import ShellTemplate
+from shellfoundry.utilities import GEN_TWO, SEPARATOR
+from shellfoundry.utilities.constants import TEMPLATE_INFO_FILE, TEMPLATES_YML, SERVER_VERSION_KEY
 
 
 class TemplateRetriever(object):
-    def get_templates(self):
-        """
+    def get_templates(self, **kwargs):
+        """ Get templates
         :return: Dictionary of shellfoundry.ShellTemplate
         """
-        response = self._get_templates_from_github()
-        config = yaml.load(response)
+
+        alternative_path = kwargs.get('alternative', None)
+        template_location = kwargs.get('template_location', None)
+        standards = kwargs.get('standards', {})
+
+        if alternative_path:
+            response = self._get_templates_from_path(alternative_path)
+            config = yaml.load(response)
+        elif template_location:
+            config = self._get_local_templates(template_location=template_location)
+        else:
+            response = self._get_templates_from_github()
+            config = yaml.load(response)
+
         if not config or 'templates' not in config:
-            return []
+            return {}
 
-        templatesdic = OrderedDict()
+        templatesdic = defaultdict(list)
         for template in config['templates']:
-            templatesdic[template['name']] = ShellTemplate(
-                template['name'],
-                template['description'],
-                template['repository'],
-                template['min_cs_ver'],
-                template['params'])
 
-        return templatesdic
+            if template["repository"]:  # Online templates
+                standard_version = {}
+            else:
+                standard_version = template["standard_version"]
+
+            templatesdic[template["name"]].append(ShellTemplate(name=template['name'],
+                                                                description=template['description'],
+                                                                repository=template['repository'],
+                                                                min_cs_ver=template['min_cs_ver'],
+                                                                standard=self._get_standard_out_of_name(
+                                                                    template['name']),
+                                                                standard_version=standard_version,
+                                                                params=template['params']))
+
+        return self._filter_by_standards(templatesdic, standards)
 
     @staticmethod
     def _get_templates_from_github():
+        """ Get templates data from GitHub """
+
         session = requests.Session()
         session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
         return session.get(TEMPLATES_YML).text
+
+    @staticmethod
+    def _get_templates_from_path(alternative_path):
+        """ Get templates data from local file """
+
+        with open(alternative_path, mode='r') as stream:
+            response = stream.read()
+        return response
+
+    def _get_local_templates(self, template_location):
+        """ Get templates from local storage """
+
+        if not template_location or not os.path.exists(template_location):
+            raise click.ClickException("Local template location empty or doesn't exist")
+        else:
+            templ_info = []
+            for root, directories, filenames in os.walk(template_location):
+                for filename in filenames:
+                    if filename == TEMPLATE_INFO_FILE:
+                        full_path = os.path.join(root, filename)
+                        standard_version = self._get_standard_version_from_template(root)
+                        with open(full_path, mode='r') as f:
+                            templ_data = json.load(f)
+                        templ_info.append({"name": templ_data.get("template_name", "Undefined"),
+                                           "description": templ_data.get("template_descr", "Undefined"),
+                                           "min_cs_ver": templ_data.get(SERVER_VERSION_KEY, "Undefined"),
+                                           "repository": "",
+                                           "standard_version": {standard_version: {"repo": root,
+                                                                                   "min_cs_ver": templ_data.get(
+                                                                                       SERVER_VERSION_KEY,
+                                                                                       "Undefined")}},
+                                           "params": {"project_name": templ_data.get("project_name", None),
+                                                      "family_name": templ_data.get("family_name", None)}})
+
+            if templ_info:
+                templates = {"templates": sorted(templ_info, key=lambda data: data["standard_version"].keys()[0])}
+            else:
+                templates = None
+
+        return templates
+
+    @staticmethod
+    def _get_standard_version_from_template(template_location):
+        """ Get standard version from template shell-definition file """
+
+        for root, directories, filenames in os.walk(template_location):
+            for filename in filenames:
+                if filename == "shell-definition.yaml":
+                    with open(os.path.join(root, "shell-definition.yaml")) as stream:
+                        match = re.search(
+                            r"cloudshell_standard:\s*cloudshell_(?P<name>\S+)_standard_(?P<version>\S+)\.\w+$",
+                            stream.read(),
+                            re.MULTILINE)
+                        if match:
+                            return str(match.groupdict()["version"].replace("_", "."))
+
+    @staticmethod
+    def _get_standard_out_of_name(template_name, default=None):
+        """
+        :type template_name str
+        :return:
+        """
+
+        type_index = 0
+        standard_index = 1
+        template = template_name.split(SEPARATOR)
+        if template[type_index] != GEN_TWO:
+            return default
+        return template[standard_index]
+
+    @staticmethod
+    def _filter_by_standards(templates, standards):
+        """ Filter templates by available on CloudShell Standards
+        :type templates collections.defaultdict(list)
+        :type standards dict
+        :return:
+        """
+
+        if not standards:
+            return OrderedDict(sorted(templates.iteritems()))
+
+        global filtered_templates
+        filtered_templates = defaultdict(list)
+
+        threads = []
+        lock = RLock()
+
+        for template_name, templates_list in templates.iteritems():
+            template_thread = Thread(target=TemplateRetriever._filter_in_threads,
+                                     args=(template_name, templates_list, standards, lock))
+            threads.append(template_thread)
+
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        return OrderedDict(sorted(filtered_templates.iteritems()))
+
+    @staticmethod
+    def _filter_in_threads(template_name, templates_list, standards, lock):
+        """  """
+
+        clear_template_name = TemplateRetriever._get_standard_out_of_name(template_name)
+        if clear_template_name is None:
+            for template in templates_list:
+                lock.acquire()
+                filtered_templates[template_name].append(template)
+                lock.release()
+        elif clear_template_name in standards.keys():
+            for template in templates_list:
+                if not template.standard_version or template.standard_version.keys()[0] in standards[clear_template_name]:
+                    if template.repository:
+                        template.min_cs_ver = TemplateRetriever._get_min_cs_version(repository=template.repository,
+                                                                                    standard_name=template.standard,
+                                                                                    standards=standards) or template.min_cs_ver
+                    lock.acquire()
+                    filtered_templates[template_name].append(template)
+                    lock.release()
+
+    @staticmethod
+    def _get_min_cs_version(repository, standard_name, standards, branch=None):
+        """ Get minimal CloudShell Server Version available for provided template """
+
+        if not branch:
+            branch = unicode(min(map(parse_version, standards[standard_name])))  # determine minimal standard version
+        repository = repository.replace("https://github.com", "https://raw.github.com")
+        url = "/".join([repository, str(branch), "cookiecutter.json"])
+
+        session = requests.Session()
+        session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
+        responce = session.get(url)
+
+        if responce.status_code == 200:
+            data = json.loads(responce.text)
+            return data.get(SERVER_VERSION_KEY, None)
+        else:
+            return
+
+    def get_repo_branches(self, repository, github_login=None, github_password=None):
+        """ Get all available branches for provided repository """
+
+        if repository.endswith("/"):
+            repository = repository[:-1]
+        request = "{}/branches".format(repository.replace("https://github.com", "https://api.github.com/repos"))
+
+        session = requests.Session()
+        if github_login and github_password:
+            session.auth = (github_login, github_password)
+        session.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
+        responce = session.get(request)
+
+        if responce.status_code == 200:
+            data = json.loads(responce.text)
+            branches = [item["name"] for item in data]
+        else:
+            raise click.ClickException("Cannot access GitHub repository branches. {}".format(
+                json.loads(responce.text).get("message", "Probably wrong GitHub credentials")))
+
+        repo_branches = []
+        for item in branches:
+            if item == "master":
+                repo_branches.append(item)
+            elif isinstance(parse_version(item), Version):  # only numeric version
+                repo_branches.append(parse_version(item))
+
+        repo_branches.reverse()
+
+        return repo_branches
+
+    def get_latest_template(self, repo, version, github_login=None, github_password=None):
+        """ Get latest template version based on CloudShell version """
+
+        for branch in self.get_repo_branches(repo, github_login, github_password):
+            cs_version = self._get_min_cs_version(repository=repo,
+                                                  standard_name=None,
+                                                  standards=None,
+                                                  branch=branch)
+
+            if cs_version:
+                try:
+                    if parse_version(version) >= parse_version(cs_version):
+                        return str(branch)
+                except:
+                    pass
 
 
 class FilteredTemplateRetriever(object):
@@ -41,6 +260,6 @@ class FilteredTemplateRetriever(object):
         self.template_retriever = template_retriever or TemplateRetriever()
         self.filter = CompositeFilter(template_type).filter
 
-    def get_templates(self):
-        templates = self.template_retriever.get_templates()
+    def get_templates(self, **kwargs):
+        templates = self.template_retriever.get_templates(**kwargs)
         return OrderedDict((k, v) for k, v in templates.iteritems() if self.filter(k))

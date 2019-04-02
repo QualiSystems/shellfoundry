@@ -52,6 +52,24 @@ templates:
         project_name :
         family_name :
       min_cs_ver: 7.0
+    - name : gen1/custom-service
+      params:
+        project_name :
+      description : 1st generation shell template for custom service
+      repository : https://github.com/QualiSystems/shell-custom-service-standard
+      min_cs_ver: 7.0
+    - name : gen1/cloud-service
+      params:
+        project_name :
+      description : 1st generation shell template for cloud service
+      repository : https://github.com/QualiSystems/shell-cloud-service-standard
+      min_cs_ver: 7.0
+    - name : gen1/traffic-controller-service
+      params:
+        project_name :
+      description : 1st generation shell template for cloud service
+      repository : https://github.com/QualiSystems/shell-traffic-controller-standard
+      min_cs_ver: 7.0
     - name: layer-1-switch
       description : A native shell template for layer 1 switches
       repository : https://github.com/QualiSystems/shell-L1-standard
@@ -108,6 +126,20 @@ templates:
       description : 2nd generation shell template for basic inventory resources
       repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
       min_cs_ver: 8.0
+    - name : gen2/resource-with-connected-commands
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for basic inventory resources with connected commands
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-resource_with_connected_commands-template
+      min_cs_ver: 9.2
+    - name : gen2/connectable-resource
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for basic inventory connectable resources
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-generic_connectable_resource-template
+      min_cs_ver: 9.1
     - name : gen2/firewall
       params:
         project_name :
@@ -122,3 +154,64 @@ templates:
       description : 2nd generation shell template for software assets
       repository : https://github.com/QualiSystems/shellfoundry-tosca-software_asset-template
       min_cs_ver: 8.1
+    - name : gen2/broadband-media
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for broadband media
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-broadband_media-template
+      min_cs_ver: 8.1
+    - name : gen2/sdn-controller
+      params:
+        project_name :
+        family_name: SDNController
+      description : 2nd generation shell template for a SDN controller
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-sdn-template
+      min_cs_ver: 8.0
+    - name : gen2/traffic-chassis
+      params:
+        project_name :
+        family_name : TrafficGeneratorChassis
+      description : 2nd generation shell template for a traffic-generator chassis resource
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-traffic-generator-chassis-template
+      min_cs_ver: 8.2
+    - name : gen2/custom-service
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for a custom service
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-custom-service-template
+      min_cs_ver: 8.3
+    - name : gen2/admin-only-custom-service
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for a admin only custom service
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-admin-only-custom-service-template
+      min_cs_ver: 8.3
+    - name : gen2/cloud-service
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for a cloud service
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-cloud-service-template
+      min_cs_ver: 8.3
+    - name : gen2/traffic-generator-controller
+      params:
+        project_name :
+        family_name : TrafficGeneratorController
+      description : 2nd generation shell template for a traffic-generator controller service
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-traffic-generator-controller-service-template
+      min_cs_ver: 8.3
+    - name : gen2/cloud-provider
+      params:
+        project_name :
+      description : 2nd generation shell template for a cloud provider
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-cloudprovider-template
+      min_cs_ver: 9.0
+    - name : gen2/loadbalancer
+      params:
+        project_name :
+      description : 2nd generation shell template for a loadbalancer
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-loadbalancer-template
+      min_cs_ver: 8.3

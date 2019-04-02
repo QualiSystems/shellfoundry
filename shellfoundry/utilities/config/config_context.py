@@ -33,6 +33,5 @@ class ConfigContext(object):
         except:
             return False
 
-
     def _modify(self, key, value):
         return self.modifier.modify(key, value)

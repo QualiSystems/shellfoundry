@@ -1,30 +1,38 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import os
 import yaml
 
 from shellfoundry.models.install_config import InstallConfig, DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, \
-    DEFAULT_PASSWORD, DEFAULT_DOMAIN
+    DEFAULT_PASSWORD, DEFAULT_DOMAIN, DEFAULT_AUTHOR, DEFAULT_ONLINE_MODE, DEFAULT_TEMPLATE_LOCATION, \
+    DEFAULT_GITHUB_LOGIN, DEFAULT_GITHUB_PASSWORD
 from shellfoundry.models.shellfoundry_settings import ShellFoundrySettings, DEFAULT_DEFAULT_VIEW
 from shellfoundry.utilities.config.config_providers import DefaultConfigProvider
 
-INSTALL = 'install'
+INSTALL = "install"
 
-HOST = 'host'
-PORT = 'port'
-USERNAME = 'username'
-PASSWORD = 'password'
-DOMAIN = 'domain'
+HOST = "host"
+PORT = "port"
+USERNAME = "username"
+PASSWORD = "password"
+DOMAIN = "domain"
+AUTHOR = "author"
+ONLINE_MODE = "online_mode"
+TEMPLATE_LOCATION = "template_location"
+GITHUB_LOGIN = "github_login"
+GITHUB_PASSWORD = "github_password"
 
-DEFAULT_VIEW = 'defaultview'
+DEFAULT_VIEW = "defaultview"
 
 
 def get_with_default(install_config, parameter_name, default_value):
-    '''
-
+    """
     :param install_config: A dict represents the install section inside the configuration file
     :param parameter_name: Specific key inside the install section
     :param default_value: Default value in cases that the key cannot be found
     :return: The value of the key in the configuration file or default value if key cannot be found
-    '''
+    """
     return install_config[parameter_name] if install_config and parameter_name in install_config else default_value
 
 
@@ -54,7 +62,7 @@ class Configuration(object):
         """
         config_data = None
         if os.path.exists(config_path):
-            with open(config_path, mode='r') as conf_file:
+            with open(config_path, mode="r") as conf_file:
                 config_data = yaml.load(conf_file)
 
         if not config_data or INSTALL not in config_data:
@@ -74,7 +82,7 @@ class Configuration(object):
     def _mark_defaults(value, mark_defaults_char):
         if not mark_defaults_char:
             return str(value)
-        return str(value) + ' ' + mark_defaults_char
+        return "{value} {default_char}".format(value=str(value), default_char=mark_defaults_char)
 
 
 class CloudShellConfigReader(object):
@@ -87,7 +95,14 @@ class CloudShellConfigReader(object):
         username = get_with_default(config, USERNAME, DEFAULT_USERNAME)
         password = get_with_default(config, PASSWORD, DEFAULT_PASSWORD)
         domain = get_with_default(config, DOMAIN, DEFAULT_DOMAIN)
-        return InstallConfig(host, port, username, password, domain)
+        author = get_with_default(config, AUTHOR, DEFAULT_AUTHOR)
+        online_mode = get_with_default(config, ONLINE_MODE, DEFAULT_ONLINE_MODE)
+        template_location = get_with_default(config, TEMPLATE_LOCATION, DEFAULT_TEMPLATE_LOCATION)
+        github_login = get_with_default(config, GITHUB_LOGIN, DEFAULT_GITHUB_LOGIN)
+        github_password = get_with_default(config, GITHUB_PASSWORD, DEFAULT_GITHUB_PASSWORD)
+        return InstallConfig(host, port, username, password, domain,
+                             author, online_mode, template_location,
+                             github_login, github_password)
 
 
 class ShellFoundryConfig(object):

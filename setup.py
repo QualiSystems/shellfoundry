@@ -5,12 +5,13 @@ try:
 except ImportError:
     from distutils.core import setup, find_packages
 
+from shellfoundry import __version__
+
 
 def get_file_content(file_name):
     with open(file_name) as f:
         return f.read()
 
-exec(open('shellfoundry/version.py').read())
 
 setup(
     name='shellfoundry',
@@ -21,8 +22,10 @@ setup(
     author_email='borismod@gmail.com',
     url='https://github.com/QualiSystems/shellfoundry',
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
+    package_data={'shellfoundry': ['data/*.yml', 'data/*.json']},
     entry_points={
-        "console_scripts": ['shellfoundry = shellfoundry.bootstrap:cli']
+        "console_scripts": ['shellfoundry = shellfoundry.bootstrap:cli',
+                            'newtgversion = shellfoundry.releasetools.new_version: main']
     },
     include_package_data=True,
     install_requires=get_file_content('requirements.txt'),
@@ -35,6 +38,7 @@ setup(
         "Topic :: Software Development :: Libraries",
         "License :: OSI Approved :: Apache Software License",
     ],
+    python_requires='>=2.7, <3.0.*',
     test_suite='tests',
     tests_require=get_file_content('test_requirements.txt')
 )
