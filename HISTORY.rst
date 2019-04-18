@@ -5,8 +5,7 @@ History
 1.2.9 (2019-03-27)
 ------------------
 
-*
-
+* Added possibility to download dependencies from local CS repository during 'shellfoundry dist' command
 
 1.2.8 (2019-03-05)
 ------------------

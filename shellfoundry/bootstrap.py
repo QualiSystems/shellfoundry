@@ -74,7 +74,8 @@ def install():
 
 
 @cli.command()
-@click.option('--enable_cs_repo', is_flag=True, help="")
+@click.option('--enable_cs_repo', is_flag=True, help="Includes shell dependencies "
+                                                     "that are stored in the local pypi repository")
 def dist(enable_cs_repo):
     """ Creates a deployable Shell which can be distributed to a production environment """
 
