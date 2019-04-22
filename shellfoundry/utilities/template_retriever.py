@@ -10,7 +10,7 @@ import yaml
 
 from collections import OrderedDict, defaultdict
 from pkg_resources import parse_version
-from pkg_resources.extern.packaging.version import Version
+from pkg_resources._vendor.packaging.version import Version
 from threading import Thread, RLock
 
 from .filters import CompositeFilter
