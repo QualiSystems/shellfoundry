@@ -29,7 +29,7 @@ class ShellConfigReader(object):
             raise ShellYmlMissingException('shell.yml is missing')
 
         with open(config_path) as stream:
-            config = yaml.load(stream.read())
+            config = yaml.safe_load(stream.read())
 
         if not config or SHELL not in config:
             raise WrongShellYmlException('shell section is missing in shell.yml')

@@ -13,6 +13,7 @@ from shellfoundry.exceptions import VersionRequestException
 
 
 class DownloadedRepoExtractor:
+# class DownloadedRepoExtractor(metaclass=ABCMeta):
     def __init__(self):
         pass
 

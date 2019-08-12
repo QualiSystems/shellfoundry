@@ -13,11 +13,15 @@ class CookiecutterTemplateCompiler(object):
     def __init__(self):
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
-    def compile_template(self, shell_name, template_path, extra_context, running_on_same_folder):
+    def compile_template(self, shell_name, template_path, extra_context, running_on_same_folder, python_version=None):
+
+        if python_version is None:
+            python_version = self.cloudshell_config_reader.read().python_version
 
         extra_context.update({"project_name": shell_name,
                               "full_name": self.cloudshell_config_reader.read().author,
                               "release_date": datetime.datetime.now().strftime("%B %Y"),
+                              "python_version": str(python_version),
                               })
 
         if running_on_same_folder:

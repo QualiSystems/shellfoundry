@@ -3,6 +3,7 @@
 
 import base64
 import binascii
+import sys
 
 import shellfoundry.exceptions as exceptions
 
@@ -22,7 +23,10 @@ class PasswordModification(object):
 
         try:
             encryption_key = self._get_encryption_key()
-            decoded = self._decode_encode(base64.decodestring(value), encryption_key)
+            if sys.version_info[0] < 3:
+                decoded = self._decode_encode(base64.decodestring(value), encryption_key)
+            else:
+                decoded = self._decode_encode(base64.decodebytes(value.encode()), encryption_key)
             return decoded
         except binascii.Error:
             return value

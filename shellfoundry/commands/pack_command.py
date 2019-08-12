@@ -35,6 +35,6 @@ class PackCommandExecutor(object):
             config = self.config_reader.read()
             self.package_builder.build_package(current_path, config.name, config.driver_name)
         except ShellYmlMissingException:
-            click.echo(u'shell.yml file is missing')
+            click.echo('shell.yml file is missing')
         except WrongShellYmlException:
-            click.echo(u'shell.yml format is wrong')
+            click.echo('shell.yml format is wrong')
