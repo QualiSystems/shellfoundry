@@ -1,11 +1,6 @@
 =======
 History
 =======
-1.2.10 (2019-04-22)
--------------------
-
-* Added setuptools to requirements
-* Changed setuptools import according to the latest version
 
 1.2.11 (2019-08-14)
 -------------------

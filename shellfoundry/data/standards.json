@@ -1,0 +1,44 @@
+[
+  {
+    "StandardName": "cloudshell_compute_standard",
+    "Versions": [
+      "2.0.0"
+    ]
+  },
+  {
+    "StandardName": "cloudshell_deployed_app_standard",
+    "Versions": [
+      "1.0.0"
+    ]
+  },
+  {
+    "StandardName": "cloudshell_firewall_standard",
+    "Versions": [
+      "3.0.0"
+    ]
+  },
+  {
+    "StandardName": "cloudshell_networking_standard",
+    "Versions": [
+      "5.0.0"
+    ]
+  },
+  {
+    "StandardName": "cloudshell_on_prem_app_standard",
+    "Versions": [
+      "1.0.0"
+    ]
+  },
+  {
+    "StandardName": "cloudshell_pdu_standard",
+    "Versions": [
+      "2.0.0"
+    ]
+  },
+  {
+    "StandardName": "cloudshell_resource_standard",
+    "Versions": [
+      "2.0.0"
+    ]
+  }
+]

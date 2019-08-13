@@ -13,8 +13,8 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
 
-    @patch("qpm.packaging.quali_api_client.QualiAPIClient.upload_environment_zip_file")
-    @patch("qpm.packaging.quali_api_client.QualiAPIClient.__init__")
+    @patch("cloudshell.rest.api.PackagingRestApiClient.upload_environment_zip_file")
+    @patch("cloudshell.rest.api.PackagingRestApiClient.__init__")
     def test_when_install_called_it_uploads_package_to_cloudshell(self, mock_quali_api_client, mock_upload_environment_zip_file):
         # Arrange
         # Constructor should return None
@@ -25,7 +25,7 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
         os.chdir("work")
 
         install_config = InstallConfig("localhost", 9000, "YOUR_USERNAME", "YOUR_PASSWORD", "Global", "author",
-                                       "online_mode", "template_location", "github_login", "github_password")
+                                       "online_mode", "template_location", "github_login", "github_password", 2)
 
         shell_installer = ShellInstaller()
 
