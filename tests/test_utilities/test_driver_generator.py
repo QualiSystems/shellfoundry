@@ -25,7 +25,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
 
         driver_generator = DriverGenerator()
         config = InstallConfig("TEST-HOST", 9000, "user", "pwd", "Global", "author", "online_mode", "template_location",
-                               "github_login", "github_password", 2)
+                               "github_login", "github_password")
 
         with patch("shellfoundry.utilities.driver_generator.PackagingRestApiClient") as mock_rest:
             rest_client_mock = Mock()
@@ -61,7 +61,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
 
         driver_generator = DriverGenerator()
         config = InstallConfig("TEST-HOST", 9000, "user", "pwd", "Global", "author", "online_mode", "template_location",
-                               "github_login", "github_password", 2)
+                               "github_login", "github_password")
 
         with patch("shellfoundry.utilities.driver_generator.PackagingRestApiClient") as mock_rest:
             rest_client_mock = Mock()
@@ -98,7 +98,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
 
         driver_generator = DriverGenerator()
         config = InstallConfig("TEST-HOST", 9000, "user", "pwd", "Global", "author", "online_mode", "template_location",
-                               "github_login", "github_password", 2)
+                               "github_login", "github_password")
 
         with patch("shellfoundry.utilities.driver_generator.PackagingRestApiClient") as mock_rest:
             mock_rest.side_effect = urllib2.URLError("connected failed")

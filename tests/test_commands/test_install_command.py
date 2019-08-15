@@ -48,7 +48,7 @@ install:
         mock_installer.install.assert_called_once_with('nut_shell', InstallConfig('localhost', 9000, 'YOUR_USERNAME',
                                                                                   'YOUR_PASSWORD', 'Global', "AUTHOR",
                                                                                   'ONLINE_MODE', 'TEMPLATE_LOCATION',
-                                                                                  'GITHUB_LOGIN', 'GITHUB_PASSWORD', 2))
+                                                                                  'GITHUB_LOGIN', 'GITHUB_PASSWORD'))
         secho_mock.assert_any_call('Successfully installed shell', fg='green')
 
     def test_tosca_based_shell_installed_when_tosca_meta_file_exists(self):
