@@ -16,7 +16,9 @@ class CookiecutterTemplateCompiler(object):
     def compile_template(self, shell_name, template_path, extra_context, running_on_same_folder, python_version=None):
 
         if python_version is None:
-            python_version = self.cloudshell_config_reader.read().python_version
+            python_version = ""
+        else:
+            python_version = ' PythonVersion="{}"'.format(str(python_version))
 
         extra_context.update({"project_name": shell_name,
                               "full_name": self.cloudshell_config_reader.read().author,

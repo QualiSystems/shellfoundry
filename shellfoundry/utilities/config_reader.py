@@ -6,7 +6,7 @@ import yaml
 
 from shellfoundry.models.install_config import InstallConfig, DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, \
     DEFAULT_PASSWORD, DEFAULT_DOMAIN, DEFAULT_AUTHOR, DEFAULT_ONLINE_MODE, DEFAULT_TEMPLATE_LOCATION, \
-    DEFAULT_GITHUB_LOGIN, DEFAULT_GITHUB_PASSWORD, DEFAULT_PYTHON_VERSION
+    DEFAULT_GITHUB_LOGIN, DEFAULT_GITHUB_PASSWORD
 from shellfoundry.models.shellfoundry_settings import ShellFoundrySettings, DEFAULT_DEFAULT_VIEW
 from shellfoundry.utilities.config.config_providers import DefaultConfigProvider
 
@@ -22,7 +22,6 @@ ONLINE_MODE = "online_mode"
 TEMPLATE_LOCATION = "template_location"
 GITHUB_LOGIN = "github_login"
 GITHUB_PASSWORD = "github_password"
-PYTHON_VERSION = "python_version"
 
 DEFAULT_VIEW = "defaultview"
 
@@ -101,10 +100,9 @@ class CloudShellConfigReader(object):
         template_location = get_with_default(config, TEMPLATE_LOCATION, DEFAULT_TEMPLATE_LOCATION)
         github_login = get_with_default(config, GITHUB_LOGIN, DEFAULT_GITHUB_LOGIN)
         github_password = get_with_default(config, GITHUB_PASSWORD, DEFAULT_GITHUB_PASSWORD)
-        python_version = get_with_default(config, PYTHON_VERSION, DEFAULT_PYTHON_VERSION)
         return InstallConfig(host, port, username, password, domain,
                              author, online_mode, template_location,
-                             github_login, github_password, python_version)
+                             github_login, github_password)
 
 
 class ShellFoundryConfig(object):
