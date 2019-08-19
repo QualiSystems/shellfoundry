@@ -1,4 +1,8 @@
-import urllib2
+try:
+    from urllib.error import URLError
+except:
+    from urllib2 import URLError
+
 import zipfile
 import click
 from os import path
@@ -74,6 +78,6 @@ class DriverGenerator(object):
                                             domain=cloudshell_config.domain,
                                             password=cloudshell_config.password)
             return client
-        except urllib2.URLError:
-            click.echo(u'Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml', err=True)
+        except URLError:
+            click.echo('Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml', err=True)
             raise

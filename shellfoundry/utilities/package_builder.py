@@ -24,7 +24,7 @@ class PackageBuilder(object):
         self._create_driver(package_path, path, driver_name)
         zip_path = self._zip_package(package_path, path, package_name)
         shutil.rmtree(path=package_path, ignore_errors=True)
-        click.echo(u'Shell package was successfully created:')
+        click.echo('Shell package was successfully created:')
         click.echo(zip_path)
 
     def _copy_metadata(self, package_path, path):

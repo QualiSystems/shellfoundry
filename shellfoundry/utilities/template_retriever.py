@@ -33,12 +33,12 @@ class TemplateRetriever(object):
 
         if alternative_path:
             response = self._get_templates_from_path(alternative_path)
-            config = yaml.load(response)
+            config = yaml.safe_load(response)
         elif template_location:
             config = self._get_local_templates(template_location=template_location)
         else:
             response = self._get_templates_from_github()
-            config = yaml.load(response)
+            config = yaml.safe_load(response)
 
         if not config or 'templates' not in config:
             return {}
@@ -104,7 +104,7 @@ class TemplateRetriever(object):
                                                       "family_name": templ_data.get("family_name", None)}})
 
             if templ_info:
-                templates = {"templates": sorted(templ_info, key=lambda data: data["standard_version"].keys()[0])}
+                templates = {"templates": sorted(templ_info, key=lambda data: list(data["standard_version"].keys())[0])}
             else:
                 templates = None
 
@@ -148,7 +148,7 @@ class TemplateRetriever(object):
         """
 
         if not standards:
-            return OrderedDict(sorted(templates.iteritems()))
+            return OrderedDict(sorted(templates.items()))
 
         global filtered_templates
         filtered_templates = defaultdict(list)
@@ -156,7 +156,7 @@ class TemplateRetriever(object):
         threads = []
         lock = RLock()
 
-        for template_name, templates_list in templates.iteritems():
+        for template_name, templates_list in templates.items():
             template_thread = Thread(target=TemplateRetriever._filter_in_threads,
                                      args=(template_name, templates_list, standards, lock))
             threads.append(template_thread)
@@ -167,7 +167,7 @@ class TemplateRetriever(object):
         for thread in threads:
             thread.join()
 
-        return OrderedDict(sorted(filtered_templates.iteritems()))
+        return OrderedDict(sorted(filtered_templates.items()))
 
     @staticmethod
     def _filter_in_threads(template_name, templates_list, standards, lock):
@@ -179,9 +179,9 @@ class TemplateRetriever(object):
                 lock.acquire()
                 filtered_templates[template_name].append(template)
                 lock.release()
-        elif clear_template_name in standards.keys():
+        elif clear_template_name in list(standards.keys()):
             for template in templates_list:
-                if not template.standard_version or template.standard_version.keys()[0] in standards[clear_template_name]:
+                if not template.standard_version or list(template.standard_version.keys())[0] in standards[clear_template_name]:
                     if template.repository:
                         template.min_cs_ver = TemplateRetriever._get_min_cs_version(repository=template.repository,
                                                                                     standard_name=template.standard,
@@ -195,7 +195,7 @@ class TemplateRetriever(object):
         """ Get minimal CloudShell Server Version available for provided template """
 
         if not branch:
-            branch = unicode(min(map(parse_version, standards[standard_name])))  # determine minimal standard version
+            branch = str(min(list(map(parse_version, standards[standard_name]))))  # determine minimal standard version
         repository = repository.replace("https://github.com", "https://raw.github.com")
         url = "/".join([repository, str(branch), "cookiecutter.json"])
 
@@ -260,4 +260,4 @@ class FilteredTemplateRetriever(object):
 
     def get_templates(self, **kwargs):
         templates = self.template_retriever.get_templates(**kwargs)
-        return OrderedDict((k, v) for k, v in templates.iteritems() if self.filter(k))
+        return OrderedDict((k, v) for k, v in templates.items() if self.filter(k))

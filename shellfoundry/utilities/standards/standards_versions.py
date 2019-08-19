@@ -26,6 +26,6 @@ class StandardVersions(object):
         if standards is None:
             raise Exception('Failed to find latest version')
 
-        latest_version = unicode(max(map(parse_version, standards)))
+        latest_version = str(max(list(map(parse_version, standards))))
         if latest_version:
             return latest_version

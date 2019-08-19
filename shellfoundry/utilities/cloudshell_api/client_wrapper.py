@@ -1,7 +1,13 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from cloudshell.rest.api import PackagingRestApiClient
 from shellfoundry.exceptions import FatalError
 from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
-from urllib2 import HTTPError
+try:
+    from urllib.error import HTTPError
+except:
+    from urllib2 import HTTPError
 
 
 def create_cloudshell_client(retries=1):
@@ -43,5 +49,5 @@ class CloudShellClient(object):
             return client
         except (HTTPError, Exception) as e:
             if hasattr(e, 'code') and e.code == 401:
-                raise FatalError(u'Login to CloudShell failed. Please verify the credentials in the config')
+                raise FatalError('Login to CloudShell failed. Please verify the credentials in the config')
             raise FatalError(self.ConnectionFailureMessage)

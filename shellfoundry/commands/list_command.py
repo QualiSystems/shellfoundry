@@ -57,7 +57,7 @@ class ListCommandExecutor(object):
                                        "available templates and standards are not compatible")
 
         template_rows = [["Template Name", "CloudShell Ver.", "Description"]]
-        for template in templates.values():
+        for template in list(templates.values()):
             template = template[0]
             cs_ver_txt = str(template.min_cs_ver) + " and up"
             template_rows.append(
@@ -74,7 +74,7 @@ class ListCommandExecutor(object):
             return
 
         row = 1
-        for template in templates.values():
+        for template in list(templates.values()):
             template = template[0]
             wrapped_string = linesep.join(wrap(template.description, max_width))
             table.table_data[row][2] = wrapped_string

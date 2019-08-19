@@ -3,8 +3,12 @@
 
 import click
 import os
-
-from urllib2 import HTTPError, URLError
+try:
+    # Python 2.x version
+    from urllib2 import HTTPError, URLError
+except:
+    # Python 3.x version
+    from urllib.error import HTTPError, URLError
 
 from shellfoundry.exceptions import FatalError
 from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
@@ -43,12 +47,12 @@ class InstallCommandExecutor(object):
             self.installer.install(shell_config.name, cloudshell_config)
         except HTTPError as e:
             if e.code == 401:
-                raise FatalError(u'Login to CloudShell failed. Please verify the credentials in the config')
+                raise FatalError('Login to CloudShell failed. Please verify the credentials in the config')
             error = e.msg
         except URLError:
-            raise FatalError(u'Connection to CloudShell Server failed. Please make sure it is up and running properly.')
+            raise FatalError('Connection to CloudShell Server failed. Please make sure it is up and running properly.')
         except Exception as e:
             error = e.message
 
         if error:
-            raise FatalError(u"Failed to install shell. CloudShell responded with: '{}'".format(error))
+            raise FatalError("Failed to install shell. CloudShell responded with: '{}'".format(error))
