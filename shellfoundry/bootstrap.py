@@ -4,7 +4,7 @@
 import click
 import pkg_resources
 
-from shellfoundry.decorators import shellfoundry_version_check
+from shellfoundry.decorators import shellfoundry_version_check, list_presentation
 from shellfoundry.commands.delete_command import DeleteCommandExecutor
 from shellfoundry.commands.dist_command import DistCommandExecutor
 from shellfoundry.commands.generate_command import GenerateCommandExecutor
@@ -38,6 +38,7 @@ def version():
 @click.option('--layer1', 'default_view', flag_value=LAYER_ONE, help="Show layer1 shell templates")
 @click.option('--all', 'default_view', flag_value=NO_FILTER, help="Show all templates")
 @shellfoundry_version_check(abort_if_major=True)
+@list_presentation.echo_list
 def list(default_view):
     """
     Lists the available shell templates

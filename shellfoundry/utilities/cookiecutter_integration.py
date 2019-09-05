@@ -13,8 +13,9 @@ class CookiecutterTemplateCompiler(object):
     def __init__(self):
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
-    def compile_template(self, shell_name, template_path, extra_context, running_on_same_folder, python_version=None):
+    def compile_template(self, shell_name, template_path, extra_context, running_on_same_folder):
 
+        python_version = extra_context.get("python_version")
         if python_version is None:
             python_version = ""
         else:
@@ -35,6 +36,7 @@ class CookiecutterTemplateCompiler(object):
                      extra_context=extra_context,
                      overwrite_if_exists=False, output_dir=output_dir)
 
+        return os.path.join(os.path.abspath(output_dir), shell_name.lower().replace(" ", "_"))
         # self._remove_template_info_file(output_dir)
 
     @staticmethod

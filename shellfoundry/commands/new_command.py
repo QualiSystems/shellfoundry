@@ -52,7 +52,7 @@ class NewCommandExecutor(object):
         self.standard_versions = standard_versions or StandardVersionsFactory()
         self.shell_name_validations = shell_name_validations or ShellNameValidations()
 
-    def new(self, name, template, version=None, python_version=None):
+    def new(self, name, template, version=None, python_version=None, extra_context=""):
         """ Create a new shell based on a template.
         :param str version: The desired version of the shell template to use
         :param str name: The name of the Shell
@@ -78,23 +78,27 @@ class NewCommandExecutor(object):
         except Exception as err:
             raise click.ClickException("Cannot retrieve standards list. Error: {}".format(err.message))
 
+        content = json.loads(extra_context) if extra_context else {}
+        content.update({"python_version": python_version})
+
         # Get template using direct url path. Ignore parameter in configuration file
         if self._is_direct_online_template(template):
-            self._import_direct_online_template(name, running_on_same_folder, template, standards, python_version)
+            shell_path = self._import_direct_online_template(name, running_on_same_folder, template, standards, content)
         # Get template using direct path. Ignore parameter in configuration file
         elif self._is_direct_local_template(template):
-            self._import_local_template(name, running_on_same_folder, template, standards, python_version)
+            shell_path = self._import_local_template(name, running_on_same_folder, template, standards, content)
         # Get template from GitHub repository
         elif self.cloudshell_config_reader.read().online_mode.lower() == "true":
-            self._import_online_template(name, running_on_same_folder, template, version, standards, python_version)
+            shell_path = self._import_online_template(name, running_on_same_folder, template, version, standards, content)
         # Get template from local from location defined in shellfoundry configuration
         else:
             template = self._get_local_template_full_path(template, standards, version)
-            self._import_local_template(name, running_on_same_folder, template, standards, python_version)
+            shell_path = self._import_local_template(name, running_on_same_folder, template, standards, content)
 
         click.echo('Created shell {0} based on template {1}'.format(name, template))
+        return shell_path
 
-    def _import_direct_online_template(self, name, running_on_same_folder, template, standards, python_version):
+    def _import_direct_online_template(self, name, running_on_same_folder, template, standards, content):
         """ Create shell based on template downloaded by the direct link """
 
         template_url = self._remove_prefix(template, NewCommandExecutor.REMOTE_TEMPLATE_URL_PREFIX)
@@ -111,14 +115,14 @@ class NewCommandExecutor(object):
             self._verify_template_standards_compatibility(template_path=repo_path, standards=standards)
 
             extra_content = self._get_template_params(repo_path=repo_path)
+            extra_content.update(content)
 
-            self.template_compiler.compile_template(shell_name=name,
-                                                    template_path=repo_path,
-                                                    extra_context=extra_content,
-                                                    running_on_same_folder=running_on_same_folder,
-                                                    python_version=python_version)
+            return self.template_compiler.compile_template(shell_name=name,
+                                                           template_path=repo_path,
+                                                           extra_context=extra_content,
+                                                           running_on_same_folder=running_on_same_folder)
 
-    def _import_online_template(self, name, running_on_same_folder, template, version, standards, python_version):
+    def _import_online_template(self, name, running_on_same_folder, template, version, standards, content):
         """ Create shell based on template downloaded from GitHub by the name """
 
         # Create a temp folder for the operation to make sure we delete it after
@@ -156,13 +160,15 @@ class NewCommandExecutor(object):
 
             self._verify_template_standards_compatibility(template_path=repo_path, standards=standards)
 
-            self.template_compiler.compile_template(shell_name=name,
-                                                    template_path=repo_path,
-                                                    extra_context=template_obj.params,
-                                                    running_on_same_folder=running_on_same_folder,
-                                                    python_version=python_version)
+            extra_content = template_obj.params
+            extra_content.update(content)
 
-    def _import_local_template(self, name, running_on_same_folder, template, standards, python_version):
+            return self.template_compiler.compile_template(shell_name=name,
+                                                           template_path=repo_path,
+                                                           extra_context=extra_content,
+                                                           running_on_same_folder=running_on_same_folder)
+
+    def _import_local_template(self, name, running_on_same_folder, template, standards, content):
         """ Create shell based on direct path to local template """
 
         repo_path = self._remove_prefix(template, NewCommandExecutor.LOCAL_TEMPLATE_URL_PREFIX)
@@ -172,14 +178,14 @@ class NewCommandExecutor(object):
                                      .format(template_path=repo_path))
 
         extra_content = self._get_template_params(repo_path=repo_path)
+        extra_content.update(content)
 
         self._verify_template_standards_compatibility(template_path=repo_path, standards=standards)
 
-        self.template_compiler.compile_template(shell_name=name,
-                                                template_path=repo_path,
-                                                extra_context=extra_content,
-                                                running_on_same_folder=running_on_same_folder,
-                                                python_version=python_version)
+        return self.template_compiler.compile_template(shell_name=name,
+                                                       template_path=repo_path,
+                                                       extra_context=extra_content,
+                                                       running_on_same_folder=running_on_same_folder)
 
     def _get_template_latest_version(self, standards_list, standard):
         try:
