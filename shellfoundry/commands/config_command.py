@@ -52,12 +52,12 @@ class ConfigCommandExecutor(object):
     def _format_config_as_table(self, config_data, defaults_char):
         from shellfoundry.utilities.modifiers.configuration.password_modification import PasswordModification
         table_data = [['Key', 'Value', '']]
-        for key, value in config_data[INSTALL].iteritems():
+        for key, value in config_data[INSTALL].items():
             default_val = ''
             if defaults_char in value:
                 default_val = defaults_char
                 value = value.strip(defaults_char).lstrip()
-            if key == PasswordModification.HANDLING_KEY:
+            if key in PasswordModification.HANDLING_KEYS:
                 value = '[encrypted]'
             table_data.append([key, value, default_val])
         import terminaltables

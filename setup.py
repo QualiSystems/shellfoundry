@@ -32,10 +32,11 @@ setup(
     keywords='shellfoundry sandbox cloud virtualization vcenter cmp cloudshell quali command-line cli',
     classifiers=[
         "Development Status :: 5 - Production/Stable",
-        "Programming Language :: Python :: 2.7",
+        # "Programming Language :: Python :: 2.7",
         "Topic :: Software Development :: Libraries",
         "License :: OSI Approved :: Apache Software License",
     ],
+    # python_requires='>=2.7, <3.0.*',
     test_suite='tests',
     tests_require=get_file_content('test_requirements.txt')
 )

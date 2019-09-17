@@ -9,7 +9,7 @@ class TestPackCommandExecutor(fake_filesystem_unittest.TestCase):
         self.setUpPyfakefs()
 
     @patch('click.echo')
-    @patch('shellfoundry.utilities.python_dependencies_packager.pip')
+    @patch('shellfoundry.utilities.python_dependencies_packager.pip_main')
     def test_build_package_package_created(self, pip_mock, echo_mock):
         # Arrange
         self.fs.CreateFile('nut_shell/shell.yml', contents="""
@@ -36,7 +36,7 @@ shell:
         echo_mock.assert_any_call(u'Shell package was successfully created:')
 
     @patch('click.echo')
-    @patch('shellfoundry.utilities.python_dependencies_packager.pip')
+    @patch('shellfoundry.utilities.python_dependencies_packager.pip_main')
     def test_proper_error_message_displayed_when_shell_yml_is_in_wrong_format(self, pip_mock, echo_mock):
         # Arrange
         self.fs.CreateFile('nut_shell/shell.yml', contents='WRONG YAML FORMAT')
@@ -51,7 +51,7 @@ shell:
         echo_mock.assert_any_call(u'shell.yml format is wrong')
 
     @patch('click.echo')
-    @patch('shellfoundry.utilities.python_dependencies_packager.pip')
+    @patch('shellfoundry.utilities.python_dependencies_packager.pip_main')
     def test_proper_error_message_displayed_when_shell_yml_missing(self, pip_mock, echo_mock):
         # Arrange
         self.fs.CreateFile('nut_shell/datamodel/datamodel.xml')
@@ -66,7 +66,7 @@ shell:
         echo_mock.assert_any_call(u'shell.yml file is missing')
 
     @patch('click.secho')
-    @patch('shellfoundry.utilities.python_dependencies_packager.pip')
+    @patch('shellfoundry.utilities.python_dependencies_packager.pip_main')
     def test_pack_layer_one_shell(self, pip_mock, secho_mock):
         # Arrange
         self.fs.CreateFile('cloudshell-L1-test/datamodel/datamodel.xml')

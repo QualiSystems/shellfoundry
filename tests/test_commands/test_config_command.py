@@ -35,14 +35,16 @@ not_supported_section:
             u'-----------------------------------\n '
             u'username           admin        * \n '
             u'domain             Global       * \n '
-            u'defaultview        gen2         * \n '
+            u'github_login                    * \n '
             u'online_mode        True         * \n '
             u'author             Anonymous    * \n '
+            u'github_password    [encrypted]  * \n '
             u'host               localhost    * \n '
             u'key                value          \n '
             u'template_location  Empty        * \n '
             u'password           [encrypted]  * \n '
-            u'port               9000         * ')
+            u'port               9000         * \n '
+            u'defaultview        gen2         * ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')
@@ -103,14 +105,16 @@ install:
                                   u'username           admin            * \n '
                                   u'yetanotherkey      yetanothervalue    \n '
                                   u'domain             Global           * \n '
-                                  u'defaultview        gen2             * \n '
+                                  u'github_login                        * \n '
                                   u'online_mode        True             * \n '
                                   u'author             Anonymous        * \n '
+                                  u'github_password    [encrypted]      * \n '
                                   u'host               localhost        * \n '
                                   u'key                value              \n '
                                   u'template_location  Empty            * \n '
                                   u'password           [encrypted]        \n '
-                                  u'port               9000             * ')
+                                  u'port               9000             * \n '
+                                  u'defaultview        gen2             * ')
 
     @patch('shellfoundry.utilities.config.config_providers.click.get_app_dir')
     @patch('shellfoundry.commands.config_command.click.echo')

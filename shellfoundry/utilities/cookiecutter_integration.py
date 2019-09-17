@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import datetime
 import os
 
 from cookiecutter.main import cookiecutter
@@ -12,10 +13,18 @@ class CookiecutterTemplateCompiler(object):
     def __init__(self):
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
-    def compile_template(self, shell_name, template_path, extra_context, running_on_same_folder):
+    def compile_template(self, shell_name, template_path, extra_context, running_on_same_folder, python_version=None):
 
-        extra_context["project_name"] = shell_name
-        extra_context["full_name"] = self.cloudshell_config_reader.read().author
+        if python_version is None:
+            python_version = ""
+        else:
+            python_version = ' PythonVersion="{}"'.format(str(python_version))
+
+        extra_context.update({"project_name": shell_name,
+                              "full_name": self.cloudshell_config_reader.read().author,
+                              "release_date": datetime.datetime.now().strftime("%B %Y"),
+                              "python_version": str(python_version),
+                              })
 
         if running_on_same_folder:
             output_dir = os.path.pardir

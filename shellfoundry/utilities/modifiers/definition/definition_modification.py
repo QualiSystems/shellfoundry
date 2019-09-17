@@ -66,7 +66,7 @@ class DefinitionModification(object):
         :params fields tuple/list: sequence of properties name that will be added
         """
 
-        results = map(self._add_property, attribute_names)
+        results = list(map(self._add_property, attribute_names))
 
         for item in zip(attribute_names, results):
             self._comment_attribute(*item)
@@ -76,12 +76,12 @@ class DefinitionModification(object):
         yaml_parser = yaml.YAML()
         shell_definition = self._load_yaml(yaml_parser, self.entry_definition)
 
-        for node_type in shell_definition["node_types"].values():
+        for node_type in list(shell_definition["node_types"].values()):
             if "artifacts" not in node_type:
                 continue
 
             result = {}
-            for artifact_name, artifact in node_type["artifacts"].iteritems():
+            for artifact_name, artifact in node_type["artifacts"].items():
                 if artifact_name in artifact_name_list:
                     result.update({artifact_name: artifact["file"]})
 
@@ -91,7 +91,7 @@ class DefinitionModification(object):
         """  """
 
         with open(os.path.join(self.shell_path, TOSCA_META_LOCATION), "r") as tosca_file:
-            entry_definition = dict(map(str.strip, line.split(":", 1)) for line in tosca_file)["Entry-Definitions"]
+            entry_definition = dict(list(map(str.strip, line.split(":", 1))) for line in tosca_file)["Entry-Definitions"]
 
             return entry_definition
 
@@ -154,7 +154,7 @@ class DefinitionModification(object):
 
         is_last = False
         if nodes:
-            for key, value in nodes.iteritems():
+            for key, value in nodes.items():
                 if key.startswith("vendor."):
                     properties_data = value.get("properties", {})
                     if properties_data:

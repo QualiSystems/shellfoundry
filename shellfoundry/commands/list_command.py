@@ -5,14 +5,15 @@ import click
 
 from os import linesep
 from requests.exceptions import SSLError
+from terminaltables import AsciiTable
+from textwrap import wrap
+
+from cloudshell.rest.exceptions import FeatureUnavailable
 from shellfoundry import ALTERNATIVE_TEMPLATES_PATH
 from shellfoundry.utilities.template_retriever import TemplateRetriever, FilteredTemplateRetriever
 from shellfoundry.utilities.config_reader import Configuration, ShellFoundryConfig, CloudShellConfigReader
 from shellfoundry.utilities.standards import Standards
 from ..exceptions import FatalError
-from cloudshell.rest.exceptions import FeatureUnavailable
-from terminaltables import AsciiTable
-from textwrap import wrap
 
 
 class ListCommandExecutor(object):
@@ -56,7 +57,7 @@ class ListCommandExecutor(object):
                                        "available templates and standards are not compatible")
 
         template_rows = [["Template Name", "CloudShell Ver.", "Description"]]
-        for template in templates.values():
+        for template in list(templates.values()):
             template = template[0]
             cs_ver_txt = str(template.min_cs_ver) + " and up"
             template_rows.append(
@@ -73,7 +74,7 @@ class ListCommandExecutor(object):
             return
 
         row = 1
-        for template in templates.values():
+        for template in list(templates.values()):
             template = template[0]
             wrapped_string = linesep.join(wrap(template.description, max_width))
             table.table_data[row][2] = wrapped_string

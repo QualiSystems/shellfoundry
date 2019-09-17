@@ -5,7 +5,8 @@ import os
 import yaml
 
 from shellfoundry.models.install_config import InstallConfig, DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, \
-    DEFAULT_PASSWORD, DEFAULT_DOMAIN, DEFAULT_AUTHOR, DEFAULT_ONLINE_MODE, DEFAULT_TEMPLATE_LOCATION
+    DEFAULT_PASSWORD, DEFAULT_DOMAIN, DEFAULT_AUTHOR, DEFAULT_ONLINE_MODE, DEFAULT_TEMPLATE_LOCATION, \
+    DEFAULT_GITHUB_LOGIN, DEFAULT_GITHUB_PASSWORD
 from shellfoundry.models.shellfoundry_settings import ShellFoundrySettings, DEFAULT_DEFAULT_VIEW
 from shellfoundry.utilities.config.config_providers import DefaultConfigProvider
 
@@ -19,6 +20,8 @@ DOMAIN = "domain"
 AUTHOR = "author"
 ONLINE_MODE = "online_mode"
 TEMPLATE_LOCATION = "template_location"
+GITHUB_LOGIN = "github_login"
+GITHUB_PASSWORD = "github_password"
 
 DEFAULT_VIEW = "defaultview"
 
@@ -45,7 +48,7 @@ class Configuration(object):
             return self.reader.get_defaults()
 
         with open(config_path) as stream:
-            config = yaml.load(stream.read())
+            config = yaml.safe_load(stream.read())
 
         if not config or INSTALL not in config:
             return self.reader.get_defaults()
@@ -60,16 +63,16 @@ class Configuration(object):
         config_data = None
         if os.path.exists(config_path):
             with open(config_path, mode="r") as conf_file:
-                config_data = yaml.load(conf_file)
+                config_data = yaml.safe_load(conf_file)
 
         if not config_data or INSTALL not in config_data:
             config_data = {INSTALL: dict()}
 
         mark_defaults_f = Configuration._mark_defaults
         install_cfg_def = dict(
-            (k, mark_defaults_f(v, mark_defaults)) for k, v in InstallConfig.get_default().__dict__.iteritems())
+            (k, mark_defaults_f(v, mark_defaults)) for k, v in InstallConfig.get_default().__dict__.items())
         sf_cfg_def = dict(
-            (k, mark_defaults_f(v, mark_defaults)) for k, v in ShellFoundrySettings.get_default().__dict__.iteritems())
+            (k, mark_defaults_f(v, mark_defaults)) for k, v in ShellFoundrySettings.get_default().__dict__.items())
         all_cfg = dict(install_cfg_def)
         all_cfg.update(sf_cfg_def)
         all_cfg.update(config_data[INSTALL])
@@ -95,7 +98,11 @@ class CloudShellConfigReader(object):
         author = get_with_default(config, AUTHOR, DEFAULT_AUTHOR)
         online_mode = get_with_default(config, ONLINE_MODE, DEFAULT_ONLINE_MODE)
         template_location = get_with_default(config, TEMPLATE_LOCATION, DEFAULT_TEMPLATE_LOCATION)
-        return InstallConfig(host, port, username, password, domain, author, online_mode, template_location)
+        github_login = get_with_default(config, GITHUB_LOGIN, DEFAULT_GITHUB_LOGIN)
+        github_password = get_with_default(config, GITHUB_PASSWORD, DEFAULT_GITHUB_PASSWORD)
+        return InstallConfig(host, port, username, password, domain,
+                             author, online_mode, template_location,
+                             github_login, github_password)
 
 
 class ShellFoundryConfig(object):

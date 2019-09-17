@@ -62,7 +62,7 @@ install:
 
         # Act
         with patch('shellfoundry.utilities.config.config_context.yaml') as yaml_mock:
-            yaml_mock.load.side_effect = [Exception()]
+            yaml_mock.safe_load.side_effect = [Exception()]
             context = ConfigContext('/quali/shellfoundry/global_config.yml')
             record = ConfigRecord('key', 'value')
             record.save(context)
@@ -87,7 +87,7 @@ install:
 
         # Act
         with patch('shellfoundry.utilities.config.config_context.yaml') as yaml_mock:
-            yaml_mock.load.side_effect = [Exception()]
+            yaml_mock.safe_load.side_effect = [Exception()]
             context = ConfigContext('/quali/shellfoundry/global_config.yml')
             record = ConfigRecord('host')
             record.delete(context)

@@ -2,6 +2,56 @@
 History
 =======
 
+1.2.11 (2019-08-14)
+-------------------
+
+* Added Python 3 support
+
+1.2.10 (2019-04-22)
+-------------------
+
+* Added setuptools to requirements
+* Changed setuptools import according to the latest version
+
+1.2.9 (2019-03-27)
+------------------
+
+* Added possibility to download dependencies from local CS repository during 'shellfoundry dist' command
+
+1.2.8 (2019-03-05)
+------------------
+
+* Fixed issue with wrong setuptools import
+
+1.2.7 (2019-02-12)
+------------------
+
+* Fixed issue in "generate" command after renaming root folder
+
+1.2.6 (2019-01-30)
+------------------
+
+* Added "get_templates" command
+* Added "delete" command
+* Removed driver zip-file after pack command
+* Added generating shell documentation based on the template
+
+1.2.5 (2018-10-04)
+------------------
+
+* Set strict python version
+
+1.2.4 (2018-09-26)
+------------------
+
+* Removed unnecessary cloudshell-automation-api dependency from requirements
+* Set static version for package click in requirements. click==6.7
+
+1.2.2 (2018-08-16)
+------------------
+
+* Fixed bug in verification template and standards compatibility
+
 1.2.1 (2018-08-13)
 ------------------
 
@@ -135,7 +185,7 @@ History
 0.0.44 (2016-12-12)
 -------------------
 
-* Fixed a bug in config command which caused shellfoundry to crash when config file has not existed
+* Fixed a bug in config command which caused shellfoundry to crash when config file was missing
 
 0.0.43 (2016-12-11)
 -------------------

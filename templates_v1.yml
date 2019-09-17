@@ -126,6 +126,20 @@ templates:
       description : 2nd generation shell template for basic inventory resources
       repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
       min_cs_ver: 8.0
+    - name : gen2/resource-with-connected-commands
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for basic inventory resources with connected commands
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-resource_with_connected_commands-template
+      min_cs_ver: 9.2
+    - name : gen2/connectable-resource
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for basic inventory connectable resources
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-generic_connectable_resource-template
+      min_cs_ver: 9.1
     - name : gen2/firewall
       params:
         project_name :
@@ -167,6 +181,13 @@ templates:
         family_name :
       description : 2nd generation shell template for a custom service
       repository : https://github.com/QualiSystems/shellfoundry-tosca-custom-service-template
+      min_cs_ver: 8.3
+    - name : gen2/admin-only-custom-service
+      params:
+        project_name :
+        family_name :
+      description : 2nd generation shell template for a admin only custom service
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-admin-only-custom-service-template
       min_cs_ver: 8.3
     - name : gen2/cloud-service
       params:
