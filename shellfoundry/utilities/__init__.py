@@ -1,14 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import ssl
-
-try:
-    # Python 2.x version
-    from xmlrpclib import ServerProxy, ProtocolError
-except:
-    # Python 3.x version
-    from xmlrpc.client import ServerProxy, ProtocolError
+import requests
+import json
 
 try:
     from pip.utils import get_installed_version
@@ -37,9 +31,6 @@ class Index(object):
         self.url = url
 
 
-PyPI = Index('https://pypi.python.org/pypi/')
-
-
 def is_index_version_greater_than_current():
     MAJOR_INDEX = 0
 
@@ -56,17 +47,18 @@ def is_index_version_greater_than_current():
 
 def max_version_from_index():
     try:
-        ctx = ssl.SSLContext(protocol=ssl.PROTOCOL_SSLv23)
-        proxy = ServerProxy(PyPI.url, context=ctx)
-        releases = proxy.package_releases(PACKAGE_NAME)
-        max_version = max(releases)
-        return max_version
-    except ProtocolError as err:
+        url = 'https://pypi.org/pypi/{}/json'.format(PACKAGE_NAME)
+        r = requests.get(url)
+        if r.status_code != requests.codes.ok:
+            raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
+                                               "are you offline?")
+        else:
+            content = json.loads(r.content)
+            max_version = content['info']['version']
+            return max_version
+    except Exception, err:
         raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
-                                           "are you offline? Error: {}".format(err.errmsg))
-    except Exception as err:
-        raise ShellFoundryVersionException("Unexpected error during shellfoundry version check. "
-                                           "Error: {}.".format(err.message))
+                                           "are you offline? Error: {}".format(err.message))
 
 
 def get_index_of_biggest_component_between_two_versions(v1, v2):
