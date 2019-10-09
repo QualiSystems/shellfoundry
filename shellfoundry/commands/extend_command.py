@@ -47,7 +47,7 @@ class ExtendCommandExecutor(object):
                 else:
                     temp_shell_path = self._copy_online_shell(source, temp_dir)
             except VersionRequestException as err:
-                raise click.ClickException(err.message)
+                raise click.ClickException(err)
             except Exception:
                 # raise
                 raise click.BadParameter("Check correctness of entered attributes")
@@ -70,7 +70,7 @@ class ExtendCommandExecutor(object):
                 # pass
                 shutil.move(shell_path, os.path.curdir)
             except shutil.Error as err:
-                raise click.BadParameter(err.message)
+                raise click.BadParameter(err)
 
         click.echo("Created shell based on source {}".format(source))
 

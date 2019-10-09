@@ -14,6 +14,7 @@ class DeleteCommandExecutor(object):
         try:
             self.shell_package_installer.delete(shell_name=shell_name)
         except FatalError as err:
+
             msg = err.message if hasattr(err, "message") else err.args[0]
             # print(type(err.args), err.args)
             click.ClickException(msg)
