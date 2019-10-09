@@ -45,7 +45,7 @@ class ListCommandExecutor(object):
                 templates = self.template_retriever.get_templates(template_location=template_location,
                                                                   standards=standards)
         except FatalError as err:
-            raise click.UsageError(err)
+            raise click.UsageError(str(err))
         except FeatureUnavailable:
             if online_mode:
                 templates = self.template_retriever.get_templates(alternative=ALTERNATIVE_TEMPLATES_PATH)

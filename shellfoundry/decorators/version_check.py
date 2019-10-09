@@ -22,7 +22,7 @@ class shellfoundry_version_check(object):
                 try:
                     is_greater_version, is_major_release = is_index_version_greater_than_current()
                 except ShellFoundryVersionException as err:
-                    click.secho(err, fg='red')
+                    click.secho(str(err), fg='red')
                     raise click.Abort()
                 if is_greater_version:
                     if is_major_release:
