@@ -63,10 +63,10 @@ def max_version_from_index():
         return max_version
     except ProtocolError as err:
         raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
-                                           "are you offline? Error: {}".format(err.errmsg))
+                                           "are you offline? Error: {}".format(err))
     except Exception as err:
         raise ShellFoundryVersionException("Unexpected error during shellfoundry version check. "
-                                           "Error: {}.".format(err.message))
+                                           "Error: {}.".format(err))
 
 
 def get_index_of_biggest_component_between_two_versions(v1, v2):

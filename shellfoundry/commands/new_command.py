@@ -76,7 +76,7 @@ class NewCommandExecutor(object):
             #                            "Feature unavailable (probably due to cloudshell version below 8.1")
             standards = self.standards.fetch(alternative=ALTERNATIVE_STANDARDS_PATH)
         except Exception as err:
-            raise click.ClickException("Cannot retrieve standards list. Error: {}".format(err.message))
+            raise click.ClickException("Cannot retrieve standards list. Error: {}".format(err))
 
         # Get template using direct url path. Ignore parameter in configuration file
         if self._is_direct_online_template(template):

@@ -112,4 +112,4 @@ class GetTemplatesCommandExecutor(object):
                     pass
 
         except click.ClickException as err:
-            errors.append(err.message)
+            errors.append(str(err))
