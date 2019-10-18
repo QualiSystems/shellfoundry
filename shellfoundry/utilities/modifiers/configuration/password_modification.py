@@ -16,7 +16,10 @@ class PasswordModification(object):
 
         encryption_key = self._get_encryption_key()
         encoded = self._decode_encode(value, encryption_key)
-        return base64.b64encode(encoded)
+        if sys.version_info[0] < 3:
+            return base64.b64encode(encoded)
+        else:
+            return base64.b64encode(encoded.encode()).decode()
 
     def normalize(self, value):
         """  """
