@@ -48,11 +48,11 @@ class InstallCommandExecutor(object):
         except HTTPError as e:
             if e.code == 401:
                 raise FatalError('Login to CloudShell failed. Please verify the credentials in the config')
-            error = e.msg
+            error = str(e)
         except URLError:
             raise FatalError('Connection to CloudShell Server failed. Please make sure it is up and running properly.')
         except Exception as e:
-            error = e.message
+            error = str(e)
 
         if error:
             raise FatalError("Failed to install shell. CloudShell responded with: '{}'".format(error))
