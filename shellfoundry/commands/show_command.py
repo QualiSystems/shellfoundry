@@ -16,7 +16,7 @@ class ShowCommandExecutor(object):
 
     def show(self, template_name):
         try:
-            template_repo = self.template_retriever.get_templates()[template_name].repository
+            template_repo = self.template_retriever.get_templates()[template_name][0].repository
         except:
             raise click.ClickException(
                 "The template '{}' does not exist, please specify a valid 2nd Gen shell template.".format(

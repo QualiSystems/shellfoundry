@@ -29,7 +29,7 @@ class PasswordModification(object):
             if sys.version_info[0] < 3:
                 decoded = self._decode_encode(base64.decodestring(value), encryption_key)
             else:
-                decoded = self._decode_encode(base64.decodebytes(value.encode()), encryption_key)
+                decoded = self._decode_encode(base64.decodebytes(value.encode()).decode(), encryption_key)
             return decoded
         except binascii.Error:
             return value

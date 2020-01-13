@@ -22,7 +22,7 @@ class TestShowCommandExecutor(unittest.TestCase):
                                        'some description',
                                        'mock://tosca/networking/switch', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
-        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
+        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': [shell_template]}
 
         # Act
         with patch('shellfoundry.commands.show_command.requests.get') as get_response_mock:
@@ -43,7 +43,7 @@ class TestShowCommandExecutor(unittest.TestCase):
                                        'some description',
                                        'mock://tosca/networking/switch', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
-        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
+        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': [shell_template]}
 
         # Act
         with patch('shellfoundry.commands.show_command.requests.get') as get_response_mock:
@@ -63,7 +63,7 @@ class TestShowCommandExecutor(unittest.TestCase):
                                        'some description',
                                        'mock://not/the/right/one', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
-        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
+        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': [shell_template]}
 
         # Act
         with self.assertRaises(click.ClickException) as context:
@@ -82,7 +82,7 @@ class TestShowCommandExecutor(unittest.TestCase):
                                        'some description',
                                        repository, '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
-        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
+        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': [shell_template]}
 
         # Act
         with self.assertRaises(click.ClickException) as context:
@@ -124,7 +124,7 @@ class TestShowCommandExecutor(unittest.TestCase):
                                        'some description',
                                        'mock://tosca/networking/switch', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
-        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
+        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': [shell_template]}
 
         # Act
         with patch('shellfoundry.commands.show_command.requests.get') as get_response_mock, \
@@ -145,7 +145,7 @@ class TestShowCommandExecutor(unittest.TestCase):
                                        'some description',
                                        'mock://tosca/networking/switch', '8.0')
         template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
-        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
+        template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': [shell_template]}
 
         # Act
         with patch('shellfoundry.commands.show_command.requests.get') as get_response_mock, \

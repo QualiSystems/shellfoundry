@@ -4,7 +4,9 @@
 import datetime
 import os
 
+from click import ClickException
 from cookiecutter.main import cookiecutter
+from cookiecutter.exceptions import OutputDirExistsException
 from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
 from shellfoundry.utilities.constants import TEMPLATE_INFO_FILE
 
@@ -31,10 +33,12 @@ class CookiecutterTemplateCompiler(object):
         else:
             output_dir = os.path.curdir
 
-        cookiecutter(template_path, no_input=True,
-                     extra_context=extra_context,
-                     overwrite_if_exists=False, output_dir=output_dir)
-
+        try:
+            cookiecutter(template_path, no_input=True,
+                         extra_context=extra_context,
+                         overwrite_if_exists=False, output_dir=output_dir)
+        except OutputDirExistsException as err:
+            raise ClickException(str(err))
         # self._remove_template_info_file(output_dir)
 
     @staticmethod

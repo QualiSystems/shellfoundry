@@ -28,6 +28,7 @@ from shellfoundry.utilities.validations import ShellNameValidations
 class NewCommandExecutor(object):
     LOCAL_TEMPLATE_URL_PREFIX = 'local:'
     REMOTE_TEMPLATE_URL_PREFIX = 'url:'
+    L1_TEMPLATE = "layer-1-switch"
 
     def __init__(self, template_compiler=None,
                  template_retriever=None,
@@ -92,6 +93,9 @@ class NewCommandExecutor(object):
             template = self._get_local_template_full_path(template, standards, version)
             self._import_local_template(name, running_on_same_folder, template, standards, python_version)
 
+        if template == self.L1_TEMPLATE:
+            click.secho("WARNING: L1 shells support python 2.7 only!", fg="yellow")
+
         click.echo('Created shell {0} based on template {1}'.format(name, template))
 
     def _import_direct_online_template(self, name, running_on_same_folder, template, standards, python_version):
@@ -140,7 +144,7 @@ class NewCommandExecutor(object):
                                                                                    templates)))
             template_obj = templates[template]
 
-            if not version:
+            if not version and template != self.L1_TEMPLATE:
                 version = self._get_template_latest_version(standards, template_obj.standard)
 
             try:
@@ -185,7 +189,7 @@ class NewCommandExecutor(object):
         try:
             return self.standard_versions.create(standards_list).get_latest_version(standard)
         except Exception as e:
-            click.ClickException(e.message)
+            click.ClickException(str(e))
 
     def _get_local_template_full_path(self, template_name, standards, version=None):
         """ Get full path to local template based on provided template name """
