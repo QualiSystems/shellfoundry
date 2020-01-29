@@ -15,8 +15,6 @@ from cloudshell.helpers.scripts.cloudshell_dev_helpers import attach_to_cloudshe
 import cloudshell.helpers.scripts.cloudshell_scripts_helpers as script_help
 
 
-
-
 #
 # 1st gen helpers used by IxChariot, Avalanche and Xena controller shells. Remove once all controllers are upgraded.
 #
@@ -65,21 +63,13 @@ def get_credentials_from_deployment():
 def create_topology_reservation(session, topology_path, reservation_name='tg regression tests', global_inputs=[]):
 
     _, owner, _, _ = get_credentials_from_deployment()
-    try:
-        reservation = session.CreateImmediateTopologyReservation(reservationName=reservation_name,
-                                                                 topologyFullPath=topology_path,
-                                                                 globalInputs=global_inputs,
-                                                                 owner=owner, durationInMinutes=60)
-    except CloudShellAPIError as e:
-        reservations = session.GetCurrentReservations(reservationOwner='admin')
-        for reservation in reservations.Reservations:
-            if reservation.Name == 'tg regression tests':
-                session.EndReservation(reservation.Id)
-        time.sleep(2)
-        reservation = session.CreateImmediateTopologyReservation(reservationName=reservation_name,
-                                                                 topologyFullPath=topology_path,
-                                                                 globalInputs=global_inputs,
-                                                                 owner=owner, durationInMinutes=60)
+    reservations = session.GetCurrentReservations(reservationOwner=owner)
+    for reservation in [r for r in reservations.Reservations if r.Name == reservation_name]:
+        session.EndReservation(reservation.Id)
+    reservation = session.CreateImmediateTopologyReservation(reservationName=reservation_name,
+                                                             topologyFullPath=topology_path,
+                                                             globalInputs=global_inputs,
+                                                             owner=owner, durationInMinutes=60)
     return reservation
 
 
@@ -259,4 +249,8 @@ def debug_attach_from_deployment(reservation_id, resource_name=None, service_nam
 
 
 # Should I move to pylgi? Should I create a general test package that can be extended?
-cisco_mac = {'mac': '48d3.4373.32eb', 'ip': ('10.15.91.43','EB/48D3437332EB')}
+cisco_mac = {'mac': 'ac22.05ee.f971', 'ip': ('10.15.91.102', '71/AC2205EEF971')}
+casa_mac = {'mac': 'ac22.05ee.f311'}
+arris_mac = {'mac': '48d3.43ef.66a3'}
+jira = {'base_url': 'https://jira.lgi.io', 'user': 'dev_itc_laas_api', 'password': 'Welkom@3010',
+        'encripted_password': 'vi6FqSo9OmW9awOSwC3dGw=='}
