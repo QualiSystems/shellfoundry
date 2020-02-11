@@ -168,7 +168,7 @@ templates:
       description : 2nd generation shell template for a SDN controller
       repository : https://github.com/QualiSystems/shellfoundry-tosca-sdn-template
       min_cs_ver: 8.0
-    - name : gen2/traffic-chassis
+    - name : gen2/traffic-generator-chassis
       params:
         project_name :
         family_name : TrafficGeneratorChassis

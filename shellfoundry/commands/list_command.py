@@ -45,7 +45,7 @@ class ListCommandExecutor(object):
                 templates = self.template_retriever.get_templates(template_location=template_location,
                                                                   standards=standards)
         except FatalError as err:
-            raise click.UsageError(err.message)
+            raise click.UsageError(str(err))
         except FeatureUnavailable:
             if online_mode:
                 templates = self.template_retriever.get_templates(alternative=ALTERNATIVE_TEMPLATES_PATH)
@@ -57,7 +57,7 @@ class ListCommandExecutor(object):
                                        "available templates and standards are not compatible")
 
         template_rows = [["Template Name", "CloudShell Ver.", "Description"]]
-        for template in templates.values():
+        for template in list(templates.values()):
             template = template[0]
             cs_ver_txt = str(template.min_cs_ver) + " and up"
             template_rows.append(
@@ -74,7 +74,7 @@ class ListCommandExecutor(object):
             return
 
         row = 1
-        for template in templates.values():
+        for template in list(templates.values()):
             template = template[0]
             wrapped_string = linesep.join(wrap(template.description, max_width))
             table.table_data[row][2] = wrapped_string

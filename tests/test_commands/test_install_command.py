@@ -139,7 +139,7 @@ install:
 
         # Assert
         self.assertTrue(str(context.exception) == u"Failed to install shell. CloudShell responded with: '{}'"
-                        .format('Login failed for user: YOUR_USERNAME. '
+                        .format('HTTP Error 404: Login failed for user: YOUR_USERNAME. '
                                 'Please make sure the username and password are correct.'),
                         "Actual: {}".format(context.exception))
 

@@ -2,6 +2,39 @@
 History
 =======
 
+1.2.16 (2020-01-02)
+-------------------
+
+* Fixed error with click and cookiecutter versions incompatibility
+* Fixed multiple traceback issues
+
+
+1.2.13 (2019-10-18)
+-------------------
+
+* Fixed password modification error
+
+1.2.11 (2019-08-14)
+-------------------
+
+* Added Python 3 support
+
+1.2.10 (2019-04-22)
+-------------------
+
+* Added setuptools to requirements
+* Changed setuptools import according to the latest version
+
+1.2.9 (2019-03-27)
+------------------
+
+* Added possibility to download dependencies from local CS repository during 'shellfoundry dist' command
+
+1.2.8 (2019-03-05)
+------------------
+
+* Fixed issue with wrong setuptools import
+
 1.2.7 (2019-02-12)
 ------------------
 

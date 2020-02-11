@@ -7,10 +7,9 @@ import xml.etree.ElementTree as ET
 
 from cloudshell.shell.core.driver_context import (ResourceCommandContext, ResourceContextDetails,
                                                   ReservationContextDetails, ConnectivityContext, InitCommandContext)
+from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionContext
 from cloudshell.api.cloudshell_api import CloudShellAPISession, ResourceAttributesUpdateRequest
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
-from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionContext
-
 from cloudshell.helpers.scripts.cloudshell_dev_helpers import attach_to_cloudshell_as
 import cloudshell.helpers.scripts.cloudshell_scripts_helpers as script_help
 
@@ -33,8 +32,9 @@ def create_session_from_cloudshell_config():
     return CloudShellAPISession(host, username, password, domain)
 
 #
-# 2nd generation helers.
+# 2nd generation helpers.
 #
+
 
 def get_deployment_root():
 
@@ -137,7 +137,7 @@ def create_service_command_context(session, service_name, alias=None, attributes
                                     attributes=attributes)
 
     os.environ['DEVBOOTSTRAP'] = 'True'
-    debug_attach_from_deployment(reservation_id, service_name=service_name)
+    debug_attach_from_deployment(reservation_id, alias=alias)
     reservation = script_help.get_reservation_context_details()
     resource = script_help.get_resource_context_details()
 
@@ -155,7 +155,7 @@ def create_resource_command_context(session, resource_path):
     session.AddResourcesToReservation(reservationId=reservation_id, resourcesFullPath=[resource_path])
 
     os.environ['DEVBOOTSTRAP'] = 'True'
-    debug_attach_from_deployment(reservation_id, resource_path)
+    debug_attach_from_deployment(reservation_id, resource_name=resource_path)
     reservation = script_help.get_reservation_context_details()
     resource = script_help.get_resource_context_details()
 
@@ -234,7 +234,7 @@ def create_command_context_2g(session, ports, controller, attributes):
     return context
 
 
-def debug_attach_from_deployment(reservation_id, resource_name=None, service_name=None):
+def debug_attach_from_deployment(reservation_id, resource_name=None, alias=None):
 
     host, username, password, domain = get_credentials_from_deployment()
     attach_to_cloudshell_as(
@@ -244,13 +244,5 @@ def debug_attach_from_deployment(reservation_id, resource_name=None, service_nam
         reservation_id=reservation_id,
         domain=domain,
         resource_name=resource_name,
-        service_name=service_name
+        service_name=alias
     )
-
-
-# Should I move to pylgi? Should I create a general test package that can be extended?
-cisco_mac = {'mac': 'ac22.05ee.f971', 'ip': ('10.15.91.102', '71/AC2205EEF971')}
-casa_mac = {'mac': 'ac22.05ee.f311'}
-arris_mac = {'mac': '48d3.43ef.66a3'}
-jira = {'base_url': 'https://jira.lgi.io', 'user': 'dev_itc_laas_api', 'password': 'Welkom@3010',
-        'encripted_password': 'vi6FqSo9OmW9awOSwC3dGw=='}
