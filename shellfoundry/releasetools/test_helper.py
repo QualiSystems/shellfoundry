@@ -187,7 +187,8 @@ def create_autoload_resource(session, family, model, address, name, attributes):
                                       parentResourceFullPath='',
                                       resourceDescription='should be removed after test')
     session.UpdateResourceDriver(resource.Name, model)
-    session.SetAttributesValues(ResourceAttributesUpdateRequest(resource.Name, attributes))
+    if attributes:
+        session.SetAttributesValues(ResourceAttributesUpdateRequest(resource.Name, attributes))
     return resource
 
 
