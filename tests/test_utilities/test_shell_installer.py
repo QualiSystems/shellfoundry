@@ -13,9 +13,9 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
 
-    @patch("cloudshell.rest.api.PackagingRestApiClient.upload_environment_zip_file")
+    @patch("cloudshell.rest.api.PackagingRestApiClient.import_package")
     @patch("cloudshell.rest.api.PackagingRestApiClient.__init__")
-    def test_when_install_called_it_uploads_package_to_cloudshell(self, mock_quali_api_client, mock_upload_environment_zip_file):
+    def test_when_install_called_it_uploads_package_to_cloudshell(self, mock_quali_api_client, mock_import_package):
         # Arrange
         # Constructor should return None
         mock_quali_api_client.return_value = None
@@ -37,4 +37,4 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
         # self.fs.path_separator + "work" + self.fs.path_separator + "dist" + self.fs.path_separator + "nut_shell.zip"
 
         # Assert
-        mock_upload_environment_zip_file.assert_called_once_with(shell_full_path)
+        mock_import_package.assert_called_once_with(shell_full_path)

@@ -28,7 +28,7 @@ class ShowCommandExecutor(object):
         try:
             branches = TemplateVersions(*template_repo.split('/')[-2:]).get_versions_of_template()
         except (requests.RequestException, exc.NoVersionsHaveBeenFoundException) as ex:
-            raise click.ClickException(ex.message)
+            raise click.ClickException(str(ex))
         branches.remove(MASTER_BRANCH_NAME)
         if not TemplateVersions.has_versions(branches):  # validating that besides master there are other versions
             raise click.ClickException("No versions have been found for this template")
