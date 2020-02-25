@@ -2,6 +2,12 @@
 History
 =======
 
+1.2.17 (2020-02-12)
+-------------------
+
+* Fixed error with click and cookiecutter versions incompatibility
+* Fixed multiple traceback issues
+
 1.2.16 (2020-01-02)
 -------------------
 

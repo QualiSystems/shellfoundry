@@ -40,11 +40,15 @@ class PackageBuilder(object):
     @staticmethod
     def _save_to_utf_file(content, dest_path):
         with codecs.open(dest_path, "w", "utf-8-sig") as f:
+            if isinstance(content, bytes):
+                content = content.decode()
             f.write(content)
 
     @staticmethod
     def _save_to_file(content, dest_path):
         with codecs.open(dest_path, "w") as f:
+            if isinstance(content, bytes):
+                content = content.decode()
             f.write(content)
 
     @staticmethod

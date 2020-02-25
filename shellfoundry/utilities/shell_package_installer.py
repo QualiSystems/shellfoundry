@@ -152,7 +152,11 @@ class ShellPackageInstaller(object):
             raise FatalError(self._parse_installation_error("Failed to add new shell", e))
 
     def _parse_installation_error(self, base_message, error):
-        cs_message = json.loads(error.message)["Message"]
+        try:
+            # cs_message = json.loads(error.message)["Message"]
+            cs_message = json.loads(str(error))["Message"]
+        except:
+            cs_message = ""
         return "{}. CloudShell responded with: '{}'".format(base_message, cs_message)
 
     def _increase_pbar(self, pbar, time_wait):

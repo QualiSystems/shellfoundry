@@ -242,6 +242,8 @@ class NewCommandExecutor(object):
         """ Determine template additional parameters """
 
         full_path = os.path.join(repo_path, TEMPLATE_INFO_FILE)
+        if not os.path.exists(full_path):
+            raise click.ClickException("Wrong template path provided. Provided path: {}".format(repo_path))
         with open(full_path, mode='r') as f:
             templ_data = json.load(f)
 

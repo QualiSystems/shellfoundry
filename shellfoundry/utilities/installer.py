@@ -26,4 +26,5 @@ class ShellInstaller(object):
         package_full_path = os.path.join(os.getcwd(), "dist", package_name + ".zip")
         click.echo("Installing package {0} into CloudShell at http://{1}:{2}".format(package_full_path, host, port))
         server = PackagingRestApiClient(host, port, username, password, domain)
-        server.upload_environment_zip_file(package_full_path)
+        # server.upload_environment_zip_file(package_full_path)
+        server.import_package(package_full_path)
