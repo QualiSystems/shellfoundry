@@ -3,7 +3,13 @@
 
 import ssl
 
-from xmlrpclib import ServerProxy, ProtocolError
+try:
+    # Python 2.x version
+    from xmlrpclib import ServerProxy, ProtocolError
+except:
+    # Python 3.x version
+    from xmlrpc.client import ServerProxy, ProtocolError
+
 try:
     from pip.utils import get_installed_version
 except ImportError:
@@ -55,16 +61,16 @@ def max_version_from_index():
         releases = proxy.package_releases(PACKAGE_NAME)
         max_version = max(releases)
         return max_version
-    except ProtocolError, err:
+    except ProtocolError as err:
         raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
-                                           "are you offline? Error: {}".format(err.errmsg))
-    except Exception, err:
+                                           "are you offline? Error: {}".format(err))
+    except Exception as err:
         raise ShellFoundryVersionException("Unexpected error during shellfoundry version check. "
-                                           "Error: {}.".format(err.message))
+                                           "Error: {}.".format(err))
 
 
 def get_index_of_biggest_component_between_two_versions(v1, v2):
-    for i in xrange(0, len(v1)):
+    for i in range(0, len(v1)):
         if v1[i] > v2[i]:
             return i
 

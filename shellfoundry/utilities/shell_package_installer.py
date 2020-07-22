@@ -6,7 +6,10 @@ import os
 import time
 import json
 
-from urllib2 import HTTPError
+try:
+    from urllib.error import HTTPError
+except:
+    from urllib2 import HTTPError
 
 from shellfoundry.exceptions import FatalError
 from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
@@ -113,13 +116,13 @@ class ShellPackageInstaller(object):
                 client.delete_shell(shell_name)
             except FeatureUnavailable:
                 self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
-                raise FatalError("Delete shell command unavailable (probably due to CloudShell version below 9.2)")
+                raise click.ClickException("Delete shell command unavailable (probably due to CloudShell version below 9.2)")
             except ShellNotFoundException:
                 self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
-                raise FatalError("Shell '{shell_name}' doesn't exist on CloudShell".format(shell_name=shell_name))
+                raise click.ClickException("Shell '{shell_name}' doesn't exist on CloudShell".format(shell_name=shell_name))
             except Exception as e:
                 self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
-                raise FatalError(self._parse_installation_error("Failed to delete shell", e))
+                raise click.ClickException(self._parse_installation_error("Failed to delete shell", e))
             finally:
                 self._render_pbar_finish(pbar)
 
@@ -136,7 +139,7 @@ class ShellPackageInstaller(object):
             return client
         except HTTPError as e:
             if e.code == 401:
-                raise FatalError(u"Login to CloudShell failed. Please verify the credentials in the config")
+                raise FatalError("Login to CloudShell failed. Please verify the credentials in the config")
             raise FatalError("Connection to CloudShell Server failed. Please make sure it is up and running properly.")
         except:
             self._increase_pbar(pbar, time_wait=CLOUDSHELL_RETRY_INTERVAL_SEC)
@@ -154,7 +157,7 @@ class ShellPackageInstaller(object):
 
     def _increase_pbar(self, pbar, time_wait):
         time.sleep(time_wait)
-        pbar.next()
+        pbar.make_step(1)
 
     def _render_pbar_finish(self, pbar):
         pbar.finish()

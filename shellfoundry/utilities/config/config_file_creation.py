@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import click
 import errno
 import os
@@ -14,7 +17,7 @@ class ConfigFileCreation(object):
             except OSError as exc:
                 if exc.errno != errno.EEXIST:
                     click.echo('Failed to create config file')
-                    click.echo(exc.message)
+                    click.echo(str(exc))
                     raise
         try:
             click.echo('Creating config file...')
@@ -23,5 +26,5 @@ class ConfigFileCreation(object):
             if not os.path.exists(config_file_path):
                 click.echo('Failed to create config file')
                 import sys
-                click.echo(sys.exc_info()[1].message)
+                click.echo(str(sys.exc_info()[1]))
                 raise

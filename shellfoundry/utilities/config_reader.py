@@ -48,7 +48,7 @@ class Configuration(object):
             return self.reader.get_defaults()
 
         with open(config_path) as stream:
-            config = yaml.load(stream.read())
+            config = yaml.safe_load(stream.read())
 
         if not config or INSTALL not in config:
             return self.reader.get_defaults()
@@ -63,16 +63,16 @@ class Configuration(object):
         config_data = None
         if os.path.exists(config_path):
             with open(config_path, mode="r") as conf_file:
-                config_data = yaml.load(conf_file)
+                config_data = yaml.safe_load(conf_file)
 
         if not config_data or INSTALL not in config_data:
             config_data = {INSTALL: dict()}
 
         mark_defaults_f = Configuration._mark_defaults
         install_cfg_def = dict(
-            (k, mark_defaults_f(v, mark_defaults)) for k, v in InstallConfig.get_default().__dict__.iteritems())
+            (k, mark_defaults_f(v, mark_defaults)) for k, v in InstallConfig.get_default().__dict__.items())
         sf_cfg_def = dict(
-            (k, mark_defaults_f(v, mark_defaults)) for k, v in ShellFoundrySettings.get_default().__dict__.iteritems())
+            (k, mark_defaults_f(v, mark_defaults)) for k, v in ShellFoundrySettings.get_default().__dict__.items())
         all_cfg = dict(install_cfg_def)
         all_cfg.update(sf_cfg_def)
         all_cfg.update(config_data[INSTALL])

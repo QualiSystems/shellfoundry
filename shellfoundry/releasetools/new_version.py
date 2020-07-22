@@ -18,6 +18,7 @@ import pytest
 import requests
 import random
 import glob
+import fire
 
 from shellfoundry.commands.pack_command import PackCommandExecutor
 from shellfoundry.commands.install_command import InstallCommandExecutor
@@ -83,7 +84,7 @@ def release_version(parsed_args):
 
     if parsed_args.shellfoundry:
         PackCommandExecutor().pack()
-        DistCommandExecutor().dist()
+        DistCommandExecutor().dist(enable_cs_repo=True)
 
     repo = Repo('.')
     if parsed_args.commit:

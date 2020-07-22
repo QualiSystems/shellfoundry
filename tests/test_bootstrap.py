@@ -66,14 +66,22 @@ class TestBootstrap(unittest.TestCase):
         result = self.runner.invoke(new, ["test_shell"])
 
         assert result.exit_code == 0
-        new_command_executor.return_value.new.assert_called_once_with("test_shell", "gen2/resource", None)
+        new_command_executor.return_value.new.assert_called_once_with("test_shell", "gen2/resource", None, None)
 
     @patch("shellfoundry.bootstrap.NewCommandExecutor")
     def test_new(self, new_command_executor):
         result = self.runner.invoke(new, ["test_shell", "--template", "template_name", "--version", "version"])
 
         assert result.exit_code == 0
-        new_command_executor.return_value.new.assert_called_once_with("test_shell", "template_name", "version")
+        new_command_executor.return_value.new.assert_called_once_with("test_shell", "template_name", "version", None)
+
+    @patch("shellfoundry.bootstrap.NewCommandExecutor")
+    def test_new_with_python_version(self, new_command_executor):
+        result = self.runner.invoke(new, ["test_shell", "--template", "template_name", "--version", "version",
+                                          "--python", "3"])
+
+        assert result.exit_code == 0
+        new_command_executor.return_value.new.assert_called_once_with("test_shell", "template_name", "version", "3")
 
     @patch("shellfoundry.bootstrap.PackCommandExecutor")
     def test_pack(self, test_pack_executor):

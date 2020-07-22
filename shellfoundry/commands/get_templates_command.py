@@ -38,7 +38,7 @@ class GetTemplatesCommandExecutor(object):
         if online_mode:
             try:
                 response = self.template_retriever._get_templates_from_github()
-                config = yaml.load(response)
+                config = yaml.safe_load(response)
                 repos = set(template["repository"] for template in config["templates"])
 
                 if not output_dir:
@@ -111,5 +111,5 @@ class GetTemplatesCommandExecutor(object):
                 finally:
                     pass
 
-        except click.ClickException, err:
-            errors.append(err.message)
+        except click.ClickException as err:
+            errors.append(str(err))

@@ -47,17 +47,17 @@ class ExtendCommandExecutor(object):
                 else:
                     temp_shell_path = self._copy_online_shell(source, temp_dir)
             except VersionRequestException as err:
-                raise click.ClickException(err.message)
+                raise click.ClickException(str(err))
             except Exception:
                 # raise
-                raise click.BadParameter(u"Check correctness of entered attributes")
+                raise click.BadParameter("Check correctness of entered attributes")
 
             # Remove shell version from folder name
             shell_path = re.sub(r"-\d+(\.\d+)*/?$", "", temp_shell_path)
             os.rename(temp_shell_path, shell_path)
 
             if not self.shell_gen_validations.validate_2nd_gen(shell_path):
-                raise click.ClickException(u"Invalid second generation Shell.")
+                raise click.ClickException("Invalid second generation Shell.")
 
             modificator = DefinitionModification(shell_path)
             self._unpack_driver_archive(shell_path, modificator)
@@ -70,7 +70,7 @@ class ExtendCommandExecutor(object):
                 # pass
                 shutil.move(shell_path, os.path.curdir)
             except shutil.Error as err:
-                raise click.BadParameter(err.message)
+                raise click.BadParameter(str(err))
 
         click.echo("Created shell based on source {}".format(source))
 
@@ -124,9 +124,9 @@ class ExtendCommandExecutor(object):
         if not modificator:
             modificator = DefinitionModification(shell_path)
 
-        artifacts = modificator.get_artifacts_files(artifact_name_list=self.ARTIFACTS.keys())
+        artifacts = modificator.get_artifacts_files(artifact_name_list=list(self.ARTIFACTS.keys()))
 
-        for artifact_name, artifact_path in artifacts.iteritems():
+        for artifact_name, artifact_path in artifacts.items():
 
             artifact_path = os.path.join(shell_path, artifact_path)
 

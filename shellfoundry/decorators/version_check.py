@@ -21,8 +21,8 @@ class shellfoundry_version_check(object):
             if self.cloudshell_config_reader.read().online_mode.lower() == "true":
                 try:
                     is_greater_version, is_major_release = is_index_version_greater_than_current()
-                except ShellFoundryVersionException, err:
-                    click.secho(err.message, fg='red')
+                except ShellFoundryVersionException as err:
+                    click.secho(str(err), fg='red')
                     raise click.Abort()
                 if is_greater_version:
                     if is_major_release:
@@ -31,7 +31,7 @@ class shellfoundry_version_check(object):
 
                         if self.abort_if_major:
                             click.secho(output, fg='yellow')
-                            print ''
+                            print('')
                             raise click.Abort()
                     else:
                         output = 'There is a new version of shellfoundry available, ' \
@@ -40,7 +40,7 @@ class shellfoundry_version_check(object):
             f(**kwargs)
 
             if output:
-                print ''
+                print('')
                 click.secho(output, fg='yellow')
 
         return update_wrapper(decorator, f)
