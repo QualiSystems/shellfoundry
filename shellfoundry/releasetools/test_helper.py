@@ -1,18 +1,42 @@
+import json
 import inspect
 import os
-from os import path
 import time
 import yaml
+from os import path
+
 import xml.etree.ElementTree as ET
 
+import cloudshell.helpers.scripts.cloudshell_scripts_helpers as script_help
+from cloudshell.api.cloudshell_api import CloudShellAPISession, ResourceAttributesUpdateRequest, AttributeNameValue
+from cloudshell.api.common_cloudshell_api import CloudShellAPIError
+from cloudshell.helpers.scripts.cloudshell_dev_helpers import attach_to_cloudshell_as
+from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionContext
 from cloudshell.shell.core.driver_context import (ResourceCommandContext, ResourceContextDetails,
                                                   ReservationContextDetails, ConnectivityContext, InitCommandContext)
-from cloudshell.api.cloudshell_api import CloudShellAPISession, ResourceAttributesUpdateRequest
-from cloudshell.api.common_cloudshell_api import CloudShellAPIError
-from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionContext
+from cloudshell.traffic.helpers import add_service_to_reservation, add_connector_to_reservation
 
-from cloudshell.helpers.scripts.cloudshell_dev_helpers import attach_to_cloudshell_as
-import cloudshell.helpers.scripts.cloudshell_scripts_helpers as script_help
+
+def load_devices(devices_env=''):
+    deployment_root = get_shell_root()
+    devices_file = os.environ.get(devices_env, deployment_root + '/devices.yaml')
+    with open(devices_file) as f:
+        return yaml.safe_load(f)
+
+
+def print_inventory(inventory):
+    print('\n')
+    for r in inventory.resources:
+        print(f'{r.relative_address}, {r.model}, {r.name}')
+    print('\n')
+    for a in inventory.attributes:
+        print(f'{a.relative_address}, {a.relative_address}, {a.attribute_value}')
+
+
+def assert_health_check(health_check, device):
+    print(json.dumps(health_check, indent=2))
+    assert health_check['report']['name'] == device['resource']
+    assert type(health_check['report']['result']) is bool
 
 
 #
@@ -36,17 +60,21 @@ def create_session_from_cloudshell_config():
 # 2nd generation helers.
 #
 
-def get_deployment_root():
-
+def get_shell_root():
     index = 1
     test_name = inspect.stack()[index][1]
-    while test_name == __file__:
+    while os.path.splitext(test_name)[0] == os.path.splitext(__file__)[0]:
         index += 1
         test_name = inspect.stack()[index][1]
-    shell_dir = path.dirname(path.dirname(test_name))
-    if not path.exists(shell_dir + '/deployment.xml'):
-        shell_dir = path.dirname(shell_dir)
-    deployment = shell_dir + '/deployment.xml'
+    deployment_dir = path.dirname(test_name)
+    if not path.exists(deployment_dir + '/deployment.xml'):
+        deployment_dir = path.dirname(deployment_dir)
+        if not path.exists(deployment_dir + '/deployment.xml'):
+            deployment_dir = path.dirname(deployment_dir)
+    return deployment_dir
+
+def get_deployment_root():
+    deployment = get_shell_root() + '/deployment.xml'
     return ET.parse(deployment).getroot()
 
 
@@ -98,7 +126,7 @@ def end_reservation(session, reservation_id):
         pass
 
 
-def create_init_command_context(session, family, model, address, attributes, type):
+def create_init_command_context(session, family, model, address, attributes, type, name='testing'):
     """
     :param CloudShellAPISession session:
     :param family:
@@ -106,16 +134,38 @@ def create_init_command_context(session, family, model, address, attributes, typ
     :param address:
     :param type: Resource or Service
     :param attributes:
+    :param name:
     :return: Dict of attributes
     """
     connectivity = ConnectivityContext(session.host, '8029', '9000', session.token_id, '9.1',
                                        CloudShellSessionContext.DEFAULT_API_SCHEME)
-    resource = ResourceContextDetails(id='ididid', name='testing', fullname='Testing/testing',
+    resource = ResourceContextDetails(id='ididid', name=name, fullname='Testing/' + name,
                                       address=address, family=family, model=model, attributes=attributes, type=type,
                                       app_context='', networks_info='', description='',
                                       shell_standard='', shell_standard_version='')
     context = InitCommandContext(connectivity, resource)
     return context
+
+
+def create_autoload_context(session, family, model, address, attributes, name='testing'):
+    """
+    :param CloudShellAPISession session:
+    :param family:
+    :param model:
+    :param address:
+    :param type: Resource or Service
+    :param attributes:
+    :param name:
+    :return: Dict of attributes
+    """
+    connectivity = ConnectivityContext(session.host, '8029', '9000', session.token_id, '9.1',
+                                       CloudShellSessionContext.DEFAULT_API_SCHEME)
+    resource = ResourceContextDetails(id='ididid', name=name, fullname='Testing/' + name,
+                                      address=address, family=family, model=model, attributes=attributes,
+                                      type='Resource',
+                                      app_context='', networks_info='', description='',
+                                      shell_standard='', shell_standard_version='')
+    yield ResourceCommandContext(connectivity, resource, None, [])
 
 
 def create_service_command_context(session, service_name, alias=None, attributes=[]):
@@ -137,7 +187,7 @@ def create_service_command_context(session, service_name, alias=None, attributes
                                     attributes=attributes)
 
     os.environ['DEVBOOTSTRAP'] = 'True'
-    debug_attach_from_deployment(reservation_id, service_name=service_name)
+    debug_attach_from_deployment(reservation_id, service_name=alias)
     reservation = script_help.get_reservation_context_details()
     resource = script_help.get_resource_context_details()
 
@@ -234,6 +284,12 @@ def create_command_context_2g(session, ports, controller, attributes):
     return context
 
 
+def create_healthcheck_service(context, alias, status_selector=''):
+    attributes = [AttributeNameValue('Healthcheck_Status.status_selector', status_selector)]
+    service = add_service_to_reservation(context, 'Healthcheck_Status', alias, attributes)
+    add_connector_to_reservation(context, context.resource.fullname, service.Alias)
+
+
 def debug_attach_from_deployment(reservation_id, resource_name=None, service_name=None):
 
     host, username, password, domain = get_credentials_from_deployment()
@@ -246,11 +302,3 @@ def debug_attach_from_deployment(reservation_id, resource_name=None, service_nam
         resource_name=resource_name,
         service_name=service_name
     )
-
-
-# Should I move to pylgi? Should I create a general test package that can be extended?
-cisco_mac = {'mac': 'ac22.05ee.f971', 'ip': ('10.15.91.102', '71/AC2205EEF971')}
-casa_mac = {'mac': 'ac22.05ee.f311'}
-arris_mac = {'mac': '48d3.43ef.66a3'}
-jira = {'base_url': 'https://jira.lgi.io', 'user': 'dev_itc_laas_api', 'password': 'Welkom@3010',
-        'encripted_password': 'vi6FqSo9OmW9awOSwC3dGw=='}
