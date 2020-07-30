@@ -284,7 +284,7 @@ def create_command_context_2g(session, ports, controller, attributes):
     return context
 
 
-def create_healthcheck_service(context, alias, status_selector=''):
+def create_healthcheck_service(context, alias, status_selector='none'):
     attributes = [AttributeNameValue('Healthcheck_Status.status_selector', status_selector)]
     service = add_service_to_reservation(context, 'Healthcheck_Status', alias, attributes)
     add_connector_to_reservation(context, context.resource.fullname, service.Alias)

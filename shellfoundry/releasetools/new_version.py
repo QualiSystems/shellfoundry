@@ -20,11 +20,11 @@ import random
 import glob
 import fire
 
-from shellfoundry.commands.pack_command import PackCommandExecutor
-from shellfoundry.commands.install_command import InstallCommandExecutor
-from shellfoundry.commands.dist_command import DistCommandExecutor
+from ..commands.pack_command import PackCommandExecutor
+from ..commands.install_command import InstallCommandExecutor
+from ..commands.dist_command import DistCommandExecutor
 
-from shellfoundry import __version__
+from .. import __version__
 
 
 def main(args=None):
