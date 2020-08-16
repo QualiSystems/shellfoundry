@@ -7,7 +7,6 @@ from os import path
 
 import xml.etree.ElementTree as ET
 
-import cloudshell.helpers.scripts.cloudshell_scripts_helpers as script_help
 from cloudshell.api.cloudshell_api import CloudShellAPISession, ResourceAttributesUpdateRequest, AttributeNameValue
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 from cloudshell.helpers.scripts.cloudshell_dev_helpers import attach_to_cloudshell_as
@@ -15,6 +14,7 @@ from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionCo
 from cloudshell.shell.core.driver_context import (ResourceCommandContext, ResourceContextDetails,
                                                   ReservationContextDetails, ConnectivityContext, InitCommandContext)
 from cloudshell.traffic.helpers import add_service_to_reservation, add_connector_to_reservation
+import shellfoundry.releasetools.cloudshell_scripts_helpers as script_help
 
 
 def load_devices(devices_env=''):
@@ -284,10 +284,14 @@ def create_command_context_2g(session, ports, controller, attributes):
     return context
 
 
-def create_healthcheck_service(context, alias, status_selector='none'):
+def create_healthcheck_service(context, resource=None, alias='Healthcheck_Status', status_selector='none'):
     attributes = [AttributeNameValue('Healthcheck_Status.status_selector', status_selector)]
+    if not resource:
+        resource = context.resource
     service = add_service_to_reservation(context, 'Healthcheck_Status', alias, attributes)
-    add_connector_to_reservation(context, context.resource.fullname, service.Alias)
+    source_name = resource.fullname if type(resource) == ResourceContextDetails else resource.Alias
+    add_connector_to_reservation(context, source_name, service.Alias)
+    return service
 
 
 def debug_attach_from_deployment(reservation_id, resource_name=None, service_name=None):
