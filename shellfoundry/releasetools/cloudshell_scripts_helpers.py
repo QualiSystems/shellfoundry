@@ -1,8 +1,10 @@
-from cloudshell.api.cloudshell_api import CloudShellAPISession
-from cloudshell.shell.core.driver_context import ResourceContextDetails
 
-import os
 import json
+import os
+
+from cloudshell.api.cloudshell_api import CloudShellAPISession
+from cloudshell.shell.core.driver_context import ResourceContextDetails, ReservationContextDetails
+
 
 def get_user_param(parameter):
     """
@@ -57,17 +59,16 @@ def get_reservation_context_details():
     env_params = EnvironmentParameters(get_global_inputs(),
                                        get_resource_requirement_inputs(),
                                        get_resource_additional_info_inputs())
-    res_details = ReservationContextDetails(res_dict['environmentName'],
-                                            res_dict['domain'],
-                                            res_dict['description'],
-                                            env_params,
-                                            res_dict['ownerUser'],
-                                            res_dict['ownerPass'],
-                                            res_dict['id'],
-                                            res_dict['environmentPath'],
-                                            get_permitted_users(),
-                                            res_dict['savedSandboxId'],
-                                            res_dict['runningUser'])
+    res_details = ReservationContextDetails(environment_name=res_dict['environmentName'],
+                                            environment_path=res_dict['environmentPath'],
+                                            domain=res_dict['domain'],
+                                            description=res_dict['description'],
+                                            owner_user=res_dict['ownerUser'],
+                                            owner_email='no-email',
+                                            reservation_id=res_dict['id'],
+                                            saved_sandbox_name=res_dict['savedSandboxId'],
+                                            saved_sandbox_id='',
+                                            running_user=res_dict['runningUser'])
     return res_details
 
 
@@ -209,33 +210,6 @@ class ConnectivityContextDetails:
         self.admin_pass = admin_pass
         """:type : str"""
 
-
-class ReservationContextDetails:
-    def __init__(self, environment_name, domain, description,
-                 parameters, owner_user, owner_password,
-                 reservation_id, environment_path, permitted_users, savedSandboxId, running_user):
-        self.environment_name = environment_name
-        """:type : str"""
-        self.domain = domain
-        """:type : str"""
-        self.description = description
-        """:type : str"""
-        self.parameters = parameters
-        """:type : EnvironmentParameters"""
-        self.owner_user = owner_user
-        """:type : str"""
-        self.owner_password = owner_password
-        """:type : str"""
-        self.id = reservation_id
-        """:type : str"""
-        self.environment_path = environment_path
-        """:type : str"""
-        self.savedSandboxId = savedSandboxId
-        """:type : str"""
-        self.permitted_users = permitted_users
-        """:type : list[UserDetails]"""
-        self.running_user = running_user
-        """:type : str"""
 
 class UserDetails:
     def __init__(self, user_name, email):
