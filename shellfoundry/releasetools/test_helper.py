@@ -11,7 +11,7 @@ from cloudshell.api.cloudshell_api import CloudShellAPISession, ResourceAttribut
 from cloudshell.api.common_cloudshell_api import CloudShellAPIError
 from cloudshell.helpers.scripts.cloudshell_dev_helpers import attach_to_cloudshell_as
 from cloudshell.shell.core.session.cloudshell_session import CloudShellSessionContext
-from cloudshell.shell.core.driver_context import (ResourceCommandContext, ResourceContextDetails,
+from cloudshell.shell.core.driver_context import (ResourceCommandContext, ResourceContextDetails, AutoLoadCommandContext,
                                                   ReservationContextDetails, ConnectivityContext, InitCommandContext)
 from cloudshell.traffic.helpers import add_service_to_reservation, add_connector_to_reservation
 import shellfoundry.releasetools.cloudshell_scripts_helpers as script_help
@@ -165,7 +165,7 @@ def create_autoload_context(session, family, model, address, attributes, name='t
                                       type='Resource',
                                       app_context='', networks_info='', description='',
                                       shell_standard='', shell_standard_version='')
-    yield ResourceCommandContext(connectivity, resource, None, [])
+    return AutoLoadCommandContext(connectivity, resource)
 
 
 def create_service_command_context(session, service_name, alias=None, attributes=[]):
