@@ -30,7 +30,7 @@ def print_inventory(inventory):
         print(f'{r.relative_address}, {r.model}, {r.name}')
     print('\n')
     for a in inventory.attributes:
-        print(f'{a.relative_address}, {a.relative_address}, {a.attribute_value}')
+        print(f'{a.relative_address}, {a.attribute_name}, {a.attribute_value}')
 
 
 def assert_health_check(health_check, device):
@@ -88,32 +88,29 @@ def get_credentials_from_deployment():
     return host, username, password, domain
 
 
-def create_topology_reservation(session, topology_path, reservation_name='tg regression tests', global_inputs=[]):
+def create_session_from_deployment():
+    return CloudShellAPISession(*get_credentials_from_deployment())
 
+
+def create_topology_reservation(session, topology_path, global_inputs, reservation_name='tg regression tests'):
+    end_named_reservations(session, reservation_name)
     _, owner, _, _ = get_credentials_from_deployment()
-    reservations = session.GetCurrentReservations(reservationOwner=owner)
-    for reservation in [r for r in reservations.Reservations if r.Name == reservation_name]:
-        session.EndReservation(reservation.Id)
-    reservation = session.CreateImmediateTopologyReservation(reservationName=reservation_name,
-                                                             topologyFullPath=topology_path,
-                                                             globalInputs=global_inputs,
-                                                             owner=owner, durationInMinutes=60)
-    return reservation
+    return session.CreateImmediateTopologyReservation(reservationName=reservation_name, owner=owner,
+                                                      topologyFullPath=topology_path, globalInputs=global_inputs,
+                                                      durationInMinutes=60)
 
 
 def create_reservation(session, reservation_name='tg regression tests'):
+    end_named_reservations(session, reservation_name)
+    _, owner, _, _ = get_credentials_from_deployment()
+    return session.CreateImmediateReservation(reservationName=reservation_name, owner=owner, durationInMinutes=60)
 
+
+def end_named_reservations(session, reservation_name):
     _, owner, _, _ = get_credentials_from_deployment()
     reservations = session.GetCurrentReservations(reservationOwner=owner)
     for reservation in [r for r in reservations.Reservations if r.Name == reservation_name]:
-        session.EndReservation(reservation.Id)
-    reservation = session.CreateImmediateReservation(reservationName=reservation_name, owner=owner,
-                                                     durationInMinutes=60)
-    return reservation
-
-
-def create_session_from_deployment():
-    return CloudShellAPISession(*get_credentials_from_deployment())
+        end_reservation(session, reservation.Id)
 
 
 def end_reservation(session, reservation_id):
@@ -237,7 +234,8 @@ def create_autoload_resource(session, family, model, address, name, attributes):
                                       parentResourceFullPath='',
                                       resourceDescription='should be removed after test')
     session.UpdateResourceDriver(resource.Name, model)
-    session.SetAttributesValues(ResourceAttributesUpdateRequest(resource.Name, attributes))
+    if attributes:
+        session.SetAttributesValues(ResourceAttributesUpdateRequest(resource.Name, attributes))
     return resource
 
 
