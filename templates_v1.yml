@@ -133,7 +133,7 @@ templates:
       description : 2nd generation shell template for basic inventory resources with connected commands
       repository : https://github.com/QualiSystems/shellfoundry-tosca-resource_with_connected_commands-template
       min_cs_ver: 9.2
-    - name : gen2/connectable-resource
+    - name : gen2/generic-connectable-resource
       params:
         project_name :
         family_name :
