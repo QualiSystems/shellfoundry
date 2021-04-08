@@ -39,7 +39,7 @@ class DefinitionModification(object):
             tosca_data.append("\n{field}: {value}".format(field=field, value=value))
 
         with open(os.path.join(self.shell_path, TOSCA_META_LOCATION), "wb") as tosca_file:
-            tosca_file.writelines(tosca_data)
+            tosca_file.writelines(line.encode("utf-8") for line in tosca_data)
 
     def add_field_to_definition(self, field, value=None, overwrite=False):
         """ Add new field to shell-definition.yaml
