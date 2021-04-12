@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 import yaml
 
 LAYER_ONE_PREFIX = "CloudshellL1"
@@ -18,7 +19,7 @@ class ShellPackage(object):
         :return:
         """
         head, shell_name = os.path.split(self.path)
-        return shell_name.title().replace('-', '').replace('_', '')
+        return shell_name.title().replace("-", "").replace("_", "")
 
     def get_name_from_definition(self, should_reload=False):
         """
@@ -55,7 +56,7 @@ class ShellPackage(object):
         :return: TOSCA.meta path
         :rtype: str
         """
-        return os.path.join(self.path, 'TOSCA-Metadata', 'TOSCA.meta')
+        return os.path.join(self.path, "TOSCA-Metadata", "TOSCA.meta")
 
     def _reload_name(self):
         """
@@ -63,11 +64,15 @@ class ShellPackage(object):
         :return:
         """
         # fetch entry definition from tosca.meta file
-        with open(self.get_metadata_path()) as stream:
+        with open(self.get_metadata_path(), encoding="utf8") as stream:
             s = stream.read()
-            entry_definition = dict(list(map(str.strip, line.split(':', 1))) for line in s.splitlines() if line.strip())['Entry-Definitions']
+            entry_definition = dict(
+                list(map(str.strip, line.split(":", 1)))
+                for line in s.splitlines()
+                if line.strip()
+            )["Entry-Definitions"]
 
         # fetch template name from entry definition file retrieved earlier
-        with open(os.path.join(self.path, entry_definition)) as stream:
+        with open(os.path.join(self.path, entry_definition), encoding="utf8") as stream:
             definition = yaml.safe_load(stream)
-        self.real_shell_name = definition['metadata']['template_name']
+        self.real_shell_name = definition["metadata"]["template_name"]

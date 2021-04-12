@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 from mock import patch
 from pyfakefs import fake_filesystem_unittest
 
@@ -15,7 +16,9 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
 
     @patch("cloudshell.rest.api.PackagingRestApiClient.import_package")
     @patch("cloudshell.rest.api.PackagingRestApiClient.__init__")
-    def test_when_install_called_it_uploads_package_to_cloudshell(self, mock_quali_api_client, mock_import_package):
+    def test_when_install_called_it_uploads_package_to_cloudshell(
+        self, mock_quali_api_client, mock_import_package
+    ):
         # Arrange
         # Constructor should return None
         mock_quali_api_client.return_value = None
@@ -24,8 +27,18 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
 
         os.chdir("work")
 
-        install_config = InstallConfig("localhost", 9000, "YOUR_USERNAME", "YOUR_PASSWORD", "Global", "author",
-                                       "online_mode", "template_location", "github_login", "github_password")
+        install_config = InstallConfig(
+            "localhost",
+            9000,
+            "YOUR_USERNAME",
+            "YOUR_PASSWORD",
+            "Global",
+            "author",
+            "online_mode",
+            "template_location",
+            "github_login",
+            "github_password",
+        )
 
         shell_installer = ShellInstaller()
 
@@ -33,7 +46,9 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
         with patch("click.echo"):
             shell_installer.install("nut_shell", install_config)
 
-        shell_full_path = "{sep}work{sep}dist{sep}nut_shell.zip".format(sep=self.fs.path_separator)
+        shell_full_path = "{sep}work{sep}dist{sep}nut_shell.zip".format(
+            sep=self.fs.path_separator
+        )
         # self.fs.path_separator + "work" + self.fs.path_separator + "dist" + self.fs.path_separator + "nut_shell.zip"
 
         # Assert

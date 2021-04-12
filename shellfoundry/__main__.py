@@ -3,6 +3,7 @@
 
 """bootstrap.cli: executed when bootstrap directory is called as script."""
 from .bootstrap import cli
+
 cli()
 
 # Alternative way to create the script which supports arguments

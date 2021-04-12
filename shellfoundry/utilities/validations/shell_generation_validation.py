@@ -8,10 +8,9 @@ from shellfoundry.utilities.constants import TOSCA_META_LOCATION
 
 
 class ShellGenerationValidations(object):
-
     def validate_2nd_gen(self, shell_path):
-        """ Validate generation of Shell
-            :param str shell_path: path to Shell directory or Shell zip-file
+        """Validate generation of Shell
+        :param str shell_path: path to Shell directory or Shell zip-file
         """
 
         if os.path.isdir(shell_path):

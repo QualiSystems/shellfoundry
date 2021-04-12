@@ -1,10 +1,11 @@
 import unittest
+
 import httpretty
 import requests
-
 from mock import patch
+
 from shellfoundry.exceptions import NoVersionsHaveBeenFoundException
-from shellfoundry.utilities.template_versions import TemplateVersions, VERSIONS_URL
+from shellfoundry.utilities.template_versions import VERSIONS_URL, TemplateVersions
 
 
 def mock_get_branches_from_github():
@@ -58,25 +59,38 @@ class TestTemplateVersions(unittest.TestCase):
     @httpretty.activate
     def test_get_versions_of_template_and_has_no_versions_failure(self):
         # Arrange
-        user, repo = 'user', 'repo'
-        httpretty.register_uri('GET', VERSIONS_URL.format(*(user, repo)), body=mock_get_branches_from_github())
+        user, repo = "user", "repo"
+        httpretty.register_uri(
+            "GET",
+            VERSIONS_URL.format(*(user, repo)),
+            body=mock_get_branches_from_github(),
+        )
 
         # Act
-        with patch('shellfoundry.utilities.template_versions.TemplateVersions.has_versions', return_value=False):
+        with patch(
+            "shellfoundry.utilities.template_versions.TemplateVersions.has_versions",
+            return_value=False,
+        ):
             with self.assertRaises(NoVersionsHaveBeenFoundException) as context:
                 TemplateVersions(user, repo).get_versions_of_template()
 
         # Assert
-        self.assertEqual(context.exception.message, "No versions have been found for this template")
+        self.assertEqual(
+            context.exception.message, "No versions have been found for this template"
+        )
 
     @httpretty.activate
     def test_get_versions_of_template_reversed_success(self):
         # Arrange
-        user, repo = 'user', 'repo'
-        httpretty.register_uri('GET', VERSIONS_URL.format(*(user, repo)), body=mock_get_branches_from_github())
+        user, repo = "user", "repo"
+        httpretty.register_uri(
+            "GET",
+            VERSIONS_URL.format(*(user, repo)),
+            body=mock_get_branches_from_github(),
+        )
 
         # Act
         versions = TemplateVersions(user, repo).get_versions_of_template()
 
         # Assert
-        self.assertSequenceEqual(versions, ['5.0.2', '5.0.1', '5.0.0', 'master'])
+        self.assertSequenceEqual(versions, ["5.0.2", "5.0.1", "5.0.0", "master"])

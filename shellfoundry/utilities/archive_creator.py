@@ -3,7 +3,6 @@ import zipfile
 
 
 class ArchiveCreator(object):
-
     @staticmethod
     def make_archive(output_filename, format, source_dir):
         """
@@ -14,8 +13,8 @@ class ArchiveCreator(object):
         :param source_dir: Directory to scan for archiving
         :return:
         """
-        if os.path.splitext(output_filename)[1] == '':
-            output_filename += '.zip'
+        if os.path.splitext(output_filename)[1] == "":
+            output_filename += ".zip"
         output_dir = os.path.dirname(output_filename)
         if output_dir and not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -31,4 +30,3 @@ class ArchiveCreator(object):
                         zip.write(filename, arcname)
 
         return output_filename
-

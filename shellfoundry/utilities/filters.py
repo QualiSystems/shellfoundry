@@ -4,10 +4,12 @@ from . import *
 class CompositeFilter(object):
     def __init__(self, template_type=None):
         self.template_type = template_type or NO_FILTER
-        self.filters = {GEN_ONE: GenOneFilter,
-                        GEN_TWO: GenTwoFilter,
-                        LAYER_ONE: LayerOneFilter,
-                        NO_FILTER: NoFilter}
+        self.filters = {
+            GEN_ONE: GenOneFilter,
+            GEN_TWO: GenTwoFilter,
+            LAYER_ONE: LayerOneFilter,
+            NO_FILTER: NoFilter,
+        }
 
     def filter(self, template_name):
         return self.filters.get(self.template_type, NoFilter)().filter(template_name)

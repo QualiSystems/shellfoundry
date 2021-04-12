@@ -1,8 +1,9 @@
 import codecs
 import os
 import unittest
-import mock
 import xml.etree.ElementTree as etree
+
+import mock
 
 from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
@@ -74,15 +75,21 @@ class TestDataModelMerger(unittest.TestCase):
         merger = ShellDataModelMerger()
         merged_xml = merger.merge_shell_model(datamodel, shell)
 
-        parser = etree.XMLParser(encoding='utf-8')
+        parser = etree.XMLParser(encoding="utf-8")
         tree = etree.fromstring(merged_xml, parser)
 
-        self.assertIsNotNone(tree.find(".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}AttributeInfo[@Name='Shell Enable Password']"),
-                             "Attribute was not found in merged xml")
+        self.assertIsNotNone(
+            tree.find(
+                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}AttributeInfo[@Name='Shell Enable Password']"
+            ),
+            "Attribute was not found in merged xml",
+        )
 
-        self.assertIsNotNone(tree.find(
-            ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}AttributeInfo[@Name='Shell Power Management']"),
-                             "Attribute was not found in merged xml"
+        self.assertIsNotNone(
+            tree.find(
+                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}AttributeInfo[@Name='Shell Power Management']"
+            ),
+            "Attribute was not found in merged xml",
         )
 
     def test_exception_thrown_when_family_missing_in_data_model(self):
@@ -226,11 +233,15 @@ class TestDataModelMerger(unittest.TestCase):
         merger = ShellDataModelMerger()
         merged_xml = merger.merge_shell_model(datamodel, shell)
 
-        parser = etree.XMLParser(encoding='utf-8')
+        parser = etree.XMLParser(encoding="utf-8")
         tree = etree.fromstring(merged_xml, parser)
 
-        self.assertIsNotNone(tree.find(".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel"),
-                             "Model was not found in merged xml")
+        self.assertIsNotNone(
+            tree.find(
+                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel"
+            ),
+            "Model was not found in merged xml",
+        )
 
     def test_addds_the_shell_model_to_the_target_family(self):
         datamodel = """<?xml version="1.0" encoding="utf-8"?>
@@ -282,19 +293,27 @@ class TestDataModelMerger(unittest.TestCase):
         merger = ShellDataModelMerger()
         merged_xml = merger.merge_shell_model(datamodel, shell)
 
-        parser = etree.XMLParser(encoding='utf-8')
+        parser = etree.XMLParser(encoding="utf-8")
         tree = etree.fromstring(merged_xml, parser)
 
-        family = tree.find(".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceFamily[@Name='Switch']")
+        family = tree.find(
+            ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceFamily[@Name='Switch']"
+        )
 
         self.assertIsNotNone(
-            family.find(".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel[@Name='SSwitch']"),
-        "Model was not found in merged xml")
+            family.find(
+                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel[@Name='SSwitch']"
+            ),
+            "Model was not found in merged xml",
+        )
 
         bait_family = tree.find(
-            ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceFamily[@Name='Bait']")
+            ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceFamily[@Name='Bait']"
+        )
 
         self.assertIsNone(
             bait_family.find(
-                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel[@Name='SSwitch']"),
-            "Model was added to wrong element")
+                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel[@Name='SSwitch']"
+            ),
+            "Model was added to wrong element",
+        )

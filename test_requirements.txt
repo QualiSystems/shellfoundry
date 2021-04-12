@@ -1,5 +1,7 @@
-mock
+mock; python_version <= '2.7'
 pyfakefs==3.2
 httpretty==0.8.14
 quali-testing-helpers
 freezegun
+pytest
+pytest-cov

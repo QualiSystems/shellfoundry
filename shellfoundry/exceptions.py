@@ -30,7 +30,7 @@ class VersionRequestException(ShellFoundryBaseException):
 
 
 class PlatformNameIsEmptyException(ShellFoundryBaseException):
-    def __init__(self, message='Machine name is empty'):
+    def __init__(self, message="Machine name is empty"):
         super(PlatformNameIsEmptyException, self).__init__(message)
 
 
@@ -40,7 +40,7 @@ class FatalError(click.ClickException):
         super(FatalError, self).__init__(message)
 
     def show(self, file=None):
-        click.secho('Error: {}'.format(self.format_message()), err=True, fg='red')
+        click.secho("Error: {}".format(self.format_message()), err=True, fg="red")
 
 
 class YmlFieldMissingException(Exception):

@@ -1,34 +1,42 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from distutils.core import setup, find_packages
+import os
+
+from setuptools import find_packages, setup
+
+with open(os.path.join("version.txt")) as version_file:
+    version_from_file = version_file.read().strip()
+
+with open("requirements.txt") as f_required:
+    required = f_required.read().splitlines()
+
+with open("test_requirements.txt") as f_tests:
+    required_for_tests = f_tests.read().splitlines()
 
 
 def get_file_content(file_name):
     with open(file_name) as f:
         return f.read()
 
-exec(open("shellfoundry/version.py").read())
 
 setup(
     name="shellfoundry",
-    version=__version__,
+    version=version_from_file,
     description="shellfoundry - Quali tool for creating, building and installing CloudShell shells",
-    long_description=get_file_content("README.rst") + "\n\n" + get_file_content("HISTORY.rst"),
+    long_description=get_file_content("README.rst")
+    + "\n\n"
+    + get_file_content("HISTORY.rst"),
     # long_description_content_type="text/x-rst",
     long_description_content_type="text/markdown",
-    author="Boris Modylevsky",
-    author_email="borismod@gmail.com",
+    author="QualiSystems",
+    author_email="info@qualisystems.com",
     url="https://github.com/QualiSystems/shellfoundry",
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     package_data={"shellfoundry": ["data/*.yml", "data/*.json"]},
-    entry_points={
-        "console_scripts": ["shellfoundry = shellfoundry.bootstrap:cli"]
-    },
+    entry_points={"console_scripts": ["shellfoundry = shellfoundry.bootstrap:cli"]},
     include_package_data=True,
-    install_requires=get_file_content("requirements.txt"),
+    install_requires=required,
+    tests_require=required_for_tests,
     license="Apache Software License 2.0",
     zip_safe=False,
     keywords="shellfoundry sandbox cloud virtualization vcenter cmp cloudshell quali command-line cli",
@@ -41,5 +49,4 @@ setup(
     ],
     python_requires=">=2.7",
     test_suite="tests",
-    tests_require=get_file_content("test_requirements.txt")
 )

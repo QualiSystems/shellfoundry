@@ -1,7 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from shellfoundry.utilities.modifiers.configuration.password_modification import PasswordModification
+from shellfoundry.utilities.modifiers.configuration.password_modification import (
+    PasswordModification,
+)
 
 DEFAULT_HOST = "localhost"
 DEFAULT_PORT = 9000
@@ -16,8 +18,19 @@ DEFAULT_GITHUB_PASSWORD = ""
 
 
 class InstallConfig(object):
-    def __init__(self, host, port, username, password, domain, author, online_mode, template_location,
-                 github_login, github_password):
+    def __init__(
+        self,
+        host,
+        port,
+        username,
+        password,
+        domain,
+        author,
+        online_mode,
+        template_location,
+        github_login,
+        github_password,
+    ):
         self.domain = domain
         self.password = self._decode_password(password)
         self.username = username
@@ -36,22 +49,33 @@ class InstallConfig(object):
         :return: True of same value, False otherwise
         :rtype bool
         """
-        return self.domain == other.domain \
-               and self.host == other.host \
-               and self.password == other.password \
-               and self.port == other.port \
-               and self.username == other.username \
-               and self.author == other.author \
-               and self.online_mode == other.online_mode \
-               and self.template_location == other.template_location \
-               and self.github_login == other.github_login \
-               and self.github_password == other.github_password
+        return (
+            self.domain == other.domain
+            and self.host == other.host
+            and self.password == other.password
+            and self.port == other.port
+            and self.username == other.username
+            and self.author == other.author
+            and self.online_mode == other.online_mode
+            and self.template_location == other.template_location
+            and self.github_login == other.github_login
+            and self.github_password == other.github_password
+        )
 
     @staticmethod
     def get_default():
-        return InstallConfig(DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, DEFAULT_PASSWORD, DEFAULT_DOMAIN,
-                             DEFAULT_AUTHOR, DEFAULT_ONLINE_MODE, DEFAULT_TEMPLATE_LOCATION,
-                             DEFAULT_GITHUB_LOGIN, DEFAULT_GITHUB_PASSWORD)
+        return InstallConfig(
+            DEFAULT_HOST,
+            DEFAULT_PORT,
+            DEFAULT_USERNAME,
+            DEFAULT_PASSWORD,
+            DEFAULT_DOMAIN,
+            DEFAULT_AUTHOR,
+            DEFAULT_ONLINE_MODE,
+            DEFAULT_TEMPLATE_LOCATION,
+            DEFAULT_GITHUB_LOGIN,
+            DEFAULT_GITHUB_PASSWORD,
+        )
 
     def _decode_password(self, password):
         pass_mod = PasswordModification()
