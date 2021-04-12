@@ -1,39 +1,55 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import click
 import os
-import shutil
 import re
+import shutil
 
-from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
-from shellfoundry.utilities.constants import TEMPLATE_AUTHOR_FIELD, METADATA_AUTHOR_FIELD, TEMPLATE_BASED_ON
-from shellfoundry.utilities.modifiers.definition.definition_modification import DefinitionModification
-from shellfoundry.utilities.repository_downloader import RepositoryDownloader
-from shellfoundry.utilities.temp_dir_context import TempDirContext
-from shellfoundry.utilities.validations import ShellNameValidations, ShellGenerationValidations
-from shellfoundry.utilities.shell_package import ShellPackage
+import click
+
 from shellfoundry.exceptions import VersionRequestException
+from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
+from shellfoundry.utilities.constants import (
+    METADATA_AUTHOR_FIELD,
+    TEMPLATE_AUTHOR_FIELD,
+    TEMPLATE_BASED_ON,
+)
+from shellfoundry.utilities.modifiers.definition.definition_modification import (
+    DefinitionModification,
+)
+from shellfoundry.utilities.repository_downloader import RepositoryDownloader
+from shellfoundry.utilities.shell_package import ShellPackage
+from shellfoundry.utilities.temp_dir_context import TempDirContext
+from shellfoundry.utilities.validations import (
+    ShellGenerationValidations,
+    ShellNameValidations,
+)
 
 
 class ExtendCommandExecutor(object):
     LOCAL_TEMPLATE_URL_PREFIX = "local:"
     SIGN_FILENAME = "signed"
-    ARTIFACTS = {"driver": "src",
-                 "deployment": "deployments"}
+    ARTIFACTS = {"driver": "src", "deployment": "deployments"}
 
-    def __init__(self, repository_downloader=None, shell_name_validations=None, shell_gen_validations=None):
+    def __init__(
+        self,
+        repository_downloader=None,
+        shell_name_validations=None,
+        shell_gen_validations=None,
+    ):
         """
         :param RepositoryDownloader repository_downloader:
         :param ShellNameValidations shell_name_validations:
         """
         self.repository_downloader = repository_downloader or RepositoryDownloader()
         self.shell_name_validations = shell_name_validations or ShellNameValidations()
-        self.shell_gen_validations = shell_gen_validations or ShellGenerationValidations()
+        self.shell_gen_validations = (
+            shell_gen_validations or ShellGenerationValidations()
+        )
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
     def extend(self, source, attribute_names):
-        """ Create a new shell based on an already existing shell
+        """Create a new shell based on an already existing shell
         :param str source: The path to the existing shell. Can be a url or local path
         :param tuple attribute_names: Sequence of attribute names that should be added
         """
@@ -41,9 +57,12 @@ class ExtendCommandExecutor(object):
         with TempDirContext("Extended_Shell_Temp_Dir") as temp_dir:
             try:
                 if self._is_local(source):
-                    temp_shell_path = self._copy_local_shell(self._remove_prefix(source,
-                                                                                 ExtendCommandExecutor.LOCAL_TEMPLATE_URL_PREFIX),
-                                                             temp_dir)
+                    temp_shell_path = self._copy_local_shell(
+                        self._remove_prefix(
+                            source, ExtendCommandExecutor.LOCAL_TEMPLATE_URL_PREFIX
+                        ),
+                        temp_dir,
+                    )
                 else:
                     temp_shell_path = self._copy_online_shell(source, temp_dir)
             except VersionRequestException as err:
@@ -102,7 +121,11 @@ class ExtendCommandExecutor(object):
         archive_path = None
         try:
             archive_path = self.repository_downloader.download_file(source, destination)
-            ext_shell_path = self.repository_downloader.repo_extractor.extract_to_folder(archive_path, destination)
+            ext_shell_path = (
+                self.repository_downloader.repo_extractor.extract_to_folder(
+                    archive_path, destination
+                )
+            )
             ext_shell_path = ext_shell_path[0]
         finally:
             if archive_path and os.path.exists(archive_path):
@@ -124,23 +147,28 @@ class ExtendCommandExecutor(object):
         if not modificator:
             modificator = DefinitionModification(shell_path)
 
-        artifacts = modificator.get_artifacts_files(artifact_name_list=list(self.ARTIFACTS.keys()))
+        artifacts = modificator.get_artifacts_files(
+            artifact_name_list=list(self.ARTIFACTS.keys())
+        )
 
         for artifact_name, artifact_path in artifacts.items():
 
             artifact_path = os.path.join(shell_path, artifact_path)
 
             if os.path.exists(artifact_path):
-                self.repository_downloader.repo_extractor.extract_to_folder(artifact_path,
-                                                                            os.path.join(shell_path,
-                                                                                         self.ARTIFACTS[artifact_name]))
+                self.repository_downloader.repo_extractor.extract_to_folder(
+                    artifact_path,
+                    os.path.join(shell_path, self.ARTIFACTS[artifact_name]),
+                )
                 os.remove(artifact_path)
 
     @staticmethod
     def _remove_quali_signature(shell_path):
         """ Remove Quali signature from shell """
 
-        signature_file_path = os.path.join(shell_path, ExtendCommandExecutor.SIGN_FILENAME)
+        signature_file_path = os.path.join(
+            shell_path, ExtendCommandExecutor.SIGN_FILENAME
+        )
         if os.path.exists(signature_file_path):
             os.remove(signature_file_path)
 

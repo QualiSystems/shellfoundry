@@ -3,7 +3,16 @@
 
 
 class ShellTemplate(object):
-    def __init__(self, name, description, repository, min_cs_ver, standard=None, standard_version=None, params=None):
+    def __init__(
+        self,
+        name,
+        description,
+        repository,
+        min_cs_ver,
+        standard=None,
+        standard_version=None,
+        params=None,
+    ):
         self.name = name
         self.description = description
         self.repository = repository

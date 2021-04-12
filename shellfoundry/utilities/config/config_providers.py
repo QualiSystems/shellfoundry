@@ -2,23 +2,24 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 import click
 
-GLOBAL_CONFIG_NAME = 'global_config.yml'
-LOCAL_CONFIG_NAME = 'cloudshell_config.yml'
+GLOBAL_CONFIG_NAME = "global_config.yml"
+LOCAL_CONFIG_NAME = "cloudshell_config.yml"
 
 
 class LocalConfigProvider(object):
     def get_config_path(self):
         path = os.path.join(os.getcwd(), LOCAL_CONFIG_NAME)
         if os.path.exists(path):
-            click.echo('Using local configuration...')
+            click.echo("Using local configuration...")
         return path
 
 
 class GlobalConfigProvider(object):
-    QUALI = 'Quali'
-    PRODUCT = 'shellfoundry'
+    QUALI = "Quali"
+    PRODUCT = "shellfoundry"
 
     def get_config_path(self):
         sf_name = os.path.join(GlobalConfigProvider.QUALI, GlobalConfigProvider.PRODUCT)

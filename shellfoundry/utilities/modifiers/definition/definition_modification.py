@@ -3,20 +3,26 @@
 
 import os
 import re
+
 import ruamel.yaml as yaml
 
-from shellfoundry.utilities.constants import TOSCA_META_LOCATION, TEMPLATE_VERSION, TEMPLATE_PROPERTY
-
 from shellfoundry.exceptions import YmlFieldMissingException
+from shellfoundry.utilities.constants import (
+    TEMPLATE_PROPERTY,
+    TEMPLATE_VERSION,
+    TOSCA_META_LOCATION,
+)
 
 
 class DefinitionModification(object):
     def __init__(self, shell_path):
         self.shell_path = shell_path
-        self.entry_definition = os.path.join(self.shell_path, self._find_entry_definition())
+        self.entry_definition = os.path.join(
+            self.shell_path, self._find_entry_definition()
+        )
 
     def edit_definition(self, field, value):
-        """ Modify shell-definition.yaml
+        """Modify shell-definition.yaml
         :params field str: field name to modify
         :params value str: new value to update
         """
@@ -26,7 +32,9 @@ class DefinitionModification(object):
     def edit_tosca_meta(self, field, value):
         """  """
 
-        with open(os.path.join(self.shell_path, TOSCA_META_LOCATION), "r") as tosca_file:
+        with open(
+            os.path.join(self.shell_path, TOSCA_META_LOCATION), "r", encoding="utf8"
+        ) as tosca_file:
             is_changed = False
             tosca_data = []
             for line in tosca_file:
@@ -38,11 +46,13 @@ class DefinitionModification(object):
         if not is_changed:
             tosca_data.append("\n{field}: {value}".format(field=field, value=value))
 
-        with open(os.path.join(self.shell_path, TOSCA_META_LOCATION), "wb") as tosca_file:
+        with open(
+            os.path.join(self.shell_path, TOSCA_META_LOCATION), "wb", encoding="utf8"
+        ) as tosca_file:
             tosca_file.writelines(tosca_data)
 
     def add_field_to_definition(self, field, value=None, overwrite=False):
-        """ Add new field to shell-definition.yaml
+        """Add new field to shell-definition.yaml
         :params field str: field name to add
         :params value str: value to add
         :params overwrite bool: overwrite value if it already exists
@@ -55,14 +65,18 @@ class DefinitionModification(object):
         except YmlFieldMissingException:
             value = value or self._get_value_from_definition(TEMPLATE_VERSION)
             yaml_parser = yaml.YAML()
-            loaded = self._load_yaml(yaml_parser=yaml_parser, yaml_file=self.entry_definition)
+            loaded = self._load_yaml(
+                yaml_parser=yaml_parser, yaml_file=self.entry_definition
+            )
 
             section, field_name = field.split("/", 1)
             loaded[section].update({field_name: value})
-            self._edit_file(yaml_file=self.entry_definition, yaml_parser=yaml_parser, data=loaded)
+            self._edit_file(
+                yaml_file=self.entry_definition, yaml_parser=yaml_parser, data=loaded
+            )
 
     def add_properties(self, attribute_names):
-        """ Add property to shell-definition.yaml file
+        """Add property to shell-definition.yaml file
         :params fields tuple/list: sequence of properties name that will be added
         """
 
@@ -90,15 +104,19 @@ class DefinitionModification(object):
     def _find_entry_definition(self):
         """  """
 
-        with open(os.path.join(self.shell_path, TOSCA_META_LOCATION), "r") as tosca_file:
-            entry_definition = dict(list(map(str.strip, line.split(":", 1))) for line in tosca_file)["Entry-Definitions"]
+        with open(
+            os.path.join(self.shell_path, TOSCA_META_LOCATION), "r", encoding="utf8"
+        ) as tosca_file:
+            entry_definition = dict(
+                list(map(str.strip, line.split(":", 1))) for line in tosca_file
+            )["Entry-Definitions"]
 
             return entry_definition
 
     def _load_yaml(self, yaml_parser, yaml_file):
         """  """
 
-        with open(yaml_file) as stream:
+        with open(yaml_file, encoding="utf8") as stream:
             try:
                 yaml_parser.indent(offset=2)
                 return yaml_parser.load(stream=stream)
@@ -117,7 +135,7 @@ class DefinitionModification(object):
         self._edit_file(yaml_file=yaml_file, yaml_parser=yaml_parser, data=loaded)
 
     def _edit_file(self, yaml_file, yaml_parser, data):
-        with open(yaml_file, "wb") as f:
+        with open(yaml_file, "wb", encoding="utf8") as f:
             yaml_parser.dump(data, stream=f)
 
     def _get_inner_dict_recursively(self, dic, field):
@@ -143,7 +161,7 @@ class DefinitionModification(object):
         return value
 
     def _add_property(self, attribute_name):
-        """ Add property to shell-definition.yaml file
+        """Add property to shell-definition.yaml file
         :params fields list: list of properties name that will be added
         """
 
@@ -161,11 +179,15 @@ class DefinitionModification(object):
                         properties_data.update({attribute_name: TEMPLATE_PROPERTY})
                         is_last = False
                     else:
-                        value.insert(1, "properties", {attribute_name: TEMPLATE_PROPERTY})
+                        value.insert(
+                            1, "properties", {attribute_name: TEMPLATE_PROPERTY}
+                        )
                         is_last = True
                     break
 
-            self._edit_file(yaml_file=self.entry_definition, yaml_parser=yaml_parser, data=loaded)
+            self._edit_file(
+                yaml_file=self.entry_definition, yaml_parser=yaml_parser, data=loaded
+            )
 
         return is_last
 
@@ -175,9 +197,9 @@ class DefinitionModification(object):
         spaces = None
         need_comment = False
         lines = []
-        with open(self.entry_definition, "r") as f:
+        with open(self.entry_definition, "r", encoding="utf8") as f:
             for line in f:
-                stripped = line.lstrip(' ')
+                stripped = line.lstrip(" ")
                 if stripped.startswith("{}:".format(attribute_name)):
                     if is_last:
                         lines[-1] = "# {}".format(lines[-1])
@@ -193,5 +215,5 @@ class DefinitionModification(object):
                 need_comment = False
                 lines.append(line)
 
-        with open(self.entry_definition, "w") as f:
+        with open(self.entry_definition, "w", encoding="utf8") as f:
             f.writelines(lines)

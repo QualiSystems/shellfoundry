@@ -12,13 +12,16 @@ class TestGenerateCommandExecutor(fake_filesystem_unittest.TestCase):
 
     def test_generate_driver_not_called_on_non_tosca_based_shell(self):
         # Arrange
-        self.fs.CreateFile('nut_shell/shell.yml', contents="""
+        self.fs.CreateFile(
+            "nut_shell/shell.yml",
+            contents="""
 shell:
     name: nut_shell
     driver: NutShellDriver
-    """)
+    """,
+        )
 
-        os.chdir('nut_shell')
+        os.chdir("nut_shell")
 
         driver_generator = MagicMock()
 
@@ -32,20 +35,28 @@ shell:
 
     def test_generate_driver_called_on_tosca_based_shell(self):
         # Arrange
-        self.fs.CreateFile('nut_shell/shell.yml', contents="""
+        self.fs.CreateFile(
+            "nut_shell/shell.yml",
+            contents="""
 shell:
     name: nut_shell
     driver: NutShellDriver
-    """)
+    """,
+        )
 
-        self.fs.CreateFile('nut_shell/TOSCA-Metadata/TOSCA.meta', contents="""
+        self.fs.CreateFile(
+            "nut_shell/TOSCA-Metadata/TOSCA.meta",
+            contents="""
 TOSCA-Meta-File-Version: 1.0
 CSAR-Version: 0.1.0
 Created-By: Anonymous
 Entry-Definitions: shell-definition.yml
-    """)
+    """,
+        )
 
-        self.fs.CreateFile('nut_shell/shell-definition.yml', contents="""
+        self.fs.CreateFile(
+            "nut_shell/shell-definition.yml",
+            contents="""
         metadata:
           template_name: NutShell
         node_types:
@@ -54,9 +65,10 @@ Entry-Definitions: shell-definition.yml
               driver:
                 file: NutShell.zip
                 type: tosca.artifacts.File
-                    """)
+                    """,
+        )
 
-        os.chdir('nut_shell')
+        os.chdir("nut_shell")
 
         driver_generator = MagicMock()
         driver_generator.generate_driver = MagicMock()
@@ -68,4 +80,7 @@ Entry-Definitions: shell-definition.yml
 
         # Assert
         self.assertTrue(driver_generator.generate_driver.called)
-        self.assertEqual(driver_generator.generate_driver.call_args[1]['shell_filename'], 'NutShell.zip')
+        self.assertEqual(
+            driver_generator.generate_driver.call_args[1]["shell_filename"],
+            "NutShell.zip",
+        )

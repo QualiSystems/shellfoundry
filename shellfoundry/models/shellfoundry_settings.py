@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-DEFAULT_DEFAULT_VIEW = 'gen2'
+DEFAULT_DEFAULT_VIEW = "gen2"
 
 
 class ShellFoundrySettings(object):
@@ -11,4 +11,3 @@ class ShellFoundrySettings(object):
     @staticmethod
     def get_default():
         return ShellFoundrySettings(DEFAULT_DEFAULT_VIEW)
-

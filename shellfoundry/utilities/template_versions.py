@@ -2,14 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import requests
+
 import shellfoundry.exceptions as exc
 
-VERSIONS_URL = 'https://api.github.com/repos/{}/{}/branches'
-NAME_PLACEHOLDER = 'name'
+VERSIONS_URL = "https://api.github.com/repos/{}/{}/branches"
+NAME_PLACEHOLDER = "name"
 
 
 def is_version(vstr):
     from distutils.version import StrictVersion
+
     try:
         StrictVersion(vstr)
         return True
@@ -33,7 +35,9 @@ class TemplateVersions(object):
         branches = [d[NAME_PLACEHOLDER] for d in response.json()]
         branches.sort(reverse=True, key=lambda x: (is_version(x), x))
         if not self.has_versions(branches):
-            raise exc.NoVersionsHaveBeenFoundException("No versions have been found for this template")
+            raise exc.NoVersionsHaveBeenFoundException(
+                "No versions have been found for this template"
+            )
         return branches
 
     @staticmethod

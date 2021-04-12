@@ -5,10 +5,22 @@ import os
 import unittest
 
 from click.testing import CliRunner
-from mock import patch, call, Mock
+from mock import Mock, call, patch
 
-from shellfoundry.bootstrap import version, list, new, pack, install,\
-    dist, generate, config, show, extend, get_templates, delete
+from shellfoundry.bootstrap import (
+    config,
+    delete,
+    dist,
+    extend,
+    generate,
+    get_templates,
+    install,
+    list,
+    new,
+    pack,
+    show,
+    version,
+)
 from shellfoundry.utilities import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
 
 
@@ -66,22 +78,40 @@ class TestBootstrap(unittest.TestCase):
         result = self.runner.invoke(new, ["test_shell"])
 
         assert result.exit_code == 0
-        new_command_executor.return_value.new.assert_called_once_with("test_shell", "gen2/resource", None, None)
+        new_command_executor.return_value.new.assert_called_once_with(
+            "test_shell", "gen2/resource", None, None
+        )
 
     @patch("shellfoundry.bootstrap.NewCommandExecutor")
     def test_new(self, new_command_executor):
-        result = self.runner.invoke(new, ["test_shell", "--template", "template_name", "--version", "version"])
+        result = self.runner.invoke(
+            new, ["test_shell", "--template", "template_name", "--version", "version"]
+        )
 
         assert result.exit_code == 0
-        new_command_executor.return_value.new.assert_called_once_with("test_shell", "template_name", "version", None)
+        new_command_executor.return_value.new.assert_called_once_with(
+            "test_shell", "template_name", "version", None
+        )
 
     @patch("shellfoundry.bootstrap.NewCommandExecutor")
     def test_new_with_python_version(self, new_command_executor):
-        result = self.runner.invoke(new, ["test_shell", "--template", "template_name", "--version", "version",
-                                          "--python", "3"])
+        result = self.runner.invoke(
+            new,
+            [
+                "test_shell",
+                "--template",
+                "template_name",
+                "--version",
+                "version",
+                "--python",
+                "3",
+            ],
+        )
 
         assert result.exit_code == 0
-        new_command_executor.return_value.new.assert_called_once_with("test_shell", "template_name", "version", "3")
+        new_command_executor.return_value.new.assert_called_once_with(
+            "test_shell", "template_name", "version", "3"
+        )
 
     @patch("shellfoundry.bootstrap.PackCommandExecutor")
     def test_pack(self, test_pack_executor):
@@ -153,7 +183,9 @@ class TestBootstrap(unittest.TestCase):
 
         assert result.exit_code == 0
         test_config_class.assert_called_once_with(True)
-        test_config_class.return_value.config.assert_called_once_with((None, None), None)
+        test_config_class.return_value.config.assert_called_once_with(
+            (None, None), None
+        )
 
     @patch("shellfoundry.bootstrap.ConfigCommandExecutor")
     def test_config_get_local(self, test_config_class):
@@ -161,7 +193,9 @@ class TestBootstrap(unittest.TestCase):
 
         assert result.exit_code == 0
         test_config_class.assert_called_once_with(False)
-        test_config_class.return_value.config.assert_called_once_with((None, None), None)
+        test_config_class.return_value.config.assert_called_once_with(
+            (None, None), None
+        )
 
     @patch("shellfoundry.bootstrap.ConfigCommandExecutor")
     def test_config_add_key(self, test_config_class):
@@ -169,7 +203,9 @@ class TestBootstrap(unittest.TestCase):
 
         assert result.exit_code == 0
         test_config_class.assert_called_once_with(True)
-        test_config_class.return_value.config.assert_called_once_with(("new_key", "new_value"), None)
+        test_config_class.return_value.config.assert_called_once_with(
+            ("new_key", "new_value"), None
+        )
 
     @patch("shellfoundry.bootstrap.ConfigCommandExecutor")
     def test_config_remove_key(self, test_config_class):
@@ -177,7 +213,9 @@ class TestBootstrap(unittest.TestCase):
 
         assert result.exit_code == 0
         test_config_class.assert_called_once_with(True)
-        test_config_class.return_value.config.assert_called_once_with((None, None), "key_to_remove")
+        test_config_class.return_value.config.assert_called_once_with(
+            (None, None), "key_to_remove"
+        )
 
     @patch("shellfoundry.bootstrap.ShowCommandExecutor")
     def test_show(self, test_show_class):
@@ -191,32 +229,47 @@ class TestBootstrap(unittest.TestCase):
         result = self.runner.invoke(extend, ["source shell location"])
 
         assert result.exit_code == 0
-        test_extend_class.return_value.extend.assert_called_once_with("source shell location", tuple())
+        test_extend_class.return_value.extend.assert_called_once_with(
+            "source shell location", tuple()
+        )
 
     @patch("shellfoundry.bootstrap.ExtendCommandExecutor")
     def test_extend_add_attributes(self, test_extend_class):
-        result = self.runner.invoke(extend, ["source shell location", "--attribute", "attr_1", "--attribute", "attr2"])
+        result = self.runner.invoke(
+            extend,
+            ["source shell location", "--attribute", "attr_1", "--attribute", "attr2"],
+        )
 
         assert result.exit_code == 0
-        test_extend_class.return_value.extend.assert_called_once_with("source shell location", ("attr_1", "attr2"))
+        test_extend_class.return_value.extend.assert_called_once_with(
+            "source shell location", ("attr_1", "attr2")
+        )
 
     @patch("shellfoundry.bootstrap.GetTemplatesCommandExecutor")
     def test_get_templates(self, test_get_templates_class):
         result = self.runner.invoke(get_templates, ["cs_version"])
 
         assert result.exit_code == 0
-        test_get_templates_class.return_value.get_templates.assert_called_once_with("cs_version", None)
+        test_get_templates_class.return_value.get_templates.assert_called_once_with(
+            "cs_version", None
+        )
 
     @patch("shellfoundry.bootstrap.GetTemplatesCommandExecutor")
     def test_get_templates_with_output_folder(self, test_get_templates_class):
-        result = self.runner.invoke(get_templates, ["cs_version", "--output_dir", "some output folder"])
+        result = self.runner.invoke(
+            get_templates, ["cs_version", "--output_dir", "some output folder"]
+        )
 
         assert result.exit_code == 0
-        test_get_templates_class.return_value.get_templates.assert_called_once_with("cs_version", "some output folder")
+        test_get_templates_class.return_value.get_templates.assert_called_once_with(
+            "cs_version", "some output folder"
+        )
 
     @patch("shellfoundry.bootstrap.DeleteCommandExecutor")
     def test_delete(self, test_delete_class):
         result = self.runner.invoke(delete, ["shell_name_to_delete"])
 
         assert result.exit_code == 0
-        test_delete_class.return_value.delete.assert_called_once_with("shell_name_to_delete")
+        test_delete_class.return_value.delete.assert_called_once_with(
+            "shell_name_to_delete"
+        )

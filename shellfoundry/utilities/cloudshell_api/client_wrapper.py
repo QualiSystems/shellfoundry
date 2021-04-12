@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from cloudshell.rest.api import PackagingRestApiClient
+
 from shellfoundry.exceptions import FatalError
-from shellfoundry.utilities.config_reader import Configuration, CloudShellConfigReader
+from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
+
 try:
     from urllib.error import HTTPError
 except:
@@ -19,7 +21,7 @@ def create_cloudshell_client(retries=1):
 
 
 class CloudShellClient(object):
-    ConnectionFailureMessage = 'Connection to CloudShell Server failed. Please make sure it is up and running properly.'
+    ConnectionFailureMessage = "Connection to CloudShell Server failed. Please make sure it is up and running properly."
 
     def __init__(self, cs_config=None):
         """
@@ -28,7 +30,7 @@ class CloudShellClient(object):
         self._cs_config = cs_config or Configuration(CloudShellConfigReader()).read()
 
     def create_client(self, **kwargs):
-        retries = kwargs.get('retries', 1)
+        retries = kwargs.get("retries", 1)
         if retries == 0:
             raise FatalError(self.ConnectionFailureMessage)
         try:
@@ -41,13 +43,17 @@ class CloudShellClient(object):
 
     def _create_client(self):
         try:
-            client = PackagingRestApiClient(ip=self._cs_config.host,
-                                            username=self._cs_config.username,
-                                            port=self._cs_config.port,
-                                            domain=self._cs_config.domain,
-                                            password=self._cs_config.password)
+            client = PackagingRestApiClient(
+                ip=self._cs_config.host,
+                username=self._cs_config.username,
+                port=self._cs_config.port,
+                domain=self._cs_config.domain,
+                password=self._cs_config.password,
+            )
             return client
         except (HTTPError, Exception) as e:
-            if hasattr(e, 'code') and e.code == 401:
-                raise FatalError('Login to CloudShell failed. Please verify the credentials in the config')
+            if hasattr(e, "code") and e.code == 401:
+                raise FatalError(
+                    "Login to CloudShell failed. Please verify the credentials in the config"
+                )
             raise FatalError(self.ConnectionFailureMessage)

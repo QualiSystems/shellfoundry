@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 import click
+
 # from qpm.packaging.quali_api_client import QualiAPIClient
 from cloudshell.rest.api import PackagingRestApiClient
 
@@ -24,7 +26,11 @@ class ShellInstaller(object):
         domain = config.domain
 
         package_full_path = os.path.join(os.getcwd(), "dist", package_name + ".zip")
-        click.echo("Installing package {0} into CloudShell at http://{1}:{2}".format(package_full_path, host, port))
+        click.echo(
+            "Installing package {0} into CloudShell at http://{1}:{2}".format(
+                package_full_path, host, port
+            )
+        )
         server = PackagingRestApiClient(host, port, username, password, domain)
         # server.upload_environment_zip_file(package_full_path)
         server.import_package(package_full_path)

@@ -27,9 +27,13 @@ class PasswordModification(object):
         try:
             encryption_key = self._get_encryption_key()
             if sys.version_info[0] < 3:
-                decoded = self._decode_encode(base64.decodestring(value), encryption_key)
+                decoded = self._decode_encode(
+                    base64.decodestring(value), encryption_key
+                )
             else:
-                decoded = self._decode_encode(base64.decodebytes(value.encode()).decode(), encryption_key)
+                decoded = self._decode_encode(
+                    base64.decodebytes(value.encode()).decode(), encryption_key
+                )
             return decoded
         except binascii.Error:
             return value
@@ -46,4 +50,6 @@ class PasswordModification(object):
     def _decode_encode(self, value, key):
         """  """
 
-        return ''.join(chr(ord(source) ^ ord(key)) for source, key in zip(value, key * 100))
+        return "".join(
+            chr(ord(source) ^ ord(key)) for source, key in zip(value, key * 100)
+        )

@@ -2,12 +2,26 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 import yaml
 
-from shellfoundry.models.install_config import InstallConfig, DEFAULT_HOST, DEFAULT_PORT, DEFAULT_USERNAME, \
-    DEFAULT_PASSWORD, DEFAULT_DOMAIN, DEFAULT_AUTHOR, DEFAULT_ONLINE_MODE, DEFAULT_TEMPLATE_LOCATION, \
-    DEFAULT_GITHUB_LOGIN, DEFAULT_GITHUB_PASSWORD
-from shellfoundry.models.shellfoundry_settings import ShellFoundrySettings, DEFAULT_DEFAULT_VIEW
+from shellfoundry.models.install_config import (
+    DEFAULT_AUTHOR,
+    DEFAULT_DOMAIN,
+    DEFAULT_GITHUB_LOGIN,
+    DEFAULT_GITHUB_PASSWORD,
+    DEFAULT_HOST,
+    DEFAULT_ONLINE_MODE,
+    DEFAULT_PASSWORD,
+    DEFAULT_PORT,
+    DEFAULT_TEMPLATE_LOCATION,
+    DEFAULT_USERNAME,
+    InstallConfig,
+)
+from shellfoundry.models.shellfoundry_settings import (
+    DEFAULT_DEFAULT_VIEW,
+    ShellFoundrySettings,
+)
 from shellfoundry.utilities.config.config_providers import DefaultConfigProvider
 
 INSTALL = "install"
@@ -33,7 +47,11 @@ def get_with_default(install_config, parameter_name, default_value):
     :param default_value: Default value in cases that the key cannot be found
     :return: The value of the key in the configuration file or default value if key cannot be found
     """
-    return install_config[parameter_name] if install_config and parameter_name in install_config else default_value
+    return (
+        install_config[parameter_name]
+        if install_config and parameter_name in install_config
+        else default_value
+    )
 
 
 class Configuration(object):
@@ -47,7 +65,7 @@ class Configuration(object):
         if config_path is None or not os.path.isfile(config_path):
             return self.reader.get_defaults()
 
-        with open(config_path) as stream:
+        with open(config_path, encoding="utf8") as stream:
             config = yaml.safe_load(stream.read())
 
         if not config or INSTALL not in config:
@@ -62,7 +80,7 @@ class Configuration(object):
         """
         config_data = None
         if os.path.exists(config_path):
-            with open(config_path, mode="r") as conf_file:
+            with open(config_path, mode="r", encoding="utf8") as conf_file:
                 config_data = yaml.safe_load(conf_file)
 
         if not config_data or INSTALL not in config_data:
@@ -70,9 +88,13 @@ class Configuration(object):
 
         mark_defaults_f = Configuration._mark_defaults
         install_cfg_def = dict(
-            (k, mark_defaults_f(v, mark_defaults)) for k, v in InstallConfig.get_default().__dict__.items())
+            (k, mark_defaults_f(v, mark_defaults))
+            for k, v in InstallConfig.get_default().__dict__.items()
+        )
         sf_cfg_def = dict(
-            (k, mark_defaults_f(v, mark_defaults)) for k, v in ShellFoundrySettings.get_default().__dict__.items())
+            (k, mark_defaults_f(v, mark_defaults))
+            for k, v in ShellFoundrySettings.get_default().__dict__.items()
+        )
         all_cfg = dict(install_cfg_def)
         all_cfg.update(sf_cfg_def)
         all_cfg.update(config_data[INSTALL])
@@ -82,7 +104,9 @@ class Configuration(object):
     def _mark_defaults(value, mark_defaults_char):
         if not mark_defaults_char:
             return str(value)
-        return "{value} {default_char}".format(value=str(value), default_char=mark_defaults_char)
+        return "{value} {default_char}".format(
+            value=str(value), default_char=mark_defaults_char
+        )
 
 
 class CloudShellConfigReader(object):
@@ -97,12 +121,25 @@ class CloudShellConfigReader(object):
         domain = get_with_default(config, DOMAIN, DEFAULT_DOMAIN)
         author = get_with_default(config, AUTHOR, DEFAULT_AUTHOR)
         online_mode = get_with_default(config, ONLINE_MODE, DEFAULT_ONLINE_MODE)
-        template_location = get_with_default(config, TEMPLATE_LOCATION, DEFAULT_TEMPLATE_LOCATION)
+        template_location = get_with_default(
+            config, TEMPLATE_LOCATION, DEFAULT_TEMPLATE_LOCATION
+        )
         github_login = get_with_default(config, GITHUB_LOGIN, DEFAULT_GITHUB_LOGIN)
-        github_password = get_with_default(config, GITHUB_PASSWORD, DEFAULT_GITHUB_PASSWORD)
-        return InstallConfig(host, port, username, password, domain,
-                             author, online_mode, template_location,
-                             github_login, github_password)
+        github_password = get_with_default(
+            config, GITHUB_PASSWORD, DEFAULT_GITHUB_PASSWORD
+        )
+        return InstallConfig(
+            host,
+            port,
+            username,
+            password,
+            domain,
+            author,
+            online_mode,
+            template_location,
+            github_login,
+            github_password,
+        )
 
 
 class ShellFoundryConfig(object):
