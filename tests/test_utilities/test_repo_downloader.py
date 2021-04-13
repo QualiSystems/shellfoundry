@@ -1,9 +1,8 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import os
-from unittest import TestCase
 
 import httpretty
-import requests
-from mock import Mock
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.utilities.repository_downloader import (
@@ -18,9 +17,9 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
 
         from requests.utils import DEFAULT_CA_BUNDLE_PATH
 
-        self.fs.CreateFile(DEFAULT_CA_BUNDLE_PATH)
+        self.fs.CreateFile(DEFAULT_CA_BUNDLE_PATH)  # noqa: E501
 
-    @httpretty.activate  # much preferred way than httpretty.enable because it combine enable and disable in one line
+    @httpretty.activate  # much preferred way than httpretty.enable because it combine enable and disable in one line  # noqa: E501
     def test_extracts_and_calls_api_url_from_https_addrses(self):
         test_dir = "/test_dir"
         self.fs.CreateDirectory(test_dir)
@@ -50,7 +49,7 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
 
         self.assertIsNotNone(httpretty.last_request())
 
-    @httpretty.activate  # much preferred way than httpretty.enable because it combine enable and disable in one line
+    @httpretty.activate  # much preferred way than httpretty.enable because it combine enable and disable in one line  # noqa: E501
     def test_extracts_and_calls_api_url_from_git_addrses(self):
         test_dir = "/test_dir"
         self.fs.CreateDirectory(test_dir)
@@ -80,7 +79,7 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
 
         self.assertIsNotNone(httpretty.last_request())
 
-    @httpretty.activate  # much preferred way than httpretty.enable because it combine enable and disable in one line
+    @httpretty.activate  # much preferred way than httpretty.enable because it combine enable and disable in one line  # noqa: E501
     def test_returns_the_root_folder_of_the_git_repo(self):
         test_dir = "/test_dir"
         self.fs.CreateDirectory(test_dir)

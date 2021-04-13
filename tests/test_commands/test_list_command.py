@@ -1,12 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import sys
 import unittest
 
 import httpretty
 from click import ClickException, UsageError
 from cloudshell.rest.api import FeatureUnavailable
-from mock import MagicMock, Mock, patch
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
+
 from pyfakefs import fake_filesystem_unittest
 from requests.exceptions import SSLError
 
@@ -29,14 +34,14 @@ class TestListCommand(unittest.TestCase):
         )
         # between the running console size
 
-        template_retriever = Mock()
-        template_retriever.get_templates = Mock(
+        template_retriever = MagicMock()
+        template_retriever.get_templates = MagicMock(
             return_value={
                 "gen1/base": [ShellTemplate("gen1/base", "description", "", "7.0")]
             }
         )
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {}
 
         list_command_executor = ListCommandExecutor(
@@ -60,10 +65,10 @@ class TestListCommand(unittest.TestCase):
             read=MagicMock(return_value=MagicMock(online_mode="True"))
         )
         conf_class.return_value = configuration
-        template_retriever = Mock()
+        template_retriever = MagicMock()
         template_retriever.get_templates.side_effect = SSLError()
         list_command_executor = ListCommandExecutor(
-            template_retriever=template_retriever, standards=Mock()
+            template_retriever=template_retriever, standards=MagicMock()
         )
 
         # Assert
@@ -78,8 +83,8 @@ class TestListCommand(unittest.TestCase):
         )
         # between the running console size
 
-        template_retriever = Mock()
-        template_retriever.get_templates = Mock(
+        template_retriever = MagicMock()
+        template_retriever.get_templates = MagicMock(
             return_value={
                 "gen1/base": [
                     ShellTemplate("gen1/base", "base description", "", "7.0", "base")
@@ -90,7 +95,7 @@ class TestListCommand(unittest.TestCase):
             }
         )
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {}
 
         list_command_executor = ListCommandExecutor(
@@ -119,13 +124,13 @@ class TestListCommand(unittest.TestCase):
         )
         # between the running console size
 
-        template_retriever = Mock()
-        template_retriever.get_templates = Mock(
+        template_retriever = MagicMock()
+        template_retriever.get_templates = MagicMock(
             return_value={
                 "gen2/networking/switch": [
                     ShellTemplate(
                         "gen2/networking/switch",
-                        "TOSCA based template for standard Switch devices/virtual appliances",
+                        "TOSCA based template for standard Switch devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -133,7 +138,7 @@ class TestListCommand(unittest.TestCase):
                 "gen2/networking/WirelessController": [
                     ShellTemplate(
                         "gen2/networking/WirelessController",
-                        "TOSCA based template for standard WirelessController devices/virtual appliances",
+                        "TOSCA based template for standard WirelessController devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -141,7 +146,7 @@ class TestListCommand(unittest.TestCase):
             }
         )
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {}
 
         list_command_executor = ListCommandExecutor(
@@ -153,13 +158,13 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name                       CloudShell Ver.  Description                              \n"
-            u"-----------------------------------------------------------------------------------------------\n"
-            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"
-            u"                                                      WirelessController devices/virtual       \n"
-            u"                                                      appliances                               \n"
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"
-            u"                                                      devices/virtual appliances               "
+            u" Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
+            u"-----------------------------------------------------------------------------------------------\n"  # noqa: E501
+            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
+            u"                                                      WirelessController devices/virtual       \n"  # noqa: E501
+            u"                                                      appliances                               \n"  # noqa: E501
+            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
+            u"                                                      devices/virtual appliances               "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -169,13 +174,13 @@ class TestListCommand(unittest.TestCase):
     ):
         # Arrange
         max_width_mock.return_value = 0
-        template_retriever = Mock()
-        template_retriever.get_templates = Mock(
+        template_retriever = MagicMock()
+        template_retriever.get_templates = MagicMock(
             return_value={
                 "gen2/networking/switch": [
                     ShellTemplate(
                         "gen2/networking/switch",
-                        "TOSCA based template for standard Switch devices/virtual appliances",
+                        "TOSCA based template for standard Switch devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -183,7 +188,7 @@ class TestListCommand(unittest.TestCase):
                 "gen2/networking/WirelessController": [
                     ShellTemplate(
                         "gen2/networking/WirelessController",
-                        "TOSCA based template for standard WirelessController devices/virtual appliances",
+                        "TOSCA based template for standard WirelessController devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -191,7 +196,7 @@ class TestListCommand(unittest.TestCase):
             }
         )
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {
             "networking": ["2.0.0"],
             "resource": ["5.0.0", "5.0.1"],
@@ -206,10 +211,10 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_called_once_with(
-            u" Template Name                       CloudShell Ver.  Description                                                                     \n"
-            u"--------------------------------------------------------------------------------------------------------------------------------------\n"
-            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard WirelessController devices/virtual appliances \n"
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch devices/virtual appliances             "
+            u" Template Name                       CloudShell Ver.  Description                                                                     \n"  # noqa: E501
+            u"--------------------------------------------------------------------------------------------------------------------------------------\n"  # noqa: E501
+            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard WirelessController devices/virtual appliances \n"  # noqa: E501
+            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch devices/virtual appliances             "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -217,13 +222,13 @@ class TestListCommand(unittest.TestCase):
     def test_filter_by_tosca_shows_all_tosca_templates(self, max_width_mock, echo_mock):
         # Arrange
         max_width_mock.return_value = 40
-        template_retriever = Mock()
-        template_retriever.get_templates = Mock(
+        template_retriever = MagicMock()
+        template_retriever.get_templates = MagicMock(
             return_value={
                 "gen2/networking/switch": [
                     ShellTemplate(
                         "gen2/networking/switch",
-                        "TOSCA based template for standard Switch devices/virtual appliances",
+                        "TOSCA based template for standard Switch devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -231,7 +236,7 @@ class TestListCommand(unittest.TestCase):
                 "gen2/networking/WirelessController": [
                     ShellTemplate(
                         "gen2/networking/WirelessController",
-                        "TOSCA based template for standard WirelessController devices/virtual appliances",
+                        "TOSCA based template for standard WirelessController devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -246,7 +251,7 @@ class TestListCommand(unittest.TestCase):
         )
         flag_value = "gen2"
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {}
 
         list_command_executor = ListCommandExecutor(
@@ -261,13 +266,13 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name                       CloudShell Ver.  Description                              \n"
-            u"-----------------------------------------------------------------------------------------------\n"
-            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"
-            u"                                                      WirelessController devices/virtual       \n"
-            u"                                                      appliances                               \n"
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"
-            u"                                                      devices/virtual appliances               "
+            u" Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
+            u"-----------------------------------------------------------------------------------------------\n"  # noqa: E501
+            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
+            u"                                                      WirelessController devices/virtual       \n"  # noqa: E501
+            u"                                                      appliances                               \n"  # noqa: E501
+            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
+            u"                                                      devices/virtual appliances               "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -277,13 +282,13 @@ class TestListCommand(unittest.TestCase):
     ):
         # Arrange
         max_width_mock.return_value = 62
-        template_retriever = Mock()
-        template_retriever.get_templates = Mock(
+        template_retriever = MagicMock()
+        template_retriever.get_templates = MagicMock(
             return_value={
                 "gen2/networking/switch": [
                     ShellTemplate(
                         "gen2/networking/switch",
-                        "TOSCA based template for standard Switch devices/virtual appliances",
+                        "TOSCA based template for standard Switch devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -291,7 +296,7 @@ class TestListCommand(unittest.TestCase):
                 "gen2/networking/WirelessController": [
                     ShellTemplate(
                         "gen2/networking/WirelessController",
-                        "TOSCA based template for standard WirelessController devices/virtual appliances",
+                        "TOSCA based template for standard WirelessController devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -306,7 +311,7 @@ class TestListCommand(unittest.TestCase):
         )
         flag_value = "gen1"
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {}
 
         list_command_executor = ListCommandExecutor(
@@ -332,8 +337,8 @@ class TestListCommand(unittest.TestCase):
     def test_filter_by_all_shows_all_templates(self, max_width_mock, echo_mock):
         # Arrange
         max_width_mock.return_value = 40
-        template_retriever = Mock()
-        template_retriever.get_templates = Mock(
+        template_retriever = MagicMock()
+        template_retriever.get_templates = MagicMock(
             return_value={
                 "gen1/base": [
                     ShellTemplate("gen1/base", "base description", "", "7.0")
@@ -344,7 +349,7 @@ class TestListCommand(unittest.TestCase):
                 "gen2/networking/switch": [
                     ShellTemplate(
                         "gen2/networking/switch",
-                        "TOSCA based template for standard Switch devices/virtual appliances",
+                        "TOSCA based template for standard Switch devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -352,7 +357,7 @@ class TestListCommand(unittest.TestCase):
                 "gen2/networking/WirelessController": [
                     ShellTemplate(
                         "gen2/networking/WirelessController",
-                        "TOSCA based template for standard WirelessController devices/virtual appliances",
+                        "TOSCA based template for standard WirelessController devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -361,7 +366,7 @@ class TestListCommand(unittest.TestCase):
         )
         flag_value = "all"
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {}
 
         list_command_executor = ListCommandExecutor(
@@ -376,15 +381,15 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name                       CloudShell Ver.  Description                              \n"
-            u"-----------------------------------------------------------------------------------------------\n"
-            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"
-            u"                                                      WirelessController devices/virtual       \n"
-            u"                                                      appliances                               \n"
-            u" gen1/base                           7.0 and up       base description                         \n"
-            u" gen1/switch                         7.0 and up       switch description                       \n"
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"
-            u"                                                      devices/virtual appliances               "
+            u" Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
+            u"-----------------------------------------------------------------------------------------------\n"  # noqa: E501
+            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
+            u"                                                      WirelessController devices/virtual       \n"  # noqa: E501
+            u"                                                      appliances                               \n"  # noqa: E501
+            u" gen1/base                           7.0 and up       base description                         \n"  # noqa: E501
+            u" gen1/switch                         7.0 and up       switch description                       \n"  # noqa: E501
+            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
+            u"                                                      devices/virtual appliances               "  # noqa: E501
         )
 
     # @patch('click.echo')
@@ -394,13 +399,13 @@ class TestListCommand(unittest.TestCase):
     ):
         # Arrange
         max_width_mock.return_value = 40
-        template_retriever = Mock()
-        template_retriever.get_templates = Mock(
+        template_retriever = MagicMock()
+        template_retriever.get_templates = MagicMock(
             return_value={
                 "gen2/networking/switch": [
                     ShellTemplate(
                         "gen2/networking/switch",
-                        "TOSCA based template for standard Switch devices/virtual appliances",
+                        "TOSCA based template for standard Switch devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -408,7 +413,7 @@ class TestListCommand(unittest.TestCase):
                 "gen2/networking/WirelessController": [
                     ShellTemplate(
                         "gen2/networking/WirelessController",
-                        "TOSCA based template for standard WirelessController devices/virtual appliances",
+                        "TOSCA based template for standard WirelessController devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -417,7 +422,7 @@ class TestListCommand(unittest.TestCase):
         )
         flag_value = "gen1"
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {}
 
         list_command_executor = ListCommandExecutor(
@@ -445,13 +450,13 @@ class TestListCommand(unittest.TestCase):
     ):
         # Arrange
         max_width_mock.return_value = 40
-        template_retriever = Mock()
-        template_retriever.get_templates = Mock(
+        template_retriever = MagicMock()
+        template_retriever.get_templates = MagicMock(
             return_value={
                 "gen2/networking/switch": [
                     ShellTemplate(
                         "gen2/networking/switch",
-                        "TOSCA based template for standard Switch devices/virtual appliances",
+                        "TOSCA based template for standard Switch devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -459,7 +464,7 @@ class TestListCommand(unittest.TestCase):
                 "gen2/networking/WirelessController": [
                     ShellTemplate(
                         "gen2/networking/WirelessController",
-                        "TOSCA based template for standard WirelessController devices/virtual appliances",
+                        "TOSCA based template for standard WirelessController devices/virtual appliances",  # noqa: E501
                         "",
                         "8.0",
                     )
@@ -468,7 +473,7 @@ class TestListCommand(unittest.TestCase):
         )
         flag_value = None
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {}
 
         list_command_executor = ListCommandExecutor(
@@ -484,8 +489,8 @@ class TestListCommand(unittest.TestCase):
         # Assert
         echo_mock.assert_any_call(
             """
-As of CloudShell 8.0, CloudShell uses 2nd generation shells, to view the list of 1st generation shells use: shellfoundry list --gen1.
-For more information, please visit our devguide: https://qualisystems.github.io/devguide/"""
+As of CloudShell 8.0, CloudShell uses 2nd generation shells, to view the list of 1st generation shells use: shellfoundry list --gen1.  # noqa: E501
+For more information, please visit our devguide: https://qualisystems.github.io/devguide/"""  # noqa: E501
         )
 
     @patch("click.echo")
@@ -528,19 +533,19 @@ For more information, please visit our devguide: https://qualisystems.github.io/
         project_name :
         family_name: Switch
       description : 2nd generation shell template for a standard switch
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template  # noqa: E501
       min_cs_ver: 8.0
     - name : gen2/networking/wireless-controller
       params:
         project_name :
         family_name: WirelessController
       description : 2nd generation shell template for a standard wireless controller
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template  # noqa: E501
       min_cs_ver: 8.0"""
 
         flag_value = "all"
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {"resource": ["5.0.0"]}
 
         template_retriever = FilteredTemplateRetriever(flag_value, TemplateRetriever())
@@ -597,26 +602,26 @@ For more information, please visit our devguide: https://qualisystems.github.io/
             project_name :
             family_name:
           description : 2nd generation shell template for a standard resource
-          repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template
+          repository : https://github.com/QualiSystems/shellfoundry-tosca-resource-template  # noqa: E501
           min_cs_ver: 8.0
         - name : gen2/networking/switch
           params:
             project_name :
             family_name: Switch
           description : 2nd generation shell template for a standard switch
-          repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+          repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template  # noqa: E501
           min_cs_ver: 8.0
         - name : gen2/networking/wireless-controller
           params:
             project_name :
             family_name: WirelessController
           description : 2nd generation shell template for a standard wireless controller
-          repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template
+          repository : https://github.com/QualiSystems/shellfoundry-tosca-networking-template  # noqa: E501
           min_cs_ver: 8.0"""
 
         flag_value = "gen2"
 
-        standards = Mock()
+        standards = MagicMock()
         standards.fetch.return_value = {"networking": ["5.0.0"]}
 
         template_retriever = FilteredTemplateRetriever(flag_value, TemplateRetriever())
@@ -632,12 +637,12 @@ For more information, please visit our devguide: https://qualisystems.github.io/
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name                        CloudShell Ver.  Description                         \n"
-            u"-------------------------------------------------------------------------------------------\n"
-            u" gen2/networking/switch               8.0 and up       2nd generation shell template for a \n"
-            u"                                                       standard switch                     \n"
-            u" gen2/networking/wireless-controller  8.0 and up       2nd generation shell template for a \n"
-            u"                                                       standard wireless controller        "
+            u" Template Name                        CloudShell Ver.  Description                         \n"  # noqa: E501
+            u"-------------------------------------------------------------------------------------------\n"  # noqa: E501
+            u" gen2/networking/switch               8.0 and up       2nd generation shell template for a \n"  # noqa: E501
+            u"                                                       standard switch                     \n"  # noqa: E501
+            u" gen2/networking/wireless-controller  8.0 and up       2nd generation shell template for a \n"  # noqa: E501
+            u"                                                       standard wireless controller        "  # noqa: E501
         )
 
 
@@ -648,27 +653,27 @@ class TestListCommandWithFakeFs(fake_filesystem_unittest.TestCase):
     @staticmethod
     def get_8_0_templates_output():
         return (
-            u" Template Name                        CloudShell Ver.  Description                                                 \n"
-            u"-------------------------------------------------------------------------------------------------------------------\n"
-            u" gen1/compute                         7.0 and up       1st generation shell template for compute servers           \n"
-            u" gen1/deployed-app                    7.0 and up       1st generation shell template for a deployed app            \n"
-            u" gen1/firewall                        7.0 and up       1st generation shell template for a standard firewall       \n"
-            u" gen1/networking/router               7.0 and up       1st generation shell template for a standard router         \n"
-            u" gen1/networking/switch               7.0 and up       1st generation shell template for a standard switch         \n"
-            u" gen1/pdu                             7.0 and up       1st generation shell template for a standard pdu            \n"
-            u" gen1/resource                        7.0 and up       1st generation shell template for basic inventory resources \n"
-            u" gen1/resource-clean                  7.0 and up       1st generation shell template for basic inventory resources \n"
-            u"                                                       (without sample commands)                                   \n"
-            u" gen2/compute                         8.0 and up       2nd generation shell template for compute servers           \n"
-            u" gen2/deployed-app                    8.0 and up       2nd generation shell template for a deployed app            \n"
-            u" gen2/firewall                        8.0 and up       2nd generation shell template for firewall resources        \n"
-            u" gen2/networking/router               8.0 and up       2nd generation shell template for a standard router         \n"
-            u" gen2/networking/switch               8.0 and up       2nd generation shell template for a standard switch         \n"
-            u" gen2/networking/wireless-controller  8.0 and up       2nd generation shell template for a standard wireless       \n"
-            u"                                                       controller                                                  \n"
-            u" gen2/pdu                             8.0 and up       2nd generation shell template for a standard pdu            \n"
-            u" gen2/resource                        8.0 and up       2nd generation shell template for basic inventory resources \n"
-            u" layer-1-switch                       7.0 and up       A native shell template for layer 1 switches                "
+            u" Template Name                        CloudShell Ver.  Description                                                 \n"  # noqa: E501
+            u"-------------------------------------------------------------------------------------------------------------------\n"  # noqa: E501
+            u" gen1/compute                         7.0 and up       1st generation shell template for compute servers           \n"  # noqa: E501
+            u" gen1/deployed-app                    7.0 and up       1st generation shell template for a deployed app            \n"  # noqa: E501
+            u" gen1/firewall                        7.0 and up       1st generation shell template for a standard firewall       \n"  # noqa: E501
+            u" gen1/networking/router               7.0 and up       1st generation shell template for a standard router         \n"  # noqa: E501
+            u" gen1/networking/switch               7.0 and up       1st generation shell template for a standard switch         \n"  # noqa: E501
+            u" gen1/pdu                             7.0 and up       1st generation shell template for a standard pdu            \n"  # noqa: E501
+            u" gen1/resource                        7.0 and up       1st generation shell template for basic inventory resources \n"  # noqa: E501
+            u" gen1/resource-clean                  7.0 and up       1st generation shell template for basic inventory resources \n"  # noqa: E501
+            u"                                                       (without sample commands)                                   \n"  # noqa: E501
+            u" gen2/compute                         8.0 and up       2nd generation shell template for compute servers           \n"  # noqa: E501
+            u" gen2/deployed-app                    8.0 and up       2nd generation shell template for a deployed app            \n"  # noqa: E501
+            u" gen2/firewall                        8.0 and up       2nd generation shell template for firewall resources        \n"  # noqa: E501
+            u" gen2/networking/router               8.0 and up       2nd generation shell template for a standard router         \n"  # noqa: E501
+            u" gen2/networking/switch               8.0 and up       2nd generation shell template for a standard switch         \n"  # noqa: E501
+            u" gen2/networking/wireless-controller  8.0 and up       2nd generation shell template for a standard wireless       \n"  # noqa: E501
+            u"                                                       controller                                                  \n"  # noqa: E501
+            u" gen2/pdu                             8.0 and up       2nd generation shell template for a standard pdu            \n"  # noqa: E501
+            u" gen2/resource                        8.0 and up       2nd generation shell template for basic inventory resources \n"  # noqa: E501
+            u" layer-1-switch                       7.0 and up       A native shell template for layer 1 switches                "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -683,7 +688,7 @@ class TestListCommandWithFakeFs(fake_filesystem_unittest.TestCase):
 
         self.fs.add_real_file(ALTERNATIVE_TEMPLATES_PATH)
 
-        standards = Mock(fetch=Mock(side_effect=FeatureUnavailable()))
+        standards = MagicMock(fetch=MagicMock(side_effect=FeatureUnavailable()))
 
         template_retriever = FilteredTemplateRetriever("all", TemplateRetriever())
 

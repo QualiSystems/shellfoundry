@@ -1,8 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import urllib2
-from mock import MagicMock, Mock, patch
+import sys
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+    from urllib.error import URLError
+else:
+    from mock import MagicMock, patch
+    from urllib2 import URLError
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.models.install_config import InstallConfig
@@ -44,7 +50,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         with patch(
             "shellfoundry.utilities.driver_generator.PackagingRestApiClient"
         ) as mock_rest:
-            rest_client_mock = Mock()
+            rest_client_mock = MagicMock()
             rest_client_mock.token = "TEST-TOKEN"
             mock_rest.return_value = rest_client_mock
 
@@ -53,7 +59,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
                 with open("nut-shell/temp/data-model.zip", "r") as data_model_file:
                     file_content = data_model_file.read()
 
-                response = Mock()
+                response = MagicMock()
                 response.status_code = 200
                 response.content = file_content
                 post_mock.return_value = response
@@ -98,12 +104,12 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         with patch(
             "shellfoundry.utilities.driver_generator.PackagingRestApiClient"
         ) as mock_rest:
-            rest_client_mock = Mock()
+            rest_client_mock = MagicMock()
             rest_client_mock.token = "TEST-TOKEN"
             mock_rest.return_value = rest_client_mock
 
             with patch("shellfoundry.utilities.driver_generator.post") as post_mock:
-                response = Mock()
+                response = MagicMock()
                 response.status_code = 500
                 response.content = "Error occurred"
                 post_mock.return_value = response
@@ -155,7 +161,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         with patch(
             "shellfoundry.utilities.driver_generator.PackagingRestApiClient"
         ) as mock_rest:
-            mock_rest.side_effect = urllib2.URLError("connected failed")
+            mock_rest.side_effect = URLError("connected failed")
 
             with patch("shellfoundry.utilities.driver_generator.click") as click_mock:
                 echo_mock = MagicMock()
@@ -170,13 +176,13 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
                         shell_filename="NutShell.zip",
                         shell_name="NutShell",
                     )
-                except urllib2.URLError:
+                except URLError:
                     pass
 
                 self.assertTrue(echo_mock.called, "click should have been called")
                 self.assertEqual(
                     echo_mock.call_args[0][0],
-                    u"Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml",
+                    u"Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml",  # noqa: E501
                 )
 
         # Assert

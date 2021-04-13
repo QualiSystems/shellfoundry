@@ -1,11 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-import os
+import sys
 import unittest
 
 from click.testing import CliRunner
-from mock import Mock, call, patch
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
 
 from shellfoundry.bootstrap import (
     config,
@@ -33,9 +36,9 @@ class TestBootstrap(unittest.TestCase):
 
     @patch("shellfoundry.bootstrap.pkg_resources")
     def test_version(self, test_dist):
-        obj = Mock()
+        obj = MagicMock()
         obj.version = "shellfoundry_version"
-        test_dist.get_distribution = Mock(return_value=obj)
+        test_dist.get_distribution = MagicMock(return_value=obj)
         result = self.runner.invoke(version)
 
         assert result.exit_code == 0

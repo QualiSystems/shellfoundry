@@ -2,15 +2,20 @@
 # -*- coding: utf-8 -*-
 
 import os
-from unittest import TestCase
+import sys
+import unittest
 
 from cookiecutter.main import cookiecutter
-from mock import MagicMock, patch
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
 
 from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplateCompiler
 
 
-class TestCookiecutterTemplateCompiler(TestCase):
+class TestCookiecutterTemplateCompiler(unittest.TestCase):
     @patch("shellfoundry.utilities.cookiecutter_integration.cookiecutter")
     def test_when_in_local_dir_mode_output_folder_is_to_same_dir(
         self, cookiecutter_mock

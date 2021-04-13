@@ -1,6 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import unittest
 
-from shellfoundry.utilities import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
 from shellfoundry.utilities.filters import *
 
 
@@ -63,7 +64,7 @@ class TestFilters(unittest.TestCase):
         self.assertTrue(cf.filter("gen2/template"))
         self.assertFalse(cf.filter("layer-1-switch"))
 
-    def test_composite_filter_return_true_if_template_type_is_layer1_match_template_name(
+    def test_composite_filter_return_true_if_template_type_is_layer1_match_template_name(  # noqa: E501
         self,
     ):
         # Act

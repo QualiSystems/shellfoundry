@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
 
 from setuptools import find_packages, setup
 
-with open(os.path.join("version.txt")) as version_file:
+with open("version.txt") as version_file:
     version_from_file = version_file.read().strip()
 
 with open("requirements.txt") as f_required:
@@ -22,11 +21,11 @@ def get_file_content(file_name):
 setup(
     name="shellfoundry",
     version=version_from_file,
-    description="shellfoundry - Quali tool for creating, building and installing CloudShell shells",
+    description="shellfoundry - Quali tool for creating, "
+    "building and installing CloudShell shells",
     long_description=get_file_content("README.rst")
     + "\n\n"
     + get_file_content("HISTORY.rst"),
-    # long_description_content_type="text/x-rst",
     long_description_content_type="text/markdown",
     author="QualiSystems",
     author_email="info@qualisystems.com",
@@ -39,7 +38,8 @@ setup(
     tests_require=required_for_tests,
     license="Apache Software License 2.0",
     zip_safe=False,
-    keywords="shellfoundry sandbox cloud virtualization vcenter cmp cloudshell quali command-line cli",
+    keywords="shellfoundry sandbox cloud virtualization "
+    "vcenter cmp cloudshell quali command-line cli",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python :: 2.7",

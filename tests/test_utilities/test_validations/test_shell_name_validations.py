@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import unittest
 
 from shellfoundry.utilities.validations import ShellNameValidations
@@ -61,7 +63,7 @@ class TestShellNameValidations(unittest.TestCase):
 
     def test_shell_name_too_long_validation_failed(self):
         # Arrange
-        shell_name = "vidoisthekingofthewholeuniverseandthatincludesofcourseallunknownworldsinthefarfarreachesoftheuniverse"
+        shell_name = "vidoisthekingofthewholeuniverseandthatincludesofcourseallunknownworldsinthefarfarreachesoftheuniverse"  # noqa: E501
         validations = ShellNameValidations()
 
         # Act

@@ -1,14 +1,22 @@
-import os
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
-from mock import MagicMock, Mock, call, patch
+import os
+import sys
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+    from urllib.error import HTTPError, URLError
+else:
+    from mock import MagicMock, patch
+    from urllib2 import HTTPError, URLError
 from pyfakefs import fake_filesystem_unittest
-from urllib2 import HTTPError, URLError
 
 from shellfoundry.commands.install_command import InstallCommandExecutor
 from shellfoundry.exceptions import FatalError
 from shellfoundry.models.install_config import InstallConfig
 
-LOGIN_ERROR_MESSAGE = "Login failed for user: YOUR_USERNAME. Please make sure the username and password are correct."
+LOGIN_ERROR_MESSAGE = "Login failed for user: YOUR_USERNAME. Please make sure the username and password are correct."  # noqa: E501
 
 
 class TestInstallCommandExecutor(fake_filesystem_unittest.TestCase):
@@ -133,8 +141,8 @@ install:
     """,
         )
         os.chdir("nut_shell")
-        mock_installer = Mock()
-        mock_installer.install = Mock(
+        mock_installer = MagicMock()
+        mock_installer.install = MagicMock(
             side_effect=HTTPError("", 401, LOGIN_ERROR_MESSAGE, None, None)
         )
         command_executor = InstallCommandExecutor(installer=mock_installer)
@@ -146,7 +154,7 @@ install:
         # Assert
         self.assertTrue(
             str(context.exception)
-            == u"Login to CloudShell failed. Please verify the credentials in the config"
+            == u"Login to CloudShell failed. Please verify the credentials in the config"  # noqa: E501
         )
 
     def test_proper_error_message_when_non_authentication_http_error_raised(self):
@@ -170,8 +178,8 @@ install:
     """,
         )
         os.chdir("nut_shell")
-        mock_installer = Mock()
-        mock_installer.install = Mock(
+        mock_installer = MagicMock()
+        mock_installer.install = MagicMock(
             side_effect=HTTPError("", 404, LOGIN_ERROR_MESSAGE, None, None)
         )
         command_executor = InstallCommandExecutor(installer=mock_installer)
@@ -211,8 +219,8 @@ install:
     """,
         )
         os.chdir("nut_shell")
-        mock_installer = Mock()
-        mock_installer.install = Mock(side_effect=URLError(""))
+        mock_installer = MagicMock()
+        mock_installer.install = MagicMock(side_effect=URLError(""))
         command_executor = InstallCommandExecutor(installer=mock_installer)
 
         # Act
@@ -222,7 +230,7 @@ install:
         # Assert
         self.assertTrue(
             context.exception.message
-            == u"Connection to CloudShell Server failed. Please make sure it is up and running properly."
+            == u"Connection to CloudShell Server failed. Please make sure it is up and running properly."  # noqa: E501
         )
 
     def test_proper_error_appears_when_old_shell_installation_fails(self):
@@ -246,9 +254,9 @@ install:
     """,
         )
         os.chdir("nut_shell")
-        mock_installer = Mock()
+        mock_installer = MagicMock()
         ex_msg = "Quali Error: some fancy error here"
-        mock_installer.install = Mock(side_effect=Exception(ex_msg))
+        mock_installer.install = MagicMock(side_effect=Exception(ex_msg))
         command_executor = InstallCommandExecutor(installer=mock_installer)
 
         # Act

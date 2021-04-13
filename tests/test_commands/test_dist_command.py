@@ -1,9 +1,16 @@
-from mock import Mock
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import os
+import sys
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock
+else:
+    from mock import MagicMock
+
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.commands.dist_command import DistCommandExecutor
-
-from tests.asserts import *
 
 
 class TestDistCommandExecutor(fake_filesystem_unittest.TestCase):
@@ -26,16 +33,16 @@ shell:
 
         os.chdir("nut_shell")
 
-        dependencies_packager = Mock()
+        dependencies_packager = MagicMock()
         command_executor = DistCommandExecutor(dependencies_packager)
 
         # Act
         command_executor.dist(enable_cs_repo=False)
 
         # Assert
-        # self.assertTrue(dependencies_packager.save_offline_dependencies.called)
-        # args = dependencies_packager.save_offline_dependencies.call_args[0]
-        # self.assertEqual(args[0].split(os.path.sep)[-1], 'requirements.txt')
-        # self.assertEqual(args[0].split(os.path.sep)[-2], 'src')
-        # self.assertEqual(args[1].split(os.path.sep)[-1], 'offline_requirements')
-        # self.assertEqual(args[1].split(os.path.sep)[-2], 'dist')
+        self.assertTrue(dependencies_packager.save_offline_dependencies.called)
+        args = dependencies_packager.save_offline_dependencies.call_args[0]
+        self.assertEqual(args[0].split(os.path.sep)[-1], "requirements.txt")
+        self.assertEqual(args[0].split(os.path.sep)[-2], "src")
+        self.assertEqual(args[1].split(os.path.sep)[-1], "offline_requirements")
+        self.assertEqual(args[1].split(os.path.sep)[-2], "dist")

@@ -2,9 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 
 from click import BadArgumentUsage
-from mock import Mock, call, patch
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
+
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.commands.config_command import ConfigCommandExecutor
@@ -248,7 +254,7 @@ install:
             ConfigCommandExecutor(True).config(("key", ""))
 
     @patch("shellfoundry.utilities.config.config_providers.click.get_app_dir")
-    @patch("platform.node", Mock(return_value="machine-name-here"))
+    @patch("platform.node", MagicMock(return_value="machine-name-here"))
     def test_set_password_config_password_should_appear_encrypted(
         self, get_app_dir_mock
     ):
