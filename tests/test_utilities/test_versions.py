@@ -1,6 +1,12 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import sys
 import unittest
 
-from mock import Mock, patch
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
 
 from shellfoundry.utilities import is_index_version_greater_than_current
 
@@ -16,7 +22,7 @@ class TestVersionsHelpers(unittest.TestCase):
             "1.0.0": "amazing data",
         }
 
-        server_proxy = Mock(package_releases=Mock(return_value=releases))
+        server_proxy = MagicMock(package_releases=MagicMock(return_value=releases))
 
         # Act
         with patch(
@@ -35,7 +41,7 @@ class TestVersionsHelpers(unittest.TestCase):
         # Arrange
         releases = {"0.2.7": "data", "0.2.8": "some other data"}
 
-        server_proxy = Mock(package_releases=Mock(return_value=releases))
+        server_proxy = MagicMock(package_releases=MagicMock(return_value=releases))
 
         # Act
         with patch(
@@ -58,7 +64,7 @@ class TestVersionsHelpers(unittest.TestCase):
             "1.0.0": "amazing data",
         }
 
-        server_proxy = Mock(package_releases=Mock(return_value=releases))
+        server_proxy = MagicMock(package_releases=MagicMock(return_value=releases))
 
         # Act
         with patch(
@@ -77,7 +83,7 @@ class TestVersionsHelpers(unittest.TestCase):
         # Arrange
         releases = {"0.2.7": "data"}
 
-        server_proxy = Mock(package_releases=Mock(return_value=releases))
+        server_proxy = MagicMock(package_releases=MagicMock(return_value=releases))
 
         # Act
         with patch(

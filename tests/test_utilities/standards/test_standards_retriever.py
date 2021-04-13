@@ -1,5 +1,13 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import sys
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
+
 from cloudshell.rest.api import FeatureUnavailable
-from mock import MagicMock, patch
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.utilities.standards import Standards
@@ -15,7 +23,7 @@ class TestStandards(fake_filesystem_unittest.TestCase):
 
         # Act
         with patch(
-            "shellfoundry.utilities.standards.standards_retriever.create_cloudshell_client",
+            "shellfoundry.utilities.standards.standards_retriever.create_cloudshell_client",  # noqa: E501
             return_value=cs_client,
         ):
             Standards().fetch()
@@ -30,7 +38,7 @@ class TestStandards(fake_filesystem_unittest.TestCase):
 
         # Act
         with patch(
-            "shellfoundry.utilities.standards.standards_retriever.create_cloudshell_client",
+            "shellfoundry.utilities.standards.standards_retriever.create_cloudshell_client",  # noqa: E501
             return_value=cs_client,
         ):
             with self.assertRaises(FeatureUnavailable):

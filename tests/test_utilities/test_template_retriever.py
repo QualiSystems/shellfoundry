@@ -1,8 +1,16 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import sys
 import unittest
 
 import httpretty
-import mock
-import pyfakefs.fake_filesystem_unittest
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import patch
+else:
+    from mock import patch
+
+from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.utilities import GEN_ONE, GEN_TWO, NO_FILTER
 from shellfoundry.utilities.template_retriever import (
@@ -37,14 +45,14 @@ class TestTemplateRetriever(unittest.TestCase):
             min_cs_ver: 8.0
           - name : gen2/software-asset
             description : Basic software-asset template
-            repository : https://github.com/QualiSystems/shellfoundry-software-asset-template
+            repository : https://github.com/QualiSystems/shellfoundry-software-asset-template  # noqa: E501
             params:
                 project_name:
             min_cs_ver: 8.0
         """
 
-    @mock.patch(
-        "shellfoundry.utilities.template_retriever.TemplateRetriever._get_templates_from_github",
+    @patch(
+        "shellfoundry.utilities.template_retriever.TemplateRetriever._get_templates_from_github",  # noqa: E501
         mock_get_templates_from_github,
     )
     def test_get_templates(self):
@@ -73,8 +81,8 @@ class TestTemplateRetriever(unittest.TestCase):
             "https://github.com/QualiSystems/shellfoundry-switch-template",
         )
 
-    @mock.patch(
-        "shellfoundry.utilities.template_retriever.TemplateRetriever._get_templates_from_github",
+    @patch(
+        "shellfoundry.utilities.template_retriever.TemplateRetriever._get_templates_from_github",  # noqa: E501
         lambda x: "",
     )
     def test_empty_templates_should_return_when_not_templates_found_on_github(self):
@@ -239,7 +247,7 @@ class TestTemplateRetriever(unittest.TestCase):
         )
 
 
-class TestTemplateRetrieverFakeFS(pyfakefs.fake_filesystem_unittest.TestCase):
+class TestTemplateRetrieverFakeFS(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
 
@@ -260,7 +268,7 @@ templates:
         project_name :
         family_name :
       description : 2nd generation shell template for software assets
-      repository : https://github.com/QualiSystems/shellfoundry-tosca-software_asset-template
+      repository : https://github.com/QualiSystems/shellfoundry-tosca-software_asset-template  # noqa: E501
       min_cs_ver: 8.1
 """,
         )

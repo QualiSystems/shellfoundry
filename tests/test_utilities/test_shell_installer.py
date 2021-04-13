@@ -2,8 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 
-from mock import patch
+if sys.version_info >= (3, 0):
+    from unittest.mock import patch
+else:
+    from mock import patch
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.models.install_config import InstallConfig
@@ -49,7 +53,6 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
         shell_full_path = "{sep}work{sep}dist{sep}nut_shell.zip".format(
             sep=self.fs.path_separator
         )
-        # self.fs.path_separator + "work" + self.fs.path_separator + "dist" + self.fs.path_separator + "nut_shell.zip"
 
         # Assert
         mock_import_package.assert_called_once_with(shell_full_path)

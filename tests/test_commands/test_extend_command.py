@@ -1,39 +1,30 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os
 import shutil
+import sys
 import unittest
 
-import mock
-from click import BadParameter, ClickException, UsageError
-from cloudshell.rest.api import FeatureUnavailable
-from requests.exceptions import SSLError
+if sys.version_info >= (3, 0):
+    from unittest import TestCase
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
+    from unittest import TestCase
 
-from shellfoundry import ALTERNATIVE_STANDARDS_PATH, ALTERNATIVE_TEMPLATES_PATH
+from click import BadParameter, ClickException, UsageError
+
 from shellfoundry.commands.extend_command import ExtendCommandExecutor
-from shellfoundry.commands.new_command import NewCommandExecutor
 from shellfoundry.exceptions import VersionRequestException
-from shellfoundry.models.shell_template import ShellTemplate
-from shellfoundry.utilities.constants import (
-    METADATA_AUTHOR_FIELD,
-    TEMPLATE_AUTHOR_FIELD,
-    TEMPLATE_BASED_ON,
-)
-from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplateCompiler
-from shellfoundry.utilities.repository_downloader import RepositoryDownloader
-from shellfoundry.utilities.standards import Standards, StandardVersionsFactory
-from shellfoundry.utilities.temp_dir_context import TempDirContext
-from shellfoundry.utilities.template_retriever import TEMPLATES_YML, TemplateRetriever
-from shellfoundry.utilities.template_versions import TemplateVersions
+from shellfoundry.utilities.constants import TEMPLATE_BASED_ON
 
 
 class TestExtendCommandExecutor(unittest.TestCase):
     def setUp(self):
         super(TestExtendCommandExecutor, self).setUp()
-        repository_downloader = mock.MagicMock
-        shell_name_validations = mock.MagicMock
-        with mock.patch("shellfoundry.commands.extend_command.Configuration"):
+        repository_downloader = MagicMock
+        shell_name_validations = MagicMock
+        with patch("shellfoundry.commands.extend_command.Configuration"):
             self.tested_instance = ExtendCommandExecutor(
                 repository_downloader=repository_downloader,
                 shell_name_validations=shell_name_validations,
@@ -44,139 +35,133 @@ class TestExtendCommandExecutor(unittest.TestCase):
         super(TestExtendCommandExecutor, self).tearDown()
         del self.tested_instance
 
-    @mock.patch(
+    @patch(
         "shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_local_shell",
-        new=mock.MagicMock(side_effect=Exception),
+        new=MagicMock(side_effect=Exception),
     )
     def test_extend_incorrect_arguments(self):
 
-        with mock.patch("shellfoundry.commands.extend_command.TempDirContext"):
+        with patch("shellfoundry.commands.extend_command.TempDirContext"):
             with self.assertRaisesRegexp(
                 BadParameter, u"Check correctness of entered attributes"
             ):
                 self.tested_instance.extend("local:some_path", ("new_attribute",))
 
-    @mock.patch(
-        "shellfoundry.commands.extend_command.ShellGenerationValidations.validate_2nd_gen",
-        new=mock.MagicMock(return_value=True),
+    @patch(
+        "shellfoundry.commands.extend_command.ShellGenerationValidations.validate_2nd_gen",  # noqa: E501
+        new=MagicMock(return_value=True),
     )
-    @mock.patch(
+    @patch(
         "shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_local_shell",
-        new=mock.MagicMock(return_value="extended_shell_path"),
+        new=MagicMock(return_value="extended_shell_path"),
     )
-    @mock.patch(
-        "shellfoundry.commands.extend_command.ExtendCommandExecutor._unpack_driver_archive",
-        new=mock.MagicMock(),
+    @patch(
+        "shellfoundry.commands.extend_command.ExtendCommandExecutor._unpack_driver_archive",  # noqa: E501
+        new=MagicMock(),
     )
-    @mock.patch("shellfoundry.commands.extend_command.os", new=mock.MagicMock())
-    @mock.patch("shellfoundry.commands.extend_command.shutil", new=mock.MagicMock())
+    @patch("shellfoundry.commands.extend_command.os", new=MagicMock())
+    @patch("shellfoundry.commands.extend_command.shutil", new=MagicMock())
     def test_extend_from_local_success(self):
 
-        with mock.patch("shellfoundry.commands.extend_command.TempDirContext"):
-            with mock.patch(
-                "shellfoundry.commands.extend_command.DefinitionModification"
-            ):
+        with patch("shellfoundry.commands.extend_command.TempDirContext"):
+            with patch("shellfoundry.commands.extend_command.DefinitionModification"):
                 self.tested_instance.extend("local:some_path", ("new_attribute",))
 
-    @mock.patch(
-        "shellfoundry.commands.extend_command.ShellGenerationValidations.validate_2nd_gen",
-        new=mock.MagicMock(return_value=True),
+    @patch(
+        "shellfoundry.commands.extend_command.ShellGenerationValidations.validate_2nd_gen",  # noqa: E501
+        new=MagicMock(return_value=True),
     )
-    @mock.patch(
+    @patch(
         "shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_online_shell",
-        new=mock.MagicMock(return_value="extended_shell_path"),
+        new=MagicMock(return_value="extended_shell_path"),
     )
-    @mock.patch(
-        "shellfoundry.commands.extend_command.ExtendCommandExecutor._unpack_driver_archive",
-        new=mock.MagicMock(),
+    @patch(
+        "shellfoundry.commands.extend_command.ExtendCommandExecutor._unpack_driver_archive",  # noqa: E501
+        new=MagicMock(),
     )
-    @mock.patch("shellfoundry.commands.extend_command.os", new=mock.MagicMock())
-    @mock.patch("shellfoundry.commands.extend_command.shutil", new=mock.MagicMock())
+    @patch("shellfoundry.commands.extend_command.os", new=MagicMock())
+    @patch("shellfoundry.commands.extend_command.shutil", new=MagicMock())
     def test_extend_from_remote_success(self):
-        with mock.patch("shellfoundry.commands.extend_command.TempDirContext"):
-            with mock.patch(
-                "shellfoundry.commands.extend_command.DefinitionModification"
-            ):
+        with patch("shellfoundry.commands.extend_command.TempDirContext"):
+            with patch("shellfoundry.commands.extend_command.DefinitionModification"):
                 self.tested_instance.extend("some_path", ("new_attribute",))
 
-    @mock.patch(
+    @patch(
         "shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_online_shell",
-        new=mock.MagicMock(side_effect=VersionRequestException),
+        new=MagicMock(side_effect=VersionRequestException),
     )
     def test_extend_from_remote_download_failed(self):
-        with mock.patch("shellfoundry.commands.extend_command.TempDirContext"):
+        with patch("shellfoundry.commands.extend_command.TempDirContext"):
             with self.assertRaises(ClickException):
                 self.tested_instance.extend("some_path", ("new_attribute",))
 
-    @mock.patch("shellfoundry.commands.extend_command.os.rename", new=mock.MagicMock())
-    @mock.patch(
-        "shellfoundry.commands.extend_command.ShellGenerationValidations.validate_2nd_gen",
-        new=mock.MagicMock(return_value=False),
+    @patch("shellfoundry.commands.extend_command.os.rename", new=MagicMock())
+    @patch(
+        "shellfoundry.commands.extend_command.ShellGenerationValidations.validate_2nd_gen",  # noqa: E501
+        new=MagicMock(return_value=False),
     )
-    @mock.patch(
+    @patch(
         "shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_online_shell",
-        new=mock.MagicMock(return_value="extended_shell_path"),
+        new=MagicMock(return_value="extended_shell_path"),
     )
     def test_extend_not_2_gen_shell(self):
-        with mock.patch("shellfoundry.commands.extend_command.TempDirContext"):
+        with patch("shellfoundry.commands.extend_command.TempDirContext"):
             with self.assertRaisesRegexp(
                 ClickException, u"Invalid second generation Shell."
             ):
                 self.tested_instance.extend("some_path", ("new_attribute",))
 
-    @mock.patch(
-        "shellfoundry.commands.extend_command.ShellGenerationValidations.validate_2nd_gen",
-        new=mock.MagicMock(return_value=True),
+    @patch(
+        "shellfoundry.commands.extend_command.ShellGenerationValidations.validate_2nd_gen",  # noqa: E501
+        new=MagicMock(return_value=True),
     )
-    @mock.patch(
+    @patch(
         "shellfoundry.commands.extend_command.ExtendCommandExecutor._copy_local_shell",
-        new=mock.MagicMock(return_value="extended_shell_path"),
+        new=MagicMock(return_value="extended_shell_path"),
     )
-    @mock.patch(
-        "shellfoundry.commands.extend_command.ExtendCommandExecutor._unpack_driver_archive",
-        new=mock.MagicMock(),
+    @patch(
+        "shellfoundry.commands.extend_command.ExtendCommandExecutor._unpack_driver_archive",  # noqa: E501
+        new=MagicMock(),
     )
-    @mock.patch("shellfoundry.commands.extend_command.os", new=mock.MagicMock())
-    @mock.patch(
+    @patch("shellfoundry.commands.extend_command.os", new=MagicMock())
+    @patch(
         "shellfoundry.commands.extend_command.shutil.move",
-        new=mock.MagicMock(side_effect=shutil.Error),
+        new=MagicMock(side_effect=shutil.Error),
     )
     def test_extend_failed_copy_from_temp_folder(self):
-        with mock.patch("shellfoundry.commands.extend_command.TempDirContext"):
-            with mock.patch(
-                "shellfoundry.commands.extend_command.DefinitionModification"
-            ):
+        with patch("shellfoundry.commands.extend_command.TempDirContext"):
+            with patch("shellfoundry.commands.extend_command.DefinitionModification"):
                 with self.assertRaises(BadParameter):
                     self.tested_instance.extend("local:some_path", ("new_attribute",))
 
-    @mock.patch(
+    @patch(
         "shellfoundry.commands.extend_command.os.path.isdir",
-        new=mock.MagicMock(return_value=True),
+        new=MagicMock(return_value=True),
     )
-    @mock.patch("shellfoundry.commands.extend_command.shutil", new=mock.MagicMock())
+    @patch("shellfoundry.commands.extend_command.shutil", new=MagicMock())
     def test___copy_local_shell_success(self):
         self.tested_instance._copy_local_shell(
             "source_shell_path", "destination_shell_path"
         )
 
-    @mock.patch(
+    @patch(
         "shellfoundry.commands.extend_command.os.path.isdir",
-        new=mock.MagicMock(return_value=False),
+        new=MagicMock(return_value=False),
     )
-    @mock.patch("shellfoundry.commands.extend_command.shutil", new=mock.MagicMock())
+    @patch("shellfoundry.commands.extend_command.shutil", new=MagicMock())
     def test___copy_local_shell_failed_source_not_a_folder(self):
         with self.assertRaises(Exception):
             self.tested_instance._copy_local_shell(
                 "source_shell_path", "destination_shell_path"
             )
 
-    @mock.patch(
+    @patch(
         "shellfoundry.commands.extend_command.os.path.isdir",
-        new=mock.MagicMock(return_value=True),
+        new=MagicMock(return_value=True),
     )
-    @mock.patch(
+    @patch(
         "shellfoundry.commands.extend_command.shutil.copytree",
-        new=mock.MagicMock(side_effect=Exception),
+        new=MagicMock(side_effect=Exception),
     )
     def test___copy_local_shell_failed_copy_shell(self):
         with self.assertRaises(Exception):
@@ -184,9 +169,9 @@ class TestExtendCommandExecutor(unittest.TestCase):
                 "source_shell_path", "destination_shell_path"
             )
 
-    @mock.patch("shellfoundry.commands.extend_command.DefinitionModification")
+    @patch("shellfoundry.commands.extend_command.DefinitionModification")
     def test__add_based_on_success(self, definition_modification_class):
-        modificator = mock.MagicMock()
+        modificator = MagicMock()
         definition_modification_class.return_value = modificator
 
         self.tested_instance._add_based_on("shell_path", modificator)
@@ -195,9 +180,9 @@ class TestExtendCommandExecutor(unittest.TestCase):
             field=TEMPLATE_BASED_ON
         )
 
-    @mock.patch("shellfoundry.commands.extend_command.DefinitionModification")
+    @patch("shellfoundry.commands.extend_command.DefinitionModification")
     def test__add_based_on_without_modificator(self, definition_modification_class):
-        modificator = mock.MagicMock()
+        modificator = MagicMock()
         definition_modification_class.return_value = modificator
 
         self.tested_instance._add_based_on("shell_path")
@@ -206,22 +191,22 @@ class TestExtendCommandExecutor(unittest.TestCase):
             field=TEMPLATE_BASED_ON
         )
 
-    @mock.patch("shellfoundry.commands.extend_command.DefinitionModification")
+    @patch("shellfoundry.commands.extend_command.DefinitionModification")
     def test__add_attributes_success(self, definition_modification_class):
 
         attr_names = ["attr_1", "attr_2"]
-        modificator = mock.MagicMock()
+        modificator = MagicMock()
         definition_modification_class.return_value = modificator
 
         self.tested_instance._add_attributes("shell_path", attr_names, modificator)
 
         modificator.add_properties.assert_called_once_with(attribute_names=attr_names)
 
-    @mock.patch("shellfoundry.commands.extend_command.DefinitionModification")
+    @patch("shellfoundry.commands.extend_command.DefinitionModification")
     def test__add_attributes_without_modificator(self, definition_modification_class):
 
         attr_names = ["attr_1", "attr_2"]
-        modificator = mock.MagicMock()
+        modificator = MagicMock()
         definition_modification_class.return_value = modificator
 
         self.tested_instance._add_attributes("shell_path", attr_names)

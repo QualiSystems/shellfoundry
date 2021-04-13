@@ -1,11 +1,13 @@
-from unittest import TestCase
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import unittest
 
 from freezegun import freeze_time
 
 from shellfoundry.utilities.version_utilities import DriverVersionTimestampBased
 
 
-class TestDriverVersionTimestampBased(TestCase):
+class TestDriverVersionTimestampBased(unittest.TestCase):
     def test_it_gets_the_expected_build_and_revision_values_according_to_timestamp(
         self,
     ):

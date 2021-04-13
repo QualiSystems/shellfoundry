@@ -1,10 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import sys
 import unittest
 
 import click
-from mock import Mock, PropertyMock, call, patch
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, PropertyMock, call, patch
+else:
+    from mock import MagicMock, PropertyMock, call, patch
 
 from shellfoundry.commands.show_command import ShowCommandExecutor
 from shellfoundry.models.shell_template import ShellTemplate
@@ -25,7 +29,7 @@ class TestShowCommandExecutor(unittest.TestCase):
             "mock://tosca/networking/switch",
             "8.0",
         )
-        template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
+        template_retriever_mock = MagicMock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {
             "tosca/networking/switch": [shell_template]
         }
@@ -37,7 +41,7 @@ class TestShowCommandExecutor(unittest.TestCase):
             type(get_response_mock.return_value).status_code = PropertyMock(
                 return_value=200
             )
-            type(get_response_mock.return_value).json = Mock(
+            type(get_response_mock.return_value).json = MagicMock(
                 side_effect=lambda: raw_response
             )
             ShowCommandExecutor(template_retriever_mock).show(template_name)
@@ -59,7 +63,7 @@ class TestShowCommandExecutor(unittest.TestCase):
             "mock://tosca/networking/switch",
             "8.0",
         )
-        template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
+        template_retriever_mock = MagicMock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {
             "tosca/networking/switch": [shell_template]
         }
@@ -71,7 +75,7 @@ class TestShowCommandExecutor(unittest.TestCase):
             type(get_response_mock.return_value).status_code = PropertyMock(
                 return_value=200
             )
-            type(get_response_mock.return_value).json = Mock(
+            type(get_response_mock.return_value).json = MagicMock(
                 side_effect=lambda: raw_response
             )
             ShowCommandExecutor(template_retriever_mock).show(template_name)
@@ -87,7 +91,7 @@ class TestShowCommandExecutor(unittest.TestCase):
         shell_template = ShellTemplate(
             "notheright/one", "some description", "mock://not/the/right/one", "8.0"
         )
-        template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
+        template_retriever_mock = MagicMock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {
             "tosca/networking/switch": [shell_template]
         }
@@ -98,7 +102,7 @@ class TestShowCommandExecutor(unittest.TestCase):
 
         # Assert
         self.assertTrue(
-            "The template '{}' does not exist, please specify a valid 2nd Gen shell template.".format(
+            "The template '{}' does not exist, please specify a valid 2nd Gen shell template.".format(  # noqa: E501
                 template_name
             )
             in context.exception
@@ -112,7 +116,7 @@ class TestShowCommandExecutor(unittest.TestCase):
         shell_template = ShellTemplate(
             "tosca/networking/switch", "some description", repository, "8.0"
         )
-        template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
+        template_retriever_mock = MagicMock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {
             "tosca/networking/switch": [shell_template]
         }
@@ -124,25 +128,33 @@ class TestShowCommandExecutor(unittest.TestCase):
         # Assert
         self.assertTrue("Repository url is empty" in context.exception)
 
-    # def test_show_command_versions_request_failed_raises_error(self):
-    #     # Arrange
-    #     template_name = 'tosca/networking/switch'
-    #
-    #     shell_template = ShellTemplate('tosca/networking/switch',
-    #                                    'some description',
-    #                                    'mock://tosca/networking/switch', '8.0')
-    #     template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
-    #     template_retriever_mock.get_templates.return_value = {'tosca/networking/switch': shell_template}
-    #
-    #     # Act
-    #     with patch('shellfoundry.commands.show_command.requests.get') as get_response_mock, \
-    #         self.assertRaises(click.ClickException) as context:
-    #         type(get_response_mock.return_value).status_code = PropertyMock(return_value=400)
-    #         ShowCommandExecutor(template_retriever_mock).show(template_name)
-    #
-    #     # Assert
-    #     self.assertTrue('Failed to receive versions from host' in context.exception)
-    #     # echo_mock.assert_called_once_with('1.0 (latest)')
+    def test_show_command_versions_request_failed_raises_error(self):
+        # Arrange
+        template_name = "tosca/networking/switch"
+
+        shell_template = ShellTemplate(
+            "tosca/networking/switch",
+            "some description",
+            "mock://tosca/networking/switch",
+            "8.0",
+        )
+        template_retriever_mock = MagicMock(spec=TemplateRetriever, autospec=True)
+        template_retriever_mock.get_templates.return_value = {
+            "tosca/networking/switch": shell_template
+        }
+
+        # Act
+        with patch(
+            "shellfoundry.commands.show_command.requests.get"
+        ) as get_response_mock, self.assertRaises(click.ClickException) as context:
+            type(get_response_mock.return_value).status_code = PropertyMock(
+                return_value=400
+            )
+            ShowCommandExecutor(template_retriever_mock).show(template_name)
+
+        # Assert
+        self.assertTrue("Failed to receive versions from host" in context.exception)
+        # echo_mock.assert_called_once_with('1.0 (latest)')
 
     def test_show_command_raise_no_versions_found_when_there_are_no_versions_other_than_master(
         self,
@@ -161,7 +173,7 @@ class TestShowCommandExecutor(unittest.TestCase):
             "mock://tosca/networking/switch",
             "8.0",
         )
-        template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
+        template_retriever_mock = MagicMock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {
             "tosca/networking/switch": [shell_template]
         }
@@ -196,7 +208,7 @@ class TestShowCommandExecutor(unittest.TestCase):
             "mock://tosca/networking/switch",
             "8.0",
         )
-        template_retriever_mock = Mock(spec=TemplateRetriever, autospec=True)
+        template_retriever_mock = MagicMock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {
             "tosca/networking/switch": [shell_template]
         }

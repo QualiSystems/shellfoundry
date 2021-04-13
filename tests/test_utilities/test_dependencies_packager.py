@@ -1,20 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import codecs
 import os
-import unittest
-import xml.etree.ElementTree as etree
+import sys
 
-import mock
-from mock import MagicMock, Mock, patch
+if sys.version_info >= (3, 0):
+    from unittest.mock import patch
+else:
+    from mock import patch
 from pyfakefs import fake_filesystem_unittest
-from pyfakefs.fake_filesystem import FakeFilesystem
 
 from shellfoundry.utilities.python_dependencies_packager import (
     PythonDependenciesPackager,
 )
-from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
 
 class TestPythonDependenciesPackager(fake_filesystem_unittest.TestCase):
@@ -74,7 +72,7 @@ class TestPythonDependenciesPackager(fake_filesystem_unittest.TestCase):
         nested_file = "dst/nested/test.txt"
         self.fs.CreateFile(nested_file, contents="")
 
-        with mock.patch(
+        with patch(
             "shellfoundry.utilities.python_dependencies_packager.pip_main"
         ) as mock_pip:
             # Act
@@ -87,7 +85,7 @@ class TestPythonDependenciesPackager(fake_filesystem_unittest.TestCase):
     def test_does_nothing_if_requirements_file_does_not_exist(self):
         requirements_file = "req/requirements.requirements_file"
 
-        with mock.patch(
+        with patch(
             "shellfoundry.utilities.python_dependencies_packager.pip_main"
         ) as mock_pip:
             # Act

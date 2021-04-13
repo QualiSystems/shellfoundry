@@ -1,7 +1,15 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import sys
 import unittest
 
-from mock import Mock, patch
-from urllib2 import HTTPError
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+    from urllib.error import HTTPError
+else:
+    from mock import MagicMock, patch
+    from urllib2 import HTTPError
 
 from shellfoundry.exceptions import FatalError
 from shellfoundry.utilities.cloudshell_api import (
@@ -27,7 +35,7 @@ class TestClientWrapper(unittest.TestCase):
     @patch(
         "shellfoundry.utilities.cloudshell_api.client_wrapper.PackagingRestApiClient"
     )
-    def test_client_wrapper_raises_an_error_when_create_client_fails_after_retries_regular_exception(
+    def test_client_wrapper_raises_an_error_when_create_client_fails_after_retries_regular_exception(  # noqa: E501
         self, api_mock
     ):
         # Arrange
@@ -44,9 +52,9 @@ class TestClientWrapper(unittest.TestCase):
 
     @patch(
         "shellfoundry.utilities.cloudshell_api.client_wrapper.PackagingRestApiClient",
-        new_callable=Mock(),
+        new_callable=MagicMock(),
     )
-    def test_client_wrapper_raises_an_error_when_create_client_fails_after_retries_http_error(
+    def test_client_wrapper_raises_an_error_when_create_client_fails_after_retries_http_error(  # noqa: E501
         self, api_mock
     ):
         # Arrange

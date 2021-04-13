@@ -1,12 +1,20 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import os
+import sys
 import xml.etree.ElementTree as etree
 import zipfile
 
-from mock import Mock, patch
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
+
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.utilities.package_builder import PackageBuilder
 
-from tests.asserts import *
+from tests.asserts import assertFileDoesNotExist, assertFileExists
 
 
 class TestPackageBuilder(fake_filesystem_unittest.TestCase):
@@ -316,7 +324,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         )
 
         os.chdir("work")
-        driver_version_strategy = Mock()
+        driver_version_strategy = MagicMock()
         driver_version_strategy.supports_version_pattern.return_value = True
         driver_version_strategy.get_version.return_value = "1.2.3.4"
         builder = PackageBuilder(driver_version_strategy)
@@ -371,7 +379,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         with patch(
             "shellfoundry.utilities.package_builder.DriverVersionTimestampBased"
         ) as version_mock:
-            strategy_instance = Mock()
+            strategy_instance = MagicMock()
             version_mock.return_value = strategy_instance
             strategy_instance.get_version.return_value = "1.2.3000.4000"
             builder = PackageBuilder()

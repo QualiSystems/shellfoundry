@@ -1,10 +1,18 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 
+import sys
 import unittest
 
-import StringIO
 from click import Abort
-from mock import patch
+
+if sys.version_info >= (3, 0):
+    from io import StringIO
+    from unittest.mock import patch
+else:
+    from mock import patch
+    from StringIO import StringIO
 
 from shellfoundry.decorators import shellfoundry_version_check
 
@@ -20,7 +28,7 @@ def test_me_abort_if_major():
 
 
 class TestShellFoundryVersionCheck(unittest.TestCase):
-    @patch("sys.stdout", new_callable=StringIO.StringIO)
+    @patch("sys.stdout", new_callable=StringIO)
     def test_version_check_when_current_is_greater_than_index(self, stdout_mock):
         # Act
         with patch(
@@ -31,7 +39,7 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         # Assert
         self.assertEqual(stdout_mock.getvalue(), "vido")
 
-    @patch("sys.stdout", new_callable=StringIO.StringIO)
+    @patch("sys.stdout", new_callable=StringIO)
     def test_version_check_when_current_is_lower_than_index_but_not_major_version(
         self, stdout_mock
     ):
@@ -44,10 +52,10 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         # Assert
         self.assertEqual(
             stdout_mock.getvalue(),
-            "vido\nThere is a new version of shellfoundry available, please upgrade by running: pip install shellfoundry --upgrade\n",
+            "vido\nThere is a new version of shellfoundry available, please upgrade by running: pip install shellfoundry --upgrade\n",  # noqa: E501
         )
 
-    @patch("sys.stdout", new_callable=StringIO.StringIO)
+    @patch("sys.stdout", new_callable=StringIO)
     def test_version_check_when_current_is_lower_than_index_and_its_major_version(
         self, stdout_mock
     ):
@@ -60,10 +68,10 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         # Assert
         self.assertEqual(
             stdout_mock.getvalue(),
-            "vido\nThis version of shellfoundry is not supported anymore, please upgrade by running: pip install shellfoundry --upgrade\n",
+            "vido\nThis version of shellfoundry is not supported anymore, please upgrade by running: pip install shellfoundry --upgrade\n",  # noqa: E501
         )
 
-    @patch("sys.stdout", new_callable=StringIO.StringIO)
+    @patch("sys.stdout", new_callable=StringIO)
     def test_version_check_when_current_is_equal_to_index(self, stdout_mock):
         # Act
         with patch(
@@ -74,8 +82,8 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         # Assert
         self.assertEqual(stdout_mock.getvalue(), "vido")
 
-    @patch("sys.stdout", new_callable=StringIO.StringIO)
-    def test_version_check_when_current_is_lower_than_index_and_its_major_version_validate_abort(
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_version_check_when_current_is_lower_than_index_and_its_major_version_validate_abort(  # noqa: E501
         self, stdout_mock
     ):
         # Act
@@ -87,5 +95,5 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         # Assert
         self.assertEqual(
             stdout_mock.getvalue(),
-            "This version of shellfoundry is not supported anymore, please upgrade by running: pip install shellfoundry --upgrade\n\n",
+            "This version of shellfoundry is not supported anymore, please upgrade by running: pip install shellfoundry --upgrade\n\n",  # noqa: E501
         )

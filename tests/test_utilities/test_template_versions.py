@@ -1,8 +1,15 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import sys
 import unittest
 
 import httpretty
 import requests
-from mock import patch
+
+if sys.version_info >= (3, 0):
+    from unittest.mock import patch
+else:
+    from mock import patch
 
 from shellfoundry.exceptions import NoVersionsHaveBeenFoundException
 from shellfoundry.utilities.template_versions import VERSIONS_URL, TemplateVersions
@@ -14,7 +21,7 @@ def mock_get_branches_from_github():
     "name": "5.0.0",
     "commit": {
       "sha": "efe253280a3346c2be23b1a9af4113f2b989f26c",
-      "url": "https://api.github.com/repos/user/repo/commits/efe253280a3346c2be23b1a9af4113f2b989f26c"
+      "url": "https://api.github.com/repos/user/repo/commits/efe253280a3346c2be23b1a9af4113f2b989f26c"  # noqa: E501
     }
   },
   {
@@ -43,18 +50,22 @@ def mock_get_branches_from_github():
 
 
 class TestTemplateVersions(unittest.TestCase):
-    # @httpretty.activate
-    # def test_get_versions_of_template_error_due_to_request_failed(self):
-    #     # Arrange
-    #     user, repo = 'user', 'repo'
-    #     httpretty.register_uri('GET', VERSIONS_URL.format(*(user, repo)), status=requests.codes.bad)
-    #
-    #     # Act
-    #     with self.assertRaises(requests.HTTPError) as context:
-    #         TemplateVersions(user, repo).get_versions_of_template()
-    #
-    #     # Assert
-    #     self.assertEqual(context.exception.message, 'Failed to receive versions from host')
+    @httpretty.activate
+    def test_get_versions_of_template_error_due_to_request_failed(self):
+        # Arrange
+        user, repo = "user", "repo"
+        httpretty.register_uri(
+            "GET", VERSIONS_URL.format(*(user, repo)), status=requests.codes.bad
+        )
+
+        # Act
+        with self.assertRaises(requests.HTTPError) as context:
+            TemplateVersions(user, repo).get_versions_of_template()
+
+        # Assert
+        self.assertEqual(
+            context.exception.message, "Failed to receive versions from host"
+        )
 
     @httpretty.activate
     def test_get_versions_of_template_and_has_no_versions_failure(self):

@@ -19,7 +19,7 @@ class TestShellPackage(unittest.TestCase):
         # Assert
         self.assertEqual(shell_name, "NutShell")
 
-    def test_get_shell_name_with_underscore_should_be_capitalized_and_be_without_underscore(
+    def test_get_shell_name_with_underscore_should_be_capitalized_and_be_without_underscore(  # noqa: E501
         self,
     ):
         # Arrange

@@ -1,9 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import sys
 import unittest
 
-from mock import Mock, patch
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
 
 from shellfoundry.models.install_config import InstallConfig
 
@@ -65,7 +69,7 @@ class TestInstallConfig(unittest.TestCase):
 
         self.assertNotEqual(config1, config2)
 
-    @patch("platform.node", Mock(return_value="machine-name-here"))
+    @patch("platform.node", MagicMock(return_value="machine-name-here"))
     def test_encrypted_password_field_becomes_decrypted(self):
         config = InstallConfig(
             "localhost",
@@ -81,7 +85,7 @@ class TestInstallConfig(unittest.TestCase):
         )
         self.assertEqual("admin", config.password)
 
-    @patch("platform.node", Mock(return_value="machine-name-here"))
+    @patch("platform.node", MagicMock(return_value="machine-name-here"))
     def test_non_encrypted_password_field_stays_regular(self):
         config = InstallConfig(
             "localhost",
@@ -97,7 +101,7 @@ class TestInstallConfig(unittest.TestCase):
         )
         self.assertEqual("admin", config.password)
 
-    @patch("platform.node", Mock(return_value="machine-name-here"))
+    @patch("platform.node", MagicMock(return_value="machine-name-here"))
     def test_encrypted_github_password_field_becomes_decrypted(self):
         config = InstallConfig(
             "localhost",
@@ -113,7 +117,7 @@ class TestInstallConfig(unittest.TestCase):
         )
         self.assertEqual("admin", config.github_password)
 
-    @patch("platform.node", Mock(return_value="machine-name-here"))
+    @patch("platform.node", MagicMock(return_value="machine-name-here"))
     def test_non_encrypted_github_password_field_stays_regular(self):
         config = InstallConfig(
             "localhost",

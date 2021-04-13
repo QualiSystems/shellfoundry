@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import unittest
 
 from shellfoundry.utilities.template_url import construct_template_url

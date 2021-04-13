@@ -1,6 +1,13 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import sys
 import unittest
 
-from mock import Mock, patch
+if sys.version_info >= (3, 0):
+    from unittest.mock import MagicMock, patch
+else:
+    from mock import MagicMock, patch
 
 from shellfoundry.utilities.standards import StandardVersions
 
@@ -61,8 +68,8 @@ class TestStandardsVersions(unittest.TestCase):
         # Act
         with patch(
             "os.path.join",
-            new=Mock(return_value="/shellfoundry/folder/data/standards.json"),
-        ), patch("os.path.dirname", new=Mock(return_value="/shellfoundry/folder")):
+            new=MagicMock(return_value="/shellfoundry/folder/data/standards.json"),
+        ), patch("os.path.dirname", new=MagicMock(return_value="/shellfoundry/folder")):
             with self.assertRaises(Exception) as context:
                 StandardVersions(standards).get_latest_version("resource")
 
