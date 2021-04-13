@@ -9,10 +9,10 @@ from shellfoundry.utilities.constants import TOSCA_META_LOCATION
 
 class ShellGenerationValidations(object):
     def validate_2nd_gen(self, shell_path):
-        """Validate generation of Shell
+        """Validate generation of Shell.
+
         :param str shell_path: path to Shell directory or Shell zip-file
         """
-
         if os.path.isdir(shell_path):
             file_list = []
             for root, dirs, files in os.walk(shell_path):
@@ -24,6 +24,6 @@ class ShellGenerationValidations(object):
                 return True
             return False
         elif zipfile.is_zipfile(shell_path):
-            raise NotImplemented
+            raise NotImplementedError
         else:
             raise Exception("Unexpected shell path type")

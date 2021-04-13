@@ -19,8 +19,7 @@ class DistCommandExecutor(object):
         )
 
     def dist(self, enable_cs_repo):
-        """ Creates offline dependencies archive """
-
+        """Creates offline dependencies archive."""
         current_path = os.getcwd()
         requirements_path = os.path.join(current_path, "src", "requirements.txt")
         dest_path = os.path.join(current_path, "dist", "offline_requirements")

@@ -38,6 +38,7 @@ class ExtendCommandExecutor(object):
         shell_gen_validations=None,
     ):
         """
+
         :param RepositoryDownloader repository_downloader:
         :param ShellNameValidations shell_name_validations:
         """
@@ -49,11 +50,11 @@ class ExtendCommandExecutor(object):
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
     def extend(self, source, attribute_names):
-        """Create a new shell based on an already existing shell
+        """Create a new shell based on an already existing shell.
+
         :param str source: The path to the existing shell. Can be a url or local path
         :param tuple attribute_names: Sequence of attribute names that should be added
         """
-
         with TempDirContext("Extended_Shell_Temp_Dir") as temp_dir:
             try:
                 if self._is_local(source):
@@ -68,7 +69,6 @@ class ExtendCommandExecutor(object):
             except VersionRequestException as err:
                 raise click.ClickException(str(err))
             except Exception:
-                # raise
                 raise click.BadParameter("Check correctness of entered attributes")
 
             # Remove shell version from folder name
@@ -86,7 +86,6 @@ class ExtendCommandExecutor(object):
             self._add_attributes(shell_path, attribute_names)
 
             try:
-                # pass
                 shutil.move(shell_path, os.path.curdir)
             except shutil.Error as err:
                 raise click.BadParameter(str(err))
@@ -94,30 +93,19 @@ class ExtendCommandExecutor(object):
         click.echo("Created shell based on source {}".format(source))
 
     def _copy_local_shell(self, source, destination):
-        """ Copy shell and extract if needed """
-
+        """Copy shell and extract if needed."""
         if os.path.isdir(source):
             source = source.rstrip(os.sep)
             name = os.path.basename(source)
             ext_shell_path = os.path.join(destination, name)
             shutil.copytree(source, ext_shell_path)
-        # elif zipfile.is_zipfile(source):
-        #
-        #     name = os.path.basename(source).replace(".zip", "")
-        #     shell_path = self.repository_downloader.repo_extractor.extract_to_folder(source, destination)[0]
-        #     if not os.path.isdir(shell_path):
-        #         shell_path = os.path.dirname(shell_path)
-        #         shell_path = os.path.join(destination, shell_path)
-        #
-        #     ext_shell_path = os.path.join(os.path.dirname(shell_path.rstrip(os.sep)), name)
         else:
             raise
 
         return ext_shell_path
 
     def _copy_online_shell(self, source, destination):
-        """ Download shell and extract it """
-
+        """Download shell and extract it."""
         archive_path = None
         try:
             archive_path = self.repository_downloader.download_file(source, destination)
@@ -142,8 +130,7 @@ class ExtendCommandExecutor(object):
         return string.rpartition(prefix)[-1]
 
     def _unpack_driver_archive(self, shell_path, modificator=None):
-        """ Unpack driver files from ZIP-archive """
-
+        """Unpack driver files from ZIP-archive."""
         if not modificator:
             modificator = DefinitionModification(shell_path)
 
@@ -164,8 +151,7 @@ class ExtendCommandExecutor(object):
 
     @staticmethod
     def _remove_quali_signature(shell_path):
-        """ Remove Quali signature from shell """
-
+        """Remove Quali signature from shell."""
         signature_file_path = os.path.join(
             shell_path, ExtendCommandExecutor.SIGN_FILENAME
         )
@@ -173,8 +159,7 @@ class ExtendCommandExecutor(object):
             os.remove(signature_file_path)
 
     def _change_author(self, shell_path, modificator=None):
-        """ Change shell authoring """
-
+        """Change shell authoring."""
         author = self.cloudshell_config_reader.read().author
 
         if not modificator:
@@ -184,16 +169,14 @@ class ExtendCommandExecutor(object):
         modificator.edit_tosca_meta(field=METADATA_AUTHOR_FIELD, value=author)
 
     def _add_based_on(self, shell_path, modificator=None):
-        """ Add Based_ON field to shell-definition.yaml file """
-
+        """Add Based_ON field to shell-definition.yaml file."""
         if not modificator:
             modificator = DefinitionModification(shell_path)
 
         modificator.add_field_to_definition(field=TEMPLATE_BASED_ON)
 
     def _add_attributes(self, shell_path, attribute_names, modificator=None):
-        """ Add a commented out attributes to the shell definition """
-
+        """Add a commented out attributes to the shell definition."""
         if not modificator:
             modificator = DefinitionModification(shell_path)
 

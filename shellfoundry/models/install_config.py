@@ -44,6 +44,7 @@ class InstallConfig(object):
 
     def __eq__(self, other):
         """
+
         :param other: An instance of InstallConfig to compare
         :type other InstallConfig
         :return: True of same value, False otherwise

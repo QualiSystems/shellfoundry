@@ -6,7 +6,7 @@ import shutil
 
 try:
     from pip import main as pip_main
-except:
+except Exception:
     from pip._internal import main as pip_main
 
 

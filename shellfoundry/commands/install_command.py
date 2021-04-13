@@ -8,7 +8,7 @@ import click
 try:
     # Python 2.x version
     from urllib2 import HTTPError, URLError
-except:
+except ImportError:
     # Python 3.x version
     from urllib.error import HTTPError, URLError
 
@@ -43,7 +43,7 @@ class InstallCommandExecutor(object):
         if shell_package.is_layer_one():
             click.secho(
                 "Installing a L1 shell directly via shellfoundry is not supported. "
-                "Please follow the L1 shell import procedure described in help.quali.com.",
+                "Please follow the L1 shell import procedure described in help.quali.com.",  # noqa: E501
                 fg="yellow",
             )
         else:
@@ -62,17 +62,20 @@ class InstallCommandExecutor(object):
         except HTTPError as e:
             if e.code == 401:
                 raise FatalError(
-                    "Login to CloudShell failed. Please verify the credentials in the config"
+                    "Login to CloudShell failed. "
+                    "Please verify the credentials in the config"
                 )
             error = str(e)
         except URLError:
             raise FatalError(
-                "Connection to CloudShell Server failed. Please make sure it is up and running properly."
+                "Connection to CloudShell Server failed. "
+                "Please make sure it is up and running properly."
             )
         except Exception as e:
             error = str(e)
 
         if error:
             raise FatalError(
-                "Failed to install shell. CloudShell responded with: '{}'".format(error)
+                "Failed to install shell. "
+                "CloudShell responded with: '{}'".format(error)
             )

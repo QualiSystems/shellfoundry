@@ -19,17 +19,13 @@ class GenerateCommandExecutor(object):
         self.driver_generator = driver_generator or DriverGenerator()
 
     def generate(self):
-        """
-        Generates Python driver by connecting to CloudShell server
-        :return:
-        """
+        """Generates Python driver by connecting to CloudShell server."""
         current_path = os.getcwd()
         shell_package = ShellPackage(current_path)
         if not shell_package.is_tosca():
             click.echo("Code generation supported in TOSCA based shells only", err=True)
             return
 
-        # shell_name = shell_package.get_shell_name()
         shell_name = shell_package.get_name_from_definition()
         shell_filename = shell_name + ".zip"
         package_full_path = path.join(current_path, "dist", shell_filename)

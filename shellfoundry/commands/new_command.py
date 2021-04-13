@@ -44,6 +44,7 @@ class NewCommandExecutor(object):
         shell_name_validations=None,
     ):
         """
+
         :param CookiecutterTemplateCompiler template_compiler:
         :param TemplateRetriever template_retriever:
         :param RepositoryDownloader repository_downloader:
@@ -51,7 +52,6 @@ class NewCommandExecutor(object):
         :param StandardVersionsFactory standard_versions:
         :param ShellNameValidations shell_name_validations:
         """
-
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
         self.template_retriever = template_retriever or TemplateRetriever()
         self.repository_downloader = repository_downloader or RepositoryDownloader()
@@ -62,12 +62,14 @@ class NewCommandExecutor(object):
 
     def new(self, name, template, version=None, python_version=None):
         """Create a new shell based on a template.
+
         :param str version: The desired version of the shell template to use
         :param str name: The name of the Shell
         :param str template: The name of the template to use
         """
-        # Special handling for the case where the user runs 'shellfoundry .' in such a case the '.'
-        # character is substituted for the shell name and the content of the current folder is populated
+        # Special handling for the case where the user runs 'shellfoundry .'
+        # in such a case the '.' character is substituted for the shell name
+        # and the content of the current folder is populated
         running_on_same_folder = False
         if name == os.path.curdir:
             name = os.path.split(os.getcwd())[1]
@@ -75,14 +77,13 @@ class NewCommandExecutor(object):
 
         if not self.shell_name_validations.validate_shell_name(name):
             raise click.BadParameter(
-                "Shell name must begin with a letter and contain only alpha-numeric characters and spaces."
+                "Shell name must begin with a letter "
+                "and contain only alpha-numeric characters and spaces."
             )
 
         try:
             standards = self.standards.fetch()
         except FeatureUnavailable:
-            # raise click.ClickException("Cannot retrieve standards list. "
-            #                            "Feature unavailable (probably due to cloudshell version below 8.1")
             standards = self.standards.fetch(alternative=ALTERNATIVE_STANDARDS_PATH)
         except Exception as err:
             raise click.ClickException(
@@ -124,8 +125,7 @@ class NewCommandExecutor(object):
     def _import_direct_online_template(
         self, name, running_on_same_folder, template, standards, python_version
     ):
-        """ Create shell based on template downloaded by the direct link """
-
+        """Create shell based on template downloaded by the direct link."""
         template_url = self._remove_prefix(
             template, NewCommandExecutor.REMOTE_TEMPLATE_URL_PREFIX
         )
@@ -158,8 +158,7 @@ class NewCommandExecutor(object):
     def _import_online_template(
         self, name, running_on_same_folder, template, version, standards, python_version
     ):
-        """ Create shell based on template downloaded from GitHub by the name """
-
+        """Create shell based on template downloaded from GitHub by the name."""
         # Create a temp folder for the operation to make sure we delete it after
         with TempDirContext(name) as temp_dir:
             try:
@@ -203,8 +202,8 @@ class NewCommandExecutor(object):
                 branches.remove(MASTER_BRANCH_NAME)
                 branches_str = ", ".join(branches)
                 raise click.BadParameter(
-                    "Requested standard version ('{}') does not match template version. \n"
-                    "Available versions for {}: {}".format(
+                    "Requested standard version ('{}') doesn't match template version."
+                    " \nAvailable versions for {}: {}".format(
                         version, template_obj.name, branches_str
                     )
                 )
@@ -224,8 +223,7 @@ class NewCommandExecutor(object):
     def _import_local_template(
         self, name, running_on_same_folder, template, standards, python_version
     ):
-        """ Create shell based on direct path to local template """
-
+        """Create shell based on direct path to local template."""
         repo_path = self._remove_prefix(
             template, NewCommandExecutor.LOCAL_TEMPLATE_URL_PREFIX
         )
@@ -260,8 +258,7 @@ class NewCommandExecutor(object):
             click.ClickException(str(e))
 
     def _get_local_template_full_path(self, template_name, standards, version=None):
-        """ Get full path to local template based on provided template name """
-
+        """Get full path to local template based on provided template name."""
         templates_location = self.cloudshell_config_reader.read().template_location
 
         templates = self.template_retriever.get_templates(
@@ -299,8 +296,8 @@ class NewCommandExecutor(object):
             else:
                 raise click.BadParameter(
                     "Requested template version ({version}) "
-                    "does not compatible with available Standards on CloudShell Server "
-                    "({avail_standards})".format(
+                    "does not compatible with available Standards on CloudShell Server"
+                    " ({avail_standards})".format(
                         version=version, avail_standards=", ".join(avail_standards)
                     )
                 )
@@ -324,8 +321,7 @@ class NewCommandExecutor(object):
 
     @staticmethod
     def _get_template_params(repo_path):
-        """ Determine template additional parameters """
-
+        """Determine template additional parameters."""
         full_path = os.path.join(repo_path, TEMPLATE_INFO_FILE)
         if not os.path.exists(full_path):
             raise click.ClickException(
@@ -370,15 +366,14 @@ class NewCommandExecutor(object):
 
     @staticmethod
     def _verify_template_standards_compatibility(template_path, standards):
-        """ Check is template and available standards on cloudshell are compatible """
-
+        """Check is template and available standards on cloudshell are compatible."""
         shell_def_path = os.path.join(
             template_path, "{{cookiecutter.project_slug}}", "shell-definition.yaml"
         )
         if os.path.exists(shell_def_path):
             with open(shell_def_path, encoding="utf8") as stream:
                 match = re.search(
-                    r"cloudshell_standard:\s*cloudshell_(?P<name>\S+)_standard_(?P<version>\S+)\.\w+$",
+                    r"cloudshell_standard:\s*cloudshell_(?P<name>\S+)_standard_(?P<version>\S+)\.\w+$",  # noqa: E501
                     stream.read(),
                     re.MULTILINE,
                 )

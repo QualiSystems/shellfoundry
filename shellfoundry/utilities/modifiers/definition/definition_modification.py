@@ -22,16 +22,14 @@ class DefinitionModification(object):
         )
 
     def edit_definition(self, field, value):
-        """Modify shell-definition.yaml
+        """Modify shell-definition.yaml.
+
         :params field str: field name to modify
         :params value str: new value to update
         """
-
         self._edit_yaml(self.entry_definition, field, value)
 
     def edit_tosca_meta(self, field, value):
-        """  """
-
         with open(
             os.path.join(self.shell_path, TOSCA_META_LOCATION), "r", encoding="utf8"
         ) as tosca_file:
@@ -52,14 +50,13 @@ class DefinitionModification(object):
             tosca_file.writelines(tosca_data)
 
     def add_field_to_definition(self, field, value=None, overwrite=False):
-        """Add new field to shell-definition.yaml
+        """Add new field to shell-definition.yaml.
+
         :params field str: field name to add
         :params value str: value to add
         :params overwrite bool: overwrite value if it already exists
         """
-
         try:
-            based_on_version = self._get_value_from_definition(field)
             if overwrite:
                 self.edit_definition(field, value)
         except YmlFieldMissingException:
@@ -76,17 +73,16 @@ class DefinitionModification(object):
             )
 
     def add_properties(self, attribute_names):
-        """Add property to shell-definition.yaml file
+        """Add property to shell-definition.yaml file.
+
         :params fields tuple/list: sequence of properties name that will be added
         """
-
         results = list(map(self._add_property, attribute_names))
 
         for item in zip(attribute_names, results):
             self._comment_attribute(*item)
 
     def get_artifacts_files(self, artifact_name_list):
-        """  """
         yaml_parser = yaml.YAML()
         shell_definition = self._load_yaml(yaml_parser, self.entry_definition)
 
@@ -102,8 +98,6 @@ class DefinitionModification(object):
             return result
 
     def _find_entry_definition(self):
-        """  """
-
         with open(
             os.path.join(self.shell_path, TOSCA_META_LOCATION), "r", encoding="utf8"
         ) as tosca_file:
@@ -114,18 +108,14 @@ class DefinitionModification(object):
             return entry_definition
 
     def _load_yaml(self, yaml_parser, yaml_file):
-        """  """
-
         with open(yaml_file, encoding="utf8") as stream:
             try:
                 yaml_parser.indent(offset=2)
                 return yaml_parser.load(stream=stream)
             except yaml.YAMLError as exc:
-                print(exc)
+                print(exc)  # noqa: T001
 
     def _edit_yaml(self, yaml_file, field, value):
-        """  """
-
         yaml_parser = yaml.YAML()
         loaded = self._load_yaml(yaml_parser=yaml_parser, yaml_file=yaml_file)
 
@@ -139,8 +129,6 @@ class DefinitionModification(object):
             yaml_parser.dump(data, stream=f)
 
     def _get_inner_dict_recursively(self, dic, field):
-        """  """
-
         split = field.split("/", 1)
         i = dic.get(split[0])
         if not i:
@@ -151,8 +139,6 @@ class DefinitionModification(object):
         return self._get_inner_dict_recursively(i, split[1])
 
     def _get_value_from_definition(self, field):
-        """  """
-
         yaml_parser = yaml.YAML()
         loaded = self._load_yaml(yaml_parser, self.entry_definition)
 
@@ -161,10 +147,10 @@ class DefinitionModification(object):
         return value
 
     def _add_property(self, attribute_name):
-        """Add property to shell-definition.yaml file
+        """Add property to shell-definition.yaml file.
+
         :params fields list: list of properties name that will be added
         """
-
         yaml_parser = yaml.YAML()
         loaded = self._load_yaml(yaml_parser, self.entry_definition)
 
@@ -192,8 +178,7 @@ class DefinitionModification(object):
         return is_last
 
     def _comment_attribute(self, attribute_name, is_last=False):
-        """ Comment attribute in shell-definishion.yaml file """
-
+        """Comment attribute in shell-definishion.yaml file."""
         spaces = None
         need_comment = False
         lines = []

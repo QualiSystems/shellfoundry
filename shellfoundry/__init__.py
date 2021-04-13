@@ -1,7 +1,5 @@
 from os.path import dirname, join
 
-from .version import __version__
-
 ALTERNATIVE_TEMPLATES_PATH = join(dirname(__file__), "data", "templates.yml")
 ALTERNATIVE_STANDARDS_PATH = join(dirname(__file__), "data", "standards.json")
 

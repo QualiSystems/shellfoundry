@@ -54,12 +54,10 @@ class CookiecutterTemplateCompiler(object):
             )
         except OutputDirExistsException as err:
             raise ClickException(str(err))
-        # self._remove_template_info_file(output_dir)
 
     @staticmethod
     def _remove_template_info_file(shell_path):
-        """ Remove template info file from shell structure """
-
+        """Remove template info file from shell structure."""
         template_info_file_path = os.path.join(shell_path, TEMPLATE_INFO_FILE)
         if os.path.exists(template_info_file_path):
             os.remove(template_info_file_path)

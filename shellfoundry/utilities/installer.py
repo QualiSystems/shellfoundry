@@ -4,15 +4,13 @@
 import os
 
 import click
-
-# from qpm.packaging.quali_api_client import QualiAPIClient
 from cloudshell.rest.api import PackagingRestApiClient
 
 
 class ShellInstaller(object):
     def install(self, package_name, config):
-        """
-        Installs package according to cloudshell
+        """Installs package according to cloudshell.
+
         :param package_name: Package name to install
         :type package_name str
         :param config: Configuration to be used for
@@ -32,5 +30,4 @@ class ShellInstaller(object):
             )
         )
         server = PackagingRestApiClient(host, port, username, password, domain)
-        # server.upload_environment_zip_file(package_full_path)
         server.import_package(package_full_path)

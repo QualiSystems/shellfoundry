@@ -21,10 +21,11 @@ def create_cloudshell_client(retries=1):
 
 
 class CloudShellClient(object):
-    ConnectionFailureMessage = "Connection to CloudShell Server failed. Please make sure it is up and running properly."
+    ConnectionFailureMessage = "Connection to CloudShell Server failed. Please make sure it is up and running properly."  # noqa: E501
 
     def __init__(self, cs_config=None):
         """
+
         :type cs_config shellfoundry.models.install_config.InstallConfig
         """
         self._cs_config = cs_config or Configuration(CloudShellConfigReader()).read()
@@ -54,6 +55,7 @@ class CloudShellClient(object):
         except (HTTPError, Exception) as e:
             if hasattr(e, "code") and e.code == 401:
                 raise FatalError(
-                    "Login to CloudShell failed. Please verify the credentials in the config"
+                    "Login to CloudShell failed."
+                    "Please verify the credentials in the config"
                 )
             raise FatalError(self.ConnectionFailureMessage)

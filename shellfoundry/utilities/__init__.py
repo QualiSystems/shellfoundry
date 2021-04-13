@@ -7,18 +7,18 @@ import ssl
 try:
     # Python 2.x version
     from xmlrpclib import ProtocolError, ServerProxy
-except:
+except ImportError:
     # Python 3.x version
     from xmlrpc.client import ProtocolError, ServerProxy
 
 try:
     from urllib import urlopen
-except:
+except ImportError:
     from urllib.request import urlopen
 
 try:
     from urllib.error import HTTPError, URLError
-except:
+except ImportError:
     from urllib2 import HTTPError, URLError
 
 try:

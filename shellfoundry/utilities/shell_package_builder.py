@@ -17,11 +17,7 @@ class ShellPackageBuilder(object):
     DEPLOY_DIR = "deployments"
 
     def pack(self, path):
-        """
-        Creates TOSCA based Shell package
-        :return:
-        """
-
+        """Creates TOSCA based Shell package."""
         self._remove_all_pyc(path)
         shell_package = ShellPackage(path)
         shell_name = shell_package.get_shell_name()

@@ -1,6 +1,8 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 try:
     from urllib.error import URLError
-except:
+except ImportError:
     from urllib2 import URLError
 
 import zipfile
@@ -10,7 +12,6 @@ import click
 from cloudshell.rest.api import PackagingRestApiClient
 from requests import post
 
-from shellfoundry.models.install_config import InstallConfig
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 
 
@@ -23,8 +24,8 @@ class DriverGenerator(object):
         shell_filename,
         shell_name,
     ):
-        """
-        Generates Python data model by connecting to Cloudshell server
+        """Generates Python data model by connecting to Cloudshell server.
+
         :param cloudshell_config:
         :type cloudshell_config: InstallConfig
         :param destination_path:
@@ -52,7 +53,7 @@ class DriverGenerator(object):
         shell_filename,
         shell_name,
     ):
-        """
+        """Generates driver data model.
 
         :param client:
         :param cloudshell_config:
@@ -108,7 +109,7 @@ class DriverGenerator(object):
             return client
         except URLError:
             click.echo(
-                "Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml",
+                "Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml",  # noqa: E501
                 err=True,
             )
             raise

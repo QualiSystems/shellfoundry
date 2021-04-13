@@ -19,27 +19,27 @@ from shellfoundry.utilities.template_retriever import TemplateRetriever
 class GetTemplatesCommandExecutor(object):
     def __init__(self, repository_downloader=None, template_retriever=None):
         """
+
         :param TemplateRetriever template_retriever:
         :param RepositoryDownloader repository_downloader:
         """
-
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
         self.template_retriever = template_retriever or TemplateRetriever()
         self.repository_downloader = repository_downloader or RepositoryDownloader()
 
     def get_templates(self, cs_version, output_dir=None):
-        """Download all templates relevant to provided CloudShell Version
+        """Download all templates relevant to provided CloudShell Version.
+
         :param str cs_version: The desired version of the CloudShell
         :param str output_dir: Output directory to download templates
         """
-
         shellfoundry_config = self.cloudshell_config_reader.read()
         online_mode = shellfoundry_config.online_mode.lower() == "true"
         if online_mode:
             try:
                 response = self.template_retriever._get_templates_from_github()
                 config = yaml.safe_load(response)
-                repos = set(template["repository"] for template in config["templates"])
+                repos = {template["repository"] for template in config["templates"]}
 
                 if not output_dir:
                     output_dir = os.path.abspath(os.path.curdir)
@@ -49,7 +49,7 @@ class GetTemplatesCommandExecutor(object):
                 archive_path = os.path.join(output_dir, "{}.zip".format(archive_name))
                 if os.path.exists(archive_path):
                     click.confirm(
-                        text="Templates archive for CloudShell Version {cs_version} already exists in path {path}."
+                        text="Templates archive for CloudShell Version {cs_version} already exists in path {path}."  # noqa: E501
                         "\nDo you wish to overwrite it?".format(
                             cs_version=cs_version, path=archive_path
                         ),
@@ -88,17 +88,17 @@ class GetTemplatesCommandExecutor(object):
                     shutil.make_archive(archive_name, "zip", templates_path)
 
                 click.echo(
-                    "Downloaded templates for CloudShell {cs_version} to {templates}".format(
+                    "Downloaded templates for CloudShell {cs_version} to {templates}".format(  # noqa: E501
                         cs_version=cs_version, templates=os.path.abspath(archive_path)
                     )
                 )
             except SSLError:
                 raise click.UsageError(
-                    "Could not retrieve the templates list to download. Are you offline?"
+                    "Could not retrieve the templates list to download. Are you offline?"  # noqa: E501
                 )
         else:
             click.echo(
-                "Please, move shellfoundry to online mode. See, shellfoundry config command"
+                "Please, move shellfoundry to online mode. See, shellfoundry config command"  # noqa: E501
             )
 
     def download_template(
@@ -134,7 +134,7 @@ class GetTemplatesCommandExecutor(object):
                     shutil.rmtree(path=template_path, ignore_errors=True)
                 except VersionRequestException:
                     errors.append(
-                        "Failed to download template from repository {} version {}".format(
+                        "Failed to download template from repository {} version {}".format(  # noqa: E501
                             repository, result_branch
                         )
                     )
