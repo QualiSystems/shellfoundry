@@ -28,10 +28,10 @@ class TemplateRetriever(object):
     NAME_PLACEHOLDER = "name"
 
     def get_templates(self, **kwargs):
-        """Get templates
+        """Get templates.
+
         :return: Dictionary of shellfoundry.ShellTemplate
         """
-
         alternative_path = kwargs.get("alternative", None)
         template_location = kwargs.get("template_location", None)
         standards = kwargs.get("standards", {})
@@ -72,23 +72,20 @@ class TemplateRetriever(object):
 
     @staticmethod
     def _get_templates_from_github():
-        """ Get templates data from GitHub """
-
+        """Get templates data from GitHub."""
         session = requests.Session()
         session.mount("https://", requests.adapters.HTTPAdapter(max_retries=5))
         return session.get(TEMPLATES_YML).text
 
     @staticmethod
     def _get_templates_from_path(alternative_path):
-        """ Get templates data from local file """
-
+        """Get templates data from local file."""
         with open(alternative_path, mode="r", encoding="utf8") as stream:
             response = stream.read()
         return response
 
     def _get_local_templates(self, template_location):
-        """ Get templates from local storage """
-
+        """Get templates from local storage."""
         if not template_location or not os.path.exists(template_location):
             raise click.ClickException("Local template location empty or doesn't exist")
         else:
@@ -143,8 +140,7 @@ class TemplateRetriever(object):
 
     @staticmethod
     def _get_standard_version_from_template(template_location):
-        """ Get standard version from template shell-definition file """
-
+        """Get standard version from template shell-definition file."""
         for root, directories, filenames in os.walk(template_location):
             for filename in filenames:
                 if filename == "shell-definition.yaml":
@@ -152,7 +148,7 @@ class TemplateRetriever(object):
                         os.path.join(root, "shell-definition.yaml"), encoding="utf8"
                     ) as stream:
                         match = re.search(
-                            r"cloudshell_standard:\s*cloudshell_(?P<name>\S+)_standard_(?P<version>\S+)\.\w+$",
+                            r"cloudshell_standard:\s*cloudshell_(?P<name>\S+)_standard_(?P<version>\S+)\.\w+$",  # noqa: E501
                             stream.read(),
                             re.MULTILINE,
                         )
@@ -162,10 +158,10 @@ class TemplateRetriever(object):
     @staticmethod
     def _get_standard_out_of_name(template_name, default=None):
         """
+
         :type template_name str
         :return:
         """
-
         type_index = 0
         standard_index = 1
         template = template_name.split(SEPARATOR)
@@ -175,12 +171,12 @@ class TemplateRetriever(object):
 
     @staticmethod
     def _filter_by_standards(templates, standards):
-        """Filter templates by available on CloudShell Standards
+        """Filter templates by available on CloudShell Standards.
+
         :type templates collections.defaultdict(list)
         :type standards dict
         :return:
         """
-
         if not standards:
             return OrderedDict(sorted(templates.items()))
 
@@ -207,8 +203,6 @@ class TemplateRetriever(object):
 
     @staticmethod
     def _filter_in_threads(template_name, templates_list, standards, lock):
-        """  """
-
         clear_template_name = TemplateRetriever._get_standard_out_of_name(template_name)
         if clear_template_name is None:
             for template in templates_list:
@@ -237,8 +231,7 @@ class TemplateRetriever(object):
 
     @staticmethod
     def _get_min_cs_version(repository, standard_name, standards, branch=None):
-        """ Get minimal CloudShell Server Version available for provided template """
-
+        """Get minimal CloudShell Server Version available for provided template."""
         if not branch:
             branch = str(
                 min(list(map(parse_version, standards[standard_name])))
@@ -256,8 +249,7 @@ class TemplateRetriever(object):
             return
 
     def get_repo_branches(self, repository, github_login=None, github_password=None):
-        """ Get all available branches for provided repository """
-
+        """Get all available branches for provided repository."""
         if repository.endswith("/"):
             repository = repository[:-1]
         request = "{}/branches".format(
@@ -288,8 +280,7 @@ class TemplateRetriever(object):
     def get_latest_template(
         self, repo, version, github_login=None, github_password=None
     ):
-        """ Get latest template version based on CloudShell version """
-
+        """Get latest template version based on CloudShell version."""
         for branch in self.get_repo_branches(repo, github_login, github_password):
             cs_version = self._get_min_cs_version(
                 repository=repo, standard_name=None, standards=None, branch=branch
@@ -299,7 +290,7 @@ class TemplateRetriever(object):
                 try:
                     if parse_version(version) >= parse_version(cs_version):
                         return str(branch)
-                except:
+                except Exception:
                     pass
 
 

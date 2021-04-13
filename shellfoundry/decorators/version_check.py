@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 from functools import update_wrapper
 
 import click
@@ -31,7 +30,7 @@ class shellfoundry_version_check(object):
                     if is_major_release:
                         output = (
                             "This version of shellfoundry is not supported anymore, "
-                            "please upgrade by running: pip install shellfoundry --upgrade"
+                            "please upgrade by running: pip install shellfoundry --upgrade"  # noqa: E501
                         )
 
                         if self.abort_if_major:
@@ -41,7 +40,7 @@ class shellfoundry_version_check(object):
                     else:
                         output = (
                             "There is a new version of shellfoundry available, "
-                            "please upgrade by running: pip install shellfoundry --upgrade"
+                            "please upgrade by running: pip install shellfoundry --upgrade"  # noqa: E501
                         )
 
             f(**kwargs)

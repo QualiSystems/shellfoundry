@@ -42,7 +42,6 @@ class DefaultConfigProvider(ConfigProvider):
     def __init__(self):
         ConfigProvider.__init__(self, (GlobalConfigProvider()))  # The order do matters
         self.default_provider = LocalConfigProvider()
-        # self.fallback_provider = LocalConfigProvider()
 
     def get_config_path(self):
         config_path = self.default_provider.get_config_path()

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import click
 import requests
 
@@ -24,9 +26,9 @@ class ShowCommandExecutor(object):
             template_repo = self.template_retriever.get_templates()[template_name][
                 0
             ].repository
-        except:
+        except Exception:
             raise click.ClickException(
-                "The template '{}' does not exist, please specify a valid 2nd Gen shell template.".format(
+                "The template '{}' does not exist, please specify a valid 2nd Gen shell template.".format(  # noqa: E501
                     template_name
                 )
             )

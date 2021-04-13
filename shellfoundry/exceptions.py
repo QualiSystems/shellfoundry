@@ -36,7 +36,6 @@ class PlatformNameIsEmptyException(ShellFoundryBaseException):
 
 class FatalError(click.ClickException):
     def __init__(self, message):
-        # super(click.ClickException, self).__init__(message)
         super(FatalError, self).__init__(message)
 
     def show(self, file=None):

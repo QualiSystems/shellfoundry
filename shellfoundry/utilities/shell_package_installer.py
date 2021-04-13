@@ -9,7 +9,7 @@ import click
 
 try:
     from urllib.error import HTTPError
-except:
+except ImportError:
     from urllib2 import HTTPError
 
 from cloudshell.rest.api import PackagingRestApiClient
@@ -34,10 +34,8 @@ class ShellPackageInstaller(object):
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
     def install(self, path):
-        """ Install new or Update existed Shell """
-
+        """Install new or Update existed Shell."""
         shell_package = ShellPackage(path)
-        # shell_name = shell_package.get_shell_name()
         shell_name = shell_package.get_name_from_definition()
         shell_filename = shell_name + ".zip"
         package_full_path = os.path.join(path, "dist", shell_filename)
@@ -71,7 +69,7 @@ class ShellPackageInstaller(object):
                 click.confirm(
                     text="Upgrading to a custom version of the shell will limit you "
                     "only to customized versions of this shell from now on. "
-                    "You won't be able to upgrade it to an official version of the shell in the future."
+                    "You won't be able to upgrade it to an official version of the shell in the future."  # noqa: E501
                     "\nDo you wish to continue?",
                     abort=True,
                 )
@@ -112,8 +110,7 @@ class ShellPackageInstaller(object):
                 self._render_pbar_finish(pbar)
 
     def delete(self, shell_name):
-        """ Delete Shell """
-
+        """Delete Shell."""
         cloudshell_config = self.cloudshell_config_reader.read()
 
         if cloudshell_config.domain != self.GLOBAL_DOMAIN:
@@ -146,7 +143,7 @@ class ShellPackageInstaller(object):
             except FeatureUnavailable:
                 self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
                 raise click.ClickException(
-                    "Delete shell command unavailable (probably due to CloudShell version below 9.2)"
+                    "Delete shell command unavailable (probably due to CloudShell version below 9.2)"  # noqa: E501
                 )
             except ShellNotFoundException:
                 self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
@@ -166,7 +163,8 @@ class ShellPackageInstaller(object):
     def _open_connection_to_quali_server(self, cloudshell_config, pbar, retry):
         if retry == 0:
             raise FatalError(
-                "Connection to CloudShell Server failed. Please make sure it is up and running properly."
+                "Connection to CloudShell Server failed. "
+                "Please make sure it is up and running properly."
             )
 
         try:
@@ -181,12 +179,14 @@ class ShellPackageInstaller(object):
         except HTTPError as e:
             if e.code == 401:
                 raise FatalError(
-                    "Login to CloudShell failed. Please verify the credentials in the config"
+                    "Login to CloudShell failed. "
+                    "Please verify the credentials in the config"
                 )
             raise FatalError(
-                "Connection to CloudShell Server failed. Please make sure it is up and running properly."
+                "Connection to CloudShell Server failed. "
+                "Please make sure it is up and running properly."
             )
-        except:
+        except Exception:
             self._increase_pbar(pbar, time_wait=CLOUDSHELL_RETRY_INTERVAL_SEC)
             return self._open_connection_to_quali_server(
                 cloudshell_config, pbar, retry - 1
@@ -202,9 +202,8 @@ class ShellPackageInstaller(object):
 
     def _parse_installation_error(self, base_message, error):
         try:
-            # cs_message = json.loads(error.message)["Message"]
             cs_message = json.loads(str(error))["Message"]
-        except:
+        except Exception:
             cs_message = ""
         return "{}. CloudShell responded with: '{}'".format(base_message, cs_message)
 

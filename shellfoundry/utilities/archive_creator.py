@@ -5,10 +5,11 @@ import zipfile
 class ArchiveCreator(object):
     @staticmethod
     def make_archive(output_filename, format, source_dir):
-        """
-        Creates archive in specified format recursively of source_dir
-        Replaces shtutil.make_archive in order to be able to test with pyfakefs
-        :param output_filename: Output archive file name. If directory does not exist, it will be created
+        """Creates archive in specified format recursively of source_dir.
+
+        Replaces shutil.make_archive in order to be able to test with pyfakefs
+        :param output_filename: Output archive file name.
+        If directory does not exist, it will be created
         :param format: Archive format to be used. Currently only zip is supported
         :param source_dir: Directory to scan for archiving
         :return:

@@ -25,7 +25,6 @@ class StandardVersions(object):
         self.standards = standards
 
     def get_latest_version(self, standard):
-
         standards = self.standards.get(standard, None)
         if standards is None:
             raise Exception("Failed to find latest version")

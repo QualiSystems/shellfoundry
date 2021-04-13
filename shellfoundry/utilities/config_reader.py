@@ -41,11 +41,12 @@ DEFAULT_VIEW = "defaultview"
 
 
 def get_with_default(install_config, parameter_name, default_value):
-    """
-    :param install_config: A dict represents the install section inside the configuration file
+    """Get configuration with default values.
+
+    :param install_config: A dict represents the install section inside the configuration file  # noqa: E501
     :param parameter_name: Specific key inside the install section
     :param default_value: Default value in cases that the key cannot be found
-    :return: The value of the key in the configuration file or default value if key cannot be found
+    :return: The value of the key in the configuration file or default value if key cannot be found  # noqa: E501
     """
     return (
         install_config[parameter_name]
@@ -76,7 +77,7 @@ class Configuration(object):
     @staticmethod
     def readall(config_path, mark_defaults=None):
         """
-        reads configuration from given file and adds missing keys with their defaults
+        Reads configuration from given file and adds missing keys with their defaults.
         """
         config_data = None
         if os.path.exists(config_path):

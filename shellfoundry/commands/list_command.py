@@ -26,10 +26,6 @@ from shellfoundry.utilities.template_retriever import (
 
 class ListCommandExecutor(object):
     def __init__(self, default_view=None, template_retriever=None, standards=None):
-        """
-        :param str default_view:
-        :param Standards standards:
-        """
         dv = default_view or Configuration(ShellFoundryConfig()).read().defaultview
         self.template_retriever = template_retriever or FilteredTemplateRetriever(
             dv, TemplateRetriever()
@@ -39,8 +35,6 @@ class ListCommandExecutor(object):
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
     def list(self):
-        """  """
-
         online_mode = self.cloudshell_config_reader.read().online_mode.lower() == "true"
         template_location = self.cloudshell_config_reader.read().template_location
 
@@ -90,9 +84,8 @@ class ListCommandExecutor(object):
         table.inner_column_border = False
         max_width = table.column_max_width(2)
 
-        if (
-            max_width <= 0
-        ):  # verify that the console window is not too small, and if so skip the wrapping logic
+        if max_width <= 0:  # verify that the console window is not too small,
+            # and if so skip the wrapping logic
             click.echo(table.table)
             return
 
@@ -109,6 +102,9 @@ class ListCommandExecutor(object):
         if self.show_info_msg:
             click.echo(
                 """
-As of CloudShell 8.0, CloudShell uses 2nd generation shells, to view the list of 1st generation shells use: shellfoundry list --gen1.
-For more information, please visit our devguide: https://qualisystems.github.io/devguide/"""
+As of CloudShell 8.0, CloudShell uses 2nd generation shells,
+to view the list of 1st generation shells use: shellfoundry list --gen1.
+For more information, please visit our devguide:
+https://qualisystems.github.io/devguide/
+"""
             )

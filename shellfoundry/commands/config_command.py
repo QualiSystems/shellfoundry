@@ -53,13 +53,13 @@ class ConfigCommandExecutor(object):
         click.echo(table)
         click.echo("")
         click.echo(
-            "* Value marked with '{}' is actually the default value and has not been override by the user.".format(
+            "* Value marked with '{}' is actually the default value and has not been override by the user.".format(  # noqa: E501
                 DEFAULTS_CHAR
             )
         )
 
     def _format_config_as_table(self, config_data, defaults_char):
-        from shellfoundry.utilities.modifiers.configuration.password_modification import (
+        from shellfoundry.utilities.modifiers.configuration.password_modification import (  # noqa: E501
             PasswordModification,
         )
 
