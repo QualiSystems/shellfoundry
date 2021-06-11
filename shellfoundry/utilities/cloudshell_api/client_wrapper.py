@@ -8,7 +8,7 @@ from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configu
 
 try:
     from urllib.error import HTTPError
-except:
+except Exception:
     from urllib2 import HTTPError
 
 
@@ -24,7 +24,7 @@ class CloudShellClient(object):
     ConnectionFailureMessage = "Connection to CloudShell Server failed. Please make sure it is up and running properly."  # noqa: E501
 
     def __init__(self, cs_config=None):
-        """
+        """Creates cloudshell client.
 
         :type cs_config shellfoundry.models.install_config.InstallConfig
         """
@@ -55,7 +55,7 @@ class CloudShellClient(object):
         except (HTTPError, Exception) as e:
             if hasattr(e, "code") and e.code == 401:
                 raise FatalError(
-                    "Login to CloudShell failed."
+                    "Login to CloudShell failed. "
                     "Please verify the credentials in the config"
                 )
             raise FatalError(self.ConnectionFailureMessage)

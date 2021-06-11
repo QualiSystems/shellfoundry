@@ -4,6 +4,8 @@
 import json
 import ssl
 
+import pkg_resources
+
 try:
     # Python 2.x version
     from xmlrpclib import ProtocolError, ServerProxy
@@ -20,14 +22,6 @@ try:
     from urllib.error import HTTPError, URLError
 except ImportError:
     from urllib2 import HTTPError, URLError
-
-try:
-    from pip.utils import get_installed_version
-except ImportError:
-
-    def get_installed_version(package_name):
-        return __import__(package_name).__version__
-
 
 from distutils.version import StrictVersion
 
@@ -50,6 +44,10 @@ class Index(object):
 
 
 PyPI = Index("https://pypi.python.org/pypi/")
+
+
+def get_installed_version(package_name):
+    return pkg_resources.get_distribution(package_name).version
 
 
 def is_index_version_greater_than_current():

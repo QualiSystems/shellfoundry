@@ -2,47 +2,39 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import unittest
 
 if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock
+    from unittest.mock import MagicMock, patch
 else:
-    from mock import MagicMock
-
-from pyfakefs import fake_filesystem_unittest
+    from mock import MagicMock, patch
 
 from shellfoundry.commands.dist_command import DistCommandExecutor
+from shellfoundry.models.install_config import InstallConfig
 
 
-class TestDistCommandExecutor(fake_filesystem_unittest.TestCase):
+class TestDistCommandExecutor(unittest.TestCase):
     def setUp(self):
-        self.setUpPyfakefs()
+        self.mock_dependencies_packager = MagicMock()
 
-    def test_dependencies_downloaded_only_pypi(self):
-        # Arrange
-        self.fs.CreateFile(
-            "nut_shell/shell.yml",
-            contents="""
-shell:
-    name: nut_shell
-    author: Chuck Norris
-    email: chuck@hollywood.io
-    description: Save the world
-    version: 1.0.0
-    """,
+    @patch("shellfoundry.commands.dist_command.Configuration")
+    def test_dist(self, mock_configuration):
+        mock_configuration.return_value.read.return_value = InstallConfig.get_default()
+        command_executor = DistCommandExecutor(
+            dependencies_packager=self.mock_dependencies_packager,
         )
 
-        os.chdir("nut_shell")
+        with patch.object(os, "getcwd", return_value="shell_path"):
+            command_executor.dist(enable_cs_repo=True)
+            self.mock_dependencies_packager.save_offline_dependencies.assert_called_with(  # noqa: E501
+                "shell_path/src/requirements.txt",
+                "shell_path/dist/offline_requirements",
+                "localhost",
+            )
 
-        dependencies_packager = MagicMock()
-        command_executor = DistCommandExecutor(dependencies_packager)
-
-        # Act
-        command_executor.dist(enable_cs_repo=False)
-
-        # Assert
-        self.assertTrue(dependencies_packager.save_offline_dependencies.called)
-        args = dependencies_packager.save_offline_dependencies.call_args[0]
-        self.assertEqual(args[0].split(os.path.sep)[-1], "requirements.txt")
-        self.assertEqual(args[0].split(os.path.sep)[-2], "src")
-        self.assertEqual(args[1].split(os.path.sep)[-1], "offline_requirements")
-        self.assertEqual(args[1].split(os.path.sep)[-2], "dist")
+            command_executor.dist(enable_cs_repo=False)
+            self.mock_dependencies_packager.save_offline_dependencies.assert_called_with(  # noqa: E501
+                "shell_path/src/requirements.txt",
+                "shell_path/dist/offline_requirements",
+                None,
+            )

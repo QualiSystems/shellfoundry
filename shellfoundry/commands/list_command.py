@@ -34,7 +34,7 @@ class ListCommandExecutor(object):
         self.standards = standards or Standards()
         self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
 
-    def list(self):
+    def list(self):  # noqa: A003
         online_mode = self.cloudshell_config_reader.read().online_mode.lower() == "true"
         template_location = self.cloudshell_config_reader.read().template_location
 

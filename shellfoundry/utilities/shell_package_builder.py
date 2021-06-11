@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 import os
 import shutil
+from io import open
 
 import click
 import yaml
@@ -70,7 +70,7 @@ class ShellPackageBuilder(object):
 
             try:
                 self._remove_build_artifacts(artifact_path_list)
-            except:
+            except Exception:
                 pass
 
             click.echo("Shell package was successfully created: " + zip_path)

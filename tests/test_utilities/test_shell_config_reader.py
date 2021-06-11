@@ -13,7 +13,7 @@ class TestShellConfigReader(fake_filesystem_unittest.TestCase):
 
     def test_read_config_all_settings_are_set(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "shell_name/shell.yml",
             contents="""
 shell:

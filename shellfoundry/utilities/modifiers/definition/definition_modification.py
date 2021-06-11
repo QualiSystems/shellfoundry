@@ -3,6 +3,7 @@
 
 import os
 import re
+from io import open
 
 import ruamel.yaml as yaml
 
@@ -45,7 +46,7 @@ class DefinitionModification(object):
             tosca_data.append("\n{field}: {value}".format(field=field, value=value))
 
         with open(
-            os.path.join(self.shell_path, TOSCA_META_LOCATION), "wb", encoding="utf8"
+            os.path.join(self.shell_path, TOSCA_META_LOCATION), "w", encoding="utf8"
         ) as tosca_file:
             tosca_file.writelines(tosca_data)
 
@@ -99,10 +100,10 @@ class DefinitionModification(object):
 
     def _find_entry_definition(self):
         with open(
-            os.path.join(self.shell_path, TOSCA_META_LOCATION), "r", encoding="utf8"
+            os.path.join(self.shell_path, TOSCA_META_LOCATION), "r"
         ) as tosca_file:
             entry_definition = dict(
-                list(map(str.strip, line.split(":", 1))) for line in tosca_file
+                list(map(str.strip, str(line).split(":", 1))) for line in tosca_file
             )["Entry-Definitions"]
 
             return entry_definition
@@ -125,7 +126,7 @@ class DefinitionModification(object):
         self._edit_file(yaml_file=yaml_file, yaml_parser=yaml_parser, data=loaded)
 
     def _edit_file(self, yaml_file, yaml_parser, data):
-        with open(yaml_file, "wb", encoding="utf8") as f:
+        with open(yaml_file, "wb") as f:
             yaml_parser.dump(data, stream=f)
 
     def _get_inner_dict_recursively(self, dic, field):

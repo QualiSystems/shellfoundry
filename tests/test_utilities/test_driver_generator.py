@@ -23,9 +23,9 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         self.setUpPyfakefs()
 
     def test_driver_generated_successfully(self):
-        self.fs.CreateFile("nut-shell/dist/NutShell.zip", contents="ZIP")
+        self.fs.create_file("nut-shell/dist/NutShell.zip", contents="ZIP")
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/temp/data_model.py", contents="python data model content"
         )
 
@@ -56,7 +56,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
 
             with patch("shellfoundry.utilities.driver_generator.post") as post_mock:
 
-                with open("nut-shell/temp/data-model.zip", "r") as data_model_file:
+                with open("nut-shell/temp/data-model.zip", "rb") as data_model_file:
                     file_content = data_model_file.read()
 
                 response = MagicMock()
@@ -77,9 +77,9 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         assertFileExists(self, "nut-shell/src/data_model.py")
 
     def test_error_displayed_when_driver_generation_returns_error_code(self):
-        self.fs.CreateFile("nut-shell/dist/NutShell.zip", contents="ZIP")
+        self.fs.create_file("nut-shell/dist/NutShell.zip", contents="ZIP")
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/temp/data_model.py", contents="python data model content"
         )
 
@@ -134,9 +134,9 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         assertFileDoesNotExist(self, "nut-shell/src/data_model.py")
 
     def test_error_displayed_when_failed_to_connect_to_cloudshell_server(self):
-        self.fs.CreateFile("nut-shell/dist/NutShell.zip", contents="ZIP")
+        self.fs.create_file("nut-shell/dist/NutShell.zip", contents="ZIP")
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/temp/data_model.py", contents="python data model content"
         )
 

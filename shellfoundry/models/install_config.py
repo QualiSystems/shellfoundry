@@ -14,7 +14,7 @@ DEFAULT_AUTHOR = "Anonymous"
 DEFAULT_ONLINE_MODE = "True"
 DEFAULT_TEMPLATE_LOCATION = "Empty"
 DEFAULT_GITHUB_LOGIN = ""
-DEFAULT_GITHUB_PASSWORD = ""
+DEFAULT_GITHUB_PASSWORD = "gh_pass"
 
 
 class InstallConfig(object):
@@ -43,7 +43,7 @@ class InstallConfig(object):
         self.github_password = self._decode_password(github_password)
 
     def __eq__(self, other):
-        """
+        """Comparison.
 
         :param other: An instance of InstallConfig to compare
         :type other InstallConfig

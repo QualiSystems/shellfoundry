@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+from io import open
 
 from ..cloudshell_api import create_cloudshell_client
 
@@ -21,7 +22,7 @@ class Standards(object):
         cs_client = create_cloudshell_client()
         try:
             return cs_client.get_installed_standards()
-        except:
+        except Exception:
             raise
 
     @staticmethod

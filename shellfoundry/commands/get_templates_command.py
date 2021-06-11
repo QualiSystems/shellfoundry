@@ -18,7 +18,7 @@ from shellfoundry.utilities.template_retriever import TemplateRetriever
 
 class GetTemplatesCommandExecutor(object):
     def __init__(self, repository_downloader=None, template_retriever=None):
-        """
+        """Download all templates relevant to provided CloudShell Version.
 
         :param TemplateRetriever template_retriever:
         :param RepositoryDownloader repository_downloader:

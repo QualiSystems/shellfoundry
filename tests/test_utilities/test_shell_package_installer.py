@@ -111,7 +111,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         new=MagicMock(side_effect=Exception()),
     )
     @patch(
-        "shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition",
+        "shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition",  # noqa: E501
         new=MagicMock(return_value="NutShell"),
     )
     def test_fail_to_open_connection_to_cs(self):
@@ -189,14 +189,14 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
     )
     def test_fail_to_update_and_than_add_shell(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/nut-shell/TOSCA-Metadata/TOSCA.meta",
             contents="TOSCA-Meta-File-Version: 1.0\n"
             "CSAR-Version: 0.1.0\n"
             "Created-By: Anonymous\n"
             "Entry-Definitions: shell-definition.yaml",
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/nut-shell/shell-definition.yaml",
             contents="tosca_definitions_version: tosca_simple_yaml_1_0\n"
             "metadata:\n"
@@ -304,9 +304,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         "shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition",  # noqa: E501
         new=MagicMock(return_value="NutShell"),
     )
-    def test_install_shell_updates_official_shell_feature_unavailable(
-        self, rest_client_mock
-    ):
+    def test_install_shell_updates_official_shell_not_found(self, rest_client_mock):
         # Arrange
         mock_client = MagicMock()
         mock_client.get_shell.return_value = {SHELL_IS_OFFICIAL_FLAG: True}

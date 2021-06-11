@@ -27,7 +27,7 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
         # Constructor should return None
         mock_quali_api_client.return_value = None
 
-        file = self.fs.CreateFile("work/dest/nut_shell.zip")
+        self.fs.create_file("work/dest/nut_shell.zip")
 
         os.chdir("work")
 

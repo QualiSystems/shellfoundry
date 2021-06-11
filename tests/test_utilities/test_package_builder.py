@@ -22,17 +22,17 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         self.setUpPyfakefs()
 
     def test_it_merges_datamodel_if_shell_config_exists(self):
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/shell_model.xml", contents=""
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/shellconfig.xml", contents=""
         )
 
@@ -64,14 +64,14 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         )
 
     def test_it_does_not_merge_datamodel_if_shell_config_does_not_exist(self):
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/shellconfig.xml", contents=""
         )
 
@@ -101,27 +101,27 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         )
 
     def test_it_copies_image_files_in_the_datamodel_dir(self):
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/shellconfig.xml", contents=""
         )
-        self.fs.CreateFile("work/aws/amazon_web_services/src/driver.py", contents="")
+        self.fs.create_file("work/aws/amazon_web_services/src/driver.py", contents="")
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/iamimage.png", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/iamimage.jpg", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/iamimage.gif", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/iamimage.jpeg", contents=""
         )
 
@@ -144,18 +144,18 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         )
 
     def test_it_ignores_other_nonimage_files_in_the_datamodel_dir(self):
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/shellconfig.xml", contents=""
         )
-        self.fs.CreateFile("work/aws/amazon_web_services/src/driver.py", contents="")
+        self.fs.create_file("work/aws/amazon_web_services/src/driver.py", contents="")
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/iamimage.blah", contents=""
         )
 
@@ -173,16 +173,16 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_build_package_package_created(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/shellconfig.xml", contents=""
         )
-        self.fs.CreateFile("work/aws/amazon_web_services/src/driver.py", contents="")
+        self.fs.create_file("work/aws/amazon_web_services/src/driver.py", contents="")
         os.chdir("work")
         builder = PackageBuilder()
 
@@ -210,13 +210,13 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_pack_succeeds_when_shellconfig_is_missing(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile("work/aws/amazon_web_services/src/driver.py", contents="")
+        self.fs.create_file("work/aws/amazon_web_services/src/driver.py", contents="")
         os.chdir("work")
         builder = PackageBuilder()
 
@@ -240,13 +240,13 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_pack_succeeds_when_categories_file_is_missing(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile("work/aws/amazon_web_services/src/driver.py", contents="")
+        self.fs.create_file("work/aws/amazon_web_services/src/driver.py", contents="")
         os.chdir("work")
         builder = PackageBuilder()
 
@@ -270,16 +270,16 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_pack_succeeds_when_categories_file_exists(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/categories/categories.xml", contents=""
         )
-        self.fs.CreateFile("work/aws/amazon_web_services/src/driver.py", contents="")
+        self.fs.create_file("work/aws/amazon_web_services/src/driver.py", contents="")
         os.chdir("work")
         builder = PackageBuilder()
 
@@ -305,17 +305,17 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         )
 
     def test_it_replaces_wildcard_according_to_versioning_policy(self):
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/shellconfig.xml", contents=""
         )
-        self.fs.CreateFile("work/aws/amazon_web_services/src/driver.py", contents="")
-        self.fs.CreateFile(
+        self.fs.create_file("work/aws/amazon_web_services/src/driver.py", contents="")
+        self.fs.create_file(
             "work/aws/amazon_web_services/src/drivermetadata.xml",
             contents='<Driver Description="CloudShell shell" '
             'MainClass="driver.ImplementingDiscoveryDriver" '
@@ -355,17 +355,17 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         )
 
     def test_it_uses_the_datetime_stamp_policy_for_wildcard_versioning(self):
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/shellconfig.xml", contents=""
         )
-        self.fs.CreateFile("work/aws/amazon_web_services/src/driver.py", contents="")
-        self.fs.CreateFile(
+        self.fs.create_file("work/aws/amazon_web_services/src/driver.py", contents="")
+        self.fs.create_file(
             "work/aws/amazon_web_services/src/drivermetadata.xml",
             contents='<Driver Description="CloudShell shell" '
             'MainClass="driver.ImplementingDiscoveryDriver" '
@@ -410,17 +410,17 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         )
 
     def test_it_does_not_update_the_driver_version_when_not_needed(self):
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/metadata.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/datamodel.xml", contents=""
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/aws/amazon_web_services/datamodel/shellconfig.xml", contents=""
         )
-        self.fs.CreateFile("work/aws/amazon_web_services/src/driver.py", contents="")
-        self.fs.CreateFile(
+        self.fs.create_file("work/aws/amazon_web_services/src/driver.py", contents="")
+        self.fs.create_file(
             "work/aws/amazon_web_services/src/drivermetadata.xml",
             contents='<Driver Description="CloudShell shell" '
             'MainClass="driver.ImplementingDiscoveryDriver" '
@@ -469,7 +469,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         return etree.fromstring(xml_string, parser)
 
     def _assert_utf_file_content(self, path, content):
-        with open(path, "r") as f:
+        with open(path, "rb") as f:
             text = f.read()
 
         self.assertEqual(
@@ -489,4 +489,4 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def _assert_driver_version_equals(self, path, expected_version):
         version = self._get_driver_version_from_file(path)
-        self.assertEquals(version, expected_version)
+        self.assertEqual(version, expected_version)

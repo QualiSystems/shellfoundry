@@ -253,7 +253,7 @@ class TestTemplateRetrieverFakeFS(fake_filesystem_unittest.TestCase):
 
     def test_get_templates_from_data_folder(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "/data/templates.yml",
             contents="""
 templates:

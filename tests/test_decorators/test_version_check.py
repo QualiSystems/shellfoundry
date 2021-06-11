@@ -18,13 +18,13 @@ from shellfoundry.decorators import shellfoundry_version_check
 
 
 @shellfoundry_version_check(abort_if_major=False)
-def test_me_do_not_abort():
-    print("vido", end="")
+def do_not_abort():
+    print("vido", end="")  # noqa: T001
 
 
 @shellfoundry_version_check(abort_if_major=True)
-def test_me_abort_if_major():
-    print("vido", end="")
+def abort_if_major():
+    print("vido", end="")  # noqa: T001
 
 
 class TestShellFoundryVersionCheck(unittest.TestCase):
@@ -34,7 +34,7 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         with patch(
             "shellfoundry.utilities.get_installed_version", return_value="5.0.0"
         ), patch("shellfoundry.utilities.max_version_from_index", return_value="0.2.9"):
-            test_me_do_not_abort()
+            do_not_abort()
 
         # Assert
         self.assertEqual(stdout_mock.getvalue(), "vido")
@@ -47,7 +47,7 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         with patch(
             "shellfoundry.utilities.get_installed_version", return_value="0.2.7"
         ), patch("shellfoundry.utilities.max_version_from_index", return_value="0.3.0"):
-            test_me_do_not_abort()
+            do_not_abort()
 
         # Assert
         self.assertEqual(
@@ -63,7 +63,7 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         with patch(
             "shellfoundry.utilities.get_installed_version", return_value="0.2.7"
         ), patch("shellfoundry.utilities.max_version_from_index", return_value="1.0.0"):
-            test_me_do_not_abort()
+            do_not_abort()
 
         # Assert
         self.assertEqual(
@@ -77,7 +77,7 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         with patch(
             "shellfoundry.utilities.get_installed_version", return_value="1.0.0"
         ), patch("shellfoundry.utilities.max_version_from_index", return_value="1.0.0"):
-            test_me_do_not_abort()
+            do_not_abort()
 
         # Assert
         self.assertEqual(stdout_mock.getvalue(), "vido")
@@ -90,7 +90,7 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         with patch(
             "shellfoundry.utilities.get_installed_version", return_value="0.2.7"
         ), patch("shellfoundry.utilities.max_version_from_index", return_value="1.0.0"):
-            self.assertRaises(Abort, test_me_abort_if_major)
+            self.assertRaises(Abort, abort_if_major)
 
         # Assert
         self.assertEqual(
