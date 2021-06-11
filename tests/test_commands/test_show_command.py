@@ -105,7 +105,7 @@ class TestShowCommandExecutor(unittest.TestCase):
             "The template '{}' does not exist, please specify a valid 2nd Gen shell template.".format(  # noqa: E501
                 template_name
             )
-            in context.exception
+            in str(context.exception)
         )
 
     def test_repository_url_is_empty_raises_error(self):
@@ -126,21 +126,21 @@ class TestShowCommandExecutor(unittest.TestCase):
             ShowCommandExecutor(template_retriever_mock).show(template_name)
 
         # Assert
-        self.assertTrue("Repository url is empty" in context.exception)
+        self.assertTrue("Repository url is empty" in str(context.exception))
 
     def test_show_command_versions_request_failed_raises_error(self):
         # Arrange
         template_name = "tosca/networking/switch"
 
         shell_template = ShellTemplate(
-            "tosca/networking/switch",
-            "some description",
-            "mock://tosca/networking/switch",
-            "8.0",
+            name=template_name,
+            description="some description",
+            repository="mock://tosca/networking/switch",
+            min_cs_ver="8.0",
         )
         template_retriever_mock = MagicMock(spec=TemplateRetriever, autospec=True)
         template_retriever_mock.get_templates.return_value = {
-            "tosca/networking/switch": shell_template
+            template_name: [shell_template]
         }
 
         # Act
@@ -153,10 +153,11 @@ class TestShowCommandExecutor(unittest.TestCase):
             ShowCommandExecutor(template_retriever_mock).show(template_name)
 
         # Assert
-        self.assertTrue("Failed to receive versions from host" in context.exception)
-        # echo_mock.assert_called_once_with('1.0 (latest)')
+        self.assertTrue(
+            "No versions have been found for this template" in str(context.exception)
+        )
 
-    def test_show_command_raise_no_versions_found_when_there_are_no_versions_other_than_master(
+    def test_show_command_raise_no_versions_found_when_there_are_no_versions_other_than_master(  # noqa: E501
         self,
     ):
         # Arrange
@@ -192,7 +193,7 @@ class TestShowCommandExecutor(unittest.TestCase):
 
         # Assert
         self.assertTrue(
-            "No versions have been found for this template" in context.exception
+            "No versions have been found for this template" in str(context.exception)
         )
 
     def test_show_command_raise_no_versions_found_when_there_are_no_versions_at_all(
@@ -227,5 +228,5 @@ class TestShowCommandExecutor(unittest.TestCase):
 
         # Assert
         self.assertTrue(
-            "No versions have been found for this template" in context.exception
+            "No versions have been found for this template" in str(context.exception)
         )

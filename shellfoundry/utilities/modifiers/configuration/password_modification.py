@@ -28,7 +28,7 @@ class PasswordModification(object):
                 )
             else:
                 decoded = self._decode_encode(
-                    base64.decodebytes(value.encode()).decode(), encryption_key
+                    str(base64.decodebytes(value.encode())), encryption_key
                 )
             return decoded
         except binascii.Error:

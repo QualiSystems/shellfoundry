@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 import errno
 import os
+from io import open
 
 import click
 
@@ -23,7 +23,7 @@ class ConfigFileCreation(object):
         try:
             click.echo("Creating config file...")
             open(config_file_path, mode="w", encoding="utf8").close()
-        except:
+        except Exception:
             if not os.path.exists(config_file_path):
                 click.echo("Failed to create config file")
                 import sys

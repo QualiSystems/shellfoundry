@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import os
 import sys
 
 if sys.version_info >= (3, 0):
@@ -11,7 +11,7 @@ from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.commands.pack_command import PackCommandExecutor
 
-from tests.asserts import *
+from tests.asserts import assertFileExists
 
 
 class TestPackCommandExecutor(fake_filesystem_unittest.TestCase):
@@ -22,7 +22,7 @@ class TestPackCommandExecutor(fake_filesystem_unittest.TestCase):
     @patch("shellfoundry.utilities.python_dependencies_packager.pip_main")
     def test_build_package_package_created(self, pip_mock, echo_mock):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut_shell/shell.yml",
             contents="""
 shell:
@@ -33,10 +33,10 @@ shell:
     version: 1.0.0
     """,
         )
-        self.fs.CreateFile("nut_shell/datamodel/metadata.xml")
-        self.fs.CreateFile("nut_shell/datamodel/datamodel.xml")
-        self.fs.CreateFile("nut_shell/datamodel/shellconfig.xml")
-        self.fs.CreateFile("nut_shell/src/driver.py")
+        self.fs.create_file("nut_shell/datamodel/metadata.xml")
+        self.fs.create_file("nut_shell/datamodel/datamodel.xml")
+        self.fs.create_file("nut_shell/datamodel/shellconfig.xml")
+        self.fs.create_file("nut_shell/src/driver.py")
         os.chdir("nut_shell")
 
         command_executor = PackCommandExecutor()
@@ -54,7 +54,7 @@ shell:
         self, pip_mock, echo_mock
     ):
         # Arrange
-        self.fs.CreateFile("nut_shell/shell.yml", contents="WRONG YAML FORMAT")
+        self.fs.create_file("nut_shell/shell.yml", contents="WRONG YAML FORMAT")
         os.chdir("nut_shell")
 
         command_executor = PackCommandExecutor()
@@ -71,7 +71,7 @@ shell:
         self, pip_mock, echo_mock
     ):
         # Arrange
-        self.fs.CreateFile("nut_shell/datamodel/datamodel.xml")
+        self.fs.create_file("nut_shell/datamodel/datamodel.xml")
         os.chdir("nut_shell")
 
         command_executor = PackCommandExecutor()
@@ -86,7 +86,7 @@ shell:
     @patch("shellfoundry.utilities.python_dependencies_packager.pip_main")
     def test_pack_layer_one_shell(self, pip_mock, secho_mock):
         # Arrange
-        self.fs.CreateFile("cloudshell-L1-test/datamodel/datamodel.xml")
+        self.fs.create_file("cloudshell-L1-test/datamodel/datamodel.xml")
         os.chdir("cloudshell-L1-test")
 
         command_executor = PackCommandExecutor()
@@ -105,7 +105,7 @@ shell:
         self, pack_mock
     ):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/TOSCA-Metadata/TOSCA.meta",
             contents="TOSCA-Meta-File-Version: 1.0 \n"
             "CSAR-Version: 1.1 \n"
@@ -113,7 +113,7 @@ shell:
             "Entry-Definitions: shell-definition.yml",
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/shell-definition.yml", contents="SOME SHELL DEFINITION"
         )
 

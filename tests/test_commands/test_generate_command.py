@@ -19,7 +19,7 @@ class TestGenerateCommandExecutor(fake_filesystem_unittest.TestCase):
 
     def test_generate_driver_not_called_on_non_tosca_based_shell(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut_shell/shell.yml",
             contents="""
 shell:
@@ -42,7 +42,7 @@ shell:
 
     def test_generate_driver_called_on_tosca_based_shell(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut_shell/shell.yml",
             contents="""
 shell:
@@ -51,7 +51,7 @@ shell:
     """,
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut_shell/TOSCA-Metadata/TOSCA.meta",
             contents="""
 TOSCA-Meta-File-Version: 1.0
@@ -61,7 +61,7 @@ Entry-Definitions: shell-definition.yml
     """,
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut_shell/shell-definition.yml",
             contents="""
         metadata:

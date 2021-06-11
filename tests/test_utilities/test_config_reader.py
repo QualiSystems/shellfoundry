@@ -23,7 +23,8 @@ class TestConfigReader(fake_filesystem_unittest.TestCase):
 
     def test_read_config_all_settings_are_set(self):
         # Arrange
-        self.fs.CreateFile(
+
+        self.fs.create_file(
             "shell_name/cloudshell_config.yml",
             contents="""
 install:
@@ -49,7 +50,7 @@ install:
 
     def test_read_only_install_section_default_settings(self):
         # Arrange
-        self.fs.CreateFile("shell_name/cloudshell_config.yml", contents="install:")
+        self.fs.create_file("shell_name/cloudshell_config.yml", contents="install:")
         os.chdir("shell_name")
         reader = Configuration(CloudShellConfigReader())
 
@@ -79,7 +80,7 @@ install:
 
     def test_read_file_is_empty_default_settings(self):
         # Arrange
-        self.fs.CreateFile("shell_name/cloudshell_config.yml", contents="")
+        self.fs.create_file("shell_name/cloudshell_config.yml", contents="")
         os.chdir("shell_name")
         reader = Configuration(CloudShellConfigReader())
 
@@ -96,7 +97,7 @@ install:
     @patch("shellfoundry.utilities.config.config_providers.click.get_app_dir")
     def test_read_config_data_from_global_configuration(self, get_app_dir_mock):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "Quali/shellfoundry/global_config.yml",
             contents="""
 install:
@@ -118,7 +119,7 @@ install:
 
     def test_read_shellfoundry_settings_all_config_are_set(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "shell_name/cloudshell_config.yml",
             contents="""
 install:
@@ -145,7 +146,7 @@ install:
         self.assertEqual(settings.defaultview, "gen2")
 
     def test_non_valid_config_file_read_default(self):
-        self.fs.CreateFile(
+        self.fs.create_file(
             "shell_name/cloudshell_config.yml",
             contents="""
 invalidsection:

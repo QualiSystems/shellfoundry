@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 import json
 import os
 import re
 from collections import OrderedDict, defaultdict
+from io import open
 from threading import RLock, Thread
 
 import click
@@ -157,11 +157,6 @@ class TemplateRetriever(object):
 
     @staticmethod
     def _get_standard_out_of_name(template_name, default=None):
-        """
-
-        :type template_name str
-        :return:
-        """
         type_index = 0
         standard_index = 1
         template = template_name.split(SEPARATOR)

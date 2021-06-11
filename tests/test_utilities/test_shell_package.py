@@ -45,14 +45,14 @@ class TestShellPackageWithFileSystem(fake_filesystem_unittest.TestCase):
 
     def test_get_shell_from_definition(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/nut-shell/TOSCA-Metadata/TOSCA.meta",
             contents="TOSCA-Meta-File-Version: 1.0\n"
             "CSAR-Version: 0.1.0\n"
             "Created-By: Anonymous\n"
             "Entry-Definitions: shell-definition.yaml",
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/nut-shell/shell-definition.yaml",
             contents="tosca_definitions_version: tosca_simple_yaml_1_0\n"
             "metadata:\n"
@@ -81,14 +81,14 @@ class TestShellPackageWithFileSystem(fake_filesystem_unittest.TestCase):
 
     def test_get_shell_from_definition_with_hard_reload(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/nut-shell/TOSCA-Metadata/TOSCA.meta",
             contents="TOSCA-Meta-File-Version: 1.0\n"
             "CSAR-Version: 0.1.0\n"
             "Created-By: Anonymous\n"
             "Entry-Definitions: shell-definition.yaml",
         )
-        self.fs.CreateFile(
+        self.fs.create_file(
             "work/nut-shell/shell-definition.yaml",
             contents="tosca_definitions_version: tosca_simple_yaml_1_0\n"
             "metadata:\n"

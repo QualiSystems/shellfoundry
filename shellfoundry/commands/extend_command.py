@@ -18,7 +18,6 @@ from shellfoundry.utilities.modifiers.definition.definition_modification import 
     DefinitionModification,
 )
 from shellfoundry.utilities.repository_downloader import RepositoryDownloader
-from shellfoundry.utilities.shell_package import ShellPackage
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 from shellfoundry.utilities.validations import (
     ShellGenerationValidations,
@@ -37,7 +36,7 @@ class ExtendCommandExecutor(object):
         shell_name_validations=None,
         shell_gen_validations=None,
     ):
-        """
+        """Creates a new shell based on an already existing shell.
 
         :param RepositoryDownloader repository_downloader:
         :param ShellNameValidations shell_name_validations:

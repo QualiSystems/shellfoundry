@@ -6,6 +6,7 @@ except ImportError:
     from urllib2 import URLError
 
 import zipfile
+from io import open
 from os import path
 
 import click

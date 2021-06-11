@@ -1,6 +1,8 @@
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from io import open
+
 import yaml
 
 from shellfoundry.utilities.config_reader import INSTALL
@@ -17,13 +19,13 @@ class ConfigContext(object):
     def try_save(self, key, value):
         try:
             with open(self.config_file_path, mode="r+", encoding="utf8") as stream:
-                data = yaml.safe_load(stream) or {INSTALL: dict()}
+                data = yaml.safe_load(stream) or {INSTALL: {}}
                 data[INSTALL][key] = self._modify(key, value)
                 stream.seek(0)
                 stream.truncate()
                 yaml.safe_dump(data, stream=stream, default_flow_style=False)
             return True
-        except Exception as e:
+        except Exception:
             return False
 
     def try_delete(self, key):
@@ -35,7 +37,7 @@ class ConfigContext(object):
                 stream.truncate()
                 yaml.safe_dump(data, stream=stream, default_flow_style=False)
             return True
-        except:
+        except Exception:
             return False
 
     def _modify(self, key, value):

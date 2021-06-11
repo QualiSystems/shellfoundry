@@ -1,0 +1,189 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+  release:
+    types: [published]
+
+jobs:
+  tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install pip -U
+          pip install tox codecov
+      - name: Set TOXENV
+        run: |
+          python_version="${{ matrix.python-version }}"
+          py_version="${python_version/./}"
+          target_branch=${{ github.base_ref || github.ref }}
+          target_branch=(`[[ ${target_branch::10} == 'refs/heads' ]] && echo ${target_branch:11} || echo $target_branch`)
+          echo "target_branch =" $target_branch
+          is_master=(`[[ $target_branch == 'master' ]] && echo 'true' || echo 'false'`)
+          is_tag=${{ startsWith(github.ref, 'refs/tags') }}
+          echo "is_master =" $is_master
+          echo "is_tag =" $is_tag
+          branch=(`[[ $is_master == 'true' || $is_tag == 'true' ]] && echo 'master' || echo 'dev'`)
+          TOXENV="py$py_version-$branch"
+          echo $TOXENV
+          echo "TOXENV=$TOXENV" >> $GITHUB_ENV
+      - name: Run tox
+        run: tox
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
+          verbose: true
+  pre-commit:
+    name: Run pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install pip -U
+          pip install tox
+      - name: Run pre-commit
+        env:
+          TOXENV: pre-commit
+        run: tox
+  build:
+    name: Build package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install pip -U
+          pip install tox
+      - name: Build
+        env:
+          TOXENV: build
+        run: tox
+  check-version:
+    name: Check version
+    # only for PRs in master
+    if: ${{ github.base_ref == 'master' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Check version
+        run: |
+          git clone https://github.com/${{ github.repository }}.git ${{ github.repository }}
+          cd ${{ github.repository }}
+          git checkout -qf ${{ github.head_ref }}
+          ! git diff --exit-code --quiet origin/master version.txt
+  deploy-to-test-pypi:
+    needs: [tests, pre-commit, build]
+    if: ${{ github.ref == 'refs/heads/dev' && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install pip -U
+          pip install tox
+      - name: Add id to a package version
+        run: sed -i -E "s/^([0-9]+\.[0-9]+\.[0-9]+)$/\1.${{ github.run_number }}/" version.txt
+      - name: Build
+        env:
+          TOXENV: build
+        run: tox
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@v1.4.1
+        with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+  create-gh-release:
+    needs: [tests, pre-commit, build]
+    if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install pip -U
+          pip install tox
+      - name: Build
+        env:
+          TOXENV: build
+        run: tox
+      - name: Set envs
+        run: |
+          version="$(cat version.txt | tr -d ' \t\n\r')"
+          repo_owner=${{ github.repository }}
+          index=`expr index "$repo_owner" /`
+          repo=${repo_owner:index}
+          echo "TAG=$version" >> $GITHUB_ENV
+          echo "REPO=$repo" >> $GITHUB_ENV
+      - name: Create GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "dist/*"
+          draft: true
+          name: ${{ env.REPO }} ${{ env.TAG }}
+          tag: ${{ env.TAG }}
+          commit: master
+  deploy-to-pypi:
+    needs: [tests, pre-commit, build]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python -m pip install pip -U
+          pip install tox
+      - name: Build
+        env:
+          TOXENV: build
+        run: tox
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@v1.4.1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}

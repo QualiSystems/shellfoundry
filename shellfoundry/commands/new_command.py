@@ -4,6 +4,7 @@
 import json
 import os
 import re
+from io import open
 
 import click
 from cloudshell.rest.exceptions import FeatureUnavailable
@@ -43,7 +44,7 @@ class NewCommandExecutor(object):
         standard_versions=None,
         shell_name_validations=None,
     ):
-        """
+        """Creates shell based on template and standards.
 
         :param CookiecutterTemplateCompiler template_compiler:
         :param TemplateRetriever template_retriever:
@@ -110,7 +111,7 @@ class NewCommandExecutor(object):
                 standards,
                 python_version,
             )
-        # Get template from local from location defined in shellfoundry configuration
+        # Get template from location defined in shellfoundry configuration
         else:
             template = self._get_local_template_full_path(template, standards, version)
             self._import_local_template(

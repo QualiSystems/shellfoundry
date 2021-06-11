@@ -72,7 +72,7 @@ class TestListCommand(unittest.TestCase):
         )
 
         # Assert
-        self.assertRaisesRegexp(UsageError, "offline", list_command_executor.list)
+        self.assertRaisesRegex(UsageError, "offline", list_command_executor.list)
 
     @patch("click.echo")
     @patch("shellfoundry.commands.list_command.AsciiTable.column_max_width")
@@ -160,11 +160,11 @@ class TestListCommand(unittest.TestCase):
         echo_mock.assert_any_call(
             u" Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
             u"-----------------------------------------------------------------------------------------------\n"  # noqa: E501
+            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
+            u"                                                      devices/virtual appliances               \n"  # noqa: E501
             u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
             u"                                                      WirelessController devices/virtual       \n"  # noqa: E501
-            u"                                                      appliances                               \n"  # noqa: E501
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
-            u"                                                      devices/virtual appliances               "  # noqa: E501
+            u"                                                      appliances                               "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -213,8 +213,8 @@ class TestListCommand(unittest.TestCase):
         echo_mock.assert_called_once_with(
             u" Template Name                       CloudShell Ver.  Description                                                                     \n"  # noqa: E501
             u"--------------------------------------------------------------------------------------------------------------------------------------\n"  # noqa: E501
-            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard WirelessController devices/virtual appliances \n"  # noqa: E501
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch devices/virtual appliances             "  # noqa: E501
+            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch devices/virtual appliances             \n"  # noqa: E501
+            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard WirelessController devices/virtual appliances "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -268,11 +268,11 @@ class TestListCommand(unittest.TestCase):
         echo_mock.assert_any_call(
             u" Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
             u"-----------------------------------------------------------------------------------------------\n"  # noqa: E501
+            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
+            u"                                                      devices/virtual appliances               \n"  # noqa: E501
             u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
             u"                                                      WirelessController devices/virtual       \n"  # noqa: E501
-            u"                                                      appliances                               \n"  # noqa: E501
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
-            u"                                                      devices/virtual appliances               "  # noqa: E501
+            u"                                                      appliances                               "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -383,19 +383,19 @@ class TestListCommand(unittest.TestCase):
         echo_mock.assert_any_call(
             u" Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
             u"-----------------------------------------------------------------------------------------------\n"  # noqa: E501
-            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
-            u"                                                      WirelessController devices/virtual       \n"  # noqa: E501
-            u"                                                      appliances                               \n"  # noqa: E501
             u" gen1/base                           7.0 and up       base description                         \n"  # noqa: E501
             u" gen1/switch                         7.0 and up       switch description                       \n"  # noqa: E501
             u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
-            u"                                                      devices/virtual appliances               "  # noqa: E501
+            u"                                                      devices/virtual appliances               \n"  # noqa: E501
+            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
+            u"                                                      WirelessController devices/virtual       \n"  # noqa: E501
+            u"                                                      appliances                               "  # noqa: E501
         )
 
-    # @patch('click.echo')
+    @patch("click.echo")
     @patch("shellfoundry.commands.list_command.AsciiTable.column_max_width")
     def test_list_shows_nothing_because_filter_is_set_for_templates_that_do_not_exist(
-        self, max_width_mock
+        self, max_width_mock, echo_mock
     ):
         # Arrange
         max_width_mock.return_value = 40
@@ -433,15 +433,15 @@ class TestListCommand(unittest.TestCase):
         )
 
         # Act
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ClickException,
-            "No templates matched the view criteria\(gen1/gen2\) or "
+            r"No templates matched the view criteria\(gen1/gen2\) or "
             "available templates and standards are not compatible",
         ):
             list_command_executor.list()
 
             # Assert
-            # echo_mock.assert_called_once_with("No templates matched the criteria")
+            echo_mock.assert_called_once_with("No templates matched the criteria")
 
     @patch("click.echo")
     @patch("shellfoundry.commands.list_command.AsciiTable.column_max_width")
@@ -489,8 +489,11 @@ class TestListCommand(unittest.TestCase):
         # Assert
         echo_mock.assert_any_call(
             """
-As of CloudShell 8.0, CloudShell uses 2nd generation shells, to view the list of 1st generation shells use: shellfoundry list --gen1.  # noqa: E501
-For more information, please visit our devguide: https://qualisystems.github.io/devguide/"""  # noqa: E501
+As of CloudShell 8.0, CloudShell uses 2nd generation shells,
+to view the list of 1st generation shells use: shellfoundry list --gen1.
+For more information, please visit our devguide:
+https://qualisystems.github.io/devguide/
+"""
         )
 
     @patch("click.echo")

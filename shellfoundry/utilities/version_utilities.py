@@ -16,4 +16,4 @@ class DriverVersionTimestampBased:
 
     @staticmethod
     def supports_version_pattern(version):
-        return re.match("\d+\.\d+\.\*$", version)
+        return re.match(r"\d+\.\d+\.\*$", version)

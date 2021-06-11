@@ -35,7 +35,7 @@ class shellfoundry_version_check(object):
 
                         if self.abort_if_major:
                             click.secho(output, fg="yellow")
-                            print("")
+                            print("")  # noqa: T001
                             raise click.Abort()
                     else:
                         output = (
@@ -46,7 +46,7 @@ class shellfoundry_version_check(object):
             f(**kwargs)
 
             if output:
-                print("")
+                print("")  # noqa: T001
                 click.secho(output, fg="yellow")
 
         return update_wrapper(decorator, f)

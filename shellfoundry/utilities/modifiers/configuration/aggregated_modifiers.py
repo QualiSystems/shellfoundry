@@ -3,7 +3,9 @@
 
 from .password_modification import PasswordModification
 
-DEFAULT_MODIFIER = lambda x: x  # Default modifier returns the passed value unchanged
+DEFAULT_MODIFIER = (
+    lambda x: x
+)  # Default modifier returns the passed value unchanged  # noqa: E731
 
 
 class AggregatedModifiers(object):

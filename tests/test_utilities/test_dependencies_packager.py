@@ -21,7 +21,7 @@ class TestPythonDependenciesPackager(fake_filesystem_unittest.TestCase):
 
     def test_calls_pip_to_download_dependencies(self):
         requirements_file = "req/requirements.requirements_file"
-        self.fs.CreateFile(requirements_file, contents="")
+        self.fs.create_file(requirements_file, contents="")
 
         with patch(
             "shellfoundry.utilities.python_dependencies_packager.pip_main"
@@ -45,7 +45,7 @@ class TestPythonDependenciesPackager(fake_filesystem_unittest.TestCase):
             environ_mock.return_value = "HTTP PROXY"
 
             requirements_file = "req/requirements.requirements_file"
-            self.fs.CreateFile(requirements_file, contents="")
+            self.fs.create_file(requirements_file, contents="")
 
             with patch(
                 "shellfoundry.utilities.python_dependencies_packager.pip_main"
@@ -66,15 +66,15 @@ class TestPythonDependenciesPackager(fake_filesystem_unittest.TestCase):
 
     def test_removed_old_files_before_running(self):
         requirements_file = "req/requirements.requirements_file"
-        self.fs.CreateFile(requirements_file, contents="")
+        self.fs.create_file(requirements_file, contents="")
         file = "dst/test.txt"
-        self.fs.CreateFile(file, contents="")
+        self.fs.create_file(file, contents="")
         nested_file = "dst/nested/test.txt"
-        self.fs.CreateFile(nested_file, contents="")
+        self.fs.create_file(nested_file, contents="")
 
         with patch(
             "shellfoundry.utilities.python_dependencies_packager.pip_main"
-        ) as mock_pip:
+        ) as mock_pip:  # noqa: F841
             # Act
             packager = PythonDependenciesPackager()
             packager.save_offline_dependencies(requirements_file, "dst")

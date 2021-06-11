@@ -14,7 +14,7 @@ class TestDriverVersionTimestampBased(unittest.TestCase):
         with freeze_time("2012-01-14 12:00:01"):
             version_freezed = DriverVersionTimestampBased.get_version("1.2.*")
 
-        self.assertEquals(version_freezed, "1.2.4396.21600")
+        self.assertEqual(version_freezed, "1.2.4396.21600")
 
     def test_it_gets_a_higher_build_and_revision_values_each_time(self):
         with freeze_time("2012-01-14 12:00:01"):
@@ -23,9 +23,9 @@ class TestDriverVersionTimestampBased(unittest.TestCase):
         with freeze_time("2012-01-14 12:00:10"):
             version2 = DriverVersionTimestampBased.get_version("1.2.*")
 
-        self.assertNotEquals(version1, version2)
-        self.assertEquals(version1, "1.2.4396.21600")
-        self.assertEquals(version2, "1.2.4396.21605")
+        self.assertNotEqual(version1, version2)
+        self.assertEqual(version1, "1.2.4396.21600")
+        self.assertEqual(version2, "1.2.4396.21605")
 
     def test_it_supports_one_build_wildcard(self):
         self.assertTrue(DriverVersionTimestampBased.supports_version_pattern("1.2.*"))

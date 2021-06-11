@@ -1,4 +1,3 @@
-Sphinx==1.3.1
 pre-commit
 tox
 -r test_requirements.txt

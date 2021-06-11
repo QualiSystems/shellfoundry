@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+from io import open
 
 import yaml
 
@@ -66,7 +67,7 @@ class Configuration(object):
         if config_path is None or not os.path.isfile(config_path):
             return self.reader.get_defaults()
 
-        with open(config_path, encoding="utf8") as stream:
+        with open(config_path) as stream:
             config = yaml.safe_load(stream.read())
 
         if not config or INSTALL not in config:
@@ -76,8 +77,9 @@ class Configuration(object):
 
     @staticmethod
     def readall(config_path, mark_defaults=None):
-        """
-        Reads configuration from given file and adds missing keys with their defaults.
+        """Reads configuration from given file.
+
+        Missing keys will be filled with their defaults.
         """
         config_data = None
         if os.path.exists(config_path):
@@ -85,17 +87,17 @@ class Configuration(object):
                 config_data = yaml.safe_load(conf_file)
 
         if not config_data or INSTALL not in config_data:
-            config_data = {INSTALL: dict()}
+            config_data = {INSTALL: {}}
 
         mark_defaults_f = Configuration._mark_defaults
-        install_cfg_def = dict(
+        install_cfg_def = {
             (k, mark_defaults_f(v, mark_defaults))
             for k, v in InstallConfig.get_default().__dict__.items()
-        )
-        sf_cfg_def = dict(
+        }
+        sf_cfg_def = {
             (k, mark_defaults_f(v, mark_defaults))
             for k, v in ShellFoundrySettings.get_default().__dict__.items()
-        )
+        }
         all_cfg = dict(install_cfg_def)
         all_cfg.update(sf_cfg_def)
         all_cfg.update(config_data[INSTALL])

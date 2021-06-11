@@ -22,7 +22,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_tosca_based_shell_packed(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/TOSCA-Metadata/TOSCA.meta",
             contents="TOSCA-Meta-File-Version: 1.0 \n"
             "CSAR-Version: 1.1 \n"
@@ -30,7 +30,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             "Entry-Definitions: shell-definition.yml",
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/shell-definition.yml",
             contents="tosca_definitions_version: tosca_simple_yaml_1_0\n"
             "metadata:\n"
@@ -49,9 +49,9 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             "        type: tosca.artifacts.File",
         )
 
-        self.fs.CreateFile("nut-shell/nxos.png", contents="IMAGE")
+        self.fs.create_file("nut-shell/nxos.png", contents="IMAGE")
 
-        self.fs.CreateFile("nut-shell/src/driver.py", contents="DRIVER CONTENT")
+        self.fs.create_file("nut-shell/src/driver.py", contents="DRIVER CONTENT")
 
         os.chdir("nut-shell")
 
@@ -72,7 +72,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_tosca_based_shell_with_icon_packed(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/TOSCA-Metadata/TOSCA.meta",
             contents="TOSCA-Meta-File-Version: 1.0 \n"
             "CSAR-Version: 1.1 \n"
@@ -80,7 +80,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             "Entry-Definitions: shell-definition.yml",
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/shell-definition.yml",
             contents="tosca_definitions_version: tosca_simple_yaml_1_0\n"
             "metadata:\n"
@@ -100,9 +100,9 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             "        type: tosca.artifacts.File",
         )
 
-        self.fs.CreateFile("nut-shell/shell.png", contents="SHELL_IMAGE")
-        self.fs.CreateFile("nut-shell/nxos.png", contents="IMAGE")
-        self.fs.CreateFile("nut-shell/src/driver.py", contents="DRIVER CONTENT")
+        self.fs.create_file("nut-shell/shell.png", contents="SHELL_IMAGE")
+        self.fs.create_file("nut-shell/nxos.png", contents="IMAGE")
+        self.fs.create_file("nut-shell/src/driver.py", contents="DRIVER CONTENT")
 
         os.chdir("nut-shell")
 
@@ -124,7 +124,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_tosca_based_shell_with_underscore_packed(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut_shell/TOSCA-Metadata/TOSCA.meta",
             contents="TOSCA-Meta-File-Version: 1.0 \n"
             "CSAR-Version: 1.1 \n"
@@ -132,7 +132,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             "Entry-Definitions: shell-definition.yml",
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut_shell/shell-definition.yml",
             contents="tosca_definitions_version: tosca_simple_yaml_1_0\n"
             "metadata:\n"
@@ -151,8 +151,8 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             "        type: tosca.artifacts.File",
         )
 
-        self.fs.CreateFile("nut_shell/nxos.png", contents="IMAGE")
-        self.fs.CreateFile("nut_shell/src/driver.py", contents="DRIVER CONTENT")
+        self.fs.create_file("nut_shell/nxos.png", contents="IMAGE")
+        self.fs.create_file("nut_shell/src/driver.py", contents="DRIVER CONTENT")
 
         os.chdir("nut_shell")
 
@@ -173,7 +173,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_tosca_based_shell_packed_when_artifacts_missing_in_yaml_file(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/TOSCA-Metadata/TOSCA.meta",
             contents="TOSCA-Meta-File-Version: 1.0 \n"
             "CSAR-Version: 1.1 \n"
@@ -181,7 +181,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             "Entry-Definitions: shell-definition.yml",
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/shell-definition.yml",
             contents="tosca_definitions_version: tosca_simple_yaml_1_0\n"
             "metadata:\n"
@@ -210,7 +210,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_tosca_based_shell_packed_when_some_artifacts_missing_in_directory(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/TOSCA-Metadata/TOSCA.meta",
             contents="TOSCA-Meta-File-Version: 1.0 \n"
             "CSAR-Version: 1.1 \n"
@@ -218,7 +218,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             "Entry-Definitions: shell-definition.yml",
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/shell-definition.yml",
             contents="tosca_definitions_version: tosca_simple_yaml_1_0\n"
             "metadata:\n"
@@ -251,7 +251,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
 
     def test_tosca_based_shell_failed(self):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/TOSCA-Metadata/TOSCA.meta",
             contents="TOSCA-Meta-File-Version: 1.0 \n"
             "CSAR-Version: 1.1 \n"
@@ -259,7 +259,7 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             "Entry-Definitions: shell-definition.yml",
         )
 
-        self.fs.CreateFile(
+        self.fs.create_file(
             "nut-shell/shell-definition.yml",
             contents="tosca_definitions_version: tosca_simple_yaml_1_0\n"
             "metadata:\n"
@@ -278,13 +278,13 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             "        type: tosca.artifacts.File",
         )
 
-        self.fs.CreateFile("nut-shell/nxos.png", contents="IMAGE")
+        self.fs.create_file("nut-shell/nxos.png", contents="IMAGE")
 
         os.chdir("nut-shell")
 
         shell_package_builder = ShellPackageBuilder()
 
         # Act
-        with self.assertRaisesRegexp(Exception, "Invalid driver structure."):
+        with self.assertRaisesRegex(Exception, "Invalid driver structure."):
             with patch("click.echo"):
                 shell_package_builder.pack("/nut-shell")

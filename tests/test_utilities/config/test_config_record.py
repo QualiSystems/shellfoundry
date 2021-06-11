@@ -80,7 +80,7 @@ class TestConfigRecord(fake_filesystem_unittest.TestCase):
     @patch("shellfoundry.utilities.config.config_file_creation.click.echo")
     def test_failed_to_save_new_record(self, echo_mock):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "/quali/shellfoundry/global_config.yml",
             contents="""
 install:
@@ -96,7 +96,7 @@ install:
 
         # Assert
         echo_mock.assert_called_once_with("Failed to save key value")
-        file_content = self.fs.GetObject(
+        file_content = self.fs.get_object(
             "/quali/shellfoundry/global_config.yml"
         ).contents
         import os
@@ -118,7 +118,7 @@ install:
     @patch("shellfoundry.utilities.config.config_file_creation.click.echo")
     def test_failed_to_delete_record(self, echo_mock):
         # Arrange
-        self.fs.CreateFile(
+        self.fs.create_file(
             "/quali/shellfoundry/global_config.yml",
             contents="""
 install:
@@ -134,7 +134,7 @@ install:
 
         # Assert
         echo_mock.assert_called_once_with("Failed to delete key")
-        file_content = self.fs.GetObject(
+        file_content = self.fs.get_object(
             "/quali/shellfoundry/global_config.yml"
         ).contents
         import os

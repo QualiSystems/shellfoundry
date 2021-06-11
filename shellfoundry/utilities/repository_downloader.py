@@ -4,6 +4,7 @@
 import os
 import zipfile
 from abc import ABCMeta, abstractmethod
+from io import open
 
 import requests
 
@@ -67,7 +68,7 @@ class RepositoryDownloader(object):
             raise VersionRequestException(
                 "Failed to download zip file from {}".format(url)
             )
-        with open(local_filename, "wb", encoding="utf8") as f:
+        with open(local_filename, "wb") as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:  # filter out keep-alive new chunks
                     f.write(chunk)

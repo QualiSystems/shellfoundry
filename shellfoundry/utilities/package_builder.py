@@ -76,8 +76,8 @@ class PackageBuilder(object):
 
     @staticmethod
     def _is_image(file):
-        type, encoding = mimetypes.guess_type(file)
-        return type and "image" in type
+        file_type, encoding = mimetypes.guess_type(file)
+        return file_type and "image" in file_type
 
     @staticmethod
     def _copy_images(package_path, path):

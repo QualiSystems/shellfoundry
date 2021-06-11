@@ -2,7 +2,16 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from shellfoundry.utilities.filters import *
+from shellfoundry.utilities.filters import (
+    GEN_ONE,
+    GEN_TWO,
+    LAYER_ONE,
+    CompositeFilter,
+    GenOneFilter,
+    GenTwoFilter,
+    LayerOneFilter,
+    NoFilter,
+)
 
 
 class TestFilters(unittest.TestCase):

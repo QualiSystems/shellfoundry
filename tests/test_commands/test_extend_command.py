@@ -6,13 +6,11 @@ import sys
 import unittest
 
 if sys.version_info >= (3, 0):
-    from unittest import TestCase
     from unittest.mock import MagicMock, patch
 else:
     from mock import MagicMock, patch
-    from unittest import TestCase
 
-from click import BadParameter, ClickException, UsageError
+from click import BadParameter, ClickException
 
 from shellfoundry.commands.extend_command import ExtendCommandExecutor
 from shellfoundry.exceptions import VersionRequestException
@@ -42,7 +40,7 @@ class TestExtendCommandExecutor(unittest.TestCase):
     def test_extend_incorrect_arguments(self):
 
         with patch("shellfoundry.commands.extend_command.TempDirContext"):
-            with self.assertRaisesRegexp(
+            with self.assertRaisesRegex(
                 BadParameter, u"Check correctness of entered attributes"
             ):
                 self.tested_instance.extend("local:some_path", ("new_attribute",))
@@ -106,7 +104,7 @@ class TestExtendCommandExecutor(unittest.TestCase):
     )
     def test_extend_not_2_gen_shell(self):
         with patch("shellfoundry.commands.extend_command.TempDirContext"):
-            with self.assertRaisesRegexp(
+            with self.assertRaisesRegex(
                 ClickException, u"Invalid second generation Shell."
             ):
                 self.tested_instance.extend("some_path", ("new_attribute",))

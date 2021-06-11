@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 import os
+from io import open
 
 import yaml
 
@@ -19,7 +19,7 @@ class ShellPackage(object):
         return shell_name.title().replace("-", "").replace("_", "")
 
     def get_name_from_definition(self, should_reload=False):
-        """
+        """Get shell name from shell-definition.yaml.
 
         :param bool should_reload: Should reload from
         :return: template name section from shell-definition.yml or equivalent written in entry definition in tosca.meta  # noqa: E501
@@ -45,8 +45,8 @@ class ShellPackage(object):
     def _reload_name(self):
         """Reloads the name from the entry definition in the tosca.meta file."""
         # fetch entry definition from tosca.meta file
-        with open(self.get_metadata_path(), encoding="utf8") as stream:
-            s = stream.read()
+        with open(self.get_metadata_path()) as stream:
+            s = str(stream.read())
             entry_definition = dict(
                 list(map(str.strip, line.split(":", 1)))
                 for line in s.splitlines()
