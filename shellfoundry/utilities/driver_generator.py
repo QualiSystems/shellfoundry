@@ -71,11 +71,7 @@ class DriverGenerator(object):
         token = client.token
         response = post(
             url,
-            files={
-                path.basename(shell_filename): open(
-                    package_full_path, "rb"
-                )
-            },
+            files={path.basename(shell_filename): open(package_full_path, "rb")},
             headers={"Authorization": "Basic " + token},
         )
 
