@@ -71,11 +71,7 @@ class DriverGenerator(object):
         token = client.token
         response = post(
             url,
-            files={
-                path.basename(shell_filename): open(
-                    package_full_path, "rb", encoding="utf8"
-                )
-            },
+            files={path.basename(shell_filename): open(package_full_path, "rb")},
             headers={"Authorization": "Basic " + token},
         )
 
@@ -90,7 +86,7 @@ class DriverGenerator(object):
         with TempDirContext(remove_dir_on_error=False, prefix=shell_name) as temp_dir:
             generated_zip = path.join(temp_dir, shell_filename)
             click.echo("Writing temporary file {0}".format(generated_zip))
-            with open(generated_zip, "wb", encoding="utf8") as driver_file:
+            with open(generated_zip, "wb") as driver_file:
                 driver_file.write(response.content)
 
             click.echo("Extracting generated code at {0}".format(destination_path))
