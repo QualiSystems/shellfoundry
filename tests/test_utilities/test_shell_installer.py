@@ -35,13 +35,13 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
             "localhost",
             9000,
             "YOUR_USERNAME",
-            "YOUR_PASSWORD",
+            "LAUOKwE=",
             "Global",
             "author",
             "online_mode",
             "template_location",
             "github_login",
-            "github_password",
+            "LAUOKwE=",
         )
 
         shell_installer = ShellInstaller()

@@ -18,25 +18,25 @@ class TestInstallConfig(unittest.TestCase):
             host="localhost",
             port=9000,
             username="username",
-            password="password",
+            password="LAUOKwE=",
             domain="Global",
             author="Quali",
             online_mode="Online_mode",
             template_location="template_location",
             github_login="github_login",
-            github_password="password",
+            github_password="LAUOKwE=",
         )
         config2 = InstallConfig(
             host="localhost",
             port=9000,
             username="username",
-            password="password",
+            password="LAUOKwE=",
             domain="Global",
             author="Quali",
             online_mode="Online_mode",
             template_location="template_location",
             github_login="github_login",
-            github_password="password",
+            github_password="LAUOKwE=",
         )
 
         self.assertEqual(config1, config2)
@@ -46,13 +46,13 @@ class TestInstallConfig(unittest.TestCase):
             "localhost",
             9000,
             "YOUR_USERNAME",
-            "YOUR_PASSWORD",
+            "LAUOKwE=",
             "Global",
             "author",
             "online_mode",
             "template_location",
             "github_login",
-            "github_password",
+            "LAUOKwE=",
         )
         config2 = InstallConfig(
             "remote",
