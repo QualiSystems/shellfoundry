@@ -154,6 +154,7 @@ class TemplateRetriever(object):
                         )
                         if match:
                             return str(match.groupdict()["version"].replace("_", "."))
+        return "0.1.0"
 
     @staticmethod
     def _get_standard_out_of_name(template_name, default=None):
