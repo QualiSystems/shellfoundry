@@ -1,6 +1,12 @@
 =======
 History
 =======
+1.2.21 (2022-03-31)
+-------------------
+
+* Fixed issue with list command in offline mode
+* Fixed GH issue "Uninformative error message when configured domain is incorrect #254"
+* Fixed GH issue "'Error' word repeats twice #251"
 
 1.2.20 (2021-08-19)
 -------------------

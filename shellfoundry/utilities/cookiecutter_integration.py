@@ -53,7 +53,11 @@ class CookiecutterTemplateCompiler(object):
                 output_dir=output_dir,
             )
         except OutputDirExistsException as err:
-            raise ClickException(str(err))
+            if str(err).startswith("Error: "):
+                msg = str(err)[6:].strip()
+            else:
+                msg = str(err)
+            raise ClickException(msg)
 
     @staticmethod
     def _remove_template_info_file(shell_path):

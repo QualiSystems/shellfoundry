@@ -58,7 +58,8 @@ class TestClientWrapper(unittest.TestCase):
         self, api_mock
     ):
         # Arrange
-        error = HTTPError("url", 401, "not found", None, None)
+        error_msg = "not found"
+        error = HTTPError("url", 401, error_msg, None, None)
         api_mock.side_effect = [error, error]
 
         # Act
@@ -68,7 +69,7 @@ class TestClientWrapper(unittest.TestCase):
         # Assert
         self.assertEqual(
             context.exception.message,
-            u"Login to CloudShell failed. Please verify the credentials in the config",
+            u"Login to CloudShell failed. {}".format(error_msg),
         )
 
     @patch(

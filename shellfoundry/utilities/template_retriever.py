@@ -94,11 +94,20 @@ class TemplateRetriever(object):
                 for filename in filenames:
                     if filename == TEMPLATE_INFO_FILE:
                         full_path = os.path.join(root, filename)
-                        standard_version = self._get_standard_version_from_template(
-                            root
-                        )
+
                         with open(full_path, mode="r", encoding="utf8") as f:
                             templ_data = json.load(f)
+
+                        if GEN_TWO in templ_data.get("template_name", "Undefined"):
+                            standard_version = self._get_standard_version_from_template(
+                                root
+                            )
+                        else:
+                            standard_version = templ_data.get(
+                                "version",
+                                templ_data.get("shell_version", "0.0.1")
+                            )
+
                         templ_info.append(
                             {
                                 "name": templ_data.get("template_name", "Undefined"),
