@@ -182,7 +182,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
                 self.assertTrue(echo_mock.called, "click should have been called")
                 self.assertEqual(
                     echo_mock.call_args[0][0],
-                    u"Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml",  # noqa: E501
+                    "Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml",  # noqa: E501
                 )
 
         # Assert

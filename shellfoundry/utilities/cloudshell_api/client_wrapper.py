@@ -58,7 +58,5 @@ class CloudShellClient(object):
                     msg = e.msg
                 else:
                     msg = "Please verify the credentials in the config"
-                raise FatalError(
-                    "Login to CloudShell failed. {}".format(msg)
-                )
+                raise FatalError("Login to CloudShell failed. {}".format(msg))
             raise FatalError(self.ConnectionFailureMessage)

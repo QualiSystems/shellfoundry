@@ -53,9 +53,9 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name  CloudShell Ver.  Description \n"
-            u"---------------------------------------------\n"
-            u" gen1/base      7.0 and up       description "
+            " Template Name  CloudShell Ver.  Description \n"
+            "---------------------------------------------\n"
+            " gen1/base      7.0 and up       description "
         )
 
     @patch("shellfoundry.commands.list_command.Configuration")
@@ -107,10 +107,10 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name  CloudShell Ver.  Description        \n"
-            u"----------------------------------------------------\n"
-            u" gen1/base      7.0 and up       base description   \n"
-            u" gen1/switch    7.0 and up       switch description "
+            " Template Name  CloudShell Ver.  Description        \n"
+            "----------------------------------------------------\n"
+            " gen1/base      7.0 and up       base description   \n"
+            " gen1/switch    7.0 and up       switch description "
         )
 
     @patch("click.echo")
@@ -158,13 +158,13 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
-            u"-----------------------------------------------------------------------------------------------\n"  # noqa: E501
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
-            u"                                                      devices/virtual appliances               \n"  # noqa: E501
-            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
-            u"                                                      WirelessController devices/virtual       \n"  # noqa: E501
-            u"                                                      appliances                               "  # noqa: E501
+            " Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
+            "-----------------------------------------------------------------------------------------------\n"  # noqa: E501
+            " gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
+            "                                                      devices/virtual appliances               \n"  # noqa: E501
+            " gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
+            "                                                      WirelessController devices/virtual       \n"  # noqa: E501
+            "                                                      appliances                               "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -211,10 +211,10 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_called_once_with(
-            u" Template Name                       CloudShell Ver.  Description                                                                     \n"  # noqa: E501
-            u"--------------------------------------------------------------------------------------------------------------------------------------\n"  # noqa: E501
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch devices/virtual appliances             \n"  # noqa: E501
-            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard WirelessController devices/virtual appliances "  # noqa: E501
+            " Template Name                       CloudShell Ver.  Description                                                                     \n"  # noqa: E501
+            "--------------------------------------------------------------------------------------------------------------------------------------\n"  # noqa: E501
+            " gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch devices/virtual appliances             \n"  # noqa: E501
+            " gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard WirelessController devices/virtual appliances "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -266,13 +266,13 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
-            u"-----------------------------------------------------------------------------------------------\n"  # noqa: E501
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
-            u"                                                      devices/virtual appliances               \n"  # noqa: E501
-            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
-            u"                                                      WirelessController devices/virtual       \n"  # noqa: E501
-            u"                                                      appliances                               "  # noqa: E501
+            " Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
+            "-----------------------------------------------------------------------------------------------\n"  # noqa: E501
+            " gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
+            "                                                      devices/virtual appliances               \n"  # noqa: E501
+            " gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
+            "                                                      WirelessController devices/virtual       \n"  # noqa: E501
+            "                                                      appliances                               "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -326,10 +326,10 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name  CloudShell Ver.  Description        \n"
-            u"----------------------------------------------------\n"
-            u" gen1/base      7.0 and up       base description   \n"
-            u" gen1/switch    7.0 and up       switch description "
+            " Template Name  CloudShell Ver.  Description        \n"
+            "----------------------------------------------------\n"
+            " gen1/base      7.0 and up       base description   \n"
+            " gen1/switch    7.0 and up       switch description "
         )
 
     @patch("click.echo")
@@ -381,15 +381,15 @@ class TestListCommand(unittest.TestCase):
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
-            u"-----------------------------------------------------------------------------------------------\n"  # noqa: E501
-            u" gen1/base                           7.0 and up       base description                         \n"  # noqa: E501
-            u" gen1/switch                         7.0 and up       switch description                       \n"  # noqa: E501
-            u" gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
-            u"                                                      devices/virtual appliances               \n"  # noqa: E501
-            u" gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
-            u"                                                      WirelessController devices/virtual       \n"  # noqa: E501
-            u"                                                      appliances                               "  # noqa: E501
+            " Template Name                       CloudShell Ver.  Description                              \n"  # noqa: E501
+            "-----------------------------------------------------------------------------------------------\n"  # noqa: E501
+            " gen1/base                           7.0 and up       base description                         \n"  # noqa: E501
+            " gen1/switch                         7.0 and up       switch description                       \n"  # noqa: E501
+            " gen2/networking/switch              8.0 and up       TOSCA based template for standard Switch \n"  # noqa: E501
+            "                                                      devices/virtual appliances               \n"  # noqa: E501
+            " gen2/networking/WirelessController  8.0 and up       TOSCA based template for standard        \n"  # noqa: E501
+            "                                                      WirelessController devices/virtual       \n"  # noqa: E501
+            "                                                      appliances                               "  # noqa: E501
         )
 
     @patch("click.echo")
@@ -564,12 +564,12 @@ https://qualisystems.github.io/devguide/
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name  CloudShell Ver.  Description                         \n"
-            u"---------------------------------------------------------------------\n"
-            u" gen1/resource  7.0 and up       base description                    \n"
-            u" gen1/switch    7.0 and up       switch description                  \n"
-            u" gen2/resource  8.0 and up       2nd generation shell template for a \n"
-            u"                                 standard resource                   "
+            " Template Name  CloudShell Ver.  Description                         \n"
+            "---------------------------------------------------------------------\n"
+            " gen1/resource  7.0 and up       base description                    \n"
+            " gen1/switch    7.0 and up       switch description                  \n"
+            " gen2/resource  8.0 and up       2nd generation shell template for a \n"
+            "                                 standard resource                   "
         )
 
     @patch("click.echo")
@@ -640,12 +640,12 @@ https://qualisystems.github.io/devguide/
 
         # Assert
         echo_mock.assert_any_call(
-            u" Template Name                        CloudShell Ver.  Description                         \n"  # noqa: E501
-            u"-------------------------------------------------------------------------------------------\n"  # noqa: E501
-            u" gen2/networking/switch               8.0 and up       2nd generation shell template for a \n"  # noqa: E501
-            u"                                                       standard switch                     \n"  # noqa: E501
-            u" gen2/networking/wireless-controller  8.0 and up       2nd generation shell template for a \n"  # noqa: E501
-            u"                                                       standard wireless controller        "  # noqa: E501
+            " Template Name                        CloudShell Ver.  Description                         \n"  # noqa: E501
+            "-------------------------------------------------------------------------------------------\n"  # noqa: E501
+            " gen2/networking/switch               8.0 and up       2nd generation shell template for a \n"  # noqa: E501
+            "                                                       standard switch                     \n"  # noqa: E501
+            " gen2/networking/wireless-controller  8.0 and up       2nd generation shell template for a \n"  # noqa: E501
+            "                                                       standard wireless controller        "  # noqa: E501
         )
 
 
@@ -656,27 +656,27 @@ class TestListCommandWithFakeFs(fake_filesystem_unittest.TestCase):
     @staticmethod
     def get_8_0_templates_output():
         return (
-            u" Template Name                        CloudShell Ver.  Description                                                 \n"  # noqa: E501
-            u"-------------------------------------------------------------------------------------------------------------------\n"  # noqa: E501
-            u" gen1/compute                         7.0 and up       1st generation shell template for compute servers           \n"  # noqa: E501
-            u" gen1/deployed-app                    7.0 and up       1st generation shell template for a deployed app            \n"  # noqa: E501
-            u" gen1/firewall                        7.0 and up       1st generation shell template for a standard firewall       \n"  # noqa: E501
-            u" gen1/networking/router               7.0 and up       1st generation shell template for a standard router         \n"  # noqa: E501
-            u" gen1/networking/switch               7.0 and up       1st generation shell template for a standard switch         \n"  # noqa: E501
-            u" gen1/pdu                             7.0 and up       1st generation shell template for a standard pdu            \n"  # noqa: E501
-            u" gen1/resource                        7.0 and up       1st generation shell template for basic inventory resources \n"  # noqa: E501
-            u" gen1/resource-clean                  7.0 and up       1st generation shell template for basic inventory resources \n"  # noqa: E501
-            u"                                                       (without sample commands)                                   \n"  # noqa: E501
-            u" gen2/compute                         8.0 and up       2nd generation shell template for compute servers           \n"  # noqa: E501
-            u" gen2/deployed-app                    8.0 and up       2nd generation shell template for a deployed app            \n"  # noqa: E501
-            u" gen2/firewall                        8.0 and up       2nd generation shell template for firewall resources        \n"  # noqa: E501
-            u" gen2/networking/router               8.0 and up       2nd generation shell template for a standard router         \n"  # noqa: E501
-            u" gen2/networking/switch               8.0 and up       2nd generation shell template for a standard switch         \n"  # noqa: E501
-            u" gen2/networking/wireless-controller  8.0 and up       2nd generation shell template for a standard wireless       \n"  # noqa: E501
-            u"                                                       controller                                                  \n"  # noqa: E501
-            u" gen2/pdu                             8.0 and up       2nd generation shell template for a standard pdu            \n"  # noqa: E501
-            u" gen2/resource                        8.0 and up       2nd generation shell template for basic inventory resources \n"  # noqa: E501
-            u" layer-1-switch                       7.0 and up       A native shell template for layer 1 switches                "  # noqa: E501
+            " Template Name                        CloudShell Ver.  Description                                                 \n"  # noqa: E501
+            "-------------------------------------------------------------------------------------------------------------------\n"  # noqa: E501
+            " gen1/compute                         7.0 and up       1st generation shell template for compute servers           \n"  # noqa: E501
+            " gen1/deployed-app                    7.0 and up       1st generation shell template for a deployed app            \n"  # noqa: E501
+            " gen1/firewall                        7.0 and up       1st generation shell template for a standard firewall       \n"  # noqa: E501
+            " gen1/networking/router               7.0 and up       1st generation shell template for a standard router         \n"  # noqa: E501
+            " gen1/networking/switch               7.0 and up       1st generation shell template for a standard switch         \n"  # noqa: E501
+            " gen1/pdu                             7.0 and up       1st generation shell template for a standard pdu            \n"  # noqa: E501
+            " gen1/resource                        7.0 and up       1st generation shell template for basic inventory resources \n"  # noqa: E501
+            " gen1/resource-clean                  7.0 and up       1st generation shell template for basic inventory resources \n"  # noqa: E501
+            "                                                       (without sample commands)                                   \n"  # noqa: E501
+            " gen2/compute                         8.0 and up       2nd generation shell template for compute servers           \n"  # noqa: E501
+            " gen2/deployed-app                    8.0 and up       2nd generation shell template for a deployed app            \n"  # noqa: E501
+            " gen2/firewall                        8.0 and up       2nd generation shell template for firewall resources        \n"  # noqa: E501
+            " gen2/networking/router               8.0 and up       2nd generation shell template for a standard router         \n"  # noqa: E501
+            " gen2/networking/switch               8.0 and up       2nd generation shell template for a standard switch         \n"  # noqa: E501
+            " gen2/networking/wireless-controller  8.0 and up       2nd generation shell template for a standard wireless       \n"  # noqa: E501
+            "                                                       controller                                                  \n"  # noqa: E501
+            " gen2/pdu                             8.0 and up       2nd generation shell template for a standard pdu            \n"  # noqa: E501
+            " gen2/resource                        8.0 and up       2nd generation shell template for basic inventory resources \n"  # noqa: E501
+            " layer-1-switch                       7.0 and up       A native shell template for layer 1 switches                "  # noqa: E501
         )
 
     @patch("click.echo")

@@ -69,7 +69,7 @@ class TestClientWrapper(unittest.TestCase):
         # Assert
         self.assertEqual(
             context.exception.message,
-            u"Login to CloudShell failed. {}".format(error_msg),
+            "Login to CloudShell failed. {}".format(error_msg),
         )
 
     @patch(

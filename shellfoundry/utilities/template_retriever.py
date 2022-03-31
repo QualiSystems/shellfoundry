@@ -104,8 +104,7 @@ class TemplateRetriever(object):
                             )
                         else:
                             standard_version = templ_data.get(
-                                "version",
-                                templ_data.get("shell_version", "0.0.1")
+                                "version", templ_data.get("shell_version", "0.0.1")
                             )
 
                         templ_info.append(
