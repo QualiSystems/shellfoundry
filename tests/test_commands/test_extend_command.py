@@ -41,7 +41,7 @@ class TestExtendCommandExecutor(unittest.TestCase):
 
         with patch("shellfoundry.commands.extend_command.TempDirContext"):
             with self.assertRaisesRegex(
-                BadParameter, u"Check correctness of entered attributes"
+                BadParameter, "Check correctness of entered attributes"
             ):
                 self.tested_instance.extend("local:some_path", ("new_attribute",))
 
@@ -105,7 +105,7 @@ class TestExtendCommandExecutor(unittest.TestCase):
     def test_extend_not_2_gen_shell(self):
         with patch("shellfoundry.commands.extend_command.TempDirContext"):
             with self.assertRaisesRegex(
-                ClickException, u"Invalid second generation Shell."
+                ClickException, "Invalid second generation Shell."
             ):
                 self.tested_instance.extend("some_path", ("new_attribute",))
 

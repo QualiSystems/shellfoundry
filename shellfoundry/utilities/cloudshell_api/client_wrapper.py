@@ -54,8 +54,9 @@ class CloudShellClient(object):
             return client
         except (HTTPError, Exception) as e:
             if hasattr(e, "code") and e.code == 401:
-                raise FatalError(
-                    "Login to CloudShell failed. "
-                    "Please verify the credentials in the config"
-                )
+                if hasattr(e, "msg") and e.msg:
+                    msg = e.msg
+                else:
+                    msg = "Please verify the credentials in the config"
+                raise FatalError("Login to CloudShell failed. {}".format(msg))
             raise FatalError(self.ConnectionFailureMessage)

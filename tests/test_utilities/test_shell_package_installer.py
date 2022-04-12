@@ -149,7 +149,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         # Assert
         self.assertTrue(
             context.exception.message
-            == u"Login to CloudShell failed. Please verify the credentials in the config"  # noqa: E501
+            == "Login to CloudShell failed. Please verify the credentials in the config"  # noqa: E501
         )
 
     @patch(

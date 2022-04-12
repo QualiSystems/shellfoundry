@@ -46,7 +46,7 @@ shell:
 
         # Assert
         assertFileExists(self, "dist/nut_shell.zip")
-        echo_mock.assert_any_call(u"Shell package was successfully created:")
+        echo_mock.assert_any_call("Shell package was successfully created:")
 
     @patch("click.echo")
     @patch("shellfoundry.utilities.python_dependencies_packager.pip_main")
@@ -63,7 +63,7 @@ shell:
         command_executor.pack()
 
         # Assert
-        echo_mock.assert_any_call(u"shell.yml format is wrong")
+        echo_mock.assert_any_call("shell.yml format is wrong")
 
     @patch("click.echo")
     @patch("shellfoundry.utilities.python_dependencies_packager.pip_main")
@@ -80,7 +80,7 @@ shell:
         command_executor.pack()
 
         # Assert
-        echo_mock.assert_any_call(u"shell.yml file is missing")
+        echo_mock.assert_any_call("shell.yml file is missing")
 
     @patch("click.secho")
     @patch("shellfoundry.utilities.python_dependencies_packager.pip_main")

@@ -111,8 +111,8 @@ class TestInstallCommandExecutor(unittest.TestCase):
         # Assert
         self.mock_installer.install.assert_called_once()
         self.assertTrue(
-            str(context.exception) == u"Connection to CloudShell Server failed. "
-            u"Please make sure it is up and running properly."
+            str(context.exception) == "Connection to CloudShell Server failed. "
+            "Please make sure it is up and running properly."
         )
 
     @patch("shellfoundry.commands.install_command.ShellPackage")
@@ -139,7 +139,7 @@ class TestInstallCommandExecutor(unittest.TestCase):
         self.mock_installer.install.assert_called_once()
         self.assertTrue(
             str(context.exception)
-            == u"Login to CloudShell failed. Please verify the credentials in the config"  # noqa: E501
+            == "Login to CloudShell failed. Please verify the credentials in the config"  # noqa: E501
         )
 
     @patch("shellfoundry.commands.install_command.ShellPackage")
@@ -165,8 +165,8 @@ class TestInstallCommandExecutor(unittest.TestCase):
         # Assert
         self.mock_installer.install.assert_called_once()
         self.assertTrue(
-            str(context.exception) == u"Failed to install shell. "
-            u"CloudShell responded with: 'HTTP Error 404: Non auth error'"
+            str(context.exception) == "Failed to install shell. "
+            "CloudShell responded with: 'HTTP Error 404: Non auth error'"
         )
 
     @patch("shellfoundry.commands.install_command.ShellPackage")
@@ -192,6 +192,6 @@ class TestInstallCommandExecutor(unittest.TestCase):
         # Assert
         self.mock_installer.install.assert_called_once()
         self.assertTrue(
-            str(context.exception) == u"Failed to install shell. "
-            u"CloudShell responded with: 'Some base exception'"
+            str(context.exception) == "Failed to install shell. "
+            "CloudShell responded with: 'Some base exception'"
         )

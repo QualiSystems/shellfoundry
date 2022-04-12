@@ -50,7 +50,7 @@ def version():
 )
 @click.option("--all", "default_view", flag_value=NO_FILTER, help="Show all templates")
 @shellfoundry_version_check(abort_if_major=True)
-def list(default_view):
+def list(default_view):  # noqa: A001
     """Lists the available shell templates."""
     ListCommandExecutor(default_view).list()
 
