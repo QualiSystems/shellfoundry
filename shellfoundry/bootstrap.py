@@ -67,7 +67,7 @@ def list(default_view):  # noqa: A001
 @click.option(
     "--python",
     type=click.Choice(["2", "3"]),
-    default=None,
+    default="3",
     required=False,
     help="Specify Python version which will be used",
 )

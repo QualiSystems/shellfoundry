@@ -61,12 +61,13 @@ class NewCommandExecutor(object):
         self.standard_versions = standard_versions or StandardVersionsFactory()
         self.shell_name_validations = shell_name_validations or ShellNameValidations()
 
-    def new(self, name, template, version=None, python_version=None):
+    def new(self, name, template, version=None, python_version="3"):
         """Create a new shell based on a template.
 
         :param str version: The desired version of the shell template to use
         :param str name: The name of the Shell
         :param str template: The name of the template to use
+        :param str python_version: Python version
         """
         # Special handling for the case where the user runs 'shellfoundry .'
         # in such a case the '.' character is substituted for the shell name
