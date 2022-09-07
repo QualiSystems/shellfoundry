@@ -115,7 +115,7 @@ class TestBootstrap(unittest.TestCase):
 
             assert result.exit_code == 0
             new_command_executor.return_value.new.assert_called_once_with(
-                "test_shell", "gen2/resource", None, None
+                "test_shell", "gen2/resource", None, "3"
             )
 
     @patch("shellfoundry.bootstrap.NewCommandExecutor")
@@ -133,7 +133,7 @@ class TestBootstrap(unittest.TestCase):
 
             assert result.exit_code == 0
             new_command_executor.return_value.new.assert_called_once_with(
-                "test_shell", "template_name", "version", None
+                "test_shell", "template_name", "version", "3"
             )
 
     @patch("shellfoundry.bootstrap.NewCommandExecutor")
