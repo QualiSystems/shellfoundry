@@ -23,7 +23,6 @@ from shellfoundry.utilities.constants import (
     TEMPLATES_YML,
 )
 
-
 REQUEST_TIMEOUT = 15
 
 
