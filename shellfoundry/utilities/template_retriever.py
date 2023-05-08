@@ -24,6 +24,9 @@ from shellfoundry.utilities.constants import (
 )
 
 
+REQUEST_TIMEOUT = 15
+
+
 class TemplateRetriever(object):
     NAME_PLACEHOLDER = "name"
 
@@ -75,7 +78,7 @@ class TemplateRetriever(object):
         """Get templates data from GitHub."""
         session = requests.Session()
         session.mount("https://", requests.adapters.HTTPAdapter(max_retries=5))
-        return session.get(TEMPLATES_YML).text
+        return session.get(TEMPLATES_YML, timeout=REQUEST_TIMEOUT).text
 
     @staticmethod
     def _get_templates_from_path(alternative_path):
@@ -244,7 +247,7 @@ class TemplateRetriever(object):
 
         session = requests.Session()
         session.mount("https://", requests.adapters.HTTPAdapter(max_retries=5))
-        responce = session.get(url)
+        responce = session.get(url, timeout=REQUEST_TIMEOUT)
 
         if responce.status_code == requests.codes.ok:
             return responce.json().get(SERVER_VERSION_KEY, None)
@@ -263,7 +266,7 @@ class TemplateRetriever(object):
         if github_login and github_password:
             session.auth = (github_login, github_password)
         session.mount("https://", requests.adapters.HTTPAdapter(max_retries=5))
-        response = session.get(request)
+        response = session.get(request, timeout=REQUEST_TIMEOUT)
 
         response.raise_for_status()
 
