@@ -1,0 +1,10 @@
+name: check version
+on:
+  pull_request:
+    paths-ignore:
+      - README.md
+    branches:
+      - master
+jobs:
+  check-version:
+    uses: QualiSystems/.github/.github/workflows/package-check-version.yml@master
