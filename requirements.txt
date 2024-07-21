@@ -8,3 +8,4 @@ colorama
 giturlparse.py
 ruamel.yaml
 cryptography
+setuptools; python_version >= '3.12'
