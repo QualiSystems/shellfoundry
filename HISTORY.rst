@@ -1,11 +1,16 @@
 =======
 History
 =======
+1.2.25 (2024-07-30)
+-------------------
+
+* Added support for the latest cloudshell-rest-api
+* Added possibility to pack shell without src folder
+
 1.2.22 (2022-09-05)
 -------------------
 
 * Set default Python version for new Shells to "3"
-
 
 1.2.21 (2022-03-31)
 -------------------
