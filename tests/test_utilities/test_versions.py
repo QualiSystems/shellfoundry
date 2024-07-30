@@ -1,12 +1,6 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-import sys
 import unittest
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 from shellfoundry.utilities import is_index_version_greater_than_current
 

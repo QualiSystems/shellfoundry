@@ -1,15 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-import sys
 import unittest
+from unittest.mock import patch
 
 import httpretty
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import patch
-else:
-    from mock import patch
-
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.utilities import GEN_ONE, GEN_TWO, NO_FILTER

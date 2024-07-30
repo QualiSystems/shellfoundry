@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from setuptools import find_packages, setup
 
@@ -27,8 +26,8 @@ setup(
     + "\n\n"
     + get_file_content("HISTORY.rst"),
     long_description_content_type="text/markdown",
-    author="QualiSystems",
-    author_email="info@qualisystems.com",
+    author="Quali",
+    author_email="info@quali.com",
     url="https://github.com/QualiSystems/shellfoundry",
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     package_data={"shellfoundry": ["data/*.yml", "data/*.json"]},

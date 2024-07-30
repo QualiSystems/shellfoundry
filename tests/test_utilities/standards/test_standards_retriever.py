@@ -1,11 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-import sys
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 from cloudshell.rest.api import FeatureUnavailable
 from pyfakefs import fake_filesystem_unittest

@@ -1,13 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import os
-import sys
+from unittest.mock import patch
 
-if sys.version_info >= (3, 0):
-    from unittest.mock import patch
-else:
-    from mock import patch
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.models.install_config import InstallConfig
@@ -18,14 +13,13 @@ class TestShellInstaller(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
 
-    @patch("cloudshell.rest.api.PackagingRestApiClient.import_package")
-    @patch("cloudshell.rest.api.PackagingRestApiClient.__init__")
+    @patch("cloudshell.rest.api.PackagingRestApiClient.login.import_package")
+    @patch("cloudshell.rest.api.PackagingRestApiClient.login")
     def test_when_install_called_it_uploads_package_to_cloudshell(
         self, mock_quali_api_client, mock_import_package
     ):
         # Arrange
-        # Constructor should return None
-        mock_quali_api_client.return_value = None
+        mock_quali_api_client.return_value = mock_quali_api_client
 
         self.fs.create_file("work/dest/nut_shell.zip")
 

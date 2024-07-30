@@ -1,17 +1,15 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-import sys
 
 import click
-from cloudshell.rest.exceptions import FeatureUnavailable, ShellNotFoundException
 
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-    from urllib.error import HTTPError
-else:
-    from mock import MagicMock, patch
-    from urllib2 import HTTPError
+try:
+    from cloudshell.rest.exceptions import FeatureUnavailable, ShellNotFound
+except ImportError:
+    from cloudshell.rest.exceptions import FeatureUnavailable
+    from cloudshell.rest.exceptions import ShellNotFoundException as ShellNotFound
+
+from unittest.mock import MagicMock, patch
+from urllib.error import HTTPError
 
 from pyfakefs import fake_filesystem_unittest
 
@@ -39,7 +37,9 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
 
-    @patch("shellfoundry.utilities.shell_package_installer.PackagingRestApiClient")
+    @patch(
+        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient.login"
+    )
     @patch(
         "shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition",  # noqa: E501
         new=MagicMock(return_value="NutShell"),
@@ -58,7 +58,9 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         # Assert
         self.assertTrue(mock_client.update_shell.called)
 
-    @patch("shellfoundry.utilities.shell_package_installer.PackagingRestApiClient")
+    @patch(
+        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient.login"
+    )
     @patch(
         "shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition",  # noqa: E501
         new=MagicMock(return_value="NutShell"),
@@ -68,7 +70,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
     ):
         # Arrange
         mock_client = MagicMock()
-        mock_client.update_shell = MagicMock(side_effect=ShellNotFoundException())
+        mock_client.update_shell = MagicMock(side_effect=ShellNotFound())
         mock_client.get_shell.return_value = {SHELL_IS_OFFICIAL_FLAG: False}
         rest_client_mock.return_value = mock_client
         installer = ShellPackageInstaller()
@@ -81,7 +83,9 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         self.assertTrue(mock_client.update_shell.called)
         self.assertTrue(mock_client.add_shell.called)
 
-    @patch("shellfoundry.utilities.shell_package_installer.PackagingRestApiClient")
+    @patch(
+        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient.login"
+    )
     @patch(
         "shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition",  # noqa: E501
         new=MagicMock(return_value="NutShell"),
@@ -107,7 +111,7 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         self.assertFalse(mock_client.add_shell.called)
 
     @patch(
-        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient",
+        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient.login",
         new=MagicMock(side_effect=Exception()),
     )
     @patch(
@@ -124,13 +128,13 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
             installer.install("work/nut-shell")
 
         # Assert
-        self.assertTrue(
-            context.exception.message
-            == "Connection to CloudShell Server failed. Please make sure it is up and running properly."  # noqa: E501
+        self.assertEqual(
+            context.exception.message,
+            "Connection to CloudShell Server failed. Please make sure it is up and running properly.",  # noqa: E501
         )
 
     @patch(
-        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient",
+        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient.login",
         new=MagicMock(side_effect=HTTPError("", 401, "", None, None)),
     )
     @patch(
@@ -147,13 +151,13 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
             installer.install("work/nut-shell")
 
         # Assert
-        self.assertTrue(
-            context.exception.message
-            == "Login to CloudShell failed. Please verify the credentials in the config"  # noqa: E501
+        self.assertEqual(
+            context.exception.message,
+            "Login to CloudShell failed. Please verify the credentials in the config",
         )
 
     @patch(
-        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient",
+        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient.login",
         new=MagicMock(side_effect=HTTPError("", 403, "", None, None)),
     )
     @patch(
@@ -170,16 +174,16 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
             installer.install("work/nut-shell")
 
         # Assert
-        self.assertTrue(
-            context.exception.message
-            == "Connection to CloudShell Server failed. Please make sure it is up and running properly."  # noqa: E501
+        self.assertEqual(
+            context.exception.message,
+            "Connection to CloudShell Server failed. Please make sure it is up and running properly.",  # noqa: E501
         )
 
     @patch(
-        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient",
+        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient.login",
         new=MagicMock(
             return_value=mock_rest_client(
-                update_side_effect=ShellNotFoundException(),
+                update_side_effect=ShellNotFound(),
                 add_side_effect=Exception(
                     add_shell_error_message("Failed to add shell")
                 ),
@@ -223,12 +227,14 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
             installer.install("work/nut-shell")
 
         # Assert
-        self.assertTrue(
-            context.exception.message
-            == "Failed to add new shell. CloudShell responded with: 'Failed to add shell'"  # noqa: E501
+        self.assertEqual(
+            context.exception.message,
+            "Failed to add new shell. CloudShell responded with: 'Failed to add shell'",  # noqa: E501
         )
 
-    @patch("shellfoundry.utilities.shell_package_installer.PackagingRestApiClient")
+    @patch(
+        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient.login"
+    )
     @patch(
         "shellfoundry.utilities.shell_package_installer.click.confirm", new=MagicMock()
     )
@@ -270,7 +276,9 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         with self.assertRaises(click.Abort):
             installer.install("work/nut-shell")
 
-    @patch("shellfoundry.utilities.shell_package_installer.PackagingRestApiClient")
+    @patch(
+        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient.login"
+    )
     @patch(
         "shellfoundry.utilities.shell_package_installer.click.confirm",
         new=MagicMock(side_effect=(FeatureUnavailable)),
@@ -295,10 +303,12 @@ class TestShellPackageInstaller(fake_filesystem_unittest.TestCase):
         # Assert
         self.assertTrue(mock_client.update_shell.called)
 
-    @patch("shellfoundry.utilities.shell_package_installer.PackagingRestApiClient")
+    @patch(
+        "shellfoundry.utilities.shell_package_installer.PackagingRestApiClient.login"
+    )
     @patch(
         "shellfoundry.utilities.shell_package_installer.click.confirm",
-        new=MagicMock(side_effect=(ShellNotFoundException)),
+        new=MagicMock(side_effect=(ShellNotFound)),
     )
     @patch(
         "shellfoundry.utilities.shell_package_installer.ShellPackage.get_name_from_definition",  # noqa: E501

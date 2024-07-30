@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 from cloudshell.rest.api import PackagingRestApiClient
 
@@ -44,14 +43,24 @@ class CloudShellClient(object):
 
     def _create_client(self):
         try:
-            client = PackagingRestApiClient(
-                ip=self._cs_config.host,
-                username=self._cs_config.username,
-                port=self._cs_config.port,
-                domain=self._cs_config.domain,
-                password=self._cs_config.password,
-            )
-            return client
+            try:
+                client = PackagingRestApiClient.login(
+                    host=self._cs_config.host,
+                    port=self._cs_config.port,
+                    username=self._cs_config.username,
+                    password=self._cs_config.password,
+                    domain=self._cs_config.domain,
+                )
+                return client
+            except AttributeError:
+                client = PackagingRestApiClient(
+                    ip=self._cs_config.host,
+                    port=self._cs_config.port,
+                    username=self._cs_config.username,
+                    password=self._cs_config.password,
+                    domain=self._cs_config.domain,
+                )
+                return client
         except (HTTPError, Exception) as e:
             if hasattr(e, "code") and e.code == 401:
                 if hasattr(e, "msg") and e.msg:

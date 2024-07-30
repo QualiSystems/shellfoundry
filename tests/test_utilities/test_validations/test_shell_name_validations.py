@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 import unittest
 
 from shellfoundry.utilities.validations import ShellNameValidations

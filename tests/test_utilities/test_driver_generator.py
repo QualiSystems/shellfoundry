@@ -1,14 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
-import sys
+from unittest.mock import MagicMock, patch
+from urllib.error import URLError
 
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-    from urllib.error import URLError
-else:
-    from mock import MagicMock, patch
-    from urllib2 import URLError
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.models.install_config import InstallConfig
@@ -159,7 +153,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         )
 
         with patch(
-            "shellfoundry.utilities.driver_generator.PackagingRestApiClient"
+            "shellfoundry.utilities.driver_generator.PackagingRestApiClient.login"
         ) as mock_rest:
             mock_rest.side_effect = URLError("connected failed")
 

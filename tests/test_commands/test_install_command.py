@@ -1,15 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
-import sys
 import unittest
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-    from urllib.error import HTTPError, URLError
-else:
-    from mock import MagicMock, patch
-    from urllib2 import HTTPError, URLError
+from unittest.mock import MagicMock, patch
+from urllib.error import HTTPError, URLError
 
 from shellfoundry.commands.install_command import InstallCommandExecutor
 from shellfoundry.exceptions import FatalError

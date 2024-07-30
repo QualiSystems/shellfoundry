@@ -1,17 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-import sys
 import unittest
+from unittest.mock import MagicMock, patch
 
 import httpretty
 from click import ClickException, UsageError
 from cloudshell.rest.api import FeatureUnavailable
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
-
 from pyfakefs import fake_filesystem_unittest
 from requests.exceptions import SSLError
 

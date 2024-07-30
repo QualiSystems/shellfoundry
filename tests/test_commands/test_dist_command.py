@@ -1,13 +1,7 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 import os
-import sys
 import unittest
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 from shellfoundry.commands.dist_command import DistCommandExecutor
 from shellfoundry.models.install_config import InstallConfig

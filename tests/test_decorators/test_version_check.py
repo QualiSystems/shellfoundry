@@ -1,18 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-from __future__ import print_function
 
-import sys
 import unittest
+from io import StringIO
+from unittest.mock import patch
 
 from click import Abort
-
-if sys.version_info >= (3, 0):
-    from io import StringIO
-    from unittest.mock import patch
-else:
-    from mock import patch
-    from StringIO import StringIO
 
 from shellfoundry.decorators import shellfoundry_version_check
 
