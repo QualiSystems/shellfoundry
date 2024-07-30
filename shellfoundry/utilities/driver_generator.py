@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 try:
     from urllib.error import URLError
 except ImportError:
@@ -65,7 +64,7 @@ class DriverGenerator(object):
         :param shell_name:
         :return:
         """
-        url = "http://{0}:{1}/API/ShellDrivers/Generate".format(
+        url = "http://{}:{}/API/ShellDrivers/Generate".format(
             cloudshell_config.host, cloudshell_config.port
         )
         token = client.token
@@ -76,7 +75,7 @@ class DriverGenerator(object):
         )
 
         if response.status_code != 200:
-            error_message = "Code generation failed with code {0} and error {1}".format(
+            error_message = "Code generation failed with code {} and error {}".format(
                 response.status_code, response.text
             )
             click.echo(message=error_message, err=True)
@@ -85,25 +84,35 @@ class DriverGenerator(object):
         click.echo("Extracting data model ...")
         with TempDirContext(remove_dir_on_error=False, prefix=shell_name) as temp_dir:
             generated_zip = path.join(temp_dir, shell_filename)
-            click.echo("Writing temporary file {0}".format(generated_zip))
+            click.echo("Writing temporary file {}".format(generated_zip))
             with open(generated_zip, "wb") as driver_file:
                 driver_file.write(response.content)
 
-            click.echo("Extracting generated code at {0}".format(destination_path))
+            click.echo("Extracting generated code at {}".format(destination_path))
             with zipfile.ZipFile(generated_zip) as zf:
                 zf.extractall(destination_path)
 
     @staticmethod
     def _connect_to_cloudshell(cloudshell_config):
         try:
-            client = PackagingRestApiClient(
-                ip=cloudshell_config.host,
-                username=cloudshell_config.username,
-                port=cloudshell_config.port,
-                domain=cloudshell_config.domain,
-                password=cloudshell_config.password,
-            )
-            return client
+            try:
+                client = PackagingRestApiClient.login(
+                    host=cloudshell_config.host,
+                    port=cloudshell_config.port,
+                    username=cloudshell_config.username,
+                    password=cloudshell_config.password,
+                    domain=cloudshell_config.domain,
+                )
+                return client
+            except AttributeError:
+                client = PackagingRestApiClient(
+                    ip=cloudshell_config.host,
+                    port=cloudshell_config.port,
+                    username=cloudshell_config.username,
+                    password=cloudshell_config.password,
+                    domain=cloudshell_config.domain,
+                )
+                return client
         except URLError:
             click.echo(
                 "Login to CloudShell failed. Please verify the credentials in cloudshell_config.yml",  # noqa: E501

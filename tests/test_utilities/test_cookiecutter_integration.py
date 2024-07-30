@@ -1,16 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import os
-import sys
 import unittest
+from unittest.mock import MagicMock, patch
 
 from cookiecutter.main import cookiecutter
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
 
 from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplateCompiler
 

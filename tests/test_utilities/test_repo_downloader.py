@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 import os
 
 import httpretty
@@ -101,12 +100,12 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
 
     class FakeExtractor(DownloadedRepoExtractor):
         def __init__(self, fs):
-            super(TestRepositoryDownloader.FakeExtractor, self).__init__()
+            super().__init__()
             self.fs = fs
 
         def extract_to_folder(self, repo_link, folder):
             files = []
-            with open(repo_link, "r") as f:
+            with open(repo_link) as f:
                 content = f.read().replace("\n", "")
 
             for file in content.split(","):

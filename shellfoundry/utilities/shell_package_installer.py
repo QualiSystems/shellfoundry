@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import json
 import os
@@ -13,7 +12,14 @@ except ImportError:
     from urllib2 import HTTPError
 
 from cloudshell.rest.api import PackagingRestApiClient
-from cloudshell.rest.exceptions import FeatureUnavailable, ShellNotFoundException
+
+try:
+    from cloudshell.rest.exceptions import FeatureUnavailable, ShellNotFound
+except ImportError:
+    from cloudshell.rest.exceptions import (
+        FeatureUnavailable,
+        ShellNotFoundException as ShellNotFound,
+    )
 
 from shellfoundry.exceptions import FatalError
 from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
@@ -77,7 +83,7 @@ class ShellPackageInstaller(object):
         except FeatureUnavailable:
             # try to update shell first
             pass
-        except ShellNotFoundException:
+        except ShellNotFound:
             # try to install shell
             pass
         except click.Abort:
@@ -98,7 +104,7 @@ class ShellPackageInstaller(object):
         ) as pbar:
             try:
                 client.update_shell(package_full_path)
-            except ShellNotFoundException:
+            except ShellNotFound:
                 self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
                 self._add_new_shell(client, package_full_path)
             except Exception as e:
@@ -145,7 +151,7 @@ class ShellPackageInstaller(object):
                 raise click.ClickException(
                     "Delete shell command unavailable (probably due to CloudShell version below 9.2)"  # noqa: E501
                 )
-            except ShellNotFoundException:
+            except ShellNotFound:
                 self._increase_pbar(pbar, DEFAULT_TIME_WAIT)
                 raise click.ClickException(
                     "Shell '{shell_name}' doesn't exist on CloudShell".format(
@@ -166,16 +172,25 @@ class ShellPackageInstaller(object):
                 "Connection to CloudShell Server failed. "
                 "Please make sure it is up and running properly."
             )
-
         try:
-            client = PackagingRestApiClient(
-                ip=cloudshell_config.host,
-                username=cloudshell_config.username,
-                port=cloudshell_config.port,
-                domain=cloudshell_config.domain,
-                password=cloudshell_config.password,
-            )
-            return client
+            try:
+                client = PackagingRestApiClient.login(
+                    host=cloudshell_config.host,
+                    port=cloudshell_config.port,
+                    username=cloudshell_config.username,
+                    password=cloudshell_config.password,
+                    domain=cloudshell_config.domain,
+                )
+                return client
+            except AttributeError:
+                client = PackagingRestApiClient(
+                    ip=cloudshell_config.host,
+                    port=cloudshell_config.port,
+                    username=cloudshell_config.username,
+                    password=cloudshell_config.password,
+                    domain=cloudshell_config.domain,
+                )
+                return client
         except HTTPError as e:
             if e.code == 401:
                 raise FatalError(

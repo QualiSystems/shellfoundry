@@ -1,15 +1,9 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-import sys
 import traceback
 import unittest
+from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
 
 from shellfoundry.bootstrap import (
     config,

@@ -17,17 +17,28 @@ class ShellInstaller(object):
         :type config shellfoundry.models.install_config.InstallConfig
         :return:
         """
-        host = config.host
-        port = config.port
-        username = config.username
-        password = config.password
-        domain = config.domain
-
         package_full_path = os.path.join(os.getcwd(), "dist", package_name + ".zip")
         click.echo(
-            "Installing package {0} into CloudShell at http://{1}:{2}".format(
-                package_full_path, host, port
+            "Installing package {} into CloudShell at http://{}:{}".format(
+                package_full_path, config.host, config.port
             )
         )
-        server = PackagingRestApiClient(host, port, username, password, domain)
-        server.import_package(package_full_path)
+
+        try:
+            client = PackagingRestApiClient.login(
+                host=config.host,
+                port=config.port,
+                username=config.username,
+                password=config.password,
+                domain=config.domain,
+            )
+        except AttributeError:
+            client = PackagingRestApiClient(
+                ip=config.host,
+                port=config.port,
+                username=config.username,
+                password=config.password,
+                domain=config.domain,
+            )
+
+        client.import_package(package_full_path)

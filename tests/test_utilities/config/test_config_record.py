@@ -1,12 +1,7 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
-import sys
+from unittest.mock import patch
 
-if sys.version_info >= (3, 0):
-    from unittest.mock import patch
-else:
-    from mock import patch
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.utilities.config.config_context import ConfigContext

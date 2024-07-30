@@ -1,14 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 import os
-import sys
 import xml.etree.ElementTree as etree
 import zipfile
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 from pyfakefs import fake_filesystem_unittest
 
@@ -480,7 +474,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
 
     @staticmethod
     def _get_driver_version_from_file(path):
-        with open(path, "r") as f:
+        with open(path) as f:
             text = f.read()
 
         metadata_xml = TestPackageBuilder._parse_xml(text)

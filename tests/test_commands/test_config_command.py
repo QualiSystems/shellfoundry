@@ -1,16 +1,9 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import os
-import sys
+from unittest.mock import MagicMock, patch
 
 from click import BadArgumentUsage
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
-
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.commands.config_command import DEFAULTS_CHAR, ConfigCommandExecutor
@@ -184,7 +177,7 @@ install:
         ).contents
         self.assertTrue(
             file_content == desired_result,
-            "Expected: {}{}Actual: {}".format(desired_result, os.linesep, file_content),
+            f"Expected: {desired_result}{os.linesep}Actual: {file_content}",
         )
 
     @patch("shellfoundry.utilities.config.config_providers.click.get_app_dir")
@@ -227,7 +220,7 @@ install:
         ).contents
         self.assertTrue(
             file_content == desired_result,
-            "Expected: {}{}Actual: {}".format(desired_result, os.linesep, file_content),
+            f"Expected: {desired_result}{os.linesep}Actual: {file_content}",
         )
 
     @patch("shellfoundry.utilities.config.config_providers.click.get_app_dir")
@@ -251,7 +244,7 @@ install:
         ).contents
         self.assertTrue(
             file_content == desired_result,
-            "Expected: {}{}Actual: {}".format(desired_result, os.linesep, file_content),
+            f"Expected: {desired_result}{os.linesep}Actual: {file_content}",
         )
 
     @patch("shellfoundry.utilities.config.config_providers.click.get_app_dir")
@@ -293,5 +286,5 @@ install:
         ).contents
         self.assertTrue(
             file_content == desired_result,
-            "Expected: {}{}Actual: {}".format(desired_result, os.linesep, file_content),
+            f"Expected: {desired_result}{os.linesep}Actual: {file_content}",
         )

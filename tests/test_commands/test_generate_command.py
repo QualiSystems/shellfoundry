@@ -1,13 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import os
-import sys
+from unittest.mock import MagicMock
 
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock
-else:
-    from mock import MagicMock
 from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.commands.generate_command import GenerateCommandExecutor

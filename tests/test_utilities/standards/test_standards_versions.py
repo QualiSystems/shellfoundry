@@ -1,13 +1,7 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
-import sys
 import unittest
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 from shellfoundry.utilities.standards import StandardVersions
 
@@ -44,7 +38,7 @@ class TestStandardsVersions(unittest.TestCase):
         # Assert
         self.assertTrue(
             str(context.exception) == "Failed to find latest version",
-            "Actual: {}".format(context.exception),
+            f"Actual: {context.exception}",
         )
 
     def test_get_latest_version_find_requested_standard_within_lots_of_standards(self):
@@ -79,5 +73,5 @@ class TestStandardsVersions(unittest.TestCase):
             == "Standards list is empty. Please verify that {} exists".format(
                 "/shellfoundry/folder/data/standards.json"
             ),
-            "Actual: {}".format(context.exception),
+            f"Actual: {context.exception}",
         )

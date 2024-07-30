@@ -1,15 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
-import sys
 import unittest
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-    from urllib.error import HTTPError
-else:
-    from mock import MagicMock, patch
-    from urllib2 import HTTPError
+from unittest.mock import MagicMock, patch
+from urllib.error import HTTPError
 
 from shellfoundry.exceptions import FatalError
 from shellfoundry.utilities.cloudshell_api import (
@@ -33,7 +26,7 @@ class TestClientWrapper(unittest.TestCase):
         self.assertEqual(context.exception.message, "failure")
 
     @patch(
-        "shellfoundry.utilities.cloudshell_api.client_wrapper.PackagingRestApiClient"
+        "shellfoundry.utilities.cloudshell_api.client_wrapper.PackagingRestApiClient.login"  # noqa: E501
     )
     def test_client_wrapper_raises_an_error_when_create_client_fails_after_retries_regular_exception(  # noqa: E501
         self, api_mock
@@ -51,7 +44,7 @@ class TestClientWrapper(unittest.TestCase):
         )
 
     @patch(
-        "shellfoundry.utilities.cloudshell_api.client_wrapper.PackagingRestApiClient",
+        "shellfoundry.utilities.cloudshell_api.client_wrapper.PackagingRestApiClient.login",  # noqa: E501
         new_callable=MagicMock(),
     )
     def test_client_wrapper_raises_an_error_when_create_client_fails_after_retries_http_error(  # noqa: E501
@@ -69,7 +62,7 @@ class TestClientWrapper(unittest.TestCase):
         # Assert
         self.assertEqual(
             context.exception.message,
-            "Login to CloudShell failed. {}".format(error_msg),
+            f"Login to CloudShell failed. {error_msg}",
         )
 
     @patch(
@@ -102,10 +95,10 @@ class TestClientWrapper(unittest.TestCase):
         cs_client = create_cloudshell_client()
 
         # Assert
-        self.assertEqual(cs_client, api_mock)
+        self.assertEqual(cs_client, api_mock.login())
 
     @patch(
-        "shellfoundry.utilities.cloudshell_api.client_wrapper.PackagingRestApiClient"
+        "shellfoundry.utilities.cloudshell_api.client_wrapper.PackagingRestApiClient"  # noqa: E501
     )
     def test_client_wrapper_creates_client_successfully_after_initial_exception(
         self, api_mock
@@ -117,4 +110,4 @@ class TestClientWrapper(unittest.TestCase):
         cs_client = create_cloudshell_client(retries=2)
 
         # Assert
-        self.assertEqual(cs_client, api_mock)
+        self.assertEqual(cs_client, api_mock.login())

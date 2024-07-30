@@ -1,14 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-import sys
 import unittest
+from unittest.mock import MagicMock, patch
 
 import requests
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import patch, MagicMock
 
 from shellfoundry.exceptions import NoVersionsHaveBeenFoundException
 from shellfoundry.utilities.template_versions import TemplateVersions

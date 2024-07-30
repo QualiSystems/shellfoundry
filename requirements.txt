@@ -3,7 +3,7 @@ cookiecutter~=1.7.2
 click~=7.1.2
 pyyaml
 terminaltables
-cloudshell-rest-api>=8.2.3.1,<9
+cloudshell-rest-api~=9.0.0
 colorama
 giturlparse.py
 ruamel.yaml

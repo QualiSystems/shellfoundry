@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 from shellfoundry.utilities.modifiers.configuration.password_modification import (
     PasswordModification,

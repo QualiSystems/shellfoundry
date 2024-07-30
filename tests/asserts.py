@@ -1,19 +1,14 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 import os
 
 
 def assertFileExists(obj, file_path):
     obj.assertTrue(
         os.path.exists(file_path),
-        msg="File/directory {0} does not exist".format(file_path),
+        msg=f"File/directory {file_path} does not exist",
     )
-    obj.assertTrue(
-        os.path.isfile(file_path), msg="File {0} does not exist".format(file_path)
-    )
+    obj.assertTrue(os.path.isfile(file_path), msg=f"File {file_path} does not exist")
 
 
 def assertFileDoesNotExist(obj, file_path):
-    obj.assertFalse(
-        os.path.exists(file_path), msg="File/directory {0} exists".format(file_path)
-    )
+    obj.assertFalse(os.path.exists(file_path), msg=f"File/directory {file_path} exists")

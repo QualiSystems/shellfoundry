@@ -1,12 +1,6 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 import inspect
-import sys
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock
-else:
-    from mock import MagicMock
+from unittest.mock import MagicMock
 
 
 def bootstrap():

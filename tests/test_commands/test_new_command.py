@@ -1,16 +1,9 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-import sys
 import unittest
+from unittest.mock import MagicMock, patch
 
 from click import BadParameter, ClickException
 from cloudshell.rest.api import FeatureUnavailable
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
-
 
 from shellfoundry import ALTERNATIVE_STANDARDS_PATH
 from shellfoundry.commands.new_command import NewCommandExecutor
@@ -71,7 +64,7 @@ class TestNewCommandExecutor(unittest.TestCase):
         )
 
         with self.assertRaisesRegex(
-            ClickException, "Cannot retrieve standards list. Error: {}".format(exc_msg)
+            ClickException, f"Cannot retrieve standards list. Error: {exc_msg}"
         ):
             command_executor.new(
                 name="Shell_Name",
@@ -149,7 +142,7 @@ class TestNewCommandExecutor(unittest.TestCase):
             "python_version",
         )
         mock_echo.assert_called_with(
-            "Created shell {0} based on template {1}".format(
+            "Created shell {} based on template {}".format(
                 "Shell_Name", "shell/template"
             )
         )
@@ -197,7 +190,7 @@ class TestNewCommandExecutor(unittest.TestCase):
             "python_version",
         )
         mock_echo.assert_called_with(
-            "Created shell {0} based on template {1}".format(
+            "Created shell {} based on template {}".format(
                 "Shell_Name", "shell/template"
             )
         )
@@ -254,7 +247,7 @@ class TestNewCommandExecutor(unittest.TestCase):
             "python_version",
         )
         mock_echo.assert_called_with(
-            "Created shell {0} based on template {1}".format(
+            "Created shell {} based on template {}".format(
                 "Shell_Name", "shell/template"
             )
         )
@@ -316,7 +309,7 @@ class TestNewCommandExecutor(unittest.TestCase):
             "python_version",
         )
         mock_echo.assert_called_with(
-            "Created shell {0} based on template {1}".format(
+            "Created shell {} based on template {}".format(
                 "Shell_Name", "local_template_name"
             )
         )
@@ -383,7 +376,7 @@ class TestNewCommandExecutor(unittest.TestCase):
             "WARNING: L1 shells support python 2.7 only!", fg="yellow"
         )
         mock_echo.assert_called_with(
-            "Created shell {0} based on template {1}".format(
+            "Created shell {} based on template {}".format(
                 "Shell_Name", command_executor.L1_TEMPLATE
             )
         )

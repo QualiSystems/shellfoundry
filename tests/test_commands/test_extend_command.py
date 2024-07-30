@@ -1,14 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 import shutil
-import sys
 import unittest
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, patch
-else:
-    from mock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 
 from click import BadParameter, ClickException
 
@@ -19,7 +13,7 @@ from shellfoundry.utilities.constants import TEMPLATE_BASED_ON
 
 class TestExtendCommandExecutor(unittest.TestCase):
     def setUp(self):
-        super(TestExtendCommandExecutor, self).setUp()
+        super().setUp()
         repository_downloader = MagicMock
         shell_name_validations = MagicMock
         with patch("shellfoundry.commands.extend_command.Configuration"):
@@ -30,7 +24,7 @@ class TestExtendCommandExecutor(unittest.TestCase):
             )
 
     def tearDown(self):
-        super(TestExtendCommandExecutor, self).tearDown()
+        super().tearDown()
         del self.tested_instance
 
     @patch(

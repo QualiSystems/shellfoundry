@@ -1,14 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
-import sys
 import unittest
+from unittest.mock import MagicMock, PropertyMock, call, patch
 
 import click
-
-if sys.version_info >= (3, 0):
-    from unittest.mock import MagicMock, PropertyMock, call, patch
-else:
-    from mock import MagicMock, PropertyMock, call, patch
 
 from shellfoundry.commands.show_command import ShowCommandExecutor
 from shellfoundry.models.shell_template import ShellTemplate
