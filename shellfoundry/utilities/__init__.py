@@ -3,16 +3,8 @@
 
 import json
 import requests
-import ssl
 
 import pkg_resources
-
-try:
-    # Python 2.x version
-    from xmlrpclib import ProtocolError, ServerProxy
-except ImportError:
-    # Python 3.x version
-    from xmlrpc.client import ProtocolError, ServerProxy
 
 try:
     from urllib import urlopen
