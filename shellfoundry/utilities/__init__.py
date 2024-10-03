@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import json
-import requests
 
 import pkg_resources
+import requests
 
 try:
     from urllib import urlopen
@@ -64,18 +64,21 @@ def is_index_version_greater_than_current():
 
 def max_version_from_index():
     try:
-        url = 'https://pypi.org/pypi/{}/json'.format(PACKAGE_NAME)
+        url = "https://pypi.org/pypi/{}/json".format(PACKAGE_NAME)
         r = requests.get(url)
         if r.status_code != requests.codes.ok:
-            raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
-                                               "are you offline?")
+            raise ShellFoundryVersionException(
+                "Cannot retrieve latest shellfoundry version, " "are you offline?"
+            )
         else:
             content = json.loads(r.content)
-            max_version = content['info']['version']
+            max_version = content["info"]["version"]
             return max_version
     except Exception as err:
-        raise ShellFoundryVersionException("Cannot retrieve latest shellfoundry version, "
-                                           "are you offline? Error: {}".format(err.message))
+        raise ShellFoundryVersionException(
+            "Cannot retrieve latest shellfoundry version, "
+            "are you offline? Error: {}".format(err.message)
+        )
 
 
 def latest_released_version():
