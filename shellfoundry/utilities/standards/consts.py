@@ -1,2 +1,2 @@
-STANDARD_NAME_KEY = 'StandardName'
-VERSIONS_KEY = 'Versions'
+STANDARD_NAME_KEY = "StandardName"
+VERSIONS_KEY = "Versions"

@@ -1,30 +1,40 @@
+#!/usr/bin/python
+
 import codecs
 import os
 import unittest
-import mock
 import xml.etree.ElementTree as etree
 
 from shellfoundry.utilities.shell_datamodel_merger import ShellDataModelMerger
 
+from tests import TEST_DIR
+
 
 class TestDataModelMerger(unittest.TestCase):
+    def test_works_with_utf_files(self):
 
-    # def test_works_with_utf_files(self):
-    #
-    #     with codecs.open(os.path.join(".","test_data","datamodel.xml"), 'r', encoding='utf8') as f:
-    #         dm = f.read()
-    #
-    #     with codecs.open(os.path.join(".","test_data","shell_model.xml"), 'r', encoding='utf8') as f:
-    #         shell = f.read()
-    #
-    #     merger = ShellDataModelMerger()
-    #     merged_xml = merger.merge_shell_model(dm, shell)
-    #     self.assertIsNotNone(merged_xml)
+        with codecs.open(
+            os.path.join(TEST_DIR, "test_utilities", "test_data", "datamodel.xml"),
+            "r",
+            encoding="utf8",
+        ) as f:
+            dm = f.read()
+
+        with codecs.open(
+            os.path.join(TEST_DIR, "test_utilities", "test_data", "shell_model.xml"),
+            "r",
+            encoding="utf8",
+        ) as f:
+            shell = f.read()
+
+        merger = ShellDataModelMerger()
+        merged_xml = merger.merge_shell_model(dm, shell)
+        self.assertIsNotNone(merged_xml)
 
     def test_merges_attributes(self):
 
         datamodel = """<?xml version="1.0" encoding="utf-8"?>
-            <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">
+            <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">  # noqa: E501
               <Attributes>
               </Attributes>
               <ResourceFamilies>
@@ -45,7 +55,7 @@ class TestDataModelMerger(unittest.TestCase):
         shell = """
             <Shell>
             <ShellAttributes>
-             <AttributeInfo Name="Shell Enable Password" Type="Password" DefaultValue="3M3u7nkDzxWb0aJ/IZYeWw==" IsReadOnly="false">
+             <AttributeInfo Name="Shell Enable Password" Type="Password" DefaultValue="3M3u7nkDzxWb0aJ/IZYeWw==" IsReadOnly="false">  # noqa: E501
                 <Rules>
                  <Rule Name="Configuration" />
                 </Rules>
@@ -74,21 +84,27 @@ class TestDataModelMerger(unittest.TestCase):
         merger = ShellDataModelMerger()
         merged_xml = merger.merge_shell_model(datamodel, shell)
 
-        parser = etree.XMLParser(encoding='utf-8')
+        parser = etree.XMLParser(encoding="utf-8")
         tree = etree.fromstring(merged_xml, parser)
 
-        self.assertIsNotNone(tree.find(".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}AttributeInfo[@Name='Shell Enable Password']"),
-                             "Attribute was not found in merged xml")
+        self.assertIsNotNone(
+            tree.find(
+                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}AttributeInfo[@Name='Shell Enable Password']"  # noqa: E501
+            ),
+            "Attribute was not found in merged xml",
+        )
 
-        self.assertIsNotNone(tree.find(
-            ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}AttributeInfo[@Name='Shell Power Management']"),
-                             "Attribute was not found in merged xml"
+        self.assertIsNotNone(
+            tree.find(
+                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}AttributeInfo[@Name='Shell Power Management']"  # noqa: E501
+            ),
+            "Attribute was not found in merged xml",
         )
 
     def test_exception_thrown_when_family_missing_in_data_model(self):
 
         datamodel = """<?xml version="1.0" encoding="utf-8"?>
-            <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">
+            <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">  # noqa: E501
               <Attributes>
               </Attributes>
               <ResourceFamilies>
@@ -109,7 +125,7 @@ class TestDataModelMerger(unittest.TestCase):
         shell = """
             <Shell>
             <ShellAttributes>
-             <AttributeInfo Name="Shell Enable Password" Type="Password" DefaultValue="3M3u7nkDzxWb0aJ/IZYeWw==" IsReadOnly="false">
+             <AttributeInfo Name="Shell Enable Password" Type="Password" DefaultValue="3M3u7nkDzxWb0aJ/IZYeWw==" IsReadOnly="false">  # noqa: E501
                 <Rules>
                  <Rule Name="Configuration" />
                 </Rules>
@@ -143,7 +159,7 @@ class TestDataModelMerger(unittest.TestCase):
     def test_exception_thrown_when_shell_model_missing_in_data_model(self):
 
         datamodel = """<?xml version="1.0" encoding="utf-8"?>
-            <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">
+            <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">  # noqa: E501
               <Attributes>
               </Attributes>
               <ResourceFamilies>
@@ -163,7 +179,7 @@ class TestDataModelMerger(unittest.TestCase):
         shell = """
             <Shell>
             <ShellAttributes>
-             <AttributeInfo Name="Shell Enable Password" Type="Password" DefaultValue="3M3u7nkDzxWb0aJ/IZYeWw==" IsReadOnly="false">
+             <AttributeInfo Name="Shell Enable Password" Type="Password" DefaultValue="3M3u7nkDzxWb0aJ/IZYeWw==" IsReadOnly="false">  # noqa: E501
                 <Rules>
                  <Rule Name="Configuration" />
                 </Rules>
@@ -184,7 +200,7 @@ class TestDataModelMerger(unittest.TestCase):
     def test_adds_the_shell_model_to_the_datamodel(self):
 
         datamodel = """<?xml version="1.0" encoding="utf-8"?>
-            <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">
+            <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">  # noqa: E501
               <Attributes>
               </Attributes>
               <ResourceFamilies>
@@ -209,7 +225,7 @@ class TestDataModelMerger(unittest.TestCase):
             </ShellAttributes>
 
             <ShellModel Family="Switch">
-                <ResourceModel Name="SSwitch" Description="" SupportsConcurrentCommands="true">
+                <ResourceModel Name="SSwitch" Description="" SupportsConcurrentCommands="true">  # noqa: E501
                     <AttachedAttributes>
                     </AttachedAttributes>
                     <AttributeValues>
@@ -226,15 +242,19 @@ class TestDataModelMerger(unittest.TestCase):
         merger = ShellDataModelMerger()
         merged_xml = merger.merge_shell_model(datamodel, shell)
 
-        parser = etree.XMLParser(encoding='utf-8')
+        parser = etree.XMLParser(encoding="utf-8")
         tree = etree.fromstring(merged_xml, parser)
 
-        self.assertIsNotNone(tree.find(".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel"),
-                             "Model was not found in merged xml")
+        self.assertIsNotNone(
+            tree.find(
+                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel"  # noqa: E501
+            ),
+            "Model was not found in merged xml",
+        )
 
     def test_addds_the_shell_model_to_the_target_family(self):
         datamodel = """<?xml version="1.0" encoding="utf-8"?>
-              <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">
+              <DataModelInfo xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd">  # noqa: E501
                 <Attributes>
                 </Attributes>
                 <ResourceFamilies>
@@ -265,7 +285,7 @@ class TestDataModelMerger(unittest.TestCase):
               </ShellAttributes>
 
               <ShellModel Family="Switch">
-                  <ResourceModel Name="SSwitch" Description="" SupportsConcurrentCommands="true">
+                  <ResourceModel Name="SSwitch" Description="" SupportsConcurrentCommands="true">  # noqa: E501
                       <AttachedAttributes>
                       </AttachedAttributes>
                       <AttributeValues>
@@ -282,19 +302,27 @@ class TestDataModelMerger(unittest.TestCase):
         merger = ShellDataModelMerger()
         merged_xml = merger.merge_shell_model(datamodel, shell)
 
-        parser = etree.XMLParser(encoding='utf-8')
+        parser = etree.XMLParser(encoding="utf-8")
         tree = etree.fromstring(merged_xml, parser)
 
-        family = tree.find(".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceFamily[@Name='Switch']")
+        family = tree.find(
+            ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceFamily[@Name='Switch']"  # noqa: E501
+        )
 
         self.assertIsNotNone(
-            family.find(".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel[@Name='SSwitch']"),
-        "Model was not found in merged xml")
+            family.find(
+                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel[@Name='SSwitch']"  # noqa: E501
+            ),
+            "Model was not found in merged xml",
+        )
 
         bait_family = tree.find(
-            ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceFamily[@Name='Bait']")
+            ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceFamily[@Name='Bait']"  # noqa: E501
+        )
 
         self.assertIsNone(
             bait_family.find(
-                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel[@Name='SSwitch']"),
-            "Model was added to wrong element")
+                ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}ResourceModel[@Name='SSwitch']"  # noqa: E501
+            ),
+            "Model was added to wrong element",
+        )

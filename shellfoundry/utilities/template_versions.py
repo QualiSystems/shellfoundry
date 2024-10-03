@@ -2,18 +2,20 @@
 # -*- coding: utf-8 -*-
 
 import requests
+
 import shellfoundry.exceptions as exc
 
-VERSIONS_URL = 'https://api.github.com/repos/{}/{}/branches'
-NAME_PLACEHOLDER = 'name'
+VERSIONS_URL = "https://api.github.com/repos/{}/{}/branches"
+NAME_PLACEHOLDER = "name"
 
 
 def is_version(vstr):
     from distutils.version import StrictVersion
+
     try:
         StrictVersion(vstr)
         return True
-    except:
+    except Exception:
         return False
 
 
@@ -22,9 +24,10 @@ class TemplateVersions(object):
         self.template_repo = [url_user, url_repo]
 
     def get_versions_of_template(self):
-        """
-        Get all versions (branches) of a given template.
-        Raises HTTPError on request fail, NoVersionsHaveBeenFoundException when no versions have been found
+        """Get all versions (branches) of a given template.
+
+        Raises HTTPError on request fail,
+        NoVersionsHaveBeenFoundException when no versions have been found
         :return: List filled with version names (e.g. 1.0, 1.1, 2.0...)
         """
         response = requests.get(VERSIONS_URL.format(*self.template_repo))
@@ -33,7 +36,9 @@ class TemplateVersions(object):
         branches = [d[NAME_PLACEHOLDER] for d in response.json()]
         branches.sort(reverse=True, key=lambda x: (is_version(x), x))
         if not self.has_versions(branches):
-            raise exc.NoVersionsHaveBeenFoundException("No versions have been found for this template")
+            raise exc.NoVersionsHaveBeenFoundException(
+                "No versions have been found for this template"
+            )
         return branches
 
     @staticmethod

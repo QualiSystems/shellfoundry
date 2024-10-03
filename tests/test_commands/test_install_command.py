@@ -1,199 +1,190 @@
-import os
+#!/usr/bin/python
 
-from urllib2 import HTTPError, URLError
-from mock import Mock, patch, MagicMock, call
-from pyfakefs import fake_filesystem_unittest
+import unittest
+from unittest.mock import MagicMock, patch
+from urllib.error import HTTPError, URLError
 
 from shellfoundry.commands.install_command import InstallCommandExecutor
-from shellfoundry.models.install_config import InstallConfig
 from shellfoundry.exceptions import FatalError
 
-LOGIN_ERROR_MESSAGE = 'Login failed for user: YOUR_USERNAME. Please make sure the username and password are correct.'
 
-
-class TestInstallCommandExecutor(fake_filesystem_unittest.TestCase):
+class TestInstallCommandExecutor(unittest.TestCase):
     def setUp(self):
-        self.setUpPyfakefs()
+        self.mock_cloudshell_config_reader = MagicMock()
+        self.mock_installer = MagicMock()
+        self.mock_shell_config_reader = MagicMock()
+        self.mock_shell_package_installer = MagicMock()
 
-    @patch('click.secho')
-    def test_when_config_files_exist_install_succeeds(self, secho_mock):
-        # Arrange
-        self.fs.CreateFile('nut_shell/shell.yml', contents="""
-shell:
-    name: nut_shell
-    driver: NutShellDriver
-    """)
-        self.fs.CreateFile('nut_shell/cloudshell_config.yml', contents="""
-install:
-    host: localhost
-    port: 9000
-    username: YOUR_USERNAME
-    password: YOUR_PASSWORD
-    domain: Global
-    author: AUTHOR
-    online_mode: ONLINE_MODE
-    template_location: TEMPLATE_LOCATION
-    github_login: GITHUB_LOGIN
-    github_password: GITHUB_PASSWORD
-    """)
-        os.chdir('nut_shell')
+    @patch("shellfoundry.commands.install_command.ShellPackage")
+    @patch("shellfoundry.commands.install_command.os")
+    @patch("shellfoundry.commands.install_command.click.secho")
+    def test_install_layer_one(self, secho_mock, os_mock, shell_package_mock):
+        shell_package_mock.return_value.is_layer_one.return_value = True
 
-        mock_installer = MagicMock()
-        command_executor = InstallCommandExecutor(installer=mock_installer)
+        command_executor = InstallCommandExecutor(
+            cloudshell_config_reader=self.mock_cloudshell_config_reader,
+            installer=self.mock_installer,
+            shell_config_reader=self.mock_shell_config_reader,
+            shell_package_installer=self.mock_shell_package_installer,
+        )
 
         # Act
         command_executor.install()
 
         # Assert
-        mock_installer.install.assert_called_once_with('nut_shell', InstallConfig('localhost', 9000, 'YOUR_USERNAME',
-                                                                                  'YOUR_PASSWORD', 'Global', "AUTHOR",
-                                                                                  'ONLINE_MODE', 'TEMPLATE_LOCATION',
-                                                                                  'GITHUB_LOGIN', 'GITHUB_PASSWORD'))
-        secho_mock.assert_any_call('Successfully installed shell', fg='green')
+        secho_mock.assert_any_call(
+            "Installing a L1 shell directly via shellfoundry is not supported. "
+            "Please follow the L1 shell import procedure described in help.quali.com.",
+            fg="yellow",
+        )
 
-    def test_tosca_based_shell_installed_when_tosca_meta_file_exists(self):
-        # Arrange
-        self.fs.CreateFile('nut-shell/TOSCA-Metadata/TOSCA.meta',
-                           contents='TOSCA-Meta-File-Version: 1.0 \n'
-                                    'CSAR-Version: 1.1 \n'
-                                    'Created-By: Anonymous \n'
-                                    'Entry-Definitions: shell-definition.yml')
+    @patch("shellfoundry.commands.install_command.ShellPackage")
+    @patch("shellfoundry.commands.install_command.os")
+    @patch("shellfoundry.commands.install_command.click.secho")
+    def test_install_gen2_shell_success(self, secho_mock, os_mock, shell_package_mock):
+        shell_package_mock.return_value.is_layer_one.return_value = False
+        shell_package_mock.return_value.is_tosca.return_value = True
+        os_mock.getcwd.return_value = "current path"
 
-        os.chdir('nut-shell')
-
-        mock_shell_package_installer = MagicMock()
-        command_executor = InstallCommandExecutor(shell_package_installer=mock_shell_package_installer)
-
-        # Act
-        command_executor.install()
-
-        # Assert
-        self.assertTrue(mock_shell_package_installer.install.called)
-
-    @patch('click.secho')
-    def test_install_layer_one_shell(self, secho_mock):
-        # Arrange
-        self.fs.CreateFile('cloudshell-L1-test/datamodel/datamodel.xml')
-        os.chdir('cloudshell-L1-test')
-
-        mock_shell_package_installer = MagicMock()
-        command_executor = InstallCommandExecutor(shell_package_installer=mock_shell_package_installer)
+        command_executor = InstallCommandExecutor(
+            cloudshell_config_reader=self.mock_cloudshell_config_reader,
+            installer=self.mock_installer,
+            shell_config_reader=self.mock_shell_config_reader,
+            shell_package_installer=self.mock_shell_package_installer,
+        )
 
         # Act
         command_executor.install()
 
         # Assert
-        secho_mock.assert_any_call("Installing a L1 shell directly via shellfoundry is not supported. "
-                                   "Please follow the L1 shell import procedure described in help.quali.com.",
-                                   fg="yellow")
+        self.mock_shell_package_installer.install.assert_called_once_with(
+            "current path"
+        )
+        secho_mock.assert_any_call("Successfully installed shell", fg="green")
 
-    def test_proper_error_message_displayed_when_login_failed(self):
-        # Arrange
-        self.fs.CreateFile('nut_shell/shell.yml', contents="""
-shell:
-    name: nut_shell
-    """)
-        self.fs.CreateFile('nut_shell/cloudshell_config.yml', contents="""
-install:
-    host: localhost
-    port: 9000
-    username: YOUR_USERNAME
-    password: YOUR_PASSWORD
-    domain: Global
-    """)
-        os.chdir('nut_shell')
-        mock_installer = Mock()
-        mock_installer.install = Mock(side_effect=HTTPError('', 401, LOGIN_ERROR_MESSAGE, None, None))
-        command_executor = InstallCommandExecutor(installer=mock_installer)
+    @patch("shellfoundry.commands.install_command.ShellPackage")
+    @patch("shellfoundry.commands.install_command.os")
+    @patch("shellfoundry.commands.install_command.click.secho")
+    def test_install_gen1_shell_success(self, secho_mock, os_mock, shell_package_mock):
+        shell_package_mock.return_value.is_layer_one.return_value = False
+        shell_package_mock.return_value.is_tosca.return_value = False
+
+        command_executor = InstallCommandExecutor(
+            cloudshell_config_reader=self.mock_cloudshell_config_reader,
+            installer=self.mock_installer,
+            shell_config_reader=self.mock_shell_config_reader,
+            shell_package_installer=self.mock_shell_package_installer,
+        )
+
+        # Act
+        command_executor.install()
+
+        # Assert
+        self.mock_installer.install.assert_called_once()
+        secho_mock.assert_any_call("Successfully installed shell", fg="green")
+
+    @patch("shellfoundry.commands.install_command.ShellPackage")
+    @patch("shellfoundry.commands.install_command.os")
+    def test_install_gen1_shell_cs_connection_failed(self, os_mock, shell_package_mock):
+        shell_package_mock.return_value.is_layer_one.return_value = False
+        shell_package_mock.return_value.is_tosca.return_value = False
+        self.mock_installer.install = MagicMock(side_effect=URLError("Error reason"))
+
+        command_executor = InstallCommandExecutor(
+            cloudshell_config_reader=self.mock_cloudshell_config_reader,
+            installer=self.mock_installer,
+            shell_config_reader=self.mock_shell_config_reader,
+            shell_package_installer=self.mock_shell_package_installer,
+        )
 
         # Act
         with self.assertRaises(FatalError) as context:
             command_executor.install()
 
         # Assert
-        self.assertTrue(str(context.exception) ==
-                        u'Login to CloudShell failed. Please verify the credentials in the config')
-
-    def test_proper_error_message_when_non_authentication_http_error_raised(self):
-        # Arrange
-        self.fs.CreateFile('nut_shell/shell.yml', contents="""
-shell:
-    name: nut_shell
-    """)
-        self.fs.CreateFile('nut_shell/cloudshell_config.yml', contents="""
-install:
-    host: localhost
-    port: 9000
-    username: YOUR_USERNAME
-    password: YOUR_PASSWORD
-    domain: Global
-    """)
-        os.chdir('nut_shell')
-        mock_installer = Mock()
-        mock_installer.install = Mock(side_effect=HTTPError('', 404, LOGIN_ERROR_MESSAGE, None, None))
-        command_executor = InstallCommandExecutor(installer=mock_installer)
-
-        # Act
-        with self.assertRaises(FatalError) as context:
-            command_executor.install()
-
-        # Assert
-        self.assertTrue(str(context.exception) == u"Failed to install shell. CloudShell responded with: '{}'"
-                        .format('Login failed for user: YOUR_USERNAME. '
-                                'Please make sure the username and password are correct.'),
-                        "Actual: {}".format(context.exception))
-
-    def test_proper_error_appears_when_connection_to_cs_failed(self):
-        # Arrange
-        self.fs.CreateFile('nut_shell/shell.yml', contents="""
-shell:
-    name: nut_shell
-    """)
-        self.fs.CreateFile('nut_shell/cloudshell_config.yml', contents="""
-install:
-    host: localhost
-    port: 9000
-    username: YOUR_USERNAME
-    password: YOUR_PASSWORD
-    domain: Global
-    """)
-        os.chdir('nut_shell')
-        mock_installer = Mock()
-        mock_installer.install = Mock(side_effect=URLError(''))
-        command_executor = InstallCommandExecutor(installer=mock_installer)
-
-        # Act
-        with self.assertRaises(FatalError) as context:
-            command_executor.install()
-
-        # Assert
+        self.mock_installer.install.assert_called_once()
         self.assertTrue(
-            context.exception.message == u'Connection to CloudShell Server failed. Please make sure it is up and running properly.')
+            str(context.exception) == "Connection to CloudShell Server failed. "
+            "Please make sure it is up and running properly."
+        )
 
-    def test_proper_error_appears_when_old_shell_installation_fails(self):
-        # Arrange
-        self.fs.CreateFile('nut_shell/shell.yml', contents="""
-shell:
-    name: nut_shell
-    """)
-        self.fs.CreateFile('nut_shell/cloudshell_config.yml', contents="""
-install:
-    host: localhost
-    port: 9000
-    username: YOUR_USERNAME
-    password: YOUR_PASSWORD
-    domain: Global
-    """)
-        os.chdir('nut_shell')
-        mock_installer = Mock()
-        ex_msg = 'Quali Error: some fancy error here'
-        mock_installer.install = Mock(side_effect=Exception(ex_msg))
-        command_executor = InstallCommandExecutor(installer=mock_installer)
+    @patch("shellfoundry.commands.install_command.ShellPackage")
+    @patch("shellfoundry.commands.install_command.os")
+    def test_install_gen1_shell_cs_login_failed(self, os_mock, shell_package_mock):
+        shell_package_mock.return_value.is_layer_one.return_value = False
+        shell_package_mock.return_value.is_tosca.return_value = False
+        self.mock_installer.install = MagicMock(
+            side_effect=HTTPError("", 401, "Login Failed", None, None)
+        )
+
+        command_executor = InstallCommandExecutor(
+            cloudshell_config_reader=self.mock_cloudshell_config_reader,
+            installer=self.mock_installer,
+            shell_config_reader=self.mock_shell_config_reader,
+            shell_package_installer=self.mock_shell_package_installer,
+        )
 
         # Act
         with self.assertRaises(FatalError) as context:
             command_executor.install()
 
         # Assert
+        self.mock_installer.install.assert_called_once()
         self.assertTrue(
-            context.exception.message == u"Failed to install shell. CloudShell responded with: '{}'".format(ex_msg))
+            str(context.exception)
+            == "Login to CloudShell failed. Please verify the credentials in the config"  # noqa: E501
+        )
+
+    @patch("shellfoundry.commands.install_command.ShellPackage")
+    @patch("shellfoundry.commands.install_command.os")
+    def test_install_gen1_shell_non_auth_http_error(self, os_mock, shell_package_mock):
+        shell_package_mock.return_value.is_layer_one.return_value = False
+        shell_package_mock.return_value.is_tosca.return_value = False
+        self.mock_installer.install = MagicMock(
+            side_effect=HTTPError("", 404, "Non auth error", None, None)
+        )
+
+        command_executor = InstallCommandExecutor(
+            cloudshell_config_reader=self.mock_cloudshell_config_reader,
+            installer=self.mock_installer,
+            shell_config_reader=self.mock_shell_config_reader,
+            shell_package_installer=self.mock_shell_package_installer,
+        )
+
+        # Act
+        with self.assertRaises(FatalError) as context:
+            command_executor.install()
+
+        # Assert
+        self.mock_installer.install.assert_called_once()
+        self.assertTrue(
+            str(context.exception) == "Failed to install shell. "
+            "CloudShell responded with: 'HTTP Error 404: Non auth error'"
+        )
+
+    @patch("shellfoundry.commands.install_command.ShellPackage")
+    @patch("shellfoundry.commands.install_command.os")
+    def test_install_gen1_shell_base_exception(self, os_mock, shell_package_mock):
+        shell_package_mock.return_value.is_layer_one.return_value = False
+        shell_package_mock.return_value.is_tosca.return_value = False
+        self.mock_installer.install = MagicMock(
+            side_effect=Exception("Some base exception")
+        )
+
+        command_executor = InstallCommandExecutor(
+            cloudshell_config_reader=self.mock_cloudshell_config_reader,
+            installer=self.mock_installer,
+            shell_config_reader=self.mock_shell_config_reader,
+            shell_package_installer=self.mock_shell_package_installer,
+        )
+
+        # Act
+        with self.assertRaises(FatalError) as context:
+            command_executor.install()
+
+        # Assert
+        self.mock_installer.install.assert_called_once()
+        self.assertTrue(
+            str(context.exception) == "Failed to install shell. "
+            "CloudShell responded with: 'Some base exception'"
+        )

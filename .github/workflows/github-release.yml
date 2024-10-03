@@ -1,0 +1,13 @@
+name: github release
+on:
+  push:
+    paths-ignore:
+      - README.md
+    branches:
+      - master
+jobs:
+  tox-ci:
+    uses: QualiSystems/.github/.github/workflows/package-tox-py-37-39.yml@master
+  pypi-deploy:
+    needs: tox-ci
+    uses: QualiSystems/.github/.github/workflows/package-github-release.yml@master

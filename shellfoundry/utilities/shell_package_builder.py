@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 import os
-import click
 import shutil
+from io import open
 
+import click
 import yaml
 
 from shellfoundry.utilities.archive_creator import ArchiveCreator
@@ -17,11 +17,7 @@ class ShellPackageBuilder(object):
     DEPLOY_DIR = "deployments"
 
     def pack(self, path):
-        """
-        Creates TOSCA based Shell package
-        :return:
-        """
-
+        """Creates TOSCA based Shell package."""
         self._remove_all_pyc(path)
         shell_package = ShellPackage(path)
         shell_name = shell_package.get_shell_name()
@@ -34,11 +30,13 @@ class ShellPackageBuilder(object):
 
             self._copy_shell_definition(package_path, "", shell_definition_path)
 
-            with open(shell_definition_path) as shell_definition_file:
+            with open(shell_definition_path, encoding="utf8") as shell_definition_file:
                 shell_definition = yaml.safe_load(shell_definition_file)
 
                 if "template_icon" in shell_definition["metadata"]:
-                    self._copy_artifact(shell_definition["metadata"]["template_icon"], package_path)
+                    self._copy_artifact(
+                        shell_definition["metadata"]["template_icon"], package_path
+                    )
 
                 for node_type in list(shell_definition["node_types"].values()):
                     if "artifacts" not in node_type:
@@ -47,18 +45,24 @@ class ShellPackageBuilder(object):
                     artifact_path_list = []
                     for artifact_name, artifact in node_type["artifacts"].items():
                         if artifact_name == "driver":
-                            artifact_path_list.append(self._create_driver(path="",
-                                                                          package_path=os.curdir,
-                                                                          dir_path=self.DRIVER_DIR,
-                                                                          driver_name=os.path.basename(
-                                                                              artifact["file"])))
+                            artifact_path_list.append(
+                                self._create_driver(
+                                    path="",
+                                    package_path=os.curdir,
+                                    dir_path=self.DRIVER_DIR,
+                                    driver_name=os.path.basename(artifact["file"]),
+                                )
+                            )
                         elif artifact_name == "deployment":
-                            artifact_path_list.append(self._create_driver(path="",
-                                                                          package_path=os.curdir,
-                                                                          dir_path=self.DEPLOY_DIR,
-                                                                          driver_name=os.path.basename(
-                                                                              artifact["file"]),
-                                                                          mandatory=False))
+                            artifact_path_list.append(
+                                self._create_driver(
+                                    path="",
+                                    package_path=os.curdir,
+                                    dir_path=self.DEPLOY_DIR,
+                                    driver_name=os.path.basename(artifact["file"]),
+                                    mandatory=False,
+                                )
+                            )
 
                         self._copy_artifact(artifact["file"], package_path)
 
@@ -66,7 +70,7 @@ class ShellPackageBuilder(object):
 
             try:
                 self._remove_build_artifacts(artifact_path_list)
-            except:
+            except Exception:
                 pass
 
             click.echo("Shell package was successfully created: " + zip_path)
@@ -81,7 +85,7 @@ class ShellPackageBuilder(object):
     def _read_tosca_meta(self, path):
         tosca_meta = {}
         shell_package = ShellPackage(path)
-        with open(shell_package.get_metadata_path()) as meta_file:
+        with open(shell_package.get_metadata_path(), encoding="utf8") as meta_file:
             for meta_line in meta_file:
                 (key, val) = meta_line.split(":")
                 tosca_meta[key] = val.strip()
@@ -90,18 +94,21 @@ class ShellPackageBuilder(object):
     def _copy_shell_icon(self, package_path, path):
         self._copy_file(
             src_file_path=os.path.join(path, "shell-icon.png"),
-            dest_dir_path=package_path)
+            dest_dir_path=package_path,
+        )
 
     def _copy_shell_definition(self, package_path, path, shell_definition):
         self._copy_file(
             src_file_path=os.path.join(path, shell_definition),
-            dest_dir_path=package_path)
+            dest_dir_path=package_path,
+        )
 
     def _copy_tosca_meta(self, package_path, path):
         shell_package = ShellPackage(path)
         self._copy_file(
             src_file_path=shell_package.get_metadata_path(),
-            dest_dir_path=os.path.join(package_path, "TOSCA-Metadata"))
+            dest_dir_path=os.path.join(package_path, "TOSCA-Metadata"),
+        )
 
     @staticmethod
     def _remove_all_pyc(package_path):
@@ -118,7 +125,11 @@ class ShellPackageBuilder(object):
             ArchiveCreator.make_archive(zip_file_path, "zip", dir_to_zip)
             return os.path.abspath(zip_file_path)
         elif mandatory:
-            raise click.ClickException("Invalid driver structure. Can't find '{}' driver folder.".format(dir_path))
+            raise click.ClickException(
+                "Invalid driver structure. Can't find '{}' driver folder.".format(
+                    dir_path
+                )
+            )
 
     @staticmethod
     def _copy_file(src_file_path, dest_dir_path):

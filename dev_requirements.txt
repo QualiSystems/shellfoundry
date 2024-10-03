@@ -1,0 +1,5 @@
+pre-commit
+tox
+tox-factor
+-r test_requirements.txt
+-r requirements.txt

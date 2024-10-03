@@ -1,9 +1,9 @@
-import tempfile
 import shutil
+import tempfile
 
 
 class TempDirContext:
-    def __init__(self, remove_dir_on_error=True, prefix=''):
+    def __init__(self, remove_dir_on_error=True, prefix=""):
         self.temp_dir = None
         self.prefix = prefix
         self._remove_dir_on_error = remove_dir_on_error
@@ -15,4 +15,3 @@ class TempDirContext:
     def __exit__(self, exc_type, exc_val, exc_tb):
         if not exc_val or (exc_val and self._remove_dir_on_error):
             shutil.rmtree(self.temp_dir, ignore_errors=True)
-

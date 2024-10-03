@@ -1,6 +1,56 @@
 =======
 History
 =======
+1.2.25 (2024-07-30)
+-------------------
+
+* Added support for the latest cloudshell-rest-api
+* Added possibility to pack shell without src folder
+
+1.2.22 (2022-09-05)
+-------------------
+
+* Set default Python version for new Shells to "3"
+
+1.2.21 (2022-03-31)
+-------------------
+
+* Fixed issue with list command in offline mode
+* Fixed GH issue "Uninformative error message when configured domain is incorrect #254"
+* Fixed GH issue "'Error' word repeats twice #251"
+
+1.2.20 (2021-08-19)
+-------------------
+
+* Fixed password decryption error
+
+1.2.19 (2021-07-27)
+-------------------
+
+* Fixed encoding issue
+
+1.2.18 (2021-04-14)
+-------------------
+
+* Fixed encoding issue
+
+1.2.17 (2020-02-12)
+-------------------
+
+* Fixed error with click and cookiecutter versions incompatibility
+* Fixed multiple traceback issues
+
+1.2.16 (2020-01-02)
+-------------------
+
+* Fixed error with click and cookiecutter versions incompatibility
+* Fixed multiple traceback issues
+
+
+1.2.13 (2019-10-18)
+-------------------
+
+* Fixed password modification error
 
 1.2.11 (2019-08-14)
 -------------------

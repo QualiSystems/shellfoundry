@@ -1,6 +1,7 @@
+#!/usr/bin/python
 import unittest
+from unittest.mock import MagicMock, patch
 
-from mock import patch, Mock
 from shellfoundry.utilities import is_index_version_greater_than_current
 
 patch.object = patch.object
