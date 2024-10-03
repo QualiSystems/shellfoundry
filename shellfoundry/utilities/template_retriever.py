@@ -11,7 +11,10 @@ import click
 import requests
 import yaml
 from pkg_resources import parse_version
-from pkg_resources._vendor.packaging.version import Version
+try:
+    from pkg_resources._vendor.packaging.version import Version
+except ImportError:
+    from packaging.version import Version
 
 from .filters import CompositeFilter
 
