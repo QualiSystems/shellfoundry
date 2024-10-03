@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, Mock
 
 from shellfoundry.utilities import is_index_version_greater_than_current
 
@@ -19,9 +19,12 @@ class TestVersionsHelpers(unittest.TestCase):
         get_response.content = return_json
 
         # Act
-        with patch('shellfoundry.utilities.get_installed_version', return_value='1.0.0'), \
-             patch('shellfoundry.utilities.requests.get', return_value=get_response):
-            is_greater_version, is_major_release = is_index_version_greater_than_current()
+        with patch(
+            "shellfoundry.utilities.get_installed_version", return_value="1.0.0"
+        ), patch("shellfoundry.utilities.requests.get", return_value=get_response):
+            is_greater_version, is_major_release = (
+                is_index_version_greater_than_current()
+            )
 
         # Assert
         self.assertFalse(is_greater_version)
@@ -38,9 +41,12 @@ class TestVersionsHelpers(unittest.TestCase):
         get_response.content = return_json
 
         # Act
-        with patch('shellfoundry.utilities.get_installed_version', return_value='0.2.7'), \
-             patch('shellfoundry.utilities.requests.get', return_value=get_response):
-            is_greater_version, is_major_release = is_index_version_greater_than_current()
+        with patch(
+            "shellfoundry.utilities.get_installed_version", return_value="0.2.7"
+        ), patch("shellfoundry.utilities.requests.get", return_value=get_response):
+            is_greater_version, is_major_release = (
+                is_index_version_greater_than_current()
+            )
 
         # Assert
         self.assertTrue(is_greater_version)
@@ -57,9 +63,12 @@ class TestVersionsHelpers(unittest.TestCase):
         get_response.content = return_json
 
         # Act
-        with patch('shellfoundry.utilities.get_installed_version', return_value='0.2.7'), \
-             patch('shellfoundry.utilities.requests.get', return_value=get_response):
-            is_greater_version, is_major_release = is_index_version_greater_than_current()
+        with patch(
+            "shellfoundry.utilities.get_installed_version", return_value="0.2.7"
+        ), patch("shellfoundry.utilities.requests.get", return_value=get_response):
+            is_greater_version, is_major_release = (
+                is_index_version_greater_than_current()
+            )
 
         # Assert
         self.assertTrue(is_greater_version)
@@ -76,9 +85,12 @@ class TestVersionsHelpers(unittest.TestCase):
         get_response.content = return_json
 
         # Act
-        with patch('shellfoundry.utilities.get_installed_version', return_value='0.2.7'), \
-             patch('shellfoundry.utilities.requests.get', return_value=get_response):
-            is_greater_version, is_major_release = is_index_version_greater_than_current()
+        with patch(
+            "shellfoundry.utilities.get_installed_version", return_value="0.2.7"
+        ), patch("shellfoundry.utilities.requests.get", return_value=get_response):
+            is_greater_version, is_major_release = (
+                is_index_version_greater_than_current()
+            )
 
         # Assert
         self.assertFalse(is_greater_version)
