@@ -11,6 +11,7 @@ import click
 import requests
 import yaml
 from pkg_resources import parse_version
+
 try:
     from pkg_resources._vendor.packaging.version import Version
 except ImportError:
