@@ -69,7 +69,9 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
 
         # Assert
         assertFileExists(self, "nut-shell/src/data_model.py")
-        self.assertEqual(post_mock.call_args[1]["headers"]["Authorization"], "Basic TEST-TOKEN")
+        self.assertEqual(
+            post_mock.call_args[1]["headers"]["Authorization"], "Basic TEST-TOKEN"
+        )
 
     def test_error_displayed_when_driver_generation_returns_error_code(self):
         self.fs.create_file("nut-shell/dist/NutShell.zip", contents="ZIP")
