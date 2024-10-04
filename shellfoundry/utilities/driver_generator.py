@@ -67,7 +67,7 @@ class DriverGenerator(object):
         url = "http://{}:{}/API/ShellDrivers/Generate".format(
             cloudshell_config.host, cloudshell_config.port
         )
-        token = client.token
+        token = client._token
         response = post(
             url,
             files={path.basename(shell_filename): open(package_full_path, "rb")},
