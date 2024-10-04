@@ -105,6 +105,6 @@ class ListCommandExecutor(object):
 As of CloudShell 8.0, CloudShell uses 2nd generation shells,
 to view the list of 1st generation shells use: shellfoundry list --gen1.
 For more information, please visit our devguide:
-https://qualisystems.github.io/devguide/
+https://help.quali.com/devguide
 """
             )
