@@ -42,10 +42,10 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         )
 
         with patch(
-            "shellfoundry.utilities.driver_generator.PackagingRestApiClient"
+            "shellfoundry.utilities.driver_generator.PackagingRestApiClient.login"
         ) as mock_rest:
             rest_client_mock = MagicMock()
-            rest_client_mock.token = "TEST-TOKEN"
+            rest_client_mock._token = "TEST-TOKEN"
             mock_rest.return_value = rest_client_mock
 
             with patch("shellfoundry.utilities.driver_generator.post") as post_mock:
@@ -69,6 +69,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
 
         # Assert
         assertFileExists(self, "nut-shell/src/data_model.py")
+        self.assertEqual(post_mock.call_args[1]["headers"]["Authorization"], "Basic TEST-TOKEN")
 
     def test_error_displayed_when_driver_generation_returns_error_code(self):
         self.fs.create_file("nut-shell/dist/NutShell.zip", contents="ZIP")
