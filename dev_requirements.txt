@@ -3,3 +3,4 @@ tox
 tox-factor
 -r test_requirements.txt
 -r requirements.txt
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
