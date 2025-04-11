@@ -1,44 +1,25 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import os
+from typing import TYPE_CHECKING
 
 import click
-from cloudshell.rest.api import PackagingRestApiClient
+
+from shellfoundry.utilities.cloudshell_api.client_wrapper import CloudShellClient
+
+if TYPE_CHECKING:
+    from shellfoundry.models.install_config import InstallConfig
 
 
-class ShellInstaller(object):
-    def install(self, package_name, config):
-        """Installs package according to cloudshell.
-
-        :param package_name: Package name to install
-        :type package_name str
-        :param config: Configuration to be used for
-        :type config shellfoundry.models.install_config.InstallConfig
-        :return:
-        """
-        package_full_path = os.path.join(os.getcwd(), "dist", package_name + ".zip")
+class ShellInstaller:
+    @staticmethod
+    def install(package_name: str, config: InstallConfig):
+        """Installs package according to cloudshell."""
+        package_full_path = os.path.join(os.getcwd(), "dist", f"{package_name}.zip")
         click.echo(
-            "Installing package {} into CloudShell at http://{}:{}".format(
-                package_full_path, config.host, config.port
-            )
+            f"Installing package {package_full_path}"
+            f" into CloudShell at http://{config.host}:{config.port}"
         )
 
-        try:
-            client = PackagingRestApiClient.login(
-                host=config.host,
-                port=config.port,
-                username=config.username,
-                password=config.password,
-                domain=config.domain,
-            )
-        except AttributeError:
-            client = PackagingRestApiClient(
-                ip=config.host,
-                port=config.port,
-                username=config.username,
-                password=config.password,
-                domain=config.domain,
-            )
-
+        client = CloudShellClient(cs_config=config).create_client()
         client.import_package(package_full_path)

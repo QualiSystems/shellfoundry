@@ -1,4 +1,5 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import os
 
 from pyfakefs import fake_filesystem_unittest

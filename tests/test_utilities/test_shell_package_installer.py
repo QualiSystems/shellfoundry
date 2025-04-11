@@ -1,16 +1,10 @@
-#!/usr/bin/python
-
-import click
-
-try:
-    from cloudshell.rest.exceptions import FeatureUnavailable, ShellNotFound
-except ImportError:
-    from cloudshell.rest.exceptions import FeatureUnavailable
-    from cloudshell.rest.exceptions import ShellNotFoundException as ShellNotFound
+from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError
 
+import click
+from cloudshell.rest.exceptions import FeatureUnavailable, ShellNotFound
 from pyfakefs import fake_filesystem_unittest
 
 import shellfoundry.utilities.shell_package_installer as spi

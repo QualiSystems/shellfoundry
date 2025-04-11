@@ -1,4 +1,4 @@
-#!/usr/bin/python
+from __future__ import annotations
 
 import shutil
 import unittest
@@ -7,8 +7,8 @@ from unittest.mock import MagicMock, patch
 from click import BadParameter, ClickException
 
 from shellfoundry.commands.extend_command import ExtendCommandExecutor
+from shellfoundry.constants import TEMPLATE_BASED_ON
 from shellfoundry.exceptions import VersionRequestException
-from shellfoundry.utilities.constants import TEMPLATE_BASED_ON
 
 
 class TestExtendCommandExecutor(unittest.TestCase):
@@ -20,7 +20,6 @@ class TestExtendCommandExecutor(unittest.TestCase):
             self.tested_instance = ExtendCommandExecutor(
                 repository_downloader=repository_downloader,
                 shell_name_validations=shell_name_validations,
-                shell_gen_validations=None,
             )
 
     def tearDown(self):
@@ -169,7 +168,7 @@ class TestExtendCommandExecutor(unittest.TestCase):
         self.tested_instance._add_based_on("shell_path", modificator)
 
         modificator.add_field_to_definition.assert_called_once_with(
-            field=TEMPLATE_BASED_ON
+            conf_field=TEMPLATE_BASED_ON
         )
 
     @patch("shellfoundry.commands.extend_command.DefinitionModification")
@@ -180,7 +179,7 @@ class TestExtendCommandExecutor(unittest.TestCase):
         self.tested_instance._add_based_on("shell_path")
 
         modificator.add_field_to_definition.assert_called_once_with(
-            field=TEMPLATE_BASED_ON
+            conf_field=TEMPLATE_BASED_ON
         )
 
     @patch("shellfoundry.commands.extend_command.DefinitionModification")

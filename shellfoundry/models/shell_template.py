@@ -1,22 +1,14 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
+
+from attrs import define, field
 
 
-class ShellTemplate(object):
-    def __init__(
-        self,
-        name,
-        description,
-        repository,
-        min_cs_ver,
-        standard=None,
-        standard_version=None,
-        params=None,
-    ):
-        self.name = name
-        self.description = description
-        self.repository = repository
-        self.min_cs_ver = min_cs_ver
-        self.standard = standard
-        self.standard_version = standard_version or {}
-        self.params = params or {}
+@define
+class ShellTemplate:
+    name: str
+    description: str
+    repository: str
+    min_cs_ver: str
+    standard: str | None = None
+    standard_version: dict | None = field(default={})
+    params: dict = field(default={})

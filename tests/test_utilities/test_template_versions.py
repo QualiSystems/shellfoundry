@@ -1,4 +1,5 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import unittest
 from unittest.mock import MagicMock, patch
 

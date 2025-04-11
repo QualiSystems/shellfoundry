@@ -1,16 +1,10 @@
-# !/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import os
+from urllib.error import HTTPError, URLError
 
 import click
-
-try:
-    # Python 2.x version
-    from urllib2 import HTTPError, URLError
-except ImportError:
-    # Python 3.x version
-    from urllib.error import HTTPError, URLError
+from attrs import define, field
 
 from shellfoundry.exceptions import FatalError
 from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
@@ -20,24 +14,19 @@ from shellfoundry.utilities.shell_package import ShellPackage
 from shellfoundry.utilities.shell_package_installer import ShellPackageInstaller
 
 
-class InstallCommandExecutor(object):
-    def __init__(
-        self,
-        cloudshell_config_reader=None,
-        installer=None,
-        shell_config_reader=None,
-        shell_package_installer=None,
-    ):
-        self.cloudshell_config_reader = cloudshell_config_reader or Configuration(
-            CloudShellConfigReader()
-        )
-        self.installer = installer or ShellInstaller()
-        self.shell_config_reader = shell_config_reader or ShellConfigReader()
-        self.shell_package_installer = (
-            shell_package_installer or ShellPackageInstaller()
-        )
+@define
+class InstallCommandExecutor:
+    cloudshell_config_reader: Configuration = field(
+        factory=lambda: Configuration(CloudShellConfigReader())
+    )
+    installer: ShellInstaller = field(factory=ShellInstaller)
+    shell_config_reader: ShellConfigReader = field(factory=ShellConfigReader)
+    shell_package_installer: ShellPackageInstaller = field(
+        factory=ShellPackageInstaller
+    )
 
     def install(self):
+        """Install Shell."""
         current_path = os.getcwd()
         shell_package = ShellPackage(current_path)
         if shell_package.is_layer_one():
@@ -54,6 +43,7 @@ class InstallCommandExecutor(object):
             click.secho("Successfully installed shell", fg="green")
 
     def _install_old_school_shell(self):
+        """Install Shell first generation."""
         error = None
         try:
             cloudshell_config = self.cloudshell_config_reader.read()
@@ -76,6 +66,5 @@ class InstallCommandExecutor(object):
 
         if error:
             raise FatalError(
-                "Failed to install shell. "
-                "CloudShell responded with: '{}'".format(error)
+                f"Failed to install shell. " f"CloudShell responded with: '{error}'"
             )

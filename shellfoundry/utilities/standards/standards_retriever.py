@@ -1,32 +1,55 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import json
-from io import open
 
-from ..cloudshell_api import create_cloudshell_client
+import click
+from cloudshell.rest.exceptions import FeatureUnavailable, PackagingRestApiError
 
-from shellfoundry.decorators.standards import standard_transformation
+from ..cloudshell_api.client_wrapper import create_cloudshell_client
+
+from shellfoundry.constants import ALTERNATIVE_STANDARDS_PATH
+from shellfoundry.exceptions import FatalError, StandardVersionException
+
+STANDARD_NAME_KEY = "StandardName"
+VERSIONS_KEY = "Versions"
 
 
-class Standards(object):
-    @standard_transformation
-    def fetch(self, **kwargs):
-        alternative = kwargs.get("alternative", None)
-        if not alternative:
-            return self._fetch_from_cloudshell()
-        return self._fetch_from_alternative_path(alternative)
+class Standards:
+    def fetch(self) -> dict[str, list[str]]:
+        """Get all available standards.
 
-    @staticmethod
-    def _fetch_from_cloudshell():
-        cs_client = create_cloudshell_client()
+        Try to get standards from Cloudshell.
+        In case of error, try to get standards from local built-in file.
+        """
         try:
-            return cs_client.get_installed_standards()
-        except Exception:
-            raise
+            cs_client = create_cloudshell_client()
+            raw_standards = cs_client.get_installed_standards()
+        except (FatalError, FeatureUnavailable, PackagingRestApiError) as e:
+            click.secho(
+                message=f"Can not get standards from Cloudshell Server. Error: {e}",
+                fg="yellow",
+            )
+            try:
+                with open(ALTERNATIVE_STANDARDS_PATH, encoding="utf8") as f:
+                    raw_standards = json.load(f)
+            except Exception:
+                raise StandardVersionException(
+                    "Error during getting standards either from the server or locally"
+                )
+
+        return self._convert_standards(raw_standards=raw_standards)
 
     @staticmethod
-    def _fetch_from_alternative_path(alternative_path):
-        with open(alternative_path, mode="r", encoding="utf8") as stream:
-            response = stream.read()
-        return json.loads(response)
+    def _convert_standards(
+        raw_standards: list[dict[str, str | list[str]]]
+    ) -> dict[str, list[str]]:
+        """Convert standards to user-friendly view."""
+        return {
+            i[STANDARD_NAME_KEY]
+            .lower()
+            .lstrip("cloudshell")
+            .rstrip("standard")
+            .strip("_")
+            .replace("_", "-"): i[VERSIONS_KEY]
+            for i in raw_standards
+        }

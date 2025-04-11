@@ -1,8 +1,8 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
+
+from importlib.metadata import version
 
 import click
-import pkg_resources
 
 from shellfoundry.commands.config_command import ConfigCommandExecutor
 from shellfoundry.commands.delete_command import DeleteCommandExecutor
@@ -15,8 +15,8 @@ from shellfoundry.commands.list_command import ListCommandExecutor
 from shellfoundry.commands.new_command import NewCommandExecutor
 from shellfoundry.commands.pack_command import PackCommandExecutor
 from shellfoundry.commands.show_command import ShowCommandExecutor
-from shellfoundry.decorators import shellfoundry_version_check
-from shellfoundry.utilities import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
+from shellfoundry.decorators.version_check import shellfoundry_version_check
+from shellfoundry.utilities.filters import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
 
 
 @click.group()
@@ -25,11 +25,9 @@ def cli():
 
 
 @cli.command()
-def version():
+def version():  # noqa: F811
     """Displays the shellfoundry version."""
-    click.echo(
-        "shellfoundry version " + pkg_resources.get_distribution("shellfoundry").version
-    )
+    click.echo(f"shellfoundry version {version('shellfoundry')}")
 
 
 @cli.command()  # noqa: A001

@@ -1,4 +1,5 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import unittest
 
 from shellfoundry.utilities.template_url import construct_template_url

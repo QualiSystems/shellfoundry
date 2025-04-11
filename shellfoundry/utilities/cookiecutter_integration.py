@@ -1,34 +1,38 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import datetime
 import os
 
+from attrs import define, field
 from click import ClickException
 from cookiecutter.exceptions import OutputDirExistsException
 from cookiecutter.main import cookiecutter
 
+from shellfoundry.constants import TEMPLATE_INFO_FILE
 from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
-from shellfoundry.utilities.constants import TEMPLATE_INFO_FILE
 
 
-class CookiecutterTemplateCompiler(object):
-    def __init__(self):
-        self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
+@define
+class CookiecutterTemplateCompiler:
+    """Create Shell structure base on provided template."""
+
+    cloudshell_config_reader: Configuration = field(
+        factory=lambda: Configuration(CloudShellConfigReader())
+    )
 
     def compile_template(
         self,
-        shell_name,
-        template_path,
-        extra_context,
-        running_on_same_folder,
-        python_version=None,
-    ):
+        shell_name: str,
+        template_path: str,
+        extra_context: dict[str, str],
+        running_on_same_folder: bool,
+        python_version: str | None = None,
+    ) -> None:
 
         if python_version is None:
             python_version = ""
         else:
-            python_version = ' PythonVersion="{}"'.format(str(python_version))
+            python_version = f' PythonVersion="{python_version}"'
 
         extra_context.update(
             {
@@ -39,10 +43,7 @@ class CookiecutterTemplateCompiler(object):
             }
         )
 
-        if running_on_same_folder:
-            output_dir = os.path.pardir
-        else:
-            output_dir = os.path.curdir
+        output_dir = os.path.pardir if running_on_same_folder else os.path.curdir
 
         try:
             cookiecutter(
@@ -60,7 +61,7 @@ class CookiecutterTemplateCompiler(object):
             raise ClickException(msg)
 
     @staticmethod
-    def _remove_template_info_file(shell_path):
+    def _remove_template_info_file(shell_path: str) -> None:
         """Remove template info file from shell structure."""
         template_info_file_path = os.path.join(shell_path, TEMPLATE_INFO_FILE)
         if os.path.exists(template_info_file_path):

@@ -1,33 +1,34 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import os
-from io import open
 
 import yaml
+from attrs import define
 
 from shellfoundry.exceptions import ShellYmlMissingException, WrongShellYmlException
 
-VERSION = "version"
-DESCRIPTION = "description"
-EMAIL = "email"
 AUTHOR = "author"
+DESCRIPTION = "description"
+DRIVER_NAME = "driver_name"
+EMAIL = "email"
 NAME = "name"
 SHELL = "shell"
-DRIVER_NAME = "driver_name"
+VERSION = "version"
 
 
-class ProjectConfig(object):
-    def __init__(self, name, author, email, description, version, driver_name):
-        self.version = version
-        self.description = description
-        self.email = email
-        self.author = author
-        self.name = name
-        self.driver_name = driver_name
+@define
+class ProjectConfig:
+    name: str = ""
+    author: str = ""
+    email: str = ""
+    description: str = ""
+    version: str = ""
+    driver_name: str = ""
 
 
-class ShellConfigReader(object):
-    def read(self):
+class ShellConfigReader:
+    @staticmethod
+    def read():
         config_path = os.path.join(os.getcwd(), "shell.yml")
 
         if not os.path.isfile(config_path):
@@ -40,20 +41,14 @@ class ShellConfigReader(object):
             raise WrongShellYmlException("shell section is missing in shell.yml")
 
         install_config = config[SHELL]
-
-        name = self._get_with_default(install_config, NAME, "")
-        author = self._get_with_default(install_config, AUTHOR, "")
-        email = self._get_with_default(install_config, EMAIL, "")
-        description = self._get_with_default(install_config, DESCRIPTION, "")
-        version = self._get_with_default(install_config, VERSION, "")
-        driver_name = self._get_with_default(install_config, DRIVER_NAME, "")
-
-        return ProjectConfig(name, author, email, description, version, driver_name)
-
-    @staticmethod
-    def _get_with_default(install_config, parameter_name, default_value):
-        return (
-            install_config[parameter_name]
-            if install_config and parameter_name in install_config
-            else default_value
-        )
+        if install_config:
+            return ProjectConfig(
+                name=install_config.get(NAME, ""),
+                author=install_config.get(AUTHOR, ""),
+                email=install_config.get(EMAIL, ""),
+                description=install_config.get(DESCRIPTION, ""),
+                version=install_config.get(VERSION, ""),
+                driver_name=install_config.get(DRIVER_NAME, ""),
+            )
+        else:
+            return ProjectConfig()

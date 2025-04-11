@@ -1,34 +1,35 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
-from pkg_resources import parse_version
+import os
+
+from attrs import define, field
+from packaging.version import parse
+
+from shellfoundry import __file__ as sf_file
+from shellfoundry.exceptions import StandardVersionException
 
 
-class StandardVersionsFactory(object):
-    def create(self, standards):
+class StandardVersionsFactory:
+    def create(self, standards: dict[str, list[str]]) -> StandardVersions:
         return StandardVersions(standards)
 
 
-class StandardVersions(object):
-    def __init__(self, standards):
-        if not standards:
-            import os
+@define
+class StandardVersions:
+    standards: dict[str, list[str]] = field()
 
-            from shellfoundry import __file__ as sf_file
-
-            raise Exception(
-                "Standards list is empty. Please verify that {} exists".format(
-                    os.path.join(os.path.dirname(sf_file), "data", "standards.json")
-                )
+    @standards.validator
+    def is_standards_exist(self, attribute, value):
+        if not value:
+            raise StandardVersionException(
+                f"Standards list is empty. "
+                f"Please verify that {os.path.join(os.path.dirname(sf_file), 'data', 'standards.json')} exists"  # noqa: E501
             )
 
-        self.standards = standards
+    def get_latest_version(self, standard: str) -> str:
+        """Get the latest standard version."""
+        standards = self.standards.get(standard)
+        if not standards:
+            raise StandardVersionException("Failed to find latest version")
 
-    def get_latest_version(self, standard):
-        standards = self.standards.get(standard, None)
-        if standards is None:
-            raise Exception("Failed to find latest version")
-
-        latest_version = str(max(list(map(parse_version, standards))))
-        if latest_version:
-            return latest_version
+        return str(max(list(map(parse, standards))))

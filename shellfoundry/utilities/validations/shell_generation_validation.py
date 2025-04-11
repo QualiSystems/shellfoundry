@@ -1,17 +1,17 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import os
 import zipfile
 
-from shellfoundry.utilities.constants import TOSCA_META_LOCATION
+from shellfoundry.constants import TOSCA_META_LOCATION
 
 
-class ShellGenerationValidations(object):
-    def validate_2nd_gen(self, shell_path):
+class ShellGenerationValidations:
+    def validate_2nd_gen(self, shell_path: str) -> bool:
         """Validate generation of Shell.
 
-        :param str shell_path: path to Shell directory or Shell zip-file
+        Parameter:
+            shell_path: path to Shell directory or Shell zip-file
         """
         if os.path.isdir(shell_path):
             file_list = []

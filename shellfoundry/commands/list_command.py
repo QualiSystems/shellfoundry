@@ -1,38 +1,49 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 from os import linesep
 from textwrap import wrap
 
 import click
+from attrs import define, field
 from cloudshell.rest.exceptions import FeatureUnavailable
 from requests.exceptions import SSLError
 from terminaltables import AsciiTable
 
 from ..exceptions import FatalError
 
-from shellfoundry import ALTERNATIVE_TEMPLATES_PATH
+from shellfoundry.constants import ALTERNATIVE_TEMPLATES_PATH
 from shellfoundry.utilities.config_reader import (
     CloudShellConfigReader,
     Configuration,
     ShellFoundryConfig,
 )
-from shellfoundry.utilities.standards import Standards
+from shellfoundry.utilities.standards.standards_retriever import Standards
 from shellfoundry.utilities.template_retriever import (
     FilteredTemplateRetriever,
     TemplateRetriever,
 )
 
 
-class ListCommandExecutor(object):
-    def __init__(self, default_view=None, template_retriever=None, standards=None):
-        dv = default_view or Configuration(ShellFoundryConfig()).read().defaultview
-        self.template_retriever = template_retriever or FilteredTemplateRetriever(
-            dv, TemplateRetriever()
-        )
-        self.show_info_msg = default_view is None
-        self.standards = standards or Standards()
-        self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
+@define
+class ListCommandExecutor:
+    default_view: str | None = field(default=None)
+    template_retriever: FilteredTemplateRetriever = field(default=None)
+    standards: Standards = field(factory=Standards)
+    cloudshell_config_reader: Configuration = field(
+        init=False, factory=lambda: Configuration(CloudShellConfigReader())
+    )
+    show_info_msg: bool = field(init=False)
+
+    def __attrs_post_init__(self):
+        self.show_info_msg = self.default_view is None
+
+        if not self.default_view:
+            self.default_view = Configuration(ShellFoundryConfig()).read().defaultview
+
+        if not self.template_retriever:
+            self.template_retriever = FilteredTemplateRetriever(
+                self.default_view, TemplateRetriever()
+            )
 
     def list(self):  # noqa: A003
         online_mode = self.cloudshell_config_reader.read().online_mode.lower() == "true"
@@ -74,7 +85,7 @@ class ListCommandExecutor(object):
         template_rows = [["Template Name", "CloudShell Ver.", "Description"]]
         for template in list(templates.values()):
             template = template[0]
-            cs_ver_txt = str(template.min_cs_ver) + " and up"
+            cs_ver_txt = f"{str(template.min_cs_ver)} and up"
             template_rows.append(
                 [template.name, cs_ver_txt, template.description]
             )  # description is later wrapped based on the size of the console

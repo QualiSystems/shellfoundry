@@ -1,6 +1,23 @@
 =======
 History
 =======
+2.0.0 (2025-03-30)
+-------------------
+
+* Removed support for Python 2.7
+* Removed support for Python 3.7
+* Removed support for Python 3.8
+* Added support for Python 3.10
+* Added support for Python 3.11
+* Added support for Python 3.12
+* Added support for Python 3.13
+
+1.2.27 (2024-10-04)
+-------------------
+
+* Fixed for XMLRPC error "Unexpected error during shellfoundry version check." raised during execution of list and new commands
+* Fixed for AttributeError: "PackagingRestApiClient" when running generate command
+
 1.2.25 (2024-07-30)
 -------------------
 
@@ -66,7 +83,7 @@ History
 1.2.9 (2019-03-27)
 ------------------
 
-* Added possibility to download dependencies from local CS repository during 'shellfoundry dist' command
+* Added possibility to download dependencies from local CS repository during "shellfoundry dist" command
 
 1.2.8 (2019-03-05)
 ------------------
@@ -230,7 +247,7 @@ History
 ------------------
 
 * Show command was added to view all available versions of a template
-* A new option was added to the 'new' command. Please welcome --version. It enables template versioning on shellfoundry.
+* A new option was added to the "new" command. Please welcome --version. It enables template versioning on shellfoundry.
 
 0.0.44 (2016-12-12)
 -------------------

@@ -1,7 +1,8 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import os
+
+from attrs import define, field
 
 from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
 from shellfoundry.utilities.python_dependencies_packager import (
@@ -9,16 +10,16 @@ from shellfoundry.utilities.python_dependencies_packager import (
 )
 
 
-class DistCommandExecutor(object):
-    def __init__(self, cloudshell_config_reader=None, dependencies_packager=None):
-        self.cloudshell_config_reader = cloudshell_config_reader or Configuration(
-            CloudShellConfigReader()
-        )
-        self.dependencies_packager = (
-            dependencies_packager or PythonDependenciesPackager()
-        )
+@define
+class DistCommandExecutor:
+    cloudshell_config_reader: Configuration = field(
+        factory=lambda: Configuration(CloudShellConfigReader())
+    )
+    dependencies_packager: PythonDependenciesPackager = field(
+        factory=PythonDependenciesPackager
+    )
 
-    def dist(self, enable_cs_repo):
+    def dist(self, enable_cs_repo: bool) -> None:
         """Creates offline dependencies archive."""
         current_path = os.getcwd()
         requirements_path = os.path.join(current_path, "src", "requirements.txt")

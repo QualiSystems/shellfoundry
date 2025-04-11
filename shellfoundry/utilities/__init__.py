@@ -1,74 +1,44 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import json
+from importlib.metadata import version
+from urllib.error import HTTPError, URLError
+from urllib.request import urlopen
 
-import pkg_resources
 import requests
+from attrs import define
+from packaging.version import Version
 
-try:
-    from urllib import urlopen
-except ImportError:
-    from urllib.request import urlopen
-
-try:
-    from urllib.error import HTTPError, URLError
-except ImportError:
-    from urllib2 import HTTPError, URLError
-
-from distutils.version import StrictVersion
-
-from shellfoundry import PACKAGE_NAME
+from shellfoundry.constants import PACKAGE_NAME
 from shellfoundry.exceptions import ShellFoundryVersionException
 
-GEN_ONE = "gen1"
-GEN_TWO = "gen2"
-LAYER_ONE = "layer1"
-NO_FILTER = "all"
-GEN_ONE_FILTER = "gen1"
-GEN_TWO_FILTER = "gen2"
-LAYER_ONE_FILTER = "layer-1"
-SEPARATOR = "/"
+
+@define
+class Index:
+    url: str
 
 
-class Index(object):
-    def __init__(self, url):
-        self.url = url
+def get_installed_version(package_name: str) -> Version:
+    return Version(version(package_name))
 
 
-def get_installed_version(package_name):
-    return pkg_resources.get_distribution(package_name).version
-
-
-def is_index_version_greater_than_current():
-    MAJOR_INDEX = 0
-
-    installed, index = (
-        StrictVersion(get_installed_version(PACKAGE_NAME)),
-        StrictVersion(max_version_from_index()),
-    )
-    is_major_release = False
+def is_index_version_greater_than_current() -> tuple[bool, bool]:
+    installed = get_installed_version(PACKAGE_NAME)
+    index = Version(max_version_from_index())
 
     is_greater_version = index > installed
-    if (
-        is_greater_version
-        and get_index_of_biggest_component_between_two_versions(
-            index.version, installed.version
-        )
-        == MAJOR_INDEX
-    ):
-        is_major_release = True
+    is_major_release = is_greater_version and index.major != installed.major
 
     return is_greater_version, is_major_release
 
 
-def max_version_from_index():
+def max_version_from_index() -> str | None:
     try:
-        url = "https://pypi.org/pypi/{}/json".format(PACKAGE_NAME)
+        url = f"https://pypi.org/pypi/{PACKAGE_NAME}/json"
         r = requests.get(url)
         if r.status_code != requests.codes.ok:
             raise ShellFoundryVersionException(
-                "Cannot retrieve latest shellfoundry version, " "are you offline?"
+                "Cannot retrieve latest shellfoundry version, are you offline?"
             )
         else:
             content = json.loads(r.content)
@@ -77,28 +47,21 @@ def max_version_from_index():
     except Exception as err:
         raise ShellFoundryVersionException(
             "Cannot retrieve latest shellfoundry version, "
-            "are you offline? Error: {}".format(err.message)
+            f"are you offline? Error: {err}"
         )
 
 
-def latest_released_version():
-    url = "https://pypi.org/pypi/{package_name}/json"
+def latest_released_version() -> str | None:
+    url = f"https://pypi.org/pypi/{PACKAGE_NAME}/json"
     try:
-        package_info = json.load(urlopen(url.format(package_name=PACKAGE_NAME)))
+        package_info = json.load(urlopen(url))
         return package_info["info"]["version"]
     except (HTTPError, URLError) as err:
         raise ShellFoundryVersionException(
-            "Cannot retrieve latest shellfoundry version, "
-            "are you offline? Error: {}".format(err)
+            f"Cannot retrieve latest shellfoundry version,"
+            f" are you offline? Error: {err}"
         )
     except Exception as err:
         raise ShellFoundryVersionException(
-            "Unexpected error during shellfoundry version check. "
-            "Error: {}.".format(err)
+            f"Unexpected error during shellfoundry version check. Error: {err}."
         )
-
-
-def get_index_of_biggest_component_between_two_versions(v1, v2):
-    for i in range(0, len(v1)):
-        if v1[i] > v2[i]:
-            return i

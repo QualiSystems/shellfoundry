@@ -1,18 +1,21 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
+
 from functools import update_wrapper
 
 import click
+from attrs import define, field
 
 from shellfoundry.exceptions import ShellFoundryVersionException
 from shellfoundry.utilities import is_index_version_greater_than_current
 from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
 
 
-class shellfoundry_version_check(object):
-    def __init__(self, abort_if_major=False):
-        self.abort_if_major = abort_if_major
-        self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
+@define
+class shellfoundry_version_check:
+    abort_if_major: bool = False
+    cloudshell_config_reader: Configuration = field(
+        factory=lambda: Configuration(CloudShellConfigReader())
+    )
 
     def __call__(self, f):
         def decorator(*args, **kwargs):

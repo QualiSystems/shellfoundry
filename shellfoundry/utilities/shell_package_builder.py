@@ -1,8 +1,9 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import os
 import shutil
-from io import open
+from contextlib import suppress
+from typing import ClassVar
 
 import click
 import yaml
@@ -12,11 +13,11 @@ from shellfoundry.utilities.shell_package import ShellPackage
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 
 
-class ShellPackageBuilder(object):
-    DRIVER_DIR = "src"
-    DEPLOY_DIR = "deployments"
+class ShellPackageBuilder:
+    DRIVER_DIR: ClassVar[str] = "src"
+    DEPLOY_DIR: ClassVar[str] = "deployments"
 
-    def pack(self, path):
+    def pack(self, path: str) -> None:
         """Creates TOSCA based Shell package."""
         self._remove_all_pyc(path)
         shell_package = ShellPackage(path)
@@ -68,21 +69,20 @@ class ShellPackageBuilder(object):
 
             zip_path = self._zip_package(package_path, "", shell_real_name)
 
-            try:
+            with suppress(Exception):
                 self._remove_build_artifacts(artifact_path_list)
-            except Exception:
-                pass
 
-            click.echo("Shell package was successfully created: " + zip_path)
+            click.echo(f"Shell package was successfully created: {zip_path}")
 
-    def _copy_artifact(self, artifact_path, package_path):
+    def _copy_artifact(self, artifact_path: str, package_path: str) -> None:
         if os.path.exists(artifact_path):
-            click.echo("Adding artifact to shell package: " + artifact_path)
+            click.echo(f"Adding artifact to shell package: {artifact_path}")
             self._copy_file(src_file_path=artifact_path, dest_dir_path=package_path)
         else:
-            click.echo("Missing artifact not added to shell package: " + artifact_path)
+            click.echo(f"Missing artifact not added to shell package: {artifact_path}")
 
-    def _read_tosca_meta(self, path):
+    @staticmethod
+    def _read_tosca_meta(path) -> dict[str, str]:
         tosca_meta = {}
         shell_package = ShellPackage(path)
         with open(shell_package.get_metadata_path(), encoding="utf8") as meta_file:
@@ -91,19 +91,21 @@ class ShellPackageBuilder(object):
                 tosca_meta[key] = val.strip()
         return tosca_meta
 
-    def _copy_shell_icon(self, package_path, path):
+    def _copy_shell_icon(self, package_path: str, path: str) -> None:
         self._copy_file(
             src_file_path=os.path.join(path, "shell-icon.png"),
             dest_dir_path=package_path,
         )
 
-    def _copy_shell_definition(self, package_path, path, shell_definition):
+    def _copy_shell_definition(
+        self, package_path: str, path: str, shell_definition: str
+    ) -> None:
         self._copy_file(
             src_file_path=os.path.join(path, shell_definition),
             dest_dir_path=package_path,
         )
 
-    def _copy_tosca_meta(self, package_path, path):
+    def _copy_tosca_meta(self, package_path: str, path: str) -> None:
         shell_package = ShellPackage(path)
         self._copy_file(
             src_file_path=shell_package.get_metadata_path(),
@@ -111,39 +113,43 @@ class ShellPackageBuilder(object):
         )
 
     @staticmethod
-    def _remove_all_pyc(package_path):
+    def _remove_all_pyc(package_path: str) -> None:
         for root, dirs, files in os.walk(package_path):
             for file in files:
                 if file.endswith(".pyc"):
                     os.remove(os.path.join(root, file))
 
     @staticmethod
-    def _create_driver(path, package_path, dir_path, driver_name, mandatory=True):
+    def _create_driver(
+        path: str,
+        package_path: str,
+        dir_path: str,
+        driver_name: str,
+        mandatory: bool = True,
+    ) -> str | None:
         dir_to_zip = os.path.join(path, dir_path)
         if os.path.exists(dir_to_zip):
             zip_file_path = os.path.join(package_path, driver_name)
-            ArchiveCreator.make_archive(zip_file_path, "zip", dir_to_zip)
+            ArchiveCreator.make_archive(zip_file_path, dir_to_zip)
             return os.path.abspath(zip_file_path)
         elif mandatory:
             raise click.ClickException(
-                "Invalid driver structure. Can't find '{}' driver folder.".format(
-                    dir_path
-                )
+                f"Invalid driver structure. Can't find '{dir_path}' driver folder."
             )
 
     @staticmethod
-    def _copy_file(src_file_path, dest_dir_path):
+    def _copy_file(src_file_path: str, dest_dir_path: str) -> None:
         if not os.path.exists(dest_dir_path):
             os.makedirs(dest_dir_path)
         shutil.copy(src_file_path, dest_dir_path)
 
     @staticmethod
-    def _zip_package(package_path, path, package_name):
+    def _zip_package(package_path: str, path: str, package_name: str) -> str | None:
         zip_file_path = os.path.join(path, "dist", package_name)
-        return ArchiveCreator.make_archive(zip_file_path, "zip", package_path)
+        return ArchiveCreator.make_archive(zip_file_path, package_path)
 
     @staticmethod
-    def _remove_build_artifacts(artifacts_path_list):
+    def _remove_build_artifacts(artifacts_path_list: list[str]) -> None:
         for artifact_path in artifacts_path_list:
             if artifact_path and os.path.exists(artifact_path):
                 os.remove(artifact_path)

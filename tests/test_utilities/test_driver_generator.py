@@ -1,5 +1,6 @@
-#!/usr/bin/python
+from __future__ import annotations
 
+from contextlib import suppress
 from unittest.mock import MagicMock, patch
 from urllib.error import URLError
 
@@ -9,7 +10,7 @@ from shellfoundry.models.install_config import InstallConfig
 from shellfoundry.utilities.archive_creator import ArchiveCreator
 from shellfoundry.utilities.driver_generator import DriverGenerator
 
-from tests.asserts import assertFileDoesNotExist, assertFileExists
+from tests.asserts import assert_file_does_not_exist, assert_file_exists
 
 
 class TestDriverGenerator(fake_filesystem_unittest.TestCase):
@@ -23,9 +24,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
             "nut-shell/temp/data_model.py", contents="python data model content"
         )
 
-        ArchiveCreator.make_archive(
-            "nut-shell/temp/data-model", "zip", "nut-shell/temp"
-        )
+        ArchiveCreator.make_archive("nut-shell/temp/data-model", "nut-shell/temp")
 
         driver_generator = DriverGenerator()
         config = InstallConfig(
@@ -42,7 +41,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         )
 
         with patch(
-            "shellfoundry.utilities.driver_generator.PackagingRestApiClient.login"
+            "shellfoundry.utilities.driver_generator.CloudShellClient.create_client"
         ) as mock_rest:
             rest_client_mock = MagicMock()
             rest_client_mock._token = "TEST-TOKEN"
@@ -68,7 +67,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
                 )
 
         # Assert
-        assertFileExists(self, "nut-shell/src/data_model.py")
+        assert_file_exists(self, "nut-shell/src/data_model.py")
         self.assertEqual(
             post_mock.call_args[1]["headers"]["Authorization"], "Basic TEST-TOKEN"
         )
@@ -80,9 +79,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
             "nut-shell/temp/data_model.py", contents="python data model content"
         )
 
-        ArchiveCreator.make_archive(
-            "nut-shell/temp/data-model", "zip", "nut-shell/temp"
-        )
+        ArchiveCreator.make_archive("nut-shell/temp/data-model", "nut-shell/temp")
 
         driver_generator = DriverGenerator()
         config = InstallConfig(
@@ -99,7 +96,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         )
 
         with patch(
-            "shellfoundry.utilities.driver_generator.PackagingRestApiClient"
+            "shellfoundry.utilities.driver_generator.CloudShellClient.create_client"
         ) as mock_rest:
             rest_client_mock = MagicMock()
             rest_client_mock.token = "TEST-TOKEN"
@@ -128,7 +125,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
                 self.assertTrue(click_mock.echo.called, "click should have been called")
 
         # Assert
-        assertFileDoesNotExist(self, "nut-shell/src/data_model.py")
+        assert_file_does_not_exist(self, "nut-shell/src/data_model.py")
 
     def test_error_displayed_when_failed_to_connect_to_cloudshell_server(self):
         self.fs.create_file("nut-shell/dist/NutShell.zip", contents="ZIP")
@@ -137,9 +134,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
             "nut-shell/temp/data_model.py", contents="python data model content"
         )
 
-        ArchiveCreator.make_archive(
-            "nut-shell/temp/data-model", "zip", "nut-shell/temp"
-        )
+        ArchiveCreator.make_archive("nut-shell/temp/data-model", "nut-shell/temp")
 
         driver_generator = DriverGenerator()
         config = InstallConfig(
@@ -156,7 +151,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
         )
 
         with patch(
-            "shellfoundry.utilities.driver_generator.PackagingRestApiClient.login"
+            "shellfoundry.utilities.driver_generator.CloudShellClient.create_client"
         ) as mock_rest:
             mock_rest.side_effect = URLError("connected failed")
 
@@ -165,7 +160,7 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
                 click_mock.echo = echo_mock
 
                 # Act
-                try:
+                with suppress(URLError):
                     driver_generator.generate_driver(
                         cloudshell_config=config,
                         destination_path="nut-shell/src",
@@ -173,8 +168,6 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
                         shell_filename="NutShell.zip",
                         shell_name="NutShell",
                     )
-                except URLError:
-                    pass
 
                 self.assertTrue(echo_mock.called, "click should have been called")
                 self.assertEqual(
@@ -183,4 +176,4 @@ class TestDriverGenerator(fake_filesystem_unittest.TestCase):
                 )
 
         # Assert
-        assertFileDoesNotExist(self, "nut-shell/src/data_model.py")
+        assert_file_does_not_exist(self, "nut-shell/src/data_model.py")

@@ -1,4 +1,5 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -464,14 +465,13 @@ class TestListCommand(unittest.TestCase):
                 ],
             }
         )
-        flag_value = None
 
         standards = MagicMock()
         standards.fetch.return_value = {}
 
         list_command_executor = ListCommandExecutor(
             template_retriever=FilteredTemplateRetriever(
-                flag_value, template_retriever
+                template_type="", template_retriever=template_retriever
             ),
             standards=standards,
         )
@@ -680,7 +680,7 @@ class TestListCommandWithFakeFs(fake_filesystem_unittest.TestCase):
         # Assert
         max_width_mock.return_value = 60
 
-        from shellfoundry import ALTERNATIVE_TEMPLATES_PATH
+        from shellfoundry.constants import ALTERNATIVE_TEMPLATES_PATH
 
         self.fs.add_real_file(ALTERNATIVE_TEMPLATES_PATH)
 

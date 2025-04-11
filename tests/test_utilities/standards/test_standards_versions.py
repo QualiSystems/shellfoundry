@@ -1,9 +1,9 @@
-#!/usr/bin/python
+from __future__ import annotations
 
 import unittest
 from unittest.mock import MagicMock, patch
 
-from shellfoundry.utilities.standards import StandardVersions
+from shellfoundry.utilities.standards.standards_versions import StandardVersions
 
 
 class TestStandardsVersions(unittest.TestCase):

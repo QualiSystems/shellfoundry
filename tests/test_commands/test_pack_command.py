@@ -1,4 +1,5 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import os
 from unittest.mock import patch
 
@@ -6,7 +7,7 @@ from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.commands.pack_command import PackCommandExecutor
 
-from tests.asserts import assertFileExists
+from tests.asserts import assert_file_exists
 
 
 class TestPackCommandExecutor(fake_filesystem_unittest.TestCase):
@@ -40,7 +41,7 @@ shell:
         command_executor.pack()
 
         # Assert
-        assertFileExists(self, "dist/nut_shell.zip")
+        assert_file_exists(self, "dist/nut_shell.zip")
         echo_mock.assert_any_call("Shell package was successfully created:")
 
     @patch("click.echo")

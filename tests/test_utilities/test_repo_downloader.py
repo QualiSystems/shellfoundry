@@ -1,4 +1,5 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import os
 
 import httpretty
@@ -9,7 +10,6 @@ from shellfoundry.utilities.repository_downloader import (
     RepositoryDownloader,
 )
 
-
 class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
     def setUp(self):
         self.setUpPyfakefs()
@@ -19,7 +19,7 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
         self.fs.create_file(DEFAULT_CA_BUNDLE_PATH)  # noqa: E501
 
     @httpretty.activate  # much preferred way than httpretty.enable because it combine enable and disable in one line  # noqa: E501
-    def test_extracts_and_calls_api_url_from_https_addrses(self):
+    def test_extracts_and_calls_api_url_from_https_addresses(self):
         test_dir = "/test_dir"
         self.fs.create_dir(test_dir)
 
@@ -49,7 +49,7 @@ class TestRepositoryDownloader(fake_filesystem_unittest.TestCase):
         self.assertIsNotNone(httpretty.last_request())
 
     @httpretty.activate  # much preferred way than httpretty.enable because it combine enable and disable in one line  # noqa: E501
-    def test_extracts_and_calls_api_url_from_git_addrses(self):
+    def test_extracts_and_calls_api_url_from_git_addresses(self):
         test_dir = "/test_dir"
         self.fs.create_dir(test_dir)
 

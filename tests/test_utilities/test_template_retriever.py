@@ -1,11 +1,12 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import unittest
 from unittest.mock import patch
 
 import httpretty
 from pyfakefs import fake_filesystem_unittest
 
-from shellfoundry.utilities import GEN_ONE, GEN_TWO, NO_FILTER
+from shellfoundry.utilities.filters import GEN_ONE, GEN_TWO, NO_FILTER
 from shellfoundry.utilities.template_retriever import (
     TEMPLATES_YML,
     FilteredTemplateRetriever,

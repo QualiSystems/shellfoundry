@@ -1,9 +1,7 @@
-# !/usr/bin/python
-# -*- coding: utf-8 -*-
-
-from io import open
+from __future__ import annotations
 
 import yaml
+from attrs import define, field
 
 from shellfoundry.utilities.config_reader import INSTALL
 from shellfoundry.utilities.modifiers.configuration.aggregated_modifiers import (
@@ -11,12 +9,12 @@ from shellfoundry.utilities.modifiers.configuration.aggregated_modifiers import 
 )
 
 
-class ConfigContext(object):
-    def __init__(self, config_file_path):
-        self.config_file_path = config_file_path
-        self.modifier = AggregatedModifiers()
+@define
+class ConfigContext:
+    config_file_path: str
+    modifier: AggregatedModifiers = field(init=False, factory=AggregatedModifiers)
 
-    def try_save(self, key, value):
+    def try_save(self, key: str, value: str) -> bool:
         try:
             with open(self.config_file_path, mode="r+", encoding="utf8") as stream:
                 data = yaml.safe_load(stream) or {INSTALL: {}}
@@ -28,11 +26,11 @@ class ConfigContext(object):
         except Exception:
             return False
 
-    def try_delete(self, key):
+    def try_delete(self, key: str) -> bool:
         try:
             with open(self.config_file_path, mode="r+", encoding="utf8") as stream:
                 data = yaml.safe_load(stream)
-                del data[INSTALL][key]  # handle cases that INSTALL does not exists
+                del data[INSTALL][key]  # handle cases that INSTALL does not exist
                 stream.seek(0)
                 stream.truncate()
                 yaml.safe_dump(data, stream=stream, default_flow_style=False)
@@ -40,5 +38,5 @@ class ConfigContext(object):
         except Exception:
             return False
 
-    def _modify(self, key, value):
+    def _modify(self, key: str, value: str) -> str:
         return self.modifier.modify(key, value)

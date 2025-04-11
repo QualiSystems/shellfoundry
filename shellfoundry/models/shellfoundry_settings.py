@@ -1,13 +1,14 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
+
+from attrs import define
 
 DEFAULT_DEFAULT_VIEW = "gen2"
 
 
-class ShellFoundrySettings(object):
-    def __init__(self, defaultview):
-        self.defaultview = defaultview
+@define
+class ShellFoundrySettings:
+    defaultview: str
 
-    @staticmethod
-    def get_default():
+    @classmethod
+    def get_default(cls):
         return ShellFoundrySettings(DEFAULT_DEFAULT_VIEW)

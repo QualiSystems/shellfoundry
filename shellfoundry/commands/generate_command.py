@@ -1,24 +1,24 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import os
 from os import path
 
 import click
+from attrs import define, field
 
 from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
 from shellfoundry.utilities.driver_generator import DriverGenerator
 from shellfoundry.utilities.shell_package import ShellPackage
 
 
-class GenerateCommandExecutor(object):
-    def __init__(self, cloudshell_config_reader=None, driver_generator=None):
-        self.cloudshell_config_reader = cloudshell_config_reader or Configuration(
-            CloudShellConfigReader()
-        )
-        self.driver_generator = driver_generator or DriverGenerator()
+@define
+class GenerateCommandExecutor:
+    cloudshell_config_reader: Configuration = field(
+        factory=lambda: Configuration(CloudShellConfigReader())
+    )
+    driver_generator: DriverGenerator = field(factory=DriverGenerator)
 
-    def generate(self):
+    def generate(self) -> None:
         """Generates Python driver by connecting to CloudShell server."""
         current_path = os.getcwd()
         shell_package = ShellPackage(current_path)
@@ -27,7 +27,7 @@ class GenerateCommandExecutor(object):
             return
 
         shell_name = shell_package.get_name_from_definition()
-        shell_filename = shell_name + ".zip"
+        shell_filename = f"{shell_name}.zip"
         package_full_path = path.join(current_path, "dist", shell_filename)
         destination_path = path.join(current_path, "src")
 

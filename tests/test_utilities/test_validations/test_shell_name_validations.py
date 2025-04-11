@@ -1,7 +1,10 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import unittest
 
-from shellfoundry.utilities.validations import ShellNameValidations
+from shellfoundry.utilities.validations.shell_name_validations import (
+    ShellNameValidations,
+)
 
 
 class TestShellNameValidations(unittest.TestCase):

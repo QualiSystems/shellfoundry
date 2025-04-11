@@ -1,12 +1,19 @@
 repos:
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.1
+    hooks:
+      - id: pyupgrade
+        exclude: "docs"
   - repo: https://github.com/timothycrosley/isort
     rev: 5.12.0
     hooks:
       - id: isort
+        exclude: "docs"
   - repo: https://github.com/python/black
     rev: 22.12.0
     hooks:
       - id: black
+        exclude: "docs"
   - repo: https://github.com/pycqa/flake8
     rev: 5.0.4
     hooks:
@@ -17,4 +24,9 @@ repos:
           flake8-comprehensions,
           flake8-print,
           flake8-eradicate,
+          flake8-requirements,
+        ]
+        exclude: "docs"
+        args: [
+          "--known-modules=cloudshell-rest-api:[cloudshell.rest]"
         ]

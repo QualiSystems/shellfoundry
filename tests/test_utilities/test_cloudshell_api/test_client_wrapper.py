@@ -1,11 +1,11 @@
-#!/usr/bin/python
+from __future__ import annotations
 
 import unittest
 from unittest.mock import MagicMock, patch
 from urllib.error import HTTPError
 
 from shellfoundry.exceptions import FatalError
-from shellfoundry.utilities.cloudshell_api import (
+from shellfoundry.utilities.cloudshell_api.client_wrapper import (
     CloudShellClient,
     create_cloudshell_client,
 )

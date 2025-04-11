@@ -1,7 +1,7 @@
 nose
 coverage
 mock; python_version <= '2.7'
-pyfakefs~=3.7.0
+pyfakefs~=5.8.0
 httpretty~=0.9.7
 freezegun
 pytest

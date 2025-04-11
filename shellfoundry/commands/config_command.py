@@ -1,7 +1,7 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import click
+from attrs import define, field
 
 from shellfoundry.utilities.config.config_context import ConfigContext
 from shellfoundry.utilities.config.config_file_creation import ConfigFileCreation
@@ -15,22 +15,24 @@ from shellfoundry.utilities.config_reader import INSTALL, Configuration
 DEFAULTS_CHAR = "*"
 
 
-class ConfigCommandExecutor(object):
-    def __init__(self, global_cfg, cfg_creation=None):
-        self.global_cfg = global_cfg
-        self.cfg_creation = cfg_creation or ConfigFileCreation()
+@define
+class ConfigCommandExecutor:
+    global_cfg: bool
+    cfg_creation: ConfigFileCreation = field(factory=ConfigFileCreation)
 
-    def config(self, kv=(None, None), key_to_remove=None):
+    def config(
+        self,
+        kv: tuple[str | None, str | None] = (None, None),
+        key_to_remove: str = None,
+    ) -> None:
         config_file_path = self._get_config_file_path(self.global_cfg)
-        if self._should_remove_key(key_to_remove):
+        if key_to_remove is not None:  # remove key
             context = ConfigContext(config_file_path)
             ConfigRecord(key_to_remove).delete(context)
-        elif self._should_append_key(kv):
-            field, name = kv
-            if not name:
-                raise click.BadArgumentUsage(
-                    "Field '{}' can not be empty".format(field)
-                )
+        elif None not in kv:  # append key
+            config_key, config_value = kv
+            if not config_value:
+                raise click.BadArgumentUsage(f"Field '{config_key}' can not be empty")
             else:
                 self.cfg_creation.create(config_file_path)
                 context = ConfigContext(config_file_path)
@@ -38,14 +40,8 @@ class ConfigCommandExecutor(object):
         else:
             self._echo_config(config_file_path)
 
-    def _should_append_key(self, kv):
-        return None not in kv
-
-    def _should_remove_key(self, key_to_remove):
-        return key_to_remove is not None
-
-    def _echo_config(self, config_file_path):
-
+    def _echo_config(self, config_file_path: str) -> None:
+        """Print current configuration."""
         config_data = Configuration.readall(
             config_file_path, mark_defaults=DEFAULTS_CHAR
         )
@@ -53,12 +49,17 @@ class ConfigCommandExecutor(object):
         click.echo(table)
         click.echo("")
         click.echo(
-            "* Value marked with '{}' is actually the default value and has not been override by the user.".format(  # noqa: E501
-                DEFAULTS_CHAR
-            )
+            f"* Value marked with '{DEFAULTS_CHAR}' "
+            f"is actually the default value and has not been override by the user."
         )
 
-    def _format_config_as_table(self, config_data, defaults_char):
+    @staticmethod
+    def _format_config_as_table(
+        config_data: dict[str, dict], defaults_char: str
+    ) -> str:
+        """Format configuration in readable table view."""
+        import terminaltables
+
         from shellfoundry.utilities.modifiers.configuration.password_modification import (  # noqa: E501
             PasswordModification,
         )
@@ -72,7 +73,6 @@ class ConfigCommandExecutor(object):
             if key in PasswordModification.HANDLING_KEYS:
                 value = "[encrypted]"
             table_data.append([key, value, default_val])
-        import terminaltables
 
         table = terminaltables.AsciiTable(table_data)
         table.outer_border = False
@@ -80,7 +80,7 @@ class ConfigCommandExecutor(object):
         return table.table
 
     @staticmethod
-    def _get_config_file_path(is_global_flag):
+    def _get_config_file_path(is_global_flag: bool) -> str:
         if is_global_flag:
             cfg_provider = GlobalConfigProvider()
             return cfg_provider.get_config_path()

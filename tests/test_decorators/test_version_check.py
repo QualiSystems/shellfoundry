@@ -1,12 +1,13 @@
-#!/usr/bin/python
+from __future__ import annotations
 
 import unittest
 from io import StringIO
 from unittest.mock import patch
 
 from click import Abort
+from packaging.version import Version
 
-from shellfoundry.decorators import shellfoundry_version_check
+from shellfoundry.decorators.version_check import shellfoundry_version_check
 
 
 @shellfoundry_version_check(abort_if_major=False)
@@ -23,9 +24,15 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
     @patch("sys.stdout", new_callable=StringIO)
     def test_version_check_when_current_is_greater_than_index(self, stdout_mock):
         # Act
-        with patch(
-            "shellfoundry.utilities.get_installed_version", return_value="5.0.0"
-        ), patch("shellfoundry.utilities.max_version_from_index", return_value="0.2.9"):
+        with (
+            patch(
+                "shellfoundry.utilities.get_installed_version",
+                return_value=Version("5.0.0"),
+            ),
+            patch(
+                "shellfoundry.utilities.max_version_from_index", return_value="0.2.9"
+            ),
+        ):
             do_not_abort()
 
         # Assert
@@ -36,9 +43,15 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         self, stdout_mock
     ):
         # Act
-        with patch(
-            "shellfoundry.utilities.get_installed_version", return_value="0.2.7"
-        ), patch("shellfoundry.utilities.max_version_from_index", return_value="0.3.0"):
+        with (
+            patch(
+                "shellfoundry.utilities.get_installed_version",
+                return_value=Version("0.2.7"),
+            ),
+            patch(
+                "shellfoundry.utilities.max_version_from_index", return_value="0.3.0"
+            ),
+        ):
             do_not_abort()
 
         # Assert
@@ -52,9 +65,15 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         self, stdout_mock
     ):
         # Act
-        with patch(
-            "shellfoundry.utilities.get_installed_version", return_value="0.2.7"
-        ), patch("shellfoundry.utilities.max_version_from_index", return_value="1.0.0"):
+        with (
+            patch(
+                "shellfoundry.utilities.get_installed_version",
+                return_value=Version("0.2.7"),
+            ),
+            patch(
+                "shellfoundry.utilities.max_version_from_index", return_value="1.0.0"
+            ),
+        ):
             do_not_abort()
 
         # Assert
@@ -66,9 +85,15 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
     @patch("sys.stdout", new_callable=StringIO)
     def test_version_check_when_current_is_equal_to_index(self, stdout_mock):
         # Act
-        with patch(
-            "shellfoundry.utilities.get_installed_version", return_value="1.0.0"
-        ), patch("shellfoundry.utilities.max_version_from_index", return_value="1.0.0"):
+        with (
+            patch(
+                "shellfoundry.utilities.get_installed_version",
+                return_value=Version("1.0.0"),
+            ),
+            patch(
+                "shellfoundry.utilities.max_version_from_index", return_value="1.0.0"
+            ),
+        ):
             do_not_abort()
 
         # Assert
@@ -79,9 +104,15 @@ class TestShellFoundryVersionCheck(unittest.TestCase):
         self, stdout_mock
     ):
         # Act
-        with patch(
-            "shellfoundry.utilities.get_installed_version", return_value="0.2.7"
-        ), patch("shellfoundry.utilities.max_version_from_index", return_value="1.0.0"):
+        with (
+            patch(
+                "shellfoundry.utilities.get_installed_version",
+                return_value=Version("0.2.7"),
+            ),
+            patch(
+                "shellfoundry.utilities.max_version_from_index", return_value="1.0.0"
+            ),
+        ):
             self.assertRaises(Abort, abort_if_major)
 
         # Assert

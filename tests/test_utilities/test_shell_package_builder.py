@@ -1,4 +1,4 @@
-#!/usr/bin/python
+from __future__ import annotations
 
 import os
 from unittest.mock import patch
@@ -7,7 +7,7 @@ from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.utilities.shell_package_builder import ShellPackageBuilder
 
-from tests.asserts import assertFileExists
+from tests.asserts import assert_file_exists
 from tests.test_utilities.test_package_builder import TestPackageBuilder
 
 
@@ -57,13 +57,13 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             shell_package_builder.pack("/nut-shell")
 
         # Assert
-        assertFileExists(self, "dist/NutShell.zip")
+        assert_file_exists(self, "dist/NutShell.zip")
         TestPackageBuilder.unzip("dist/NutShell.zip", "dist/package_content")
 
-        assertFileExists(self, "dist/package_content/TOSCA-Metadata/TOSCA.meta")
-        assertFileExists(self, "dist/package_content/shell-definition.yml")
-        assertFileExists(self, "dist/package_content/nxos.png")
-        assertFileExists(self, "dist/package_content/NutShellDriver.zip")
+        assert_file_exists(self, "dist/package_content/TOSCA-Metadata/TOSCA.meta")
+        assert_file_exists(self, "dist/package_content/shell-definition.yml")
+        assert_file_exists(self, "dist/package_content/nxos.png")
+        assert_file_exists(self, "dist/package_content/NutShellDriver.zip")
 
     def test_tosca_based_shell_with_icon_packed(self):
         # Arrange
@@ -108,14 +108,14 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             shell_package_builder.pack("/nut-shell")
 
         # Assert
-        assertFileExists(self, "dist/NutShell.zip")
+        assert_file_exists(self, "dist/NutShell.zip")
         TestPackageBuilder.unzip("dist/NutShell.zip", "dist/package_content")
 
-        assertFileExists(self, "dist/package_content/TOSCA-Metadata/TOSCA.meta")
-        assertFileExists(self, "dist/package_content/shell-definition.yml")
-        assertFileExists(self, "dist/package_content/nxos.png")
-        assertFileExists(self, "dist/package_content/shell.png")
-        assertFileExists(self, "dist/package_content/NutShellDriver.zip")
+        assert_file_exists(self, "dist/package_content/TOSCA-Metadata/TOSCA.meta")
+        assert_file_exists(self, "dist/package_content/shell-definition.yml")
+        assert_file_exists(self, "dist/package_content/nxos.png")
+        assert_file_exists(self, "dist/package_content/shell.png")
+        assert_file_exists(self, "dist/package_content/NutShellDriver.zip")
 
     def test_tosca_based_shell_with_underscore_packed(self):
         # Arrange
@@ -158,13 +158,13 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             shell_package_builder.pack("/nut_shell")
 
         # Assert
-        assertFileExists(self, "dist/NutShell.zip")
+        assert_file_exists(self, "dist/NutShell.zip")
         TestPackageBuilder.unzip("dist/NutShell.zip", "dist/package_content")
 
-        assertFileExists(self, "dist/package_content/TOSCA-Metadata/TOSCA.meta")
-        assertFileExists(self, "dist/package_content/shell-definition.yml")
-        assertFileExists(self, "dist/package_content/nxos.png")
-        assertFileExists(self, "dist/package_content/NutShellDriver.zip")
+        assert_file_exists(self, "dist/package_content/TOSCA-Metadata/TOSCA.meta")
+        assert_file_exists(self, "dist/package_content/shell-definition.yml")
+        assert_file_exists(self, "dist/package_content/nxos.png")
+        assert_file_exists(self, "dist/package_content/NutShellDriver.zip")
 
     def test_tosca_based_shell_packed_when_artifacts_missing_in_yaml_file(self):
         # Arrange
@@ -197,11 +197,11 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             shell_package_builder.pack("/nut-shell")
 
         # Assert
-        assertFileExists(self, "dist/NutShell.zip")
+        assert_file_exists(self, "dist/NutShell.zip")
         TestPackageBuilder.unzip("dist/NutShell.zip", "dist/package_content")
 
-        assertFileExists(self, "dist/package_content/TOSCA-Metadata/TOSCA.meta")
-        assertFileExists(self, "dist/package_content/shell-definition.yml")
+        assert_file_exists(self, "dist/package_content/TOSCA-Metadata/TOSCA.meta")
+        assert_file_exists(self, "dist/package_content/shell-definition.yml")
 
     def test_tosca_based_shell_packed_when_some_artifacts_missing_in_directory(self):
         # Arrange
@@ -238,11 +238,11 @@ class TestShellPackageBuilder(fake_filesystem_unittest.TestCase):
             shell_package_builder.pack("/nut-shell")
 
         # Assert
-        assertFileExists(self, "dist/NutShell.zip")
+        assert_file_exists(self, "dist/NutShell.zip")
         TestPackageBuilder.unzip("dist/NutShell.zip", "dist/package_content")
 
-        assertFileExists(self, "dist/package_content/TOSCA-Metadata/TOSCA.meta")
-        assertFileExists(self, "dist/package_content/shell-definition.yml")
+        assert_file_exists(self, "dist/package_content/TOSCA-Metadata/TOSCA.meta")
+        assert_file_exists(self, "dist/package_content/shell-definition.yml")
 
     def test_tosca_based_shell_failed(self):
         # Arrange

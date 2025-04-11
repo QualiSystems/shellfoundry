@@ -1,12 +1,14 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import unittest
 from unittest.mock import MagicMock, patch
 
 from click import BadParameter, ClickException
 from cloudshell.rest.api import FeatureUnavailable
 
-from shellfoundry import ALTERNATIVE_STANDARDS_PATH
+from shellfoundry.exceptions import StandardVersionException
 from shellfoundry.commands.new_command import NewCommandExecutor
+from shellfoundry.constants import ALTERNATIVE_STANDARDS_PATH
 from shellfoundry.models.install_config import InstallConfig
 
 
@@ -47,11 +49,11 @@ class TestNewCommandExecutor(unittest.TestCase):
 
     @patch("shellfoundry.commands.new_command.os")
     @patch("shellfoundry.commands.new_command.click.echo")
-    def test_new_standard_fetch_base_exception(self, mock_echo, mock_os):
-        exc_msg = "Some base exception"
+    def test_new_standard_fetch_exception(self, mock_echo, mock_os):
+        exc_msg = "Some exception during standards obtaining."
         self.mock_shell_name_validations.validate_shell_name.return_value = True
         self.mock_standards.fetch = MagicMock(
-            side_effect=Exception(exc_msg),
+            side_effect=StandardVersionException(exc_msg),
         )
 
         command_executor = NewCommandExecutor(
@@ -73,34 +75,6 @@ class TestNewCommandExecutor(unittest.TestCase):
                 python_version="python_version",
             )
             self.mock_standards.fetch.assert_called_once_with()
-            mock_echo.assert_not_called()
-
-    @patch("shellfoundry.commands.new_command.os")
-    @patch("shellfoundry.commands.new_command.click.echo")
-    def test_new_standard_fetch_unavailable_and_base_exception(
-        self, mock_echo, mock_os
-    ):
-        exc_msg = "Some base exception"
-        self.mock_shell_name_validations.validate_shell_name.return_value = True
-        self.mock_standards.fetch = MagicMock(
-            side_effect=[FeatureUnavailable, Exception(exc_msg)]
-        )
-
-        command_executor = NewCommandExecutor(
-            template_compiler=self.mock_template_compiler,
-            template_retriever=self.mock_template_retriever,
-            repository_downloader=self.mock_repository_downloader,
-            standards=self.mock_standards,
-            standard_versions=self.mock_standard_versions,
-            shell_name_validations=self.mock_shell_name_validations,
-        )
-
-        with self.assertRaisesRegex(BaseException, exc_msg):
-            command_executor.new(name="_Shell_Name", template="shell/template")
-            self.mock_standards.fetch.assert_called_with()
-            self.mock_standards.fetch.assert_called_with(
-                alternative=ALTERNATIVE_STANDARDS_PATH
-            )
             mock_echo.assert_not_called()
 
     @patch("shellfoundry.commands.new_command.os")

@@ -1,4 +1,5 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import os
 import xml.etree.ElementTree as etree
 import zipfile
@@ -8,7 +9,7 @@ from pyfakefs import fake_filesystem_unittest
 
 from shellfoundry.utilities.package_builder import PackageBuilder
 
-from tests.asserts import assertFileDoesNotExist, assertFileExists
+from tests.asserts import assert_file_does_not_exist, assert_file_exists
 
 
 class TestPackageBuilder(fake_filesystem_unittest.TestCase):
@@ -49,7 +50,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         TestPackageBuilder.unzip(
             "aws/amazon_web_services/dist/aws.zip", "aws/amazon_web_services/package"
         )
-        assertFileExists(
+        assert_file_exists(
             self, "aws/amazon_web_services/package/DataModel/datamodel.xml"
         )
 
@@ -86,7 +87,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         TestPackageBuilder.unzip(
             "aws/amazon_web_services/dist/aws.zip", "aws/amazon_web_services/package"
         )
-        assertFileExists(
+        assert_file_exists(
             self, "aws/amazon_web_services/package/DataModel/datamodel.xml"
         )
 
@@ -130,10 +131,16 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         TestPackageBuilder.unzip(
             "aws/amazon_web_services/dist/aws.zip", "aws/amazon_web_services/package"
         )
-        assertFileExists(self, "aws/amazon_web_services/package/DataModel/iamimage.png")
-        assertFileExists(self, "aws/amazon_web_services/package/DataModel/iamimage.jpg")
-        assertFileExists(self, "aws/amazon_web_services/package/DataModel/iamimage.gif")
-        assertFileExists(
+        assert_file_exists(
+            self, "aws/amazon_web_services/package/DataModel/iamimage.png"
+        )
+        assert_file_exists(
+            self, "aws/amazon_web_services/package/DataModel/iamimage.jpg"
+        )
+        assert_file_exists(
+            self, "aws/amazon_web_services/package/DataModel/iamimage.gif"
+        )
+        assert_file_exists(
             self, "aws/amazon_web_services/package/DataModel/iamimage.jpeg"
         )
 
@@ -161,7 +168,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             builder.build_package("aws/amazon_web_services", "aws", "AwsDriver")
 
         # Assert
-        assertFileDoesNotExist(
+        assert_file_does_not_exist(
             self, "aws/amazon_web_services/package/DataModel/iamimage.blah"
         )
 
@@ -185,19 +192,19 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             builder.build_package("aws/amazon_web_services", "aws", "AwsDriver")
 
         # Assert
-        assertFileExists(self, "aws/amazon_web_services/dist/aws.zip")
-        assertFileDoesNotExist(self, "aws/amazon_web_services/package")
+        assert_file_exists(self, "aws/amazon_web_services/dist/aws.zip")
+        assert_file_does_not_exist(self, "aws/amazon_web_services/package")
         TestPackageBuilder.unzip(
             "aws/amazon_web_services/dist/aws.zip", "aws/amazon_web_services/package"
         )
-        assertFileExists(self, "aws/amazon_web_services/package/metadata.xml")
-        assertFileExists(
+        assert_file_exists(self, "aws/amazon_web_services/package/metadata.xml")
+        assert_file_exists(
             self, "aws/amazon_web_services/package/DataModel/datamodel.xml"
         )
-        assertFileExists(
+        assert_file_exists(
             self, "aws/amazon_web_services/package/Configuration/shellconfig.xml"
         )
-        assertFileExists(
+        assert_file_exists(
             self,
             "aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip",
         )
@@ -219,15 +226,15 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             builder.build_package("aws/amazon_web_services", "aws", "AwsDriver")
 
         # Assert
-        assertFileExists(self, "aws/amazon_web_services/dist/aws.zip")
+        assert_file_exists(self, "aws/amazon_web_services/dist/aws.zip")
         TestPackageBuilder.unzip(
             "aws/amazon_web_services/dist/aws.zip", "aws/amazon_web_services/package"
         )
-        assertFileExists(self, "aws/amazon_web_services/package/metadata.xml")
-        assertFileExists(
+        assert_file_exists(self, "aws/amazon_web_services/package/metadata.xml")
+        assert_file_exists(
             self, "aws/amazon_web_services/package/DataModel/datamodel.xml"
         )
-        assertFileExists(
+        assert_file_exists(
             self,
             "aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip",
         )
@@ -249,15 +256,15 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             builder.build_package("aws/amazon_web_services", "aws", "AwsDriver")
 
         # Assert
-        assertFileExists(self, "aws/amazon_web_services/dist/aws.zip")
+        assert_file_exists(self, "aws/amazon_web_services/dist/aws.zip")
         TestPackageBuilder.unzip(
             "aws/amazon_web_services/dist/aws.zip", "aws/amazon_web_services/package"
         )
-        assertFileExists(self, "aws/amazon_web_services/package/metadata.xml")
-        assertFileExists(
+        assert_file_exists(self, "aws/amazon_web_services/package/metadata.xml")
+        assert_file_exists(
             self, "aws/amazon_web_services/package/DataModel/datamodel.xml"
         )
-        assertFileExists(
+        assert_file_exists(
             self,
             "aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip",
         )
@@ -282,18 +289,18 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             builder.build_package("aws/amazon_web_services", "aws", "AwsDriver")
 
         # Assert
-        assertFileExists(self, "aws/amazon_web_services/dist/aws.zip")
+        assert_file_exists(self, "aws/amazon_web_services/dist/aws.zip")
         TestPackageBuilder.unzip(
             "aws/amazon_web_services/dist/aws.zip", "aws/amazon_web_services/package"
         )
-        assertFileExists(self, "aws/amazon_web_services/package/metadata.xml")
-        assertFileExists(
+        assert_file_exists(self, "aws/amazon_web_services/package/metadata.xml")
+        assert_file_exists(
             self, "aws/amazon_web_services/package/DataModel/datamodel.xml"
         )
-        assertFileExists(
+        assert_file_exists(
             self, "aws/amazon_web_services/package/Categories/categories.xml"
         )
-        assertFileExists(
+        assert_file_exists(
             self,
             "aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip",
         )
@@ -331,7 +338,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         TestPackageBuilder.unzip(
             "aws/amazon_web_services/dist/aws.zip", "aws/amazon_web_services/package"
         )
-        assertFileExists(
+        assert_file_exists(
             self,
             "aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip",
         )
@@ -339,7 +346,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             "aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip",
             "aws/driver",
         )
-        assertFileExists(self, "aws/driver/drivermetadata.xml")
+        assert_file_exists(self, "aws/driver/drivermetadata.xml")
 
         # packed file should have a dynamic version
         self._assert_driver_version_equals("aws/driver/drivermetadata.xml", "1.2.3.4")
@@ -384,7 +391,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         TestPackageBuilder.unzip(
             "aws/amazon_web_services/dist/aws.zip", "aws/amazon_web_services/package"
         )
-        assertFileExists(
+        assert_file_exists(
             self,
             "aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip",
         )
@@ -392,7 +399,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             "aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip",
             "aws/driver",
         )
-        assertFileExists(self, "aws/driver/drivermetadata.xml")
+        assert_file_exists(self, "aws/driver/drivermetadata.xml")
 
         # packed file should have a dynamic version
         self._assert_driver_version_equals(
@@ -433,7 +440,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
         TestPackageBuilder.unzip(
             "aws/amazon_web_services/dist/aws.zip", "aws/amazon_web_services/package"
         )
-        assertFileExists(
+        assert_file_exists(
             self,
             "aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip",
         )
@@ -441,7 +448,7 @@ class TestPackageBuilder(fake_filesystem_unittest.TestCase):
             "aws/amazon_web_services/package/Resource Drivers - Python/AwsDriver.zip",
             "aws/driver",
         )
-        assertFileExists(self, "aws/driver/drivermetadata.xml")
+        assert_file_exists(self, "aws/driver/drivermetadata.xml")
 
         # packed file should not have a timestamped version
         self._assert_driver_version_equals("aws/driver/drivermetadata.xml", "1.2.3")

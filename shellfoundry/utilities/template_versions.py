@@ -1,7 +1,8 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import requests
+from attrs import define, field
+from packaging.version import Version
 
 import shellfoundry.exceptions as exc
 
@@ -9,21 +10,24 @@ VERSIONS_URL = "https://api.github.com/repos/{}/{}/branches"
 NAME_PLACEHOLDER = "name"
 
 
-def is_version(vstr):
-    from distutils.version import StrictVersion
-
+def is_version(string: str) -> bool:
     try:
-        StrictVersion(vstr)
+        Version(string)  # Try to parse the string as a version
         return True
-    except Exception:
+    except ValueError:
         return False
 
 
-class TemplateVersions(object):
-    def __init__(self, url_user, url_repo):
-        self.template_repo = [url_user, url_repo]
+@define
+class TemplateVersions:
+    url_user: str
+    url_repo: str
+    template_repo: list[str] = field(init=False)
 
-    def get_versions_of_template(self):
+    def __attrs_post_init__(self):
+        self.template_repo = [self.url_user, self.url_repo]
+
+    def get_versions_of_template(self) -> list[str]:
         """Get all versions (branches) of a given template.
 
         Raises HTTPError on request fail,
@@ -42,6 +46,6 @@ class TemplateVersions(object):
         return branches
 
     @staticmethod
-    def has_versions(branches):
+    def has_versions(branches: list[str]) -> bool:
         first_branch = next(iter(branches or []), None)
         return first_branch is not None

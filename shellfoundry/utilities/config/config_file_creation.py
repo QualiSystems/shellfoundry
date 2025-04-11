@@ -1,14 +1,14 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import errno
 import os
-from io import open
 
 import click
 
 
-class ConfigFileCreation(object):
-    def create(self, config_file_path):
+class ConfigFileCreation:
+    @staticmethod
+    def create(config_file_path: str) -> None:
         if os.path.exists(config_file_path):
             return
         if not os.path.exists(os.path.dirname(config_file_path)):
@@ -22,7 +22,8 @@ class ConfigFileCreation(object):
                     raise
         try:
             click.echo("Creating config file...")
-            open(config_file_path, mode="w", encoding="utf8").close()
+            with open(config_file_path, mode="w", encoding="utf8"):
+                pass
         except Exception:
             if not os.path.exists(config_file_path):
                 click.echo("Failed to create config file")

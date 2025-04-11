@@ -1,45 +1,36 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import json
 import os
 import re
 from collections import OrderedDict, defaultdict
-from io import open
+from contextlib import suppress
 from threading import RLock, Thread
+from typing import Callable, ClassVar
 
 import click
 import requests
 import yaml
-from pkg_resources import parse_version
+from attrs import define, field
+from packaging.version import Version, parse
 
-try:
-    from pkg_resources._vendor.packaging.version import Version
-except ImportError:
-    from packaging.version import Version
-
-from .filters import CompositeFilter
-
+from shellfoundry.constants import SERVER_VERSION_KEY, TEMPLATE_INFO_FILE, TEMPLATES_YML
+from shellfoundry.exceptions import FatalError
 from shellfoundry.models.shell_template import ShellTemplate
-from shellfoundry.utilities import GEN_TWO, SEPARATOR
-from shellfoundry.utilities.constants import (
-    SERVER_VERSION_KEY,
-    TEMPLATE_INFO_FILE,
-    TEMPLATES_YML,
-)
+from shellfoundry.utilities.filters import GEN_TWO, SEPARATOR, CompositeFilter
 
 REQUEST_TIMEOUT = 15
 
 
-class TemplateRetriever(object):
-    NAME_PLACEHOLDER = "name"
+@define
+class TemplateRetriever:
+    NAME_PLACEHOLDER: ClassVar[str] = "name"
 
-    def get_templates(self, **kwargs):
-        """Get templates.
-
-        :return: Dictionary of shellfoundry.ShellTemplate
-        """
-        alternative_path = kwargs.get("alternative", None)
-        template_location = kwargs.get("template_location", None)
+    def get_templates(self, **kwargs) -> dict[str, list[ShellTemplate]] | None:
+        """Get templates."""
+        templates = defaultdict(list)
+        alternative_path = kwargs.get("alternative")
+        template_location = kwargs.get("template_location")
         standards = kwargs.get("standards", {})
 
         if alternative_path:
@@ -51,30 +42,29 @@ class TemplateRetriever(object):
             response = self._get_templates_from_github()
             config = yaml.safe_load(response)
 
-        if not config or "templates" not in config:
-            return {}
+        if config and "templates" in config:
+            templatesdic = defaultdict(list)
+            for template in config["templates"]:
 
-        templatesdic = defaultdict(list)
-        for template in config["templates"]:
+                if template["repository"]:  # Online templates
+                    standard_version = {}
+                else:
+                    standard_version = template["standard_version"]
 
-            if template["repository"]:  # Online templates
-                standard_version = {}
-            else:
-                standard_version = template["standard_version"]
-
-            templatesdic[template["name"]].append(
-                ShellTemplate(
-                    name=template["name"],
-                    description=template["description"],
-                    repository=template["repository"],
-                    min_cs_ver=template["min_cs_ver"],
-                    standard=self._get_standard_out_of_name(template["name"]),
-                    standard_version=standard_version,
-                    params=template["params"],
+                templatesdic[template["name"]].append(
+                    ShellTemplate(
+                        name=template["name"],
+                        description=template["description"],
+                        repository=template["repository"],
+                        min_cs_ver=template["min_cs_ver"],
+                        standard=self._get_standard_out_of_name(template["name"]),
+                        standard_version=standard_version,
+                        params=template["params"],
+                    )
                 )
-            )
+            templates = self._filter_by_standards(templatesdic, standards)
 
-        return self._filter_by_standards(templatesdic, standards)
+        return templates
 
     @staticmethod
     def _get_templates_from_github():
@@ -84,13 +74,15 @@ class TemplateRetriever(object):
         return session.get(TEMPLATES_YML, timeout=REQUEST_TIMEOUT).text
 
     @staticmethod
-    def _get_templates_from_path(alternative_path):
+    def _get_templates_from_path(alternative_path: str) -> str:
         """Get templates data from local file."""
-        with open(alternative_path, mode="r", encoding="utf8") as stream:
+        with open(alternative_path, encoding="utf8") as stream:
             response = stream.read()
         return response
 
-    def _get_local_templates(self, template_location):
+    def _get_local_templates(
+        self, template_location: str
+    ) -> dict[str, list[dict[str, str | dict]]]:  # noqa: E501
         """Get templates from local storage."""
         if not template_location or not os.path.exists(template_location):
             raise click.ClickException("Local template location empty or doesn't exist")
@@ -101,7 +93,7 @@ class TemplateRetriever(object):
                     if filename == TEMPLATE_INFO_FILE:
                         full_path = os.path.join(root, filename)
 
-                        with open(full_path, mode="r", encoding="utf8") as f:
+                        with open(full_path, encoding="utf8") as f:
                             templ_data = json.load(f)
 
                         if GEN_TWO in templ_data.get("template_name", "Undefined"):
@@ -153,7 +145,7 @@ class TemplateRetriever(object):
         return templates
 
     @staticmethod
-    def _get_standard_version_from_template(template_location):
+    def _get_standard_version_from_template(template_location: str) -> str | None:
         """Get standard version from template shell-definition file."""
         for root, directories, filenames in os.walk(template_location):
             for filename in filenames:
@@ -170,7 +162,9 @@ class TemplateRetriever(object):
                             return str(match.groupdict()["version"].replace("_", "."))
 
     @staticmethod
-    def _get_standard_out_of_name(template_name, default=None):
+    def _get_standard_out_of_name(
+        template_name: str, default: str = None
+    ) -> str | None:
         type_index = 0
         standard_index = 1
         template = template_name.split(SEPARATOR)
@@ -179,13 +173,10 @@ class TemplateRetriever(object):
         return template[standard_index]
 
     @staticmethod
-    def _filter_by_standards(templates, standards):
-        """Filter templates by available on CloudShell Standards.
-
-        :type templates collections.defaultdict(list)
-        :type standards dict
-        :return:
-        """
+    def _filter_by_standards(
+        templates: dict[str, list[ShellTemplate]], standards: dict[str, list[str]]
+    ) -> dict[str, list[ShellTemplate]]:
+        """Filter templates by available on CloudShell Standards."""
         if not standards:
             return OrderedDict(sorted(templates.items()))
 
@@ -211,7 +202,13 @@ class TemplateRetriever(object):
         return OrderedDict(sorted(filtered_templates.items()))
 
     @staticmethod
-    def _filter_in_threads(template_name, templates_list, standards, lock):
+    def _filter_in_threads(
+        template_name: str,
+        templates_list: list[ShellTemplate],
+        standards: dict[str, list[str]],
+        lock: RLock,
+    ) -> None:
+        """Method for filter templates in Threads."""
         clear_template_name = TemplateRetriever._get_standard_out_of_name(template_name)
         if clear_template_name is None:
             for template in templates_list:
@@ -239,31 +236,41 @@ class TemplateRetriever(object):
                     lock.release()
 
     @staticmethod
-    def _get_min_cs_version(repository, standard_name, standards, branch=None):
+    def _get_min_cs_version(
+        repository: str,
+        standard_name: str | None,
+        standards: dict[str, list[str]] | None,
+        branch: str | None = None,
+    ) -> str | None:
         """Get minimal CloudShell Server Version available for provided template."""
         if not branch:
+            if not standards or standard_name:
+                raise FatalError(
+                    "Error during CS version determination due to insufficient data."
+                )
             branch = str(
-                min(list(map(parse_version, standards[standard_name])))
+                min(list(map(parse, standards[standard_name])))
             )  # determine minimal standard version
         repository = repository.replace("https://github.com", "https://raw.github.com")
         url = "/".join([repository, str(branch), "cookiecutter.json"])
 
         session = requests.Session()
         session.mount("https://", requests.adapters.HTTPAdapter(max_retries=5))
-        responce = session.get(url, timeout=REQUEST_TIMEOUT)
+        response = session.get(url, timeout=REQUEST_TIMEOUT)
 
-        if responce.status_code == requests.codes.ok:
-            return responce.json().get(SERVER_VERSION_KEY, None)
-        else:
-            return
+        if response.status_code == requests.codes.ok:
+            return response.json().get(SERVER_VERSION_KEY)
 
-    def get_repo_branches(self, repository, github_login=None, github_password=None):
+    def get_repo_branches(
+        self,
+        repository: str,
+        github_login: str | None = None,
+        github_password: str | None = None,
+    ) -> list[str]:
         """Get all available branches for provided repository."""
         if repository.endswith("/"):
             repository = repository[:-1]
-        request = "{}/branches".format(
-            repository.replace("https://github.com", "https://api.github.com/repos")
-        )
+        request = f"{repository.replace('https://github.com', 'https://api.github.com/repos')}/branches"  # noqa: E501
 
         session = requests.Session()
         if github_login and github_password:
@@ -279,16 +286,20 @@ class TemplateRetriever(object):
         for item in branches:
             if item == "master":
                 repo_branches.append(item)
-            elif isinstance(parse_version(item), Version):  # only numeric version
-                repo_branches.append(parse_version(item))
+            elif isinstance(parse(item), Version):  # only numeric version
+                repo_branches.append(parse(item))
 
         repo_branches.reverse()
 
         return repo_branches
 
     def get_latest_template(
-        self, repo, version, github_login=None, github_password=None
-    ):
+        self,
+        repo: str,
+        version: str,
+        github_login: str | None = None,
+        github_password: str | None = None,
+    ) -> str | None:
         """Get latest template version based on CloudShell version."""
         for branch in self.get_repo_branches(repo, github_login, github_password):
             cs_version = self._get_min_cs_version(
@@ -296,18 +307,20 @@ class TemplateRetriever(object):
             )
 
             if cs_version:
-                try:
-                    if parse_version(version) >= parse_version(cs_version):
+                with suppress(Exception):
+                    if parse(version) >= parse(cs_version):
                         return str(branch)
-                except Exception:
-                    pass
 
 
-class FilteredTemplateRetriever(object):
-    def __init__(self, template_type, template_retriever=None):
-        self.template_retriever = template_retriever or TemplateRetriever()
-        self.filter = CompositeFilter(template_type).filter
+@define
+class FilteredTemplateRetriever:
+    template_type: str | None
+    template_retriever: TemplateRetriever = field(factory=TemplateRetriever)
+    passes: Callable[[str], bool] = field(init=False)
+
+    def __attrs_post_init__(self):
+        self.passes = CompositeFilter(self.template_type).passes
 
     def get_templates(self, **kwargs):
         templates = self.template_retriever.get_templates(**kwargs)
-        return OrderedDict((k, v) for k, v in templates.items() if self.filter(k))
+        return OrderedDict((k, v) for k, v in templates.items() if self.passes(k))

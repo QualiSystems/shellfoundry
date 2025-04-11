@@ -1,14 +1,19 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
+
 import xml.etree.ElementTree as etree
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
 
 
 class ShellDataModelMerger:
-    def _parse_xml(self, xml_string):
+    @staticmethod
+    def _parse_xml(xml_string: str) -> Element:
         parser = etree.XMLParser(encoding="utf-8")
         return etree.fromstring(xml_string, parser)
 
-    def merge_shell_model(self, datamodel, shell_model):
+    def merge_shell_model(self, datamodel: str, shell_model: str) -> str | bytes:
         etree.register_namespace(
             "",
             "http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd",  # noqa: E501
@@ -22,13 +27,11 @@ class ShellDataModelMerger:
 
         family_name = shell_family_element.get("Family")
 
-        family_xpath_expression = ".//{{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}}ResourceFamily[@Name='{family_name}']".format(  # noqa: E501
-            family_name=family_name
-        )
+        family_xpath_expression = f".//{{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}}ResourceFamily[@Name='{family_name}']"  # noqa: E501
         dm_family_element = datamodel_tree.find(family_xpath_expression)
 
         if dm_family_element is None:
-            raise Exception("Shell family not found:" + family_name)
+            raise Exception(f"Shell family not found: {family_name}")
         model_insertion_point = dm_family_element.find(
             ".//{http://schemas.qualisystems.com/ResourceManagement/DataModelSchema.xsd}Models"  # noqa: E501
         )

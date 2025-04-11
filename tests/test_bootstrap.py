@@ -1,7 +1,8 @@
-#!/usr/bin/python
+from __future__ import annotations
+
 import traceback
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from click.testing import CliRunner
 
@@ -19,7 +20,7 @@ from shellfoundry.bootstrap import (
     show,
     version,
 )
-from shellfoundry.utilities import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
+from shellfoundry.utilities.filters import GEN_ONE, GEN_TWO, LAYER_ONE, NO_FILTER
 
 
 class TestBootstrap(unittest.TestCase):
@@ -29,11 +30,9 @@ class TestBootstrap(unittest.TestCase):
     def tearDown(self):
         pass
 
-    @patch("shellfoundry.bootstrap.pkg_resources")
-    def test_version(self, test_dist):
-        obj = MagicMock()
-        obj.version = "shellfoundry_version"
-        test_dist.get_distribution = MagicMock(return_value=obj)
+    @patch("shellfoundry.bootstrap.version")
+    def test_version(self, mock_version):
+        mock_version.return_value = "shellfoundry_version"
         result = self.runner.invoke(version)
 
         assert result.exit_code == 0

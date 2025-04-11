@@ -1,71 +1,59 @@
-#!/usr/bin/python
+from __future__ import annotations
 
+from typing import TYPE_CHECKING, ClassVar
+from urllib.error import HTTPError
+
+from attrs import define, field
 from cloudshell.rest.api import PackagingRestApiClient
 
 from shellfoundry.exceptions import FatalError
 from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
 
-try:
-    from urllib.error import HTTPError
-except Exception:
-    from urllib2 import HTTPError
+if TYPE_CHECKING:
+    from shellfoundry.models.install_config import InstallConfig
 
 
-def create_cloudshell_client(retries=1):
-    try:
-        cs_client = CloudShellClient().create_client(retries=retries)
-    except FatalError:
-        raise
-    return cs_client
+def create_cloudshell_client(retries: int = 1) -> PackagingRestApiClient:
+    return CloudShellClient().create_client(retries=retries)
 
 
-class CloudShellClient(object):
-    ConnectionFailureMessage = "Connection to CloudShell Server failed. Please make sure it is up and running properly."  # noqa: E501
+@define
+class CloudShellClient:
+    """Creates cloudshell client."""
 
-    def __init__(self, cs_config=None):
-        """Creates cloudshell client.
+    cs_config: InstallConfig = field(
+        factory=lambda: Configuration(CloudShellConfigReader()).read()
+    )
+    ConnectionFailureMessage: ClassVar[str] = (
+        "Connection to CloudShell Server failed. "
+        "Please make sure it is up and running properly."
+    )
 
-        :type cs_config shellfoundry.models.install_config.InstallConfig
-        """
-        self._cs_config = cs_config or Configuration(CloudShellConfigReader()).read()
-
-    def create_client(self, **kwargs):
+    def create_client(self, **kwargs) -> PackagingRestApiClient | None:
         retries = kwargs.get("retries", 1)
-        if retries == 0:
-            raise FatalError(self.ConnectionFailureMessage)
-        try:
-            return self._create_client()
-        except FatalError as e:
-            retry = retries - 1
-            if retry == 0:
-                raise e
-            return self.create_client(retries=retry)
 
-    def _create_client(self):
-        try:
+        while retries > 0:
             try:
-                client = PackagingRestApiClient.login(
-                    host=self._cs_config.host,
-                    port=self._cs_config.port,
-                    username=self._cs_config.username,
-                    password=self._cs_config.password,
-                    domain=self._cs_config.domain,
-                )
-                return client
-            except AttributeError:
-                client = PackagingRestApiClient(
-                    ip=self._cs_config.host,
-                    port=self._cs_config.port,
-                    username=self._cs_config.username,
-                    password=self._cs_config.password,
-                    domain=self._cs_config.domain,
-                )
-                return client
+                return self._create_client()
+            except FatalError as e:
+                retries -= 1
+                if retries == 0:
+                    raise e
+
+    def _create_client(self) -> PackagingRestApiClient:
+        try:
+            return PackagingRestApiClient.login(
+                host=self.cs_config.host,
+                port=self.cs_config.port,
+                username=self.cs_config.username,
+                password=self.cs_config.password,
+                domain=self.cs_config.domain,
+            )
         except (HTTPError, Exception) as e:
             if hasattr(e, "code") and e.code == 401:
                 if hasattr(e, "msg") and e.msg:
                     msg = e.msg
                 else:
                     msg = "Please verify the credentials in the config"
-                raise FatalError("Login to CloudShell failed. {}".format(msg))
+                raise FatalError(f"Login to CloudShell failed. {msg}")
             raise FatalError(self.ConnectionFailureMessage)

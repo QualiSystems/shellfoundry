@@ -1,73 +1,72 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import json
 import os
 import re
-from io import open
+from typing import ClassVar
 
 import click
+from attrs import define, field
 from cloudshell.rest.exceptions import FeatureUnavailable
-from pkg_resources import parse_version
+from packaging.version import parse
 from requests.exceptions import SSLError
 
-from ..exceptions import FatalError
-
-from shellfoundry import (
-    ALTERNATIVE_STANDARDS_PATH,
+from shellfoundry.constants import (
     ALTERNATIVE_TEMPLATES_PATH,
     MASTER_BRANCH_NAME,
+    TEMPLATE_INFO_FILE,
 )
-from shellfoundry.exceptions import VersionRequestException
+from shellfoundry.exceptions import (
+    FatalError,
+    StandardVersionException,
+    VersionRequestException,
+)
 from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
-from shellfoundry.utilities.constants import TEMPLATE_INFO_FILE
 from shellfoundry.utilities.cookiecutter_integration import CookiecutterTemplateCompiler
 from shellfoundry.utilities.repository_downloader import RepositoryDownloader
-from shellfoundry.utilities.standards import Standards, StandardVersionsFactory
+from shellfoundry.utilities.standards.standards_retriever import Standards
+from shellfoundry.utilities.standards.standards_versions import StandardVersionsFactory
 from shellfoundry.utilities.temp_dir_context import TempDirContext
 from shellfoundry.utilities.template_retriever import TemplateRetriever
 from shellfoundry.utilities.template_versions import TemplateVersions
-from shellfoundry.utilities.validations import ShellNameValidations
+from shellfoundry.utilities.validations.shell_name_validations import (
+    ShellNameValidations,
+)
 
 
-class NewCommandExecutor(object):
-    LOCAL_TEMPLATE_URL_PREFIX = "local:"
-    REMOTE_TEMPLATE_URL_PREFIX = "url:"
-    L1_TEMPLATE = "layer-1-switch"
+@define
+class NewCommandExecutor:
+    """Creates shell based on template and standards."""
 
-    def __init__(
+    template_compiler: CookiecutterTemplateCompiler = field(
+        factory=CookiecutterTemplateCompiler
+    )
+    template_retriever: TemplateRetriever = field(factory=TemplateRetriever)
+    repository_downloader: RepositoryDownloader = field(factory=RepositoryDownloader)
+    standards: Standards = field(factory=Standards)
+    standard_versions: StandardVersionsFactory = field(factory=StandardVersionsFactory)
+    shell_name_validations: ShellNameValidations = field(factory=ShellNameValidations)
+    cloudshell_config_reader: Configuration = field(
+        factory=lambda: Configuration(CloudShellConfigReader()), init=False
+    )
+
+    LOCAL_TEMPLATE_URL_PREFIX: ClassVar[str] = "local:"
+    REMOTE_TEMPLATE_URL_PREFIX: ClassVar[str] = "url:"
+    L1_TEMPLATE: ClassVar[str] = "layer-1-switch"
+
+    def new(
         self,
-        template_compiler=None,
-        template_retriever=None,
-        repository_downloader=None,
-        standards=None,
-        standard_versions=None,
-        shell_name_validations=None,
-    ):
-        """Creates shell based on template and standards.
-
-        :param CookiecutterTemplateCompiler template_compiler:
-        :param TemplateRetriever template_retriever:
-        :param RepositoryDownloader repository_downloader:
-        :param Standards standards:
-        :param StandardVersionsFactory standard_versions:
-        :param ShellNameValidations shell_name_validations:
-        """
-        self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
-        self.template_retriever = template_retriever or TemplateRetriever()
-        self.repository_downloader = repository_downloader or RepositoryDownloader()
-        self.template_compiler = template_compiler or CookiecutterTemplateCompiler()
-        self.standards = standards or Standards()
-        self.standard_versions = standard_versions or StandardVersionsFactory()
-        self.shell_name_validations = shell_name_validations or ShellNameValidations()
-
-    def new(self, name, template, version=None, python_version="3"):
+        name: str,
+        template: str,
+        version: str | None = None,
+        python_version: str = "3",
+    ) -> None:
         """Create a new shell based on a template.
 
-        :param str version: The desired version of the shell template to use
-        :param str name: The name of the Shell
-        :param str template: The name of the template to use
-        :param str python_version: Python version
+        version: The desired version of the shell template to use
+        name: The name of the Shell
+        template: The name of the template to use
+        python_version: Python version
         """
         # Special handling for the case where the user runs 'shellfoundry .'
         # in such a case the '.' character is substituted for the shell name
@@ -85,12 +84,8 @@ class NewCommandExecutor(object):
 
         try:
             standards = self.standards.fetch()
-        except FeatureUnavailable:
-            standards = self.standards.fetch(alternative=ALTERNATIVE_STANDARDS_PATH)
-        except Exception as err:
-            raise click.ClickException(
-                "Cannot retrieve standards list. Error: {}".format(err)
-            )
+        except StandardVersionException as err:
+            raise click.ClickException(f"Cannot retrieve standards list. Error: {err}")
 
         # Get template using direct url path. Ignore parameter in configuration file
         if self._is_direct_online_template(template):
@@ -122,11 +117,16 @@ class NewCommandExecutor(object):
         if template == self.L1_TEMPLATE:
             click.secho("WARNING: L1 shells support python 2.7 only!", fg="yellow")
 
-        click.echo("Created shell {0} based on template {1}".format(name, template))
+        click.echo(f"Created shell {name} based on template {template}")
 
     def _import_direct_online_template(
-        self, name, running_on_same_folder, template, standards, python_version
-    ):
+        self,
+        name: str,
+        running_on_same_folder: bool,
+        template: str,
+        standards: dict[str, list[str]],
+        python_version: str,
+    ) -> None:
         """Create shell based on template downloaded by the direct link."""
         template_url = self._remove_prefix(
             template, NewCommandExecutor.REMOTE_TEMPLATE_URL_PREFIX
@@ -134,13 +134,14 @@ class NewCommandExecutor(object):
         with TempDirContext(name) as temp_dir:
             try:
                 repo_path = self.repository_downloader.download_template(
-                    temp_dir, template_url, branch=None, is_need_construct=False
+                    target_dir=temp_dir,
+                    repo_address=template_url,
+                    branch=None,
+                    is_need_construct=False,
                 )
             except VersionRequestException:
                 raise click.BadParameter(
-                    "Failed to download template from provided direct link {}".format(
-                        template_url
-                    )
+                    f"Failed to download template from provided direct link {template_url}"  # noqa: E501
                 )
 
             self._verify_template_standards_compatibility(
@@ -158,8 +159,14 @@ class NewCommandExecutor(object):
             )
 
     def _import_online_template(
-        self, name, running_on_same_folder, template, version, standards, python_version
-    ):
+        self,
+        name: str,
+        running_on_same_folder: bool,
+        template: str,
+        version: str,
+        standards: dict[str, list[str]],
+        python_version: str,
+    ) -> None:
         """Create shell based on template downloaded from GitHub by the name."""
         # Create a temp folder for the operation to make sure we delete it after
         with TempDirContext(name) as temp_dir:
@@ -181,10 +188,8 @@ class NewCommandExecutor(object):
 
             if template not in templates:
                 raise click.BadParameter(
-                    "Template {0} does not exist. "
-                    "Supported templates are: {1}".format(
-                        template, self._get_templates_with_comma(templates)
-                    )
+                    f"Template {template} does not exist. "
+                    f"Supported templates are: {self._get_templates_with_comma(templates)}"  # noqa: E501
                 )
             template_obj = templates[template]
 
@@ -204,10 +209,8 @@ class NewCommandExecutor(object):
                 branches.remove(MASTER_BRANCH_NAME)
                 branches_str = ", ".join(branches)
                 raise click.BadParameter(
-                    "Requested standard version ('{}') doesn't match template version."
-                    " \nAvailable versions for {}: {}".format(
-                        version, template_obj.name, branches_str
-                    )
+                    f"Requested standard version ('{version}') doesn't match template version."  # noqa: E501
+                    f" \nAvailable versions for {template_obj.name}: {branches_str}"
                 )
 
             self._verify_template_standards_compatibility(
@@ -223,8 +226,13 @@ class NewCommandExecutor(object):
             )
 
     def _import_local_template(
-        self, name, running_on_same_folder, template, standards, python_version
-    ):
+        self,
+        name: str,
+        running_on_same_folder: bool,
+        template: str,
+        standards: dict[str, list[str]],
+        python_version: str,
+    ) -> None:
         """Create shell based on direct path to local template."""
         repo_path = self._remove_prefix(
             template, NewCommandExecutor.LOCAL_TEMPLATE_URL_PREFIX
@@ -232,9 +240,7 @@ class NewCommandExecutor(object):
 
         if not os.path.exists(repo_path) or not os.path.isdir(repo_path):
             raise click.BadParameter(
-                "Could not locate a template folder at: {template_path}".format(
-                    template_path=repo_path
-                )
+                f"Could not locate a template folder at: {repo_path}"
             )
 
         extra_content = self._get_template_params(repo_path=repo_path)
@@ -251,7 +257,10 @@ class NewCommandExecutor(object):
             python_version=python_version,
         )
 
-    def _get_template_latest_version(self, standards_list, standard):
+    def _get_template_latest_version(
+        self, standards_list: list[dict[str, list[str]]], standard: str
+    ) -> str:
+        """Get the latest template version."""
         try:
             return self.standard_versions.create(standards_list).get_latest_version(
                 standard
@@ -259,7 +268,12 @@ class NewCommandExecutor(object):
         except Exception as e:
             click.ClickException(str(e))
 
-    def _get_local_template_full_path(self, template_name, standards, version=None):
+    def _get_local_template_full_path(
+        self,
+        template_name: str,
+        standards: dict[str, list[str]],
+        version: str | None = None,
+    ) -> str:
         """Get full path to local template based on provided template name."""
         templates_location = self.cloudshell_config_reader.read().template_location
 
@@ -270,9 +284,9 @@ class NewCommandExecutor(object):
         template_obj = templates.get(template_name, None)
         if template_obj is None:
             raise click.BadParameter(
-                "There is no template with name ({tmpl_name}).\n"
+                f"There is no template with name ({template_name}).\n"
                 "Please, run command 'shellfoundry list' "
-                "to get all available templates.".format(tmpl_name=template_name)
+                "to get all available templates."
             )
 
         avail_standards = set()
@@ -287,21 +301,15 @@ class NewCommandExecutor(object):
                     return avail_templates[version]["repo"]
                 else:
                     raise click.BadParameter(
-                        "Requested template version ({version}) "
-                        "does not exist at templates location ({path}).\n"
-                        "Existing template versions: {existing_versions}".format(
-                            version=version,
-                            path=templates_location,
-                            existing_versions=", ".join(list(avail_templates.keys())),
-                        )
+                        f"Requested template version ({version}) "
+                        f"does not exist at templates location ({templates_location}).\n"  # noqa: E501
+                        f"Existing template versions: {', '.join(list(avail_templates.keys()))}"  # noqa: E501
                     )
             else:
                 raise click.BadParameter(
-                    "Requested template version ({version}) "
-                    "does not compatible with available Standards on CloudShell Server"
-                    " ({avail_standards})".format(
-                        version=version, avail_standards=", ".join(avail_standards)
-                    )
+                    f"Requested template version ({version}) "
+                    f"does not compatible with available Standards on CloudShell Server"
+                    f" ({', '.join(avail_standards)})"
                 )
         else:
             # try to find max available template version
@@ -310,7 +318,7 @@ class NewCommandExecutor(object):
                     max(
                         list(
                             map(
-                                parse_version,
+                                parse,
                                 avail_standards & set(avail_templates.keys()),
                             )
                         )
@@ -322,22 +330,20 @@ class NewCommandExecutor(object):
             return avail_templates[version]["repo"]
 
     @staticmethod
-    def _get_template_params(repo_path):
+    def _get_template_params(repo_path: str) -> dict[str, ...]:
         """Determine template additional parameters."""
         full_path = os.path.join(repo_path, TEMPLATE_INFO_FILE)
         if not os.path.exists(full_path):
             raise click.ClickException(
-                "Wrong template path provided. Provided path: {}".format(repo_path)
+                f"Wrong template path provided. Provided path: {repo_path}"
             )
-        with open(full_path, mode="r", encoding="utf8") as f:
+        with open(full_path, encoding="utf8") as f:
             templ_data = json.load(f)
 
         family_name = templ_data.get("family_name")
         if isinstance(family_name, list):
             value = click.prompt(
-                "Please, choose one of the possible family name: {}".format(
-                    ", ".join(family_name)
-                ),
+                f"Please, choose one of the possible family name: {', '.join(family_name)}",  # noqa: E501
                 default=family_name[0],
             )
             if value not in family_name:
@@ -351,23 +357,25 @@ class NewCommandExecutor(object):
         return extra_context
 
     @staticmethod
-    def _is_direct_local_template(template):
+    def _is_direct_local_template(template: str) -> bool:
         return template.startswith(NewCommandExecutor.LOCAL_TEMPLATE_URL_PREFIX)
 
     @staticmethod
-    def _is_direct_online_template(template):
+    def _is_direct_online_template(template: str) -> bool:
         return template.startswith(NewCommandExecutor.REMOTE_TEMPLATE_URL_PREFIX)
 
     @staticmethod
-    def _remove_prefix(string, prefix):
+    def _remove_prefix(string: str, prefix: str) -> str:
         return string.rpartition(prefix)[-1]
 
     @staticmethod
-    def _get_templates_with_comma(templates):
+    def _get_templates_with_comma(templates: dict[str, ...]) -> str:
         return ", ".join(list(templates.keys()))
 
     @staticmethod
-    def _verify_template_standards_compatibility(template_path, standards):
+    def _verify_template_standards_compatibility(
+        template_path: str, standards: dict[str, list[str]]
+    ) -> None:
         """Check is template and available standards on cloudshell are compatible."""
         shell_def_path = os.path.join(
             template_path, "{{cookiecutter.project_slug}}", "shell-definition.yaml"

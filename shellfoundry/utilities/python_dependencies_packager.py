@@ -1,8 +1,8 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import os
 import shutil
+from typing import ClassVar
 
 try:
     from pip import main as pip_main
@@ -10,16 +10,15 @@ except Exception:
     from pip._internal import main as pip_main
 
 
-class PythonDependenciesPackager(object):
-    CS_PYPI_PORT = 8036
-
-    def __init__(self):
-        pass
+class PythonDependenciesPackager:
+    CS_PYPI_PORT: ClassVar[int] = 8036
 
     def save_offline_dependencies(
-        self, requirements_path, dest_path, cs_server_address=None
-    ):
-
+        self,
+        requirements_path: str,
+        dest_path: str,
+        cs_server_address: str | None = None,
+    ) -> None:
         if os.path.isdir(dest_path):
             shutil.rmtree(path=dest_path, ignore_errors=True)
 

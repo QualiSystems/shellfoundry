@@ -1,45 +1,58 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-from . import (
-    GEN_ONE,
-    GEN_ONE_FILTER,
-    GEN_TWO,
-    GEN_TWO_FILTER,
-    LAYER_ONE,
-    LAYER_ONE_FILTER,
-    NO_FILTER,
-)
+from __future__ import annotations
+
+from typing import ClassVar
+
+from attrs import define, field
+
+GEN_ONE = "gen1"
+GEN_TWO = "gen2"
+LAYER_ONE = "layer1"
+NO_FILTER = "all"
+GEN_ONE_FILTER = "gen1"
+GEN_TWO_FILTER = "gen2"
+LAYER_ONE_FILTER = "layer-1"
+SEPARATOR = "/"
 
 
-class CompositeFilter(object):
-    def __init__(self, template_type=None):
-        self.template_type = template_type or NO_FILTER
-        self.filters = {
+class BaseFilter:
+    FILTER_TYPE: ClassVar[str]
+
+    def passes(self, template_name: str) -> bool:
+        return self.FILTER_TYPE == NO_FILTER or self.FILTER_TYPE in template_name
+
+
+class GenOneFilter(BaseFilter):
+    FILTER_TYPE: ClassVar[str] = GEN_ONE_FILTER
+
+
+class GenTwoFilter(BaseFilter):
+    FILTER_TYPE: ClassVar[str] = GEN_TWO_FILTER
+
+
+class LayerOneFilter(BaseFilter):
+    FILTER_TYPE: ClassVar[str] = LAYER_ONE_FILTER
+
+
+class NoFilter(BaseFilter):
+    FILTER_TYPE: ClassVar[str] = NO_FILTER
+
+
+@define
+class CompositeFilter:
+    template_type: str | None = NO_FILTER
+    filters: dict[str, type[BaseFilter]] = field(
+        init=False,
+        default={
             GEN_ONE: GenOneFilter,
             GEN_TWO: GenTwoFilter,
             LAYER_ONE: LayerOneFilter,
             NO_FILTER: NoFilter,
-        }
+        },
+    )
 
-    def filter(self, template_name):  # noqa: A003
-        return self.filters.get(self.template_type, NoFilter)().filter(template_name)
+    def __attrs_post_init__(self):
+        if not self.template_type:
+            self.template_type = NO_FILTER
 
-
-class GenOneFilter(object):
-    def filter(self, template_name):  # noqa: A003
-        return GEN_ONE_FILTER in template_name
-
-
-class GenTwoFilter(object):
-    def filter(self, template_name):  # noqa: A003
-        return GEN_TWO_FILTER in template_name
-
-
-class LayerOneFilter(object):
-    def filter(self, template_name):  # noqa: A003
-        return LAYER_ONE_FILTER in template_name
-
-
-class NoFilter(object):
-    def filter(self, template_name):  # noqa: A003
-        return True
+    def passes(self, template_name):
+        return self.filters.get(self.template_type, NoFilter)().passes(template_name)

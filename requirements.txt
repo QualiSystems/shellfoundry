@@ -1,11 +1,13 @@
+attrs>=21,<24
 requests
-cookiecutter~=1.7.2
-click~=7.1.2
+cookiecutter~=2.6.0
+click~=8.1.0
 pyyaml
 terminaltables
 cloudshell-rest-api~=9.0.0
 colorama
-giturlparse.py
+giturlparse
 ruamel.yaml
 cryptography
 setuptools; python_version >= '3.12'
+packaging

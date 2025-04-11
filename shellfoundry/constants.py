@@ -1,21 +1,14 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
-import os
+from os.path import dirname, join
 
-__all__ = [
-    "TOSCA_META_LOCATION",
-    "TEMPLATE_AUTHOR_FIELD",
-    "TEMPLATE_VERSION",
-    "TEMPLATE_BASED_ON",
-    "CLOUDSHELL_MAX_RETRIES",
-    "CLOUDSHELL_RETRY_INTERVAL_SEC",
-    "DEFAULT_TIME_WAIT",
-    "TEMPLATE_PROPERTY",
-    "TEMPLATES_YML",
-    "SERVER_VERSION_KEY",
-]
+# GENERAL SECTION
+ALTERNATIVE_TEMPLATES_PATH = join(dirname(__file__), "data", "templates.yml")
+ALTERNATIVE_STANDARDS_PATH = join(dirname(__file__), "data", "standards.json")
+MASTER_BRANCH_NAME = "master"
+PACKAGE_NAME = __package__.split(".")[0]
 
+# UTILITIES SECTION
 CLOUDSHELL_MAX_RETRIES = 5
 CLOUDSHELL_RETRY_INTERVAL_SEC = 0.5
 DEFAULT_TIME_WAIT = 1.0
@@ -33,5 +26,5 @@ TEMPLATE_PROPERTY = {
 TEMPLATES_YML = (
     "https://raw.github.com/QualiSystems/shellfoundry/master/templates_v1.yml"
 )
-TOSCA_META_LOCATION = os.path.join("TOSCA-Metadata", "TOSCA.meta")
+TOSCA_META_LOCATION = join("TOSCA-Metadata", "TOSCA.meta")
 SERVER_VERSION_KEY = "server_version"

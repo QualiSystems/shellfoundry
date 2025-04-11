@@ -1,52 +1,50 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import click
+from attrs import define
 
 
 class ShellFoundryBaseException(Exception):
-    def __init__(self, message):
-        super(ShellFoundryBaseException, self).__init__(message)
+    """Base Shellfoundry exception."""
 
 
 class ShellYmlMissingException(ShellFoundryBaseException):
-    def __init__(self, message):
-        super(ShellYmlMissingException, self).__init__(message)
+    """Configuration file shell.yml missing exception."""
 
 
 class WrongShellYmlException(ShellFoundryBaseException):
-    def __init__(self, message):
-        super(WrongShellYmlException, self).__init__(message)
+    """Incorrect configuration shell.yml structure exception."""
 
 
 class NoVersionsHaveBeenFoundException(ShellFoundryBaseException):
-    def __init__(self, message):
-        super(NoVersionsHaveBeenFoundException, self).__init__(message)
+    """No template versions have been found exception."""
 
 
 class VersionRequestException(ShellFoundryBaseException):
-    def __init__(self, message):
-        super(VersionRequestException, self).__init__(message)
+    """Exception during shell templates operations."""
 
 
+@define
 class PlatformNameIsEmptyException(ShellFoundryBaseException):
-    def __init__(self, message="Machine name is empty"):
-        super(PlatformNameIsEmptyException, self).__init__(message)
+    """Empty platform name exception."""
+
+    message: str = "Machine name is empty"
 
 
 class FatalError(click.ClickException):
-    def __init__(self, message):
-        super(FatalError, self).__init__(message)
+    """Fatal error exception."""
 
     def show(self, file=None):
-        click.secho("Error: {}".format(self.format_message()), err=True, fg="red")
+        click.secho(f"Error: {self.format_message()}", err=True, fg="red")
 
 
 class YmlFieldMissingException(Exception):
-    def __init__(self, message):
-        super(YmlFieldMissingException, self).__init__(message)
+    """Missing field in YAML-file exception."""
 
 
-class ShellFoundryVersionException(Exception):
-    def __init__(self, message):
-        super(ShellFoundryVersionException, self).__init__(message)
+class ShellFoundryVersionException(ShellFoundryBaseException):
+    """Getting shellfoundry version exception."""
+
+
+class StandardVersionException(ShellFoundryBaseException):
+    """Exception during operations with standards."""

@@ -1,60 +1,55 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
 import os
 import re
 import shutil
+from typing import ClassVar, Sequence
 
 import click
+from attrs import define, field
 
-from shellfoundry.exceptions import VersionRequestException
-from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
-from shellfoundry.utilities.constants import (
+from shellfoundry.constants import (
     METADATA_AUTHOR_FIELD,
     TEMPLATE_AUTHOR_FIELD,
     TEMPLATE_BASED_ON,
 )
+from shellfoundry.exceptions import VersionRequestException
+from shellfoundry.utilities.config_reader import CloudShellConfigReader, Configuration
 from shellfoundry.utilities.modifiers.definition.definition_modification import (
     DefinitionModification,
 )
 from shellfoundry.utilities.repository_downloader import RepositoryDownloader
 from shellfoundry.utilities.temp_dir_context import TempDirContext
-from shellfoundry.utilities.validations import (
+from shellfoundry.utilities.validations.shell_generation_validation import (
     ShellGenerationValidations,
+)
+from shellfoundry.utilities.validations.shell_name_validations import (
     ShellNameValidations,
 )
 
 
-class ExtendCommandExecutor(object):
-    LOCAL_TEMPLATE_URL_PREFIX = "local:"
-    SIGN_FILENAME = "signed"
-    ARTIFACTS = {"driver": "src", "deployment": "deployments"}
+@define
+class ExtendCommandExecutor:
+    LOCAL_TEMPLATE_URL_PREFIX: ClassVar[str] = "local:"
+    SIGN_FILENAME: ClassVar[str] = "signed"
+    ARTIFACTS: ClassVar[dict[str, str]] = {"driver": "src", "deployment": "deployments"}
 
-    def __init__(
-        self,
-        repository_downloader=None,
-        shell_name_validations=None,
-        shell_gen_validations=None,
-    ):
-        """Creates a new shell based on an already existing shell.
+    repository_downloader: RepositoryDownloader = field(factory=RepositoryDownloader)
+    shell_name_validations: ShellNameValidations = field(factory=ShellNameValidations)
+    shell_gen_validations: ShellGenerationValidations = field(
+        factory=ShellGenerationValidations
+    )
+    cloudshell_config_reader: Configuration = field(
+        init=False, factory=lambda: Configuration(CloudShellConfigReader())
+    )
 
-        :param RepositoryDownloader repository_downloader:
-        :param ShellNameValidations shell_name_validations:
-        """
-        self.repository_downloader = repository_downloader or RepositoryDownloader()
-        self.shell_name_validations = shell_name_validations or ShellNameValidations()
-        self.shell_gen_validations = (
-            shell_gen_validations or ShellGenerationValidations()
-        )
-        self.cloudshell_config_reader = Configuration(CloudShellConfigReader())
-
-    def extend(self, source, attribute_names):
+    def extend(self, source: str, attribute_names: Sequence[str]) -> None:
         """Create a new shell based on an already existing shell.
 
-        :param str source: The path to the existing shell. Can be a url or local path
-        :param tuple attribute_names: Sequence of attribute names that should be added
+        source: The path to the existing shell. Can be an url or local path
+        attribute_names: Sequence of attribute names that should be added
         """
-        with TempDirContext("Extended_Shell_Temp_Dir") as temp_dir:
+        with TempDirContext(prefix="Extended_Shell_Temp_Dir") as temp_dir:
             try:
                 if self._is_local(source):
                     temp_shell_path = self._copy_local_shell(
@@ -77,11 +72,11 @@ class ExtendCommandExecutor(object):
             if not self.shell_gen_validations.validate_2nd_gen(shell_path):
                 raise click.ClickException("Invalid second generation Shell.")
 
-            modificator = DefinitionModification(shell_path)
-            self._unpack_driver_archive(shell_path, modificator)
+            modifier = DefinitionModification(shell_path)
+            self._unpack_driver_archive(shell_path, modifier)
             self._remove_quali_signature(shell_path)
-            self._change_author(shell_path, modificator)
-            self._add_based_on(shell_path, modificator)
+            self._change_author(shell_path, modifier)
+            self._add_based_on(shell_path, modifier)
             self._add_attributes(shell_path, attribute_names)
 
             try:
@@ -89,9 +84,9 @@ class ExtendCommandExecutor(object):
             except shutil.Error as err:
                 raise click.BadParameter(str(err))
 
-        click.echo("Created shell based on source {}".format(source))
+        click.echo(f"Created shell based on source {source}")
 
-    def _copy_local_shell(self, source, destination):
+    def _copy_local_shell(self, source: str, destination: str) -> str:
         """Copy shell and extract if needed."""
         if os.path.isdir(source):
             source = source.rstrip(os.sep)
@@ -103,7 +98,7 @@ class ExtendCommandExecutor(object):
 
         return ext_shell_path
 
-    def _copy_online_shell(self, source, destination):
+    def _copy_online_shell(self, source: str, destination: str) -> str | None:
         """Download shell and extract it."""
         archive_path = None
         try:
@@ -121,19 +116,21 @@ class ExtendCommandExecutor(object):
         return os.path.join(destination, ext_shell_path)
 
     @staticmethod
-    def _is_local(source):
+    def _is_local(source: str) -> bool:
         return source.startswith(ExtendCommandExecutor.LOCAL_TEMPLATE_URL_PREFIX)
 
     @staticmethod
-    def _remove_prefix(string, prefix):
+    def _remove_prefix(string: str, prefix: str) -> str:
         return string.rpartition(prefix)[-1]
 
-    def _unpack_driver_archive(self, shell_path, modificator=None):
+    def _unpack_driver_archive(
+        self, shell_path: str, modifier: DefinitionModification | None = None
+    ) -> None:
         """Unpack driver files from ZIP-archive."""
-        if not modificator:
-            modificator = DefinitionModification(shell_path)
+        if not modifier:
+            modifier = DefinitionModification(shell_path)
 
-        artifacts = modificator.get_artifacts_files(
+        artifacts = modifier.get_artifacts_files(
             artifact_name_list=list(self.ARTIFACTS.keys())
         )
 
@@ -149,7 +146,7 @@ class ExtendCommandExecutor(object):
                 os.remove(artifact_path)
 
     @staticmethod
-    def _remove_quali_signature(shell_path):
+    def _remove_quali_signature(shell_path: str) -> None:
         """Remove Quali signature from shell."""
         signature_file_path = os.path.join(
             shell_path, ExtendCommandExecutor.SIGN_FILENAME
@@ -157,26 +154,36 @@ class ExtendCommandExecutor(object):
         if os.path.exists(signature_file_path):
             os.remove(signature_file_path)
 
-    def _change_author(self, shell_path, modificator=None):
+    def _change_author(
+        self, shell_path: str, modifier: DefinitionModification | None = None
+    ) -> None:
         """Change shell authoring."""
         author = self.cloudshell_config_reader.read().author
 
-        if not modificator:
-            modificator = DefinitionModification(shell_path)
+        if not modifier:
+            modifier = DefinitionModification(shell_path)
 
-        modificator.edit_definition(field=TEMPLATE_AUTHOR_FIELD, value=author)
-        modificator.edit_tosca_meta(field=METADATA_AUTHOR_FIELD, value=author)
+        modifier.edit_definition(conf_field=TEMPLATE_AUTHOR_FIELD, value=author)
+        modifier.edit_tosca_meta(conf_field=METADATA_AUTHOR_FIELD, value=author)
 
-    def _add_based_on(self, shell_path, modificator=None):
+    @staticmethod
+    def _add_based_on(
+        shell_path: str, modifier: DefinitionModification | None = None
+    ) -> None:
         """Add Based_ON field to shell-definition.yaml file."""
-        if not modificator:
-            modificator = DefinitionModification(shell_path)
+        if not modifier:
+            modifier = DefinitionModification(shell_path)
 
-        modificator.add_field_to_definition(field=TEMPLATE_BASED_ON)
+        modifier.add_field_to_definition(conf_field=TEMPLATE_BASED_ON)
 
-    def _add_attributes(self, shell_path, attribute_names, modificator=None):
+    @staticmethod
+    def _add_attributes(
+        shell_path: str,
+        attribute_names: Sequence[str],
+        modifier: DefinitionModification | None = None,
+    ) -> None:
         """Add a commented out attributes to the shell definition."""
-        if not modificator:
-            modificator = DefinitionModification(shell_path)
+        if not modifier:
+            modifier = DefinitionModification(shell_path)
 
-        modificator.add_properties(attribute_names=attribute_names)
+        modifier.add_properties(attribute_names=attribute_names)

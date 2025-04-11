@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import re
 from datetime import datetime
 
 
 class DriverVersionTimestampBased:
     @staticmethod
-    def get_version(version):
+    def get_version(version: str) -> str:
         days = (datetime.utcnow() - datetime(2000, 1, 1)).days
         now = datetime.now()
         seconds_since_midnight = (
@@ -15,5 +17,5 @@ class DriverVersionTimestampBased:
         return newver
 
     @staticmethod
-    def supports_version_pattern(version):
+    def supports_version_pattern(version: str) -> re.Match[str] | None:
         return re.match(r"\d+\.\d+\.\*$", version)
