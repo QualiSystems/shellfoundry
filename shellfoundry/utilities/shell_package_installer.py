@@ -216,10 +216,23 @@ class ShellPackageInstaller(object):
             )
 
     def _parse_installation_error(self, base_message, error):
+        error_str = str(error)
+        cs_message = error_str  # Default to full error string
+        
         try:
-            cs_message = json.loads(str(error))["Message"]
-        except Exception:
-            cs_message = ""
+            # Check if it's a PackagingRestApiError with embedded JSON response
+            if "response:" in error_str:
+                # Extract JSON part after "response: "
+                json_start = error_str.find("response:") + len("response:")
+                json_str = error_str[json_start:].strip().rstrip("')")
+                cs_message = json.loads(json_str)["Message"]
+            else:
+                # Try to parse the error string directly as JSON
+                cs_message = json.loads(error_str)["Message"]
+        except (json.JSONDecodeError, KeyError, ValueError):
+            # If JSON parsing fails, keep the full error string
+            pass
+        
         return "{}. CloudShell responded with: '{}'".format(base_message, cs_message)
 
     def _increase_pbar(self, pbar, time_wait):
