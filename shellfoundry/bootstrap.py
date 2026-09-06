@@ -28,9 +28,7 @@ def cli():
 @cli.command()
 def version():
     """Displays the shellfoundry version."""
-    click.echo(
-        "shellfoundry version " + importlib.metadata.version("shellfoundry")
-    )
+    click.echo("shellfoundry version " + importlib.metadata.version("shellfoundry"))
 
 
 @cli.command()  # noqa: A001
