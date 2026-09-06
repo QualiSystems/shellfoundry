@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import traceback
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from click.testing import CliRunner
 
@@ -29,11 +29,9 @@ class TestBootstrap(unittest.TestCase):
     def tearDown(self):
         pass
 
-    @patch("shellfoundry.bootstrap.pkg_resources")
-    def test_version(self, test_dist):
-        obj = MagicMock()
-        obj.version = "shellfoundry_version"
-        test_dist.get_distribution = MagicMock(return_value=obj)
+    @patch("importlib.metadata.version")
+    def test_version(self, version_mock):
+        version_mock.return_value = "shellfoundry_version"
         result = self.runner.invoke(version)
 
         assert result.exit_code == 0

@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import importlib.metadata
 import json
 
-import pkg_resources
 import requests
 
 try:
@@ -16,7 +16,7 @@ try:
 except ImportError:
     from urllib2 import HTTPError, URLError
 
-from distutils.version import StrictVersion
+from packaging.version import Version
 
 from shellfoundry import PACKAGE_NAME
 from shellfoundry.exceptions import ShellFoundryVersionException
@@ -37,15 +37,15 @@ class Index(object):
 
 
 def get_installed_version(package_name):
-    return pkg_resources.get_distribution(package_name).version
+    return importlib.metadata.version(package_name)
 
 
 def is_index_version_greater_than_current():
     MAJOR_INDEX = 0
 
     installed, index = (
-        StrictVersion(get_installed_version(PACKAGE_NAME)),
-        StrictVersion(max_version_from_index()),
+        Version(get_installed_version(PACKAGE_NAME)),
+        Version(max_version_from_index()),
     )
     is_major_release = False
 
@@ -53,7 +53,7 @@ def is_index_version_greater_than_current():
     if (
         is_greater_version
         and get_index_of_biggest_component_between_two_versions(
-            index.version, installed.version
+            index.release, installed.release
         )
         == MAJOR_INDEX
     ):

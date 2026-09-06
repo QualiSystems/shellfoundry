@@ -10,10 +10,10 @@ NAME_PLACEHOLDER = "name"
 
 
 def is_version(vstr):
-    from distutils.version import StrictVersion
+    from packaging.version import Version
 
     try:
-        StrictVersion(vstr)
+        Version(vstr)
         return True
     except Exception:
         return False

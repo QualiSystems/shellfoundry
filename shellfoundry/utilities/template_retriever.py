@@ -10,12 +10,8 @@ from threading import RLock, Thread
 import click
 import requests
 import yaml
-from pkg_resources import parse_version
-
-try:
-    from pkg_resources._vendor.packaging.version import Version
-except ImportError:
-    from packaging.version import Version
+from packaging.version import Version
+from packaging.version import parse as parse_version
 
 from .filters import CompositeFilter
 
