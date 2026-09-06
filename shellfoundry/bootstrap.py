@@ -1,8 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import importlib.metadata
+
 import click
-import pkg_resources
 
 from shellfoundry.commands.config_command import ConfigCommandExecutor
 from shellfoundry.commands.delete_command import DeleteCommandExecutor
@@ -28,7 +29,7 @@ def cli():
 def version():
     """Displays the shellfoundry version."""
     click.echo(
-        "shellfoundry version " + pkg_resources.get_distribution("shellfoundry").version
+        "shellfoundry version " + importlib.metadata.version("shellfoundry")
     )
 
 

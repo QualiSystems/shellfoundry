@@ -41,11 +41,14 @@ setup(
     "vcenter cmp cloudshell quali command-line cli",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: Software Development :: Libraries",
         "License :: OSI Approved :: Apache Software License",
     ],
-    python_requires=">=2.7",
+    python_requires=">=3.8",
     test_suite="tests",
 )

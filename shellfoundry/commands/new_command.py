@@ -8,7 +8,7 @@ from io import open
 
 import click
 from cloudshell.rest.exceptions import FeatureUnavailable
-from pkg_resources import parse_version
+from packaging.version import parse as parse_version
 from requests.exceptions import SSLError
 
 from ..exceptions import FatalError
